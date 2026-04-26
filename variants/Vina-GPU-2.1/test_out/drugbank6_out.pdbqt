@@ -1,0 +1,369 @@
+MODEL 1
+REMARK VINA RESULT:      -5.6      0.000      0.000
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      44.945 111.449  80.610  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      45.064 110.920  79.253  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      46.049 110.849  78.994  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      44.700 109.968  79.225  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      46.361 111.662  81.119  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      47.217 110.790  81.194  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      46.599 112.955  81.459  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      45.865 113.546  81.186  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      44.160 110.461  81.486  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      43.667 111.079  82.773  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      42.468 111.772  82.777  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      42.014 112.344  83.966  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      42.765 112.214  85.134  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      43.971 111.514  85.113  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      44.426 110.942  83.925  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 2
+REMARK VINA RESULT:      -5.5      1.263      2.097
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      45.735 112.181  80.019  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      46.152 111.923  78.642  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      46.189 112.799  78.121  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      47.104 111.557  78.638  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      46.813 113.051  80.643  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      47.201 112.962  81.801  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      47.340 113.936  79.758  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      47.056 114.855  79.946  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      45.560 110.851  80.768  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      44.560 110.940  81.897  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      44.935 110.535  83.168  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      44.011 110.616  84.211  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      42.727 111.103  83.968  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      42.365 111.507  82.683  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      43.288 111.426  81.640  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 3
+REMARK VINA RESULT:      -5.5      1.257      1.569
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      45.732 112.175  80.021  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      46.151 111.916  78.645  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      46.209 110.910  78.484  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      45.439 112.259  78.002  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      46.809 113.045  80.646  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      47.197 112.955  81.804  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      47.334 113.933  79.762  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      48.238 114.212  80.017  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      45.557 110.845  80.770  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      44.568 110.938  81.909  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      43.296 111.429  81.663  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      42.383 111.515  82.714  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      42.753 111.108  83.995  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      44.038 110.616  84.227  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      44.952 110.529  83.176  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 4
+REMARK VINA RESULT:      -5.4     11.702     12.806
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      46.891 101.592  85.828  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      47.836 102.180  84.881  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      47.341 102.487  84.043  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      48.245 103.022  85.286  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      45.870 102.670  86.149  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      46.056 103.602  86.921  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      44.715 102.512  85.452  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      44.211 101.727  85.753  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      47.641 101.114  87.081  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      48.657 100.037  86.783  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      49.930 100.139  87.320  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      50.869  99.145  87.044  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      50.522  98.062  86.236  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      49.235  97.974  85.703  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      48.296  98.968  85.979  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 5
+REMARK VINA RESULT:      -5.4      0.617      1.519
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      44.930 111.605  81.140  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      44.523 111.028  79.860  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      43.794 110.330  80.012  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      44.099 111.751  79.280  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      46.438 111.777  81.079  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      47.251 110.867  81.178  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      46.803 113.068  80.864  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      46.399 113.676  81.518  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      44.500 110.680  82.288  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      43.650 111.382  83.322  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      44.135 111.532  84.610  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      43.350 112.179  85.565  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      42.091 112.668  85.217  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      41.616 112.508  83.914  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      42.401 111.861  82.960  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 6
+REMARK VINA RESULT:      -5.4      1.547      2.194
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      46.093 112.376  80.040  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      46.136 111.881  78.665  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      45.668 112.542  78.045  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      47.105 111.841  78.348  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      47.166 113.445  80.151  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      47.714 113.989  79.201  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      47.440 113.770  81.441  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      46.948 114.567  81.730  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      46.332 111.214  81.018  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      45.158 110.970  81.937  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      44.097 110.198  81.492  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      43.013 109.973  82.341  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      43.005 110.522  83.623  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      44.081 111.298  84.056  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      45.165 111.523  83.208  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 7
+REMARK VINA RESULT:      -5.2      1.330      1.936
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      44.906 111.654  80.677  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      44.735 111.626  79.225  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      45.190 110.798  78.839  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      43.745 111.529  79.001  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      46.397 111.790  80.936  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      47.157 110.857  81.156  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      46.818 113.079  80.864  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      46.557 113.595  81.656  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      44.327 110.371  81.294  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      42.960 110.577  81.902  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      41.925 109.728  81.547  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      40.662 109.918  82.108  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      40.452 110.954  83.017  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      41.504 111.801  83.365  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      42.768 111.611  82.804  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 8
+REMARK VINA RESULT:      -5.2      1.247      2.174
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      44.964 111.445  80.380  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      44.978 111.107  78.958  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      44.717 111.923  78.406  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      45.929 110.872  78.674  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      46.394 111.787  80.760  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      46.905 112.893  80.642  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      47.056 110.725  81.288  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      46.519 110.257  81.962  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      44.418 110.260  81.191  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      43.095 110.562  81.855  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      43.012 111.611  82.755  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      41.791 111.890  83.369  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      40.669 111.116  83.074  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      40.769 110.061  82.165  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      41.990 109.783  81.551  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 9
+REMARK VINA RESULT:      -5.1      1.795      2.542
+REMARK  Name = 6140
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: O_1  and  C_9
+REMARK    2  A    between atoms: N_3  and  CA_5
+REMARK    3  A    between atoms: CB_4  and  CA_5
+REMARK    4  A    between atoms: CB_4  and  CG_6
+REMARK    5  A    between atoms: CA_5  and  C_9
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  PHE A   1      45.830 111.008  81.072  0.00  0.00    +0.165 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   PHE A   1      47.253 110.833  81.357  0.00  0.00    -0.318 NA
+ATOM      3  H1  PHE A   1      47.415 110.894  82.363  0.00  0.00    +0.119 HD
+ATOM      4  H2  PHE A   1      47.542 109.893  81.086  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   PHE A   1      45.733 112.055  79.976  0.00  0.00    +0.322 C 
+ATOM      6  OXT PHE A   1      44.883 112.070  79.095  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   PHE A   1      46.685 113.016  80.094  0.00  0.00    -0.480 OA
+ATOM      8  H   PHE A   1      47.532 112.654  80.430  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  PHE A   1      45.093 111.438  82.350  0.00  0.00    +0.065 C 
+BRANCH   9  10
+ATOM     10  CG  PHE A   1      43.648 110.996  82.372  0.00  0.00    -0.045 A 
+ATOM     11  CD2 PHE A   1      43.290 109.820  81.734  0.00  0.00    +0.004 A 
+ATOM     12  CE2 PHE A   1      41.956 109.411  81.753  0.00  0.00    +0.000 A 
+ATOM     13  CZ  PHE A   1      41.000 110.185  82.411  0.00  0.00    +0.000 A 
+ATOM     14  CE1 PHE A   1      41.377 111.367  83.048  0.00  0.00    +0.000 A 
+ATOM     15  CD1 PHE A   1      42.711 111.776  83.029  0.00  0.00    +0.004 A 
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
