@@ -4,8 +4,7 @@ out = ./docking_result/2b2m_docking_result.pdbqt
 center_x = 40.415
 center_y = 110.986
 center_z = 82.673
-size_x = 24
-size_y = 26.25
-size_z = 22.5
+size_x = 18
+size_y = 18
+size_z = 18
 thread = 8192
-	

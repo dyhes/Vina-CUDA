@@ -1,9 +1,9 @@
 # Need to be modified according to different users
-WORK_DIR=/home/ubuntu/Vina-CUDA/Vina-CUDA_v1.1
+WORK_DIR=$(CURDIR)
 BOOST_LIB_PATH=/usr
-NVCC_COMPILER=/usr/local/cuda-12.8/bin/nvcc
+NVCC_COMPILER=/usr/local/cuda/bin/nvcc
 GRID_DIM=-DGRID_DIM1=64 -DGRID_DIM2=128
-DOCKING_BOX_SIZE=-DLARGE_BOX
+DOCKING_BOX_SIZE=-DSMALL_BOX
 
 # Should not be modified
 BOOST_INC_PATH=-I$(BOOST_LIB_PATH)/include 
@@ -23,4 +23,4 @@ out:./main/main.cpp
 source:./main/main.cpp
 	$(NVCC_COMPILER) -o Vina-GPU-2-1-CUDA $(BOOST_INC_PATH) $(VINA_GPU_INC_PATH) $(OPENCL_INC_PATH) $(DOCKING_BOX_SIZE) ./main/main.cpp -O3 $(SRC) $(SRC_CUDA) $(LIB1) $(LIB2) $(LIB3) $(LIB_PATH) $(OPTION) $(MACRO) -DNDEBUG -DBUILD_KERNEL_FROM_SOURCE
 clean:
-	rm Vina-GPU-2-1-CUDA
+	rm -f Vina-GPU-2-1-CUDA
