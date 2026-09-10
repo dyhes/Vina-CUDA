@@ -289,7 +289,12 @@ checkCUDA(cudaStreamCreate(&stream1));
 	hp_mark("PREP_cudamalloc_done");
 	GT_BLOCK_START();
 	hp_mark("PREP_grids_h2d_start");
-	checkCUDA(cudaMemcpyAsync(grids_gpu, grids_ptr, grids_size, cudaMemcpyHostToDevice, stream1));
+	// [Q3-1] grids header-only HtoD (v5 idea, minus the redundant memset):
+	// kernel1 generates ALL m_data on device; host ships only atu/slope (8B)
+	// + per-grid metadata (first 72B of grid_cl). No m_data, no zero-fill.
+	checkCUDA(cudaMemcpyAsync(&grids_gpu->atu, &grids_ptr->atu, sizeof(int) + sizeof(flo), cudaMemcpyHostToDevice, stream1));
+	for (int gi = 0; gi < GRIDS_SIZE; gi++)
+		checkCUDA(cudaMemcpyAsync(&grids_gpu->grids[gi], &grids_ptr->grids[gi], 72, cudaMemcpyHostToDevice, stream1));
 	hp_mark("PREP_grids_h2d_done");
 	hp_mark("grids_fill_h2d");
 
