@@ -21,47 +21,47 @@
 */
 
 #include "grid.h"
-/*input £º Èı¸ö½á¹¹Ìå×é³ÉµÄ½á¹¹Ìå×é
-function£º¸ø½á¹¹ÌåÖĞµÄÎå¸öÊı×é¸³Öµ
-output£ºvoid    ¸Ä±äÊı×éÊıÖµ
+/*input ï¼š ä¸‰ä¸ªç»“æ„ä½“ç»„æˆçš„ç»“æ„ä½“ç»„
+functionï¼šç»™ç»“æ„ä½“ä¸­çš„äº”ä¸ªæ•°ç»„èµ‹å€¼
+outputï¼švoid    æ”¹å˜æ•°ç»„æ•°å€¼
 
 */
-void grid::init(const grid_dims& gd) {//ÊäÈëÎªÈı¸ö½á¹¹Ìå×é³ÉµÄ½á¹¹Ìå×é
-	m_data.resize(gd[0].n+1, gd[1].n+1, gd[2].n+1);   //Èı¸ö½á¹¹ÌåÖĞµÄÏîn+1È»ºó³Ë   £¿£¿£¿£¿£¿£¿£¿£¿£¿
-	m_init = vec(gd[0].begin, gd[1].begin, gd[2].begin);//¸øÀàgridÖĞµÄÊı×é¸³Öµ     Ã¿¸ö½á¹¹ÌåµÄbegin
-	m_range = vec(gd[0].span(), gd[1].span(), gd[2].span());//¸øÀàgridÖĞµÄÊı×é¸³Öµ  Ã¿¸ö½á¹¹ÌåµÄend - begin
-	assert(m_range[0] > 0);//È·±£Êı×éÊı×Ö>0
+void grid::init(const grid_dims& gd) {//è¾“å…¥ä¸ºä¸‰ä¸ªç»“æ„ä½“ç»„æˆçš„ç»“æ„ä½“ç»„
+	m_data.resize(gd[0].n+1, gd[1].n+1, gd[2].n+1);   //ä¸‰ä¸ªç»“æ„ä½“ä¸­çš„é¡¹n+1ç„¶åä¹˜   ï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
+	m_init = vec(gd[0].begin, gd[1].begin, gd[2].begin);//ç»™ç±»gridä¸­çš„æ•°ç»„èµ‹å€¼     æ¯ä¸ªç»“æ„ä½“çš„begin
+	m_range = vec(gd[0].span(), gd[1].span(), gd[2].span());//ç»™ç±»gridä¸­çš„æ•°ç»„èµ‹å€¼  æ¯ä¸ªç»“æ„ä½“çš„end - begin
+	assert(m_range[0] > 0);//ç¡®ä¿æ•°ç»„æ•°å­—>0
 	assert(m_range[1] > 0);
 	assert(m_range[2] > 0);
 	m_dim_fl_minus_1 = vec(m_data.dim0() - 1.0, 
 	                       m_data.dim1() - 1.0,
-			               m_data.dim2() - 1.0);//Êı×éÈı¸öÊı¶¼¼õÒ»   ¸øÀàgridÖĞµÄÊı×é¸³Öµ
+			               m_data.dim2() - 1.0);//æ•°ç»„ä¸‰ä¸ªæ•°éƒ½å‡ä¸€   ç»™ç±»gridä¸­çš„æ•°ç»„èµ‹å€¼
 	VINA_FOR(i, 3) {
-		m_factor[i] = m_dim_fl_minus_1[i] / m_range[i];   //m_dim_fl_minus_1/m_range    ¸øÀàgridÖĞµÄÊı×é¸³Öµ
-		m_factor_inv[i] = 1 / m_factor[i];//1/m_factor     ¸øÀàgridÖĞµÄÊı×é¸³Öµ
+		m_factor[i] = m_dim_fl_minus_1[i] / m_range[i];   //m_dim_fl_minus_1/m_range    ç»™ç±»gridä¸­çš„æ•°ç»„èµ‹å€¼
+		m_factor_inv[i] = 1 / m_factor[i];//1/m_factor     ç»™ç±»gridä¸­çš„æ•°ç»„èµ‹å€¼
 	}
 }// 
-/*input £º³¤¶È3doubleÀàĞÍÊı×élocation  Ö»¶Á     double£º  slope¡¢v   Ö¸ÕëÀàĞÍderiv/NULL
-output£º  double
-inter£º³¤¶È3doubleÀàĞÍÊı×és   miss  ³¤¶È3intÀàĞÍÊı×éregion  ³¤¶È3uintÀàĞÍÊı×éa
-function£ºÊä³ödoubleÀàĞÍµÄÊı²¢ÇÒ¸Ä±äderiv¶ÔÓ¦µÄÖµ  ¼ûÎÄ¼ş    //·ÖÎªÖ¸ÕëÓĞĞ§ºÍÎŞĞ§ÀàĞÍ  
+/*input ï¼šé•¿åº¦3doubleç±»å‹æ•°ç»„location  åªè¯»     doubleï¼š  slopeã€v   æŒ‡é’ˆç±»å‹deriv/NULL
+outputï¼š  double
+interï¼šé•¿åº¦3doubleç±»å‹æ•°ç»„s   miss  é•¿åº¦3intç±»å‹æ•°ç»„region  é•¿åº¦3uintç±»å‹æ•°ç»„a
+functionï¼šè¾“å‡ºdoubleç±»å‹çš„æ•°å¹¶ä¸”æ”¹å˜derivå¯¹åº”çš„å€¼  è§æ–‡ä»¶    //åˆ†ä¸ºæŒ‡é’ˆæœ‰æ•ˆå’Œæ— æ•ˆç±»å‹  
 
 */
 fl grid::evaluate_aux(const vec& location, fl slope, fl v, vec* deriv) const { // sets *deriv if not NULL
-	vec s  = elementwise_product(location - m_init, m_factor); //a0*b0    a1*b1  a2*b2   ¹¹ÔìÊı×é1   ¸ù¾İÀàÖĞµÄÊı×éºÍÊäÈë¸øÊı×és¸³Öµ
+	vec s  = elementwise_product(location - m_init, m_factor); //a0*b0    a1*b1  a2*b2   æ„é€ æ•°ç»„1   æ ¹æ®ç±»ä¸­çš„æ•°ç»„å’Œè¾“å…¥ç»™æ•°ç»„sèµ‹å€¼
 
-	vec miss(0, 0, 0);    //¹¹ÔìÊı×é2
-	boost::array<int, 3> region;  //¹¹ÔìÊı×é3
-	boost::array<sz, 3> a;  //¹¹ÔìÊı×é4
+	vec miss(0, 0, 0);    //æ„é€ æ•°ç»„2
+	boost::array<int, 3> region;  //æ„é€ æ•°ç»„3
+	boost::array<sz, 3> a;  //æ„é€ æ•°ç»„4
 
 	VINA_FOR(i, 3) {
-		if(s[i] < 0) {    //¸ù¾İÊı×é1   ¸øÊı×é1234¸³Öµ
+		if(s[i] < 0) {    //æ ¹æ®æ•°ç»„1   ç»™æ•°ç»„1234èµ‹å€¼
 			miss[i] = -s[i];
 			region[i] = -1;
 			a[i] = 0; 
 			s[i] = 0;
 		}       
-		else if(s[i] >= m_dim_fl_minus_1[i]) {//¸ù¾İÊı×é1   ¸øÊı×é1234¸³Öµ
+		else if(s[i] >= m_dim_fl_minus_1[i]) {//æ ¹æ®æ•°ç»„1   ç»™æ•°ç»„1234èµ‹å€¼
 			miss[i] = s[i] - m_dim_fl_minus_1[i];
 			region[i] = 1;
 			assert(m_data.dim(i) >= 2);
@@ -70,15 +70,15 @@ fl grid::evaluate_aux(const vec& location, fl slope, fl v, vec* deriv) const { /
 		}
 		else {
 			region[i] = 0; // now that region is boost::array, it's not initialized
-			a[i] = sz(s[i]); //¸ù¾İÊı×é1   ¸øÊı×é1234¸³Öµ
+			a[i] = sz(s[i]); //æ ¹æ®æ•°ç»„1   ç»™æ•°ç»„1234èµ‹å€¼
 			s[i] -= a[i];
 		}
 		assert(s[i] >= 0);
 		assert(s[i] <= 1);
 		assert(a[i] >= 0);
-		assert(a[i]+1 < m_data.dim(i));//ÅĞ¶Ïs[i]ÔÚ0-1Ö®¼ä  a[i]>=0ÇÒa[0]<m_i a[1]<m_j a[2]<m_k
+		assert(a[i]+1 < m_data.dim(i));//åˆ¤æ–­s[i]åœ¨0-1ä¹‹é—´  a[i]>=0ä¸”a[0]<m_i a[1]<m_j a[2]<m_k
 	}
-	const fl penalty = slope * (miss * m_factor_inv); // Êä³öµÄÒ»²¿·Ö
+	const fl penalty = slope * (miss * m_factor_inv); // è¾“å‡ºçš„ä¸€éƒ¨åˆ†
 
 	const sz x0 = a[0];
 	const sz y0 = a[1];
@@ -116,7 +116,7 @@ fl grid::evaluate_aux(const vec& location, fl slope, fl v, vec* deriv) const { /
 		f011 *  mx *  y *  z  +
 		f111 *   x *  y *  z  ;
 
-	if(deriv) { // valid pointer  ÓĞÖ¸ÕëÀàĞÍ²ÎÊı
+	if(deriv) { // valid pointer  æœ‰æŒ‡é’ˆç±»å‹å‚æ•°
 		const fl x_g = 
 			f000 * (-1)* my * mz  +
 			f100 *   1 * my * mz  +
@@ -150,17 +150,17 @@ fl grid::evaluate_aux(const vec& location, fl slope, fl v, vec* deriv) const { /
 			f111 *   x *  y *  1  ;
 
 		vec gradient(x_g, y_g, z_g);
-		curl(f, gradient, v);//¸Ä±äfºÍgradient
+		curl(f, gradient, v);//æ”¹å˜få’Œgradient
 		vec gradient_everywhere;
 
-		VINA_FOR(i, 3) {//¸Ä±äderiv¶ÔÓ¦µÄÖµ
+		VINA_FOR(i, 3) {//æ”¹å˜derivå¯¹åº”çš„å€¼
 			gradient_everywhere[i] = ((region[i] == 0) ? gradient[i] : 0);
 			(*deriv)[i] = m_factor[i] * gradient_everywhere[i] + slope * region[i];
 		}
 
-		return f + penalty;//·µ»ØÊä³ö
+		return f + penalty;//è¿”å›è¾“å‡º
 	}
-	else {  //ÎŞÊäÈëÖ¸ÕëÀàĞÍ²ÎÊı
+	else {  //æ— è¾“å…¥æŒ‡é’ˆç±»å‹å‚æ•°
 		curl(f, v);
 		return f + penalty;
 	}

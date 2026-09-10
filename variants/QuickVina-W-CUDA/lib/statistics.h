@@ -30,14 +30,14 @@
 // simple but inefficient implementations
 
 
-/*   Çó¾ùÖµ
-	input¡ª¡ª v:doubleÏòÁ¿, ,Ö»¶Á£»
-	inter¡ª¡ªacc:double;
-	output¡ª¡ªmean:double;
-	v.size()¼ÆËãvÏòÁ¿ÔªËØ¸öÊı£»
-	v.empty()ÓÃÓÚÅĞ¶ÏvÏòÁ¿ÊÇ·ñÎª¿Õ£¬Îª¿Õ·µ»Ø1·ñÔòÎª0£»
+/*   æ±‚å‡å€¼
+	inputâ€”â€” v:doubleå‘é‡, ,åªè¯»ï¼›
+	interâ€”â€”acc:double;
+	outputâ€”â€”mean:double;
+	v.size()è®¡ç®—vå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+	v.empty()ç”¨äºåˆ¤æ–­vå‘é‡æ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºè¿”å›1å¦åˆ™ä¸º0ï¼›
 	        acc=v[i]+acc;i=0-v.size
-			if(vÏòÁ¿Îª¿Õ)
+			if(vå‘é‡ä¸ºç©º)
 			mean=0;
 			else 
 			mean=acc/v.size;
@@ -46,22 +46,22 @@
 inline fl mean(const flv& v) {
 	fl acc = 0;
 	VINA_FOR_IN(i, v)						  //for(uint VINA_MACROS_TMP=v.size,i=0; i<VINA_MACROS_TMP;i++)
-		acc += v[i];						  //¶ÔÏòÁ¿ÖĞµÄÖµ½øĞĞÀÛ¼Ó
-	return v.empty() ? 0 : (acc/v.size());    //ÈôvÎª¿ÕÏòÁ¿·µ»Ø0£¬·ñÔò·µ»ØÀÛ¼ÓµÄÖµ³ıÏòÁ¿ÔªËØ¸öÊı
+		acc += v[i];						  //å¯¹å‘é‡ä¸­çš„å€¼è¿›è¡Œç´¯åŠ 
+	return v.empty() ? 0 : (acc/v.size());    //è‹¥vä¸ºç©ºå‘é‡è¿”å›0ï¼Œå¦åˆ™è¿”å›ç´¯åŠ çš„å€¼é™¤å‘é‡å…ƒç´ ä¸ªæ•°
 }
 
 
 
 
-/*   ÇóÆ«²î
-input¡ª¡ª v:doubleÏòÁ¿, ,Ö»¶Á£»
-inter¡ª¡ªacc:double¡¢m:double;
-output¡ª¡ªdeviation:double;
-v.size()¼ÆËãvÏòÁ¿ÔªËØ¸öÊı£»
-v.empty()ÓÃÓÚÅĞ¶ÏvÏòÁ¿ÊÇ·ñÎª¿Õ£¬Îª¿Õ·µ»Ø1·ñÔòÎª0£»
-m = mean(v)ÓÃÓÚÇóvÏòÁ¿µÄ¾ùÖµ
+/*   æ±‚åå·®
+inputâ€”â€” v:doubleå‘é‡, ,åªè¯»ï¼›
+interâ€”â€”acc:doubleã€m:double;
+outputâ€”â€”deviation:double;
+v.size()è®¡ç®—vå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+v.empty()ç”¨äºåˆ¤æ–­vå‘é‡æ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºè¿”å›1å¦åˆ™ä¸º0ï¼›
+m = mean(v)ç”¨äºæ±‚vå‘é‡çš„å‡å€¼
              acc=(v[i]-mean(m))^2+acc;i=0-v.size
-             if(vÏòÁ¿Îª¿Õ)
+             if(vå‘é‡ä¸ºç©º)
              deviation=0;
              else
              deviation=(acc/v.size)^(1/2);
@@ -76,22 +76,22 @@ inline fl deviation(const flv& v) {
 }
 
 
-/*   Çó¾ù·½²î¸ù
-input¡ª¡ª a¡¢b:doubleÏòÁ¿ ,Ö»¶Á£»
-inter¡ª¡ªacc:double¡¢m:double;
-output¡ª¡ªrmsd:double;
-a.size()¼ÆËãaÏòÁ¿ÔªËØ¸öÊı£»
-a.empty()ÓÃÓÚÅĞ¶ÏaÏòÁ¿ÊÇ·ñÎª¿Õ£¬Îª¿Õ·µ»Ø1·ñÔòÎª0£»
-¼ÆËãÇ°ÒªÏÈÅĞ¶Ïa¡¢bÏòÁ¿ÔªËØ¸öÊıÊÇ·ñÏàµÈ£¬ÏàµÈ²ÅÄÜ½øĞĞ½ÓÏÂÀ´µÄÔËËã¡£·ñÔòÍË³ö£»
+/*   æ±‚å‡æ–¹å·®æ ¹
+inputâ€”â€” aã€b:doubleå‘é‡ ,åªè¯»ï¼›
+interâ€”â€”acc:doubleã€m:double;
+outputâ€”â€”rmsd:double;
+a.size()è®¡ç®—aå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+a.empty()ç”¨äºåˆ¤æ–­aå‘é‡æ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºè¿”å›1å¦åˆ™ä¸º0ï¼›
+è®¡ç®—å‰è¦å…ˆåˆ¤æ–­aã€bå‘é‡å…ƒç´ ä¸ªæ•°æ˜¯å¦ç›¸ç­‰ï¼Œç›¸ç­‰æ‰èƒ½è¿›è¡Œæ¥ä¸‹æ¥çš„è¿ç®—ã€‚å¦åˆ™é€€å‡ºï¼›
               acc=(a[i]-b[i])^2+acc;i=0-a.size
-              if(vÏòÁ¿Îª¿Õ)
+              if(vå‘é‡ä¸ºç©º)
               rmsd=0;
               else
               rmsd=(acc/a.size)^(1/2);
 */
 
 inline fl rmsd(const flv& a, const flv& b) {
-	VINA_CHECK(a.size() == b.size());                 //¶ÏÑÔ assert(a.size() == b.size())£¬Èôa¡¢bÏòÁ¿¸öÊıÏàÍ¬¼ÌĞøÖ´ĞĞ£¬·ñÔòÖÕÖ¹³ÌĞò
+	VINA_CHECK(a.size() == b.size());                 //æ–­è¨€ assert(a.size() == b.size())ï¼Œè‹¥aã€bå‘é‡ä¸ªæ•°ç›¸åŒç»§ç»­æ‰§è¡Œï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åº
 	fl acc = 0;
 	VINA_FOR_IN(i, a)                                //for(uint VINA_MACROS_TMP=v.size,i=0; i<VINA_MACROS_TMP;i++)
 		acc += sqr(a[i] - b[i]);
@@ -101,21 +101,21 @@ inline fl rmsd(const flv& a, const flv& b) {
 
 
 /*  
-input¡ª¡ª a¡¢b:doubleÏòÁ¿ ,Ö»¶Á£»
-inter¡ª¡ªacc:double¡¢m:double;
-output¡ª¡ªaverage_difference:double;
-a.size()¼ÆËãaÏòÁ¿ÔªËØ¸öÊı£»
-a.empty()ÓÃÓÚÅĞ¶ÏaÏòÁ¿ÊÇ·ñÎª¿Õ£¬Îª¿Õ·µ»Ø1·ñÔòÎª0£»
-¼ÆËãÇ°ÒªÏÈÅĞ¶Ïa¡¢bÏòÁ¿ÔªËØ¸öÊıÊÇ·ñÏàµÈ£¬ÏàµÈ²ÅÄÜ½øĞĞ½ÓÏÂÀ´µÄÔËËã¡£·ñÔòÍË³ö£»
+inputâ€”â€” aã€b:doubleå‘é‡ ,åªè¯»ï¼›
+interâ€”â€”acc:doubleã€m:double;
+outputâ€”â€”average_difference:double;
+a.size()è®¡ç®—aå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+a.empty()ç”¨äºåˆ¤æ–­aå‘é‡æ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºè¿”å›1å¦åˆ™ä¸º0ï¼›
+è®¡ç®—å‰è¦å…ˆåˆ¤æ–­aã€bå‘é‡å…ƒç´ ä¸ªæ•°æ˜¯å¦ç›¸ç­‰ï¼Œç›¸ç­‰æ‰èƒ½è¿›è¡Œæ¥ä¸‹æ¥çš„è¿ç®—ã€‚å¦åˆ™é€€å‡ºï¼›
            acc=(b[i]-a[i])+acc;i=0-a.size
-           if(vÏòÁ¿Îª¿Õ)
+           if(vå‘é‡ä¸ºç©º)
            average_difference=0;
            else
            average_difference=(acc/a.size);
 */
 
 inline fl average_difference(const flv& b, const flv& a) { // b - a
-	VINA_CHECK(a.size() == b.size());                      //¶ÏÑÔ assert(a.size() == b.size())£¬Èôa¡¢bÏòÁ¿¸öÊıÏàÍ¬¼ÌĞøÖ´ĞĞ£¬·ñÔòÖÕÖ¹³ÌĞò
+	VINA_CHECK(a.size() == b.size());                      //æ–­è¨€ assert(a.size() == b.size())ï¼Œè‹¥aã€bå‘é‡ä¸ªæ•°ç›¸åŒç»§ç»­æ‰§è¡Œï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åº
 	fl acc = 0;
 	VINA_FOR_IN(i, a)									   //for(uint VINA_MACROS_TMP=v.size,i=0; i<VINA_MACROS_TMP;i++)
 		acc += b[i] - a[i];
@@ -127,24 +127,24 @@ inline fl average_difference(const flv& b, const flv& a) { // b - a
 
 
 /*   
-input¡ª¡ª x¡¢y:doubleÏòÁ¿,Ö»¶Á£»
-inter¡ª¡ªsum_x,sum_y,sum_x_sq,sum_y_sq,sum_prod¡¢sd_x¡¢sd_y¡¢cov¡¢tmp:double;
-output¡ª¡ªpearson:double;
-x.size()¼ÆËãaÏòÁ¿ÔªËØ¸öÊı£»
-x.empty()ÓÃÓÚÅĞ¶ÏaÏòÁ¿ÊÇ·ñÎª¿Õ£¬Îª¿Õ·µ»Ø1·ñÔòÎª0£»
-epsilon_flÎª¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬2.22045e-16£»
-¼ÆËãÇ°ÒªÏÈÅĞ¶Ïa¡¢bÏòÁ¿ÔªËØ¸öÊıÊÇ·ñÏàµÈ£¬ÏàµÈ²ÅÄÜ½øĞĞ½ÓÏÂÀ´µÄÔËËã¡£·ñÔòÍË³ö£»
-ÈôÏòÁ¿Îª¿ÕÖ±½Ó·µ»Ø0£»
+inputâ€”â€” xã€y:doubleå‘é‡,åªè¯»ï¼›
+interâ€”â€”sum_x,sum_y,sum_x_sq,sum_y_sq,sum_prodã€sd_xã€sd_yã€covã€tmp:double;
+outputâ€”â€”pearson:double;
+x.size()è®¡ç®—aå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+x.empty()ç”¨äºåˆ¤æ–­aå‘é‡æ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºè¿”å›1å¦åˆ™ä¸º0ï¼›
+epsilon_flä¸ºè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼Œ2.22045e-16ï¼›
+è®¡ç®—å‰è¦å…ˆåˆ¤æ–­aã€bå‘é‡å…ƒç´ ä¸ªæ•°æ˜¯å¦ç›¸ç­‰ï¼Œç›¸ç­‰æ‰èƒ½è¿›è¡Œæ¥ä¸‹æ¥çš„è¿ç®—ã€‚å¦åˆ™é€€å‡ºï¼›
+è‹¥å‘é‡ä¸ºç©ºç›´æ¥è¿”å›0ï¼›
                      sum_x=sum_x+x[i];i=0-n(a.size)
 					 sum_y=sum_y+y[i];
 					 sum_x_sq=sum_x_sq+x[i]^2;
 					 sum_y_sq=sum_y_sq+y[i]^2;
 					 sum_prod=sum_prod+y[i]*x[i];
-					 sd_x=(sum_x_sq/n - (sum_x/n)^2)^(1/2);//±ê×¼²î
-					 sd_y=(sum_y_sq/n - (sum_y/n)^2)^(1/2);//±ê×¼²î
-					 cov= sum_prod/n - (sum_x/n) * (sum_y/n);//Ğ­·½²î
+					 sd_x=(sum_x_sq/n - (sum_x/n)^2)^(1/2);//æ ‡å‡†å·®
+					 sd_y=(sum_y_sq/n - (sum_y/n)^2)^(1/2);//æ ‡å‡†å·®
+					 cov= sum_prod/n - (sum_x/n) * (sum_y/n);//åæ–¹å·®
 					 tmp=sd_x * sd_y;
-					 if£¨abs(tmp) < epsilon_fl£©
+					 ifï¼ˆabs(tmp) < epsilon_flï¼‰
 					 pearson= 0;
 					 else 
 					 pearson= cov / tmp;
@@ -153,7 +153,7 @@ epsilon_flÎª¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬2.22045e-16£»
 
 inline fl pearson(const flv& x, const flv& y) {
 	sz n = x.size();
-	VINA_CHECK(n == y.size());                          //¶ÏÑÔ assert(a.size() == b.size())£¬Èôa¡¢bÏòÁ¿¸öÊıÏàÍ¬¼ÌĞøÖ´ĞĞ£¬·ñÔòÖÕÖ¹³ÌĞò
+	VINA_CHECK(n == y.size());                          //æ–­è¨€ assert(a.size() == b.size())ï¼Œè‹¥aã€bå‘é‡ä¸ªæ•°ç›¸åŒç»§ç»­æ‰§è¡Œï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åº
 	if(n == 0) return 0; 
 	fl sum_x = 0;
 	fl sum_y = 0;
@@ -172,7 +172,7 @@ inline fl pearson(const flv& x, const flv& y) {
 	fl sd_y = std::sqrt(sum_y_sq/n - sqr(sum_y/n));
 	fl cov = sum_prod/n - (sum_x/n) * (sum_y/n);
 	fl tmp = sd_x * sd_y;
-	if(std::abs(tmp) < epsilon_fl) return 0;        // epsilon_flÎª¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬2.22045e-16
+	if(std::abs(tmp) < epsilon_fl) return 0;        // epsilon_flä¸ºè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼Œ2.22045e-16
 	return cov / tmp;
 }
 
@@ -183,7 +183,7 @@ inline fl pearson(const flv& x, const flv& y) {
 /*
 x:double;
 i:unsigned int;
-½«´«µ½spearman_auxÖĞµÄÖµ´«¸øx¡¢i£»
+å°†ä¼ åˆ°spearman_auxä¸­çš„å€¼ä¼ ç»™xã€iï¼›
 */
 struct spearman_aux {
 	fl x;
@@ -194,12 +194,12 @@ struct spearman_aux {
 
 
 
-/*Õâ¸öº¯ÊıÎªÏÂÃæµÄget_rankingsÅÅĞòº¯ÊıÌá¹©ÅÅĞò·½Ê½¡ª¡ªÉıĞò
-½«º¯ÊıÖĞµÄĞÎ²Î¸ÄÎªÖ¸Õëa¡¢b£¬¿ÉÒÔ¼õÉÙÄÚ´æ¿Õ¼ä£¬
-¼ÓÈëconstÖ®ºó£¬ÔÚÕâ¸öoperatorº¯ÊıÖĞÒ»µ©¶Ôa.x¡¢b.x¡¢a.i¡¢b.iÓĞĞŞ¸ÄµÄ²Ù×÷¾Í»á±¨´í£¬
-¿ÉÒÔ·ÀÖ¹ÎÒÃÇµÄÎó²Ù×÷
+/*è¿™ä¸ªå‡½æ•°ä¸ºä¸‹é¢çš„get_rankingsæ’åºå‡½æ•°æä¾›æ’åºæ–¹å¼â€”â€”å‡åº
+å°†å‡½æ•°ä¸­çš„å½¢å‚æ”¹ä¸ºæŒ‡é’ˆaã€bï¼Œå¯ä»¥å‡å°‘å†…å­˜ç©ºé—´ï¼Œ
+åŠ å…¥constä¹‹åï¼Œåœ¨è¿™ä¸ªoperatorå‡½æ•°ä¸­ä¸€æ—¦å¯¹a.xã€b.xã€a.iã€b.iæœ‰ä¿®æ”¹çš„æ“ä½œå°±ä¼šæŠ¥é”™ï¼Œ
+å¯ä»¥é˜²æ­¢æˆ‘ä»¬çš„è¯¯æ“ä½œ
 	if(a.x<b.x)
-	return 1£»
+	return 1ï¼›
 	else
 	return 0;
 */
@@ -208,38 +208,38 @@ inline bool operator<(const spearman_aux& a, const spearman_aux& b) {     //
 }
 
 
-/*ÊµÏÖ¶ÔÊäÈëxÏòÁ¿ÖĞµÄÖµ½øĞĞÉıĞòÅÅĞò£¬²¢¼ÇÂ¼Æä×ø±ê£¬½«ÔÚ×ø±ê´æ½øtmpÏòÁ¿ÖĞ
+/*å®ç°å¯¹è¾“å…¥xå‘é‡ä¸­çš„å€¼è¿›è¡Œå‡åºæ’åºï¼Œå¹¶è®°å½•å…¶åæ ‡ï¼Œå°†åœ¨åæ ‡å­˜è¿›tmpå‘é‡ä¸­
 
-input¡ª¡ª x:doubleÏòÁ¿,Ö»¶Á£»
-output¡ª¡ªtmp:doubleÏòÁ¿,Îªx.size£¬³õÊ¼»¯È«Îª0µÄÏòÁ¿;
-inter¡ª¡ªto_sort£º½á¹¹ÌåÏòÁ¿daxiao £»
-Ê×ÏÈto_sort½á¹¹Ìåx±äÁ¿ÖĞÔÚ×îºóÃæÒÀ´ÎÌí¼ÓÊäÈëx[i]£¨i=0-x.size£©£¬¼´½«½á¹¹ÌåÖĞµÄx¸³ÖµÊäÈëÏòÁ¿x;
-to_sort½á¹¹Ìåi±äÁ¿ÖĞÔÚ×îºóÃæÒÀ´ÎÌí¼ÓÊäÈëi£¨i=0-x.size£©£¬¼´¶Ô½á¹¹ÌåÖĞµÄi¸³Öµ;
-È»ºó½áºÏÉÏÒ»¸öoperator·ûºÅÖØÔØº¯Êı£¬¶Ôx½øĞĞÉıĞò£»
-×îºóÔÚ°´ÕÕxÉıĞòË³ĞòÈ¡iµÄÖµ£¬Ê¹µÃtmp[i]=rank :rank=0-x.size;
+inputâ€”â€” x:doubleå‘é‡,åªè¯»ï¼›
+outputâ€”â€”tmp:doubleå‘é‡,ä¸ºx.sizeï¼Œåˆå§‹åŒ–å…¨ä¸º0çš„å‘é‡;
+interâ€”â€”to_sortï¼šç»“æ„ä½“å‘é‡daxiao ï¼›
+é¦–å…ˆto_sortç»“æ„ä½“xå˜é‡ä¸­åœ¨æœ€åé¢ä¾æ¬¡æ·»åŠ è¾“å…¥x[i]ï¼ˆi=0-x.sizeï¼‰ï¼Œå³å°†ç»“æ„ä½“ä¸­çš„xèµ‹å€¼è¾“å…¥å‘é‡x;
+to_sortç»“æ„ä½“iå˜é‡ä¸­åœ¨æœ€åé¢ä¾æ¬¡æ·»åŠ è¾“å…¥iï¼ˆi=0-x.sizeï¼‰ï¼Œå³å¯¹ç»“æ„ä½“ä¸­çš„ièµ‹å€¼;
+ç„¶åç»“åˆä¸Šä¸€ä¸ªoperatorç¬¦å·é‡è½½å‡½æ•°ï¼Œå¯¹xè¿›è¡Œå‡åºï¼›
+æœ€ååœ¨æŒ‰ç…§xå‡åºé¡ºåºå–içš„å€¼ï¼Œä½¿å¾—tmp[i]=rank :rank=0-x.size;
 
 */
 
 inline flv get_rankings(const flv& x) {
-	std::vector<spearman_aux> to_sort;                 //to_sortÎª½á¹¹ÌåÏòÁ¿
+	std::vector<spearman_aux> to_sort;                 //to_sortä¸ºç»“æ„ä½“å‘é‡
 	VINA_FOR_IN(i, x)								   //for(uint VINA_MACROS_TMP=x.size,i=0; i<VINA_MACROS_TMP;i++)
-	to_sort.push_back(spearman_aux(x[i], i));      // push_backº¯Êı:½«Ò»¸öĞÂµÄÔªËØ¼Óµ½vectorµÄ×îºóÃæ£¬Î»ÖÃÎªµ±Ç°×îºóÒ»¸öÔªËØµÄÏÂÒ»¸öÔªËØ
-	std::sort(to_sort.begin(), to_sort.end());         //£¨1£©µÚÒ»¸ö²ÎÊıfirst£ºÊÇÒªÅÅĞòµÄÊı×éµÄÆğÊ¼µØÖ·¡£
-													   //£¨2£©µÚ¶ş¸ö²ÎÊılast£ºÊÇ½áÊøµÄµØÖ·£¨×îºóÒ»¸öÊı¾İµÄºóÒ»¸öÊı¾İµÄµØÖ·£©
-													   //£¨3£©µÚÈı¸ö²ÎÊıcompÊÇÅÅĞòµÄ·½·¨£º¿ÉÒÔÊÇ´ÓÉıĞòÒ²¿ÉÊÇ½µĞò¡£
-													   //Èç¹ûµÚÈı¸ö²ÎÊı²»Ğ´£¬ÔòÄ¬ÈÏµÄÅÅĞò·½·¨ÊÇ´ÓĞ¡µ½´óÅÅĞò¡£
+	to_sort.push_back(spearman_aux(x[i], i));      // push_backå‡½æ•°:å°†ä¸€ä¸ªæ–°çš„å…ƒç´ åŠ åˆ°vectorçš„æœ€åé¢ï¼Œä½ç½®ä¸ºå½“å‰æœ€åä¸€ä¸ªå…ƒç´ çš„ä¸‹ä¸€ä¸ªå…ƒç´ 
+	std::sort(to_sort.begin(), to_sort.end());         //ï¼ˆ1ï¼‰ç¬¬ä¸€ä¸ªå‚æ•°firstï¼šæ˜¯è¦æ’åºçš„æ•°ç»„çš„èµ·å§‹åœ°å€ã€‚
+													   //ï¼ˆ2ï¼‰ç¬¬äºŒä¸ªå‚æ•°lastï¼šæ˜¯ç»“æŸçš„åœ°å€ï¼ˆæœ€åä¸€ä¸ªæ•°æ®çš„åä¸€ä¸ªæ•°æ®çš„åœ°å€ï¼‰
+													   //ï¼ˆ3ï¼‰ç¬¬ä¸‰ä¸ªå‚æ•°compæ˜¯æ’åºçš„æ–¹æ³•ï¼šå¯ä»¥æ˜¯ä»å‡åºä¹Ÿå¯æ˜¯é™åºã€‚
+													   //å¦‚æœç¬¬ä¸‰ä¸ªå‚æ•°ä¸å†™ï¼Œåˆ™é»˜è®¤çš„æ’åºæ–¹æ³•æ˜¯ä»å°åˆ°å¤§æ’åºã€‚
 
-	flv tmp(x.size(), 0);							   //¶¨ÒåÒ»¸ö´óĞ¡Îªx.size£¬³õÊ¼»¯È«Îª0µÄÏòÁ¿
+	flv tmp(x.size(), 0);							   //å®šä¹‰ä¸€ä¸ªå¤§å°ä¸ºx.sizeï¼Œåˆå§‹åŒ–å…¨ä¸º0çš„å‘é‡
 	VINA_FOR_IN(rank, to_sort)						   //for(uint VINA_MACROS_TMP=to_sort.size,rank=0; rank<VINA_MACROS_TMP;rank++)
 		tmp[to_sort[rank].i] = rank;
 	return tmp;
 }
 
 /*
-input¡ª¡ª x¡¢y:doubleÏòÁ¿,Ö»¶Á£»
-output¡ª¡ªpearson£ºdouble£»
-x¡¢y½øĞĞÉıĞòºó·µ»Ø¸÷×ÔµÄ×ø±êÏòÁ¿£¨get_rankings×÷ÓÃ£©x1£¬y1(ÕâÀïÎªÁËÇø·ÖËùÒÔ×Ô¼º¶¨ÒåµÄ)£»
-×îºó¶ÔÏòÁ¿x1£¬y1½øĞĞÊıÑ§ÔËËã£¨pearson×÷ÓÃ£©£¬·µ»Ø½á¹û¡£
+inputâ€”â€” xã€y:doubleå‘é‡,åªè¯»ï¼›
+outputâ€”â€”pearsonï¼šdoubleï¼›
+xã€yè¿›è¡Œå‡åºåè¿”å›å„è‡ªçš„åæ ‡å‘é‡ï¼ˆget_rankingsä½œç”¨ï¼‰x1ï¼Œy1(è¿™é‡Œä¸ºäº†åŒºåˆ†æ‰€ä»¥è‡ªå·±å®šä¹‰çš„)ï¼›
+æœ€åå¯¹å‘é‡x1ï¼Œy1è¿›è¡Œæ•°å­¦è¿ç®—ï¼ˆpearsonä½œç”¨ï¼‰ï¼Œè¿”å›ç»“æœã€‚
 */
 
 inline fl spearman(const flv& x, const flv& y) {

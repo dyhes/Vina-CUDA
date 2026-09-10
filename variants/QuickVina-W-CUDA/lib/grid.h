@@ -26,13 +26,13 @@
 #include "array3d.h"
 #include "grid_dim.h"
 #include "curl.h"
-/*¶¨Òåm_init;m_range; m_factor;m_dim_fl_minus_1;m_factor_inv;µ÷ÓÃÀàarrat3d  
-	ÎŞ²ÎÊı¹¹Ôìº¯ÊıµÄÓÃÀ´¸øÊı×é¸³Öµ    ´ø²ÎÊıµÄ¹¹Ôìº¯ÊıÖ´ĞĞinitº¯Êı  ÊäÈëÎªgrid_dims Èı¸ö½á¹¹Ìå×é³ÉµÄÊı×é
-	¶¨ÒåÒ»¸öÊı×éÀàĞÍµÄº¯Êı£¬ÊäÈëÎªuint  x y z   ·µ»ØÒ»¸öUINTÀàĞÍµÄ³¤¶ÈÎª3µÄÊı×é   
-	¶¨ÒåÒ»¸ö boolÀàĞÍº¯Êı Èôm_dataµÄ²ÎÊısz m_i, m_j, m_k;Í¬Ê±>0Ôò·µ»Ø1  ·ñÔò0
-	ÉùÃ÷º¯Êıevaluate   ÊäÈë³¤¶ÈÎª3Êı×élocation   slope  c  doubleÀàĞÍ   Ö´ĞĞº¯Êıevaluate_aux  ·µ»Ø
-	Êä³ödoubleÀàĞÍµÄÊı»òÕßÊä³ödoubleÀàĞÍµÄÊı²¢ÇÒ¸Ä±äderiv¶ÔÓ¦µÄÖµ
-	ÇÖÈëÊ½ĞòÁĞ»¯
+/*å®šä¹‰m_init;m_range; m_factor;m_dim_fl_minus_1;m_factor_inv;è°ƒç”¨ç±»arrat3d  
+	æ— å‚æ•°æ„é€ å‡½æ•°çš„ç”¨æ¥ç»™æ•°ç»„èµ‹å€¼    å¸¦å‚æ•°çš„æ„é€ å‡½æ•°æ‰§è¡Œinitå‡½æ•°  è¾“å…¥ä¸ºgrid_dims ä¸‰ä¸ªç»“æ„ä½“ç»„æˆçš„æ•°ç»„
+	å®šä¹‰ä¸€ä¸ªæ•°ç»„ç±»å‹çš„å‡½æ•°ï¼Œè¾“å…¥ä¸ºuint  x y z   è¿”å›ä¸€ä¸ªUINTç±»å‹çš„é•¿åº¦ä¸º3çš„æ•°ç»„   
+	å®šä¹‰ä¸€ä¸ª boolç±»å‹å‡½æ•° è‹¥m_dataçš„å‚æ•°sz m_i, m_j, m_k;åŒæ—¶>0åˆ™è¿”å›1  å¦åˆ™0
+	å£°æ˜å‡½æ•°evaluate   è¾“å…¥é•¿åº¦ä¸º3æ•°ç»„location   slope  c  doubleç±»å‹   æ‰§è¡Œå‡½æ•°evaluate_aux  è¿”å›
+	è¾“å‡ºdoubleç±»å‹çš„æ•°æˆ–è€…è¾“å‡ºdoubleç±»å‹çš„æ•°å¹¶ä¸”æ”¹å˜derivå¯¹åº”çš„å€¼
+	ä¾µå…¥å¼åºåˆ—åŒ–
 */
 class grid { // FIXME rm 'm_', consistent with my new style
 public:
@@ -51,20 +51,20 @@ public:
 		           m_init[1] + m_factor_inv[1] * y,
 		           m_init[2] + m_factor_inv[2] * z);
 	}
-	//¶¨ÒåÒ»¸ö boolÀàĞÍº¯Êı Èôm_dataµÄ²ÎÊısz m_i, m_j, m_k;Í¬Ê±>0Ôò·µ»Ø1  ·ñÔò0
+	//å®šä¹‰ä¸€ä¸ª boolç±»å‹å‡½æ•° è‹¥m_dataçš„å‚æ•°sz m_i, m_j, m_k;åŒæ—¶>0åˆ™è¿”å›1  å¦åˆ™0
 	bool initialized() const {
 		return m_data.dim0() > 0 && m_data.dim1() > 0 && m_data.dim2() > 0;
 	}
 	
 	 
 	 
-	 //Ìø×ªCPP
-	fl evaluate(const vec& location, fl slope, fl c)             const { return evaluate_aux(location, slope, c, NULL);   }//Êä³ödoubleÀàĞÍµÄÊı
-	fl evaluate(const vec& location, fl slope, fl c, vec& deriv) const { return evaluate_aux(location, slope, c, &deriv); } //Êä³ödoubleÀàĞÍµÄÊı²¢ÇÒ¸Ä±äderiv¶ÔÓ¦µÄÖµ
+	 //è·³è½¬CPP
+	fl evaluate(const vec& location, fl slope, fl c)             const { return evaluate_aux(location, slope, c, NULL);   }//è¾“å‡ºdoubleç±»å‹çš„æ•°
+	fl evaluate(const vec& location, fl slope, fl c, vec& deriv) const { return evaluate_aux(location, slope, c, &deriv); } //è¾“å‡ºdoubleç±»å‹çš„æ•°å¹¶ä¸”æ”¹å˜derivå¯¹åº”çš„å€¼
 
 
 
-private://ÇÖÈëÊ½ĞòÁĞ»¯
+private://ä¾µå…¥å¼åºåˆ—åŒ–
 	fl evaluate_aux(const vec& location, fl slope, fl v, vec* deriv) const; // sets *deriv if not NULL
 	friend class boost::serialization::access;
 	template<class Archive>

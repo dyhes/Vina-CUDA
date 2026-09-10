@@ -26,14 +26,14 @@
 #include "model.h"
 #include "grid_dim.h"
 #include "array3d.h"
-/*½á¹¹Ìåszv_grid
-*ÉùÃ÷º¯Êıszv_grid  ÊäÈë  Àà Ö»¶Á  m   gd  £¬ double   cutoff_sqr
-* ÉùÃ÷uintÏòÁ¿ÀàĞÍ º¯Êı possibilities    Ö»¶Á      ÊäÈëÎª  ÏòÁ¿coords
-* ÉùÃ÷º¯Êıaverage_num_possibilitiesÖ»¶Á
-* ¶¨ÒåÀàĞÍ²ÎÊı Ä£°å²ÎÊıuintµÄÏòÁ¿   m_data
-* ¶¨Òå³¤¶ÈÎª3µÄÊı×ém_init   m_range  
-* ¶¨Òåº¯Êıindex_to_coord  ÊäÈë²ÎÊıÎªuint  i£¬j£¬k   Ö»¶Á  ·µ»Ø³¤¶ÈÎª3µÄÊı×é
-* ÉùÃ÷Ò»¸ö½á¹¹Ìå×é£¨3¸ö½á¹¹Ìå£©ĞÍµÄº¯Êıszv_grid_dims
+/*ç»“æ„ä½“szv_grid
+*å£°æ˜å‡½æ•°szv_grid  è¾“å…¥  ç±» åªè¯»  m   gd  ï¼Œ double   cutoff_sqr
+* å£°æ˜uintå‘é‡ç±»å‹ å‡½æ•° possibilities    åªè¯»      è¾“å…¥ä¸º  å‘é‡coords
+* å£°æ˜å‡½æ•°average_num_possibilitiesåªè¯»
+* å®šä¹‰ç±»å‹å‚æ•° æ¨¡æ¿å‚æ•°uintçš„å‘é‡   m_data
+* å®šä¹‰é•¿åº¦ä¸º3çš„æ•°ç»„m_init   m_range  
+* å®šä¹‰å‡½æ•°index_to_coord  è¾“å…¥å‚æ•°ä¸ºuint  iï¼Œjï¼Œk   åªè¯»  è¿”å›é•¿åº¦ä¸º3çš„æ•°ç»„
+* å£°æ˜ä¸€ä¸ªç»“æ„ä½“ç»„ï¼ˆ3ä¸ªç»“æ„ä½“ï¼‰å‹çš„å‡½æ•°szv_grid_dims
 */
 struct szv_grid {
 	szv_grid(const model& m, const grid_dims& gd, fl cutoff_sqr);

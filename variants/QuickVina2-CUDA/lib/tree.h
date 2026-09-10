@@ -29,27 +29,27 @@
 
 
 /*
-	orientation_m¡ª¡ªmat½á¹¹Ìå£»orientation_q¡ª¡ªËÄÔªÊı
-	origin=origin_¡ª¡ªvec½á¹¹Ìå±ğÃû£¬ÓÃÀ´´æ·ÅËÄÔªÊıÈı¸öĞé²¿£»
-	³õÊ¼»¯£º
-	orientation_q¡ª¡ªËÄÔªÊı£¬(1, 0, 0, 0)£»
-	orientation_m¡ª¡ªmat½á¹¹Ìå£¨¶Ô½Ç¾ØÕó£©
-	data[0]=1 £»data[3]=0 £»data[6]=0 ;
-	data[1]=0 £»data[4]=1 £»data[7]=0 ;
-	data[2]=0 £»data[5]=0 £»data[8]=1 ;
+	orientation_mâ€”â€”matç»“æ„ä½“ï¼›orientation_qâ€”â€”å››å…ƒæ•°
+	origin=origin_â€”â€”vecç»“æ„ä½“åˆ«åï¼Œç”¨æ¥å­˜æ”¾å››å…ƒæ•°ä¸‰ä¸ªè™šéƒ¨ï¼›
+	åˆå§‹åŒ–ï¼š
+	orientation_qâ€”â€”å››å…ƒæ•°ï¼Œ(1, 0, 0, 0)ï¼›
+	orientation_mâ€”â€”matç»“æ„ä½“ï¼ˆå¯¹è§’çŸ©é˜µï¼‰
+	data[0]=1 ï¼›data[3]=0 ï¼›data[6]=0 ;
+	data[1]=0 ï¼›data[4]=1 ï¼›data[7]=0 ;
+	data[2]=0 ï¼›data[5]=0 ï¼›data[8]=1 ;
 */
 
 struct frame {
 	frame(const vec& origin_) : origin(origin_), orientation_q(qt_identity), orientation_m(quaternion_to_r3(qt_identity)) {}
 	/*
-		input¡ª¡ªlocal_coords£ºvec½á¹¹Ìå;
-		output¡ª¡ªtmp£ºvec½á¹¹Ìå;
-		demo£º
-		origin£¨data0[0],data0[1],data0[2]£©
-		orientation_m£¨data1[0],data1[3],data1[6]
+		inputâ€”â€”local_coordsï¼švecç»“æ„ä½“;
+		outputâ€”â€”tmpï¼švecç»“æ„ä½“;
+		demoï¼š
+		originï¼ˆdata0[0],data0[1],data0[2]ï¼‰
+		orientation_mï¼ˆdata1[0],data1[3],data1[6]
 				       data1[1],data1[4],data1[7]
-					   data1[2],data1[5],data1[8]£©
-		local_coords£¨data2[0],data2[1],data2[2]£©
+					   data1[2],data1[5],data1[8]ï¼‰
+		local_coordsï¼ˆdata2[0],data2[1],data2[2]ï¼‰
 
 		tmp(data0[0]+data1[0]*data2[0] + data1[3]*data2[1] + data1[6]*data2[2],
 		    data0[1]+data1[1]*data2[0] + data1[4]*data2[1] + data1[7]*data2[2],
@@ -62,13 +62,13 @@ struct frame {
 	}
 
 	/*
-		input¡ª¡ªlocal_direction£ºvec½á¹¹Ìå;
-		output¡ª¡ªtmp£ºvec½á¹¹Ìå;
+		inputâ€”â€”local_directionï¼švecç»“æ„ä½“;
+		outputâ€”â€”tmpï¼švecç»“æ„ä½“;
 		demo:
-		orientation_m£¨data1[0],data1[3],data1[6]
+		orientation_mï¼ˆdata1[0],data1[3],data1[6]
 					   data1[1],data1[4],data1[7]
-					   data1[2],data1[5],data1[8]£©
-		local_direction£¨data2[0],data2[1],data2[2]£©
+					   data1[2],data1[5],data1[8]ï¼‰
+		local_directionï¼ˆdata2[0],data2[1],data2[2]ï¼‰
 
 		tmp(data1[0]*data2[0] + data1[3]*data2[1] + data1[6]*data2[2],
 			data1[1]*data2[0] + data1[4]*data2[1] + data1[7]*data2[2],
@@ -82,13 +82,13 @@ struct frame {
 	}
 
 
-	const qt& orientation() const { return orientation_q; }//·µ»Øorientation_qËÄÔªÊı
-	const vec& get_origin() const { return origin; }       //·µ»Øorigin½á¹¹Ìå
+	const qt& orientation() const { return orientation_q; }//è¿”å›orientation_qå››å…ƒæ•°
+	const vec& get_origin() const { return origin; }       //è¿”å›originç»“æ„ä½“
 	const mat& get_orientation_m() const { return orientation_m; }
 protected:
 	vec origin;
-	/*	ÉèÖÃËÄÔªÊıorientation_q=qºÍorientation_m½á¹¹Ìå
-		input¡ª¡ªq£ºËÄÔªÊı
+	/*	è®¾ç½®å››å…ƒæ•°orientation_q=qå’Œorientation_mç»“æ„ä½“
+		inputâ€”â€”qï¼šå››å…ƒæ•°
 	*/
 	void set_orientation(const qt& q) { // does not normalize the orientation
 		orientation_q = q;
@@ -99,16 +99,16 @@ protected:
 };
 
 /*
-	begin¡¢end£ºunint
+	beginã€endï¼šunint
 */
 struct atom_range {
     sz begin;
     sz end;
 	atom_range(sz begin_, sz end_) : begin(begin_), end(end_) {}
 	template<typename F>
-	/*	×ª»»
-		input¡ª¡ªf£ºÈÎºÎÀàĞÍ
-		diff£ºunint
+	/*	è½¬æ¢
+		inputâ€”â€”fï¼šä»»ä½•ç±»å‹
+		diffï¼šunint
 	*/
 	void transform(const F& f) {
 		sz diff = end - begin;
@@ -118,36 +118,36 @@ struct atom_range {
 };
 
 
-/*	Ô­×Ó½á¹¹£¬¼Ì³Ğatom_range¡¢frame½á¹¹Ìå
+/*	åŸå­ç»“æ„ï¼Œç»§æ‰¿atom_rangeã€frameç»“æ„ä½“
 
-    frame½á¹¹ÌåÖĞ£º
-	origin=origin_¡ª¡ªvec½á¹¹Ìå±ğÃû£¬ÓÃÀ´´æ·ÅËÄÔªÊıÈı¸öĞé²¿£»
-	³õÊ¼»¯£º
-	orientation_q¡ª¡ªËÄÔªÊı£¬(1, 0, 0, 0)£»
-	orientation_m¡ª¡ªmat½á¹¹Ìå£¨¶Ô½Ç¾ØÕó£©
-	data[0]=1 £»data[3]=0 £»data[6]=0 ;
-	data[1]=0 £»data[4]=1 £»data[7]=0 ;
-	data[2]=0 £»data[5]=0 £»data[8]=1 ;
+    frameç»“æ„ä½“ä¸­ï¼š
+	origin=origin_â€”â€”vecç»“æ„ä½“åˆ«åï¼Œç”¨æ¥å­˜æ”¾å››å…ƒæ•°ä¸‰ä¸ªè™šéƒ¨ï¼›
+	åˆå§‹åŒ–ï¼š
+	orientation_qâ€”â€”å››å…ƒæ•°ï¼Œ(1, 0, 0, 0)ï¼›
+	orientation_mâ€”â€”matç»“æ„ä½“ï¼ˆå¯¹è§’çŸ©é˜µï¼‰
+	data[0]=1 ï¼›data[3]=0 ï¼›data[6]=0 ;
+	data[1]=0 ï¼›data[4]=1 ï¼›data[7]=0 ;
+	data[2]=0 ï¼›data[5]=0 ï¼›data[8]=1 ;
 	
-	atom_range½á¹¹ÌåÖĞ£º
-	begin=begin_£»end=end_£»
+	atom_rangeç»“æ„ä½“ä¸­ï¼š
+	begin=begin_ï¼›end=end_ï¼›
 
 */
 struct atom_frame : public frame, public atom_range {
 	atom_frame(const vec& origin_, sz begin_, sz end_) : frame(origin_), atom_range(begin_, end_) {}
 	/*
-		input¡ª¡ªatoms£ºatom½á¹¹ÌåÏòÁ¿£»coords£ºvec½á¹¹ÌåÏòÁ¿
-		demo£º
-		origin£¨data0[0],data0[1],data0[2]£©
-		orientation_m£¨data1[0],data1[3],data1[6]
+		inputâ€”â€”atomsï¼šatomç»“æ„ä½“å‘é‡ï¼›coordsï¼švecç»“æ„ä½“å‘é‡
+		demoï¼š
+		originï¼ˆdata0[0],data0[1],data0[2]ï¼‰
+		orientation_mï¼ˆdata1[0],data1[3],data1[6]
 					   data1[1],data1[4],data1[7]
-					   data1[2],data1[5],data1[8]£©
-		coords £¨data2[0],data2[1],data2[2]£©
+					   data1[2],data1[5],data1[8]ï¼‰
+		coords ï¼ˆdata2[0],data2[1],data2[2]ï¼‰
 
 		tmp(data0[0]+data1[0]*data2[0] + data1[3]*data2[1] + data1[6]*data2[2],
 		    data0[1]+data1[1]*data2[0] + data1[4]*data2[1] + data1[7]*data2[2],
 		    data0[2]+data1[2]*data2[0] + data1[5]*data2[1] + data1[8]*data2[2])
-			ÕâÊÇcoords½á¹¹ÌåÒ»¸öÔªËØµÄÄÚÈİ£¬ÓĞ£¨begin¡ªend£©¸ö
+			è¿™æ˜¯coordsç»“æ„ä½“ä¸€ä¸ªå…ƒç´ çš„å†…å®¹ï¼Œæœ‰ï¼ˆbeginâ€”endï¼‰ä¸ª
 	*/
 	void set_coords(const atomv& atoms, vecv& coords) const {
 		VINA_RANGE(i, begin, end)
@@ -155,14 +155,14 @@ struct atom_frame : public frame, public atom_range {
 	}
 
 	/*
-		input¡ª¡ªcoords¡¢forces£ºvec½á¹¹ÌåÏòÁ¿£»
-		output¡ª¡ªtmp£º<vec,vec>½á¹¹ÌåÏòÁ¿£»
-		ÏÈ³õÊ¼»¯tmp½á¹¹ÌåÏòÁ¿<(0,0,0),(0,0,0)>£¬tmpÓĞÁ½¸ö³ÉÔ±±äÁ¿first¡¢second
-		demo£º
-			forces{£¨0£¬0£¬0£©£¬£¨1£¬1£¬1£©£¬£¨2£¬2£¬2£©}
-			coords{£¨1£¬1£¬1£©£¬£¨1£¬1£¬1£©£¬£¨2£¬2£¬2£©}
-			origin£¨1,1,1£©
-			coords[i] - origin={(1-1,1-1,1-1),(1-1,1-1,1-1),(2-1,2-1,2-1)}={£¨0£¬0£¬0£©£¬£¨0£¬0£¬0£©£¬£¨1£¬1£¬1£©}
+		inputâ€”â€”coordsã€forcesï¼švecç»“æ„ä½“å‘é‡ï¼›
+		outputâ€”â€”tmpï¼š<vec,vec>ç»“æ„ä½“å‘é‡ï¼›
+		å…ˆåˆå§‹åŒ–tmpç»“æ„ä½“å‘é‡<(0,0,0),(0,0,0)>ï¼Œtmpæœ‰ä¸¤ä¸ªæˆå‘˜å˜é‡firstã€second
+		demoï¼š
+			forces{ï¼ˆ0ï¼Œ0ï¼Œ0ï¼‰ï¼Œï¼ˆ1ï¼Œ1ï¼Œ1ï¼‰ï¼Œï¼ˆ2ï¼Œ2ï¼Œ2ï¼‰}
+			coords{ï¼ˆ1ï¼Œ1ï¼Œ1ï¼‰ï¼Œï¼ˆ1ï¼Œ1ï¼Œ1ï¼‰ï¼Œï¼ˆ2ï¼Œ2ï¼Œ2ï¼‰}
+			originï¼ˆ1,1,1ï¼‰
+			coords[i] - origin={(1-1,1-1,1-1),(1-1,1-1,1-1),(2-1,2-1,2-1)}={ï¼ˆ0ï¼Œ0ï¼Œ0ï¼‰ï¼Œï¼ˆ0ï¼Œ0ï¼Œ0ï¼‰ï¼Œï¼ˆ1ï¼Œ1ï¼Œ1ï¼‰}
 			tmp<(0+0+1+2=3,0+0+1+2=3,0+0+1+2=3),(0+0+0+0,0+0+0+0,0+0+0+0)>=<(3,3,3),(0,0,0)>
 	
 	*/
@@ -178,29 +178,29 @@ struct atom_frame : public frame, public atom_range {
 	}
 };
 
-/*  ¸ÕÌå£¬¼Ì³Ğatom_frame½á¹¹Ìå
-	origin_£ºvec½á¹¹Ìå£¬begin_¡¢end_£ºunint£»
-	frame½á¹¹ÌåÖĞµÄorigin=origin_£»atom_range½á¹¹ÌåÖĞbegin=begin_£»end=end_
+/*  åˆšä½“ï¼Œç»§æ‰¿atom_frameç»“æ„ä½“
+	origin_ï¼švecç»“æ„ä½“ï¼Œbegin_ã€end_ï¼šunintï¼›
+	frameç»“æ„ä½“ä¸­çš„origin=origin_ï¼›atom_rangeç»“æ„ä½“ä¸­begin=begin_ï¼›end=end_
 */
 struct rigid_body : public atom_frame {
 	rigid_body(const vec& origin_, sz begin_, sz end_) : atom_frame(origin_, begin_, end_) {}
 
-	/*ÅäÖÃÉèÖÃ
-	input¡ª¡ªatoms£ºatom½á¹¹ÌåÏòÁ¿£»coords£ºvec½á¹¹ÌåÏòÁ¿£»c£ºrigid_conf½á¹¹Ìå
-		¡¤atom_frame.frame.origin=rigid_conf.position
-		¡¤ÉèÖÃËÄÔªÊıorientation_q=rigid_conf.orientationºÍorientation_m½á¹¹Ìå
-		¡¤ÉèÖÃcoords½á¹¹ÌåÏòÁ¿
-		     demo£º
-		     origin£¨data0[0],data0[1],data0[2]£©
-		     orientation_m£¨data1[0],data1[3],data1[6]
+	/*é…ç½®è®¾ç½®
+	inputâ€”â€”atomsï¼šatomç»“æ„ä½“å‘é‡ï¼›coordsï¼švecç»“æ„ä½“å‘é‡ï¼›cï¼šrigid_confç»“æ„ä½“
+		Â·atom_frame.frame.origin=rigid_conf.position
+		Â·è®¾ç½®å››å…ƒæ•°orientation_q=rigid_conf.orientationå’Œorientation_mç»“æ„ä½“
+		Â·è®¾ç½®coordsç»“æ„ä½“å‘é‡
+		     demoï¼š
+		     originï¼ˆdata0[0],data0[1],data0[2]ï¼‰
+		     orientation_mï¼ˆdata1[0],data1[3],data1[6]
 		     			   data1[1],data1[4],data1[7]
-		     			   data1[2],data1[5],data1[8]£©
-		     coords £¨data2[0],data2[1],data2[2]£©
+		     			   data1[2],data1[5],data1[8]ï¼‰
+		     coords ï¼ˆdata2[0],data2[1],data2[2]ï¼‰
 		     
 		     tmp(data0[0]+data1[0]*data2[0] + data1[3]*data2[1] + data1[6]*data2[2],
 		    data0[1]+data1[1]*data2[0] + data1[4]*data2[1] + data1[7]*data2[2],
 		    data0[2]+data1[2]*data2[0] + data1[5]*data2[1] + data1[8]*data2[2])
-			ÕâÊÇcoords½á¹¹ÌåÒ»¸öÔªËØµÄÄÚÈİ£¬ÓĞ£¨begin¡ªend£©¸ö
+			è¿™æ˜¯coordsç»“æ„ä½“ä¸€ä¸ªå…ƒç´ çš„å†…å®¹ï¼Œæœ‰ï¼ˆbeginâ€”endï¼‰ä¸ª
 	*/
 	void set_conf(const atomv& atoms, vecv& coords, const rigid_conf& c) {
 		origin = c.position;
@@ -208,63 +208,63 @@ struct rigid_body : public atom_frame {
 		set_coords(atoms, coords);
 	}
 
-	void count_torsions(sz& s) const {} // do nothingÕâ¸öº¯ÊıÃ»ÓĞÊ²Ã´×÷ÓÃ
+	void count_torsions(sz& s) const {} // do nothingè¿™ä¸ªå‡½æ•°æ²¡æœ‰ä»€ä¹ˆä½œç”¨
 
-	/*ÉèÖÃÅÉÉúÎï
-		input¡ª¡ªforce_torque£º<vec, vec>½á¹¹ÌåÏòÁ¿ÓĞÁ½¸ö³ÉÔ±º¯Êıfirst¡¢second£¬c:rigid_change½á¹¹Ìå
+	/*è®¾ç½®æ´¾ç”Ÿç‰©
+		inputâ€”â€”force_torqueï¼š<vec, vec>ç»“æ„ä½“å‘é‡æœ‰ä¸¤ä¸ªæˆå‘˜å‡½æ•°firstã€secondï¼Œc:rigid_changeç»“æ„ä½“
 	*/
 	void set_derivative(const vecp& force_torque, rigid_change& c) const {
 		c.position     = force_torque.first;
 		c.orientation  = force_torque.second;
 	}
 };
-/*×ø±ê½á¹¹£¬¼Ì³Ğatom_frame½á¹¹Ìå
-	origin_¡¢axis_root¡¢diff£ºvec½á¹¹Ìå£¬begin_¡¢end_£ºunint£¬nrm£ºdouble£»
-	¡¤frame½á¹¹ÌåÖĞµÄorigin=origin_£»atom_range½á¹¹ÌåÖĞbegin=begin_£»end=end_
-	¡¤diff=origin½á¹¹Ìå¼õÈ¥axis_root½á¹¹Ìå£¨¡°-¡±ÖØ¹¹£©
-	¡¤nrm=diff½á¹¹ÌåÖĞdataÊı×é¸÷ÔªËØÆ½·½ºÍ£¬¿ª¸ùºÅ(¿Õ¼äÏòÁ¿Ä£)
-	¡¤axis£ºvec ½á¹¹Ìå
-	demo£º
-		diff£¨2£¬3£¬4£©£»1/nrm=2;
-		 axis=£¨4,6,8)
+/*åæ ‡ç»“æ„ï¼Œç»§æ‰¿atom_frameç»“æ„ä½“
+	origin_ã€axis_rootã€diffï¼švecç»“æ„ä½“ï¼Œbegin_ã€end_ï¼šunintï¼Œnrmï¼šdoubleï¼›
+	Â·frameç»“æ„ä½“ä¸­çš„origin=origin_ï¼›atom_rangeç»“æ„ä½“ä¸­begin=begin_ï¼›end=end_
+	Â·diff=originç»“æ„ä½“å‡å»axis_rootç»“æ„ä½“ï¼ˆâ€œ-â€é‡æ„ï¼‰
+	Â·nrm=diffç»“æ„ä½“ä¸­dataæ•°ç»„å„å…ƒç´ å¹³æ–¹å’Œï¼Œå¼€æ ¹å·(ç©ºé—´å‘é‡æ¨¡)
+	Â·axisï¼švec ç»“æ„ä½“
+	demoï¼š
+		diffï¼ˆ2ï¼Œ3ï¼Œ4ï¼‰ï¼›1/nrm=2;
+		 axis=ï¼ˆ4,6,8)
 */
 struct axis_frame : public atom_frame {
 	axis_frame(const vec& origin_, sz begin_, sz end_, const vec& axis_root) : atom_frame(origin_, begin_, end_) {
 		vec diff; diff = origin - axis_root;
 		fl nrm = diff.norm();
-		VINA_CHECK(nrm >= epsilon_fl);     //Òª´óÓÚ2.22045e-16
+		VINA_CHECK(nrm >= epsilon_fl);     //è¦å¤§äº2.22045e-16
 		axis = (1/nrm) * diff;
 	}
 
-	/* ÉèÖÃÅÉÉúÎï
-		input¡ª¡ªforce_torque£º<vec,vec>½á¹¹ÌåÏòÁ¿£»c£ºdouble
-		axis£ºvec ½á¹¹Ìå
-		demo£º
-		force_torque.second£¨1£¬2£¬3£©£¬axis£¨2£¬3£¬4£©
+	/* è®¾ç½®æ´¾ç”Ÿç‰©
+		inputâ€”â€”force_torqueï¼š<vec,vec>ç»“æ„ä½“å‘é‡ï¼›cï¼šdouble
+		axisï¼švec ç»“æ„ä½“
+		demoï¼š
+		force_torque.secondï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œaxisï¼ˆ2ï¼Œ3ï¼Œ4ï¼‰
 		c=1*2+2*3+3*4=20
 	*/
 	void set_derivative(const vecp& force_torque, fl& c) const {
 		c = force_torque.second * axis;
 	}
-	vec get_axis() { return axis; } // ·µ»Øaxis
+	vec get_axis() { return axis; } // è¿”å›axis
 
 protected:
 	vec axis;
 };
-/*   ¼Ì³Ğaxis_frame½á¹¹Ìå
-	origin_¡¢axis_root¡¢relative_axis¡¢relative_origin£ºvec½á¹¹Ìå£¬begin_¡¢end_£ºunint£¬parent£ºframe½á¹¹Ìå£»
-	¡¤frame½á¹¹ÌåÖĞµÄorigin=origin_£»atom_range½á¹¹ÌåÖĞbegin=begin_£»end=end_
-	¡¤diff=origin½á¹¹Ìå¼õÈ¥axis_root½á¹¹Ìå£¨¡°-¡±ÖØ¹¹£©
-	¡¤axis_frame½á¹¹ÌåÖĞnrm=diff½á¹¹ÌåÖĞdataÊı×é¸÷ÔªËØÆ½·½ºÍ£¬¿ª¸ùºÅ(¿Õ¼äÏòÁ¿Ä£)
-	¡¤axis_frame½á¹¹ÌåÖĞaxis£ºvec ½á¹¹Ìå
-		demo£º
-			diff£¨2£¬3£¬4£©£»1/nrm=2;
-			 axis=£¨4,6,8)
-	¡¤ÅĞ¶Ïframe½á¹¹ÌåÖĞorientation_qÊÇ·ñµÈÓÚ(1, 0, 0, 0)
-	¡¤relative_axis=axis
-	¡¤relative_origin£º
-	  demo£ºorigin£¨4£¬5£¬6£©£¬frame½á¹¹ÌåÖĞorigin£¨1£¬1£¬1£©
-	  relative_origin=£¨3£¬4£¬5£©
+/*   ç»§æ‰¿axis_frameç»“æ„ä½“
+	origin_ã€axis_rootã€relative_axisã€relative_originï¼švecç»“æ„ä½“ï¼Œbegin_ã€end_ï¼šunintï¼Œparentï¼šframeç»“æ„ä½“ï¼›
+	Â·frameç»“æ„ä½“ä¸­çš„origin=origin_ï¼›atom_rangeç»“æ„ä½“ä¸­begin=begin_ï¼›end=end_
+	Â·diff=originç»“æ„ä½“å‡å»axis_rootç»“æ„ä½“ï¼ˆâ€œ-â€é‡æ„ï¼‰
+	Â·axis_frameç»“æ„ä½“ä¸­nrm=diffç»“æ„ä½“ä¸­dataæ•°ç»„å„å…ƒç´ å¹³æ–¹å’Œï¼Œå¼€æ ¹å·(ç©ºé—´å‘é‡æ¨¡)
+	Â·axis_frameç»“æ„ä½“ä¸­axisï¼švec ç»“æ„ä½“
+		demoï¼š
+			diffï¼ˆ2ï¼Œ3ï¼Œ4ï¼‰ï¼›1/nrm=2;
+			 axis=ï¼ˆ4,6,8)
+	Â·åˆ¤æ–­frameç»“æ„ä½“ä¸­orientation_qæ˜¯å¦ç­‰äº(1, 0, 0, 0)
+	Â·relative_axis=axis
+	Â·relative_originï¼š
+	  demoï¼šoriginï¼ˆ4ï¼Œ5ï¼Œ6ï¼‰ï¼Œframeç»“æ„ä½“ä¸­originï¼ˆ1ï¼Œ1ï¼Œ1ï¼‰
+	  relative_origin=ï¼ˆ3ï¼Œ4ï¼Œ5ï¼‰
 */
 struct segment : public axis_frame {
 	segment(const vec& origin_, sz begin_, sz end_, const vec& axis_root, const frame& parent) : axis_frame(origin_, begin_, end_, axis_root) {
@@ -273,25 +273,25 @@ struct segment : public axis_frame {
 		relative_origin = origin - parent.get_origin();
 	}
 
-	/*»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-		input¡ª¡ªparent£ºframe½á¹¹Ìå£¬atoms¡¢coords£ºatom½á¹¹ÌåÏòÁ¿£¬c£ºµü´úÆ÷
-		torsion£ºdouble
-		tmp£º½Ç¶ÈËÄÔªÊı*frame½á¹¹ÌåÖĞorientation_qËÄÔªÊı
+	/*è·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+		inputâ€”â€”parentï¼šframeç»“æ„ä½“ï¼Œatomsã€coordsï¼šatomç»“æ„ä½“å‘é‡ï¼Œcï¼šè¿­ä»£å™¨
+		torsionï¼šdouble
+		tmpï¼šè§’åº¦å››å…ƒæ•°*frameç»“æ„ä½“ä¸­orientation_qå››å…ƒæ•°
 	
 	*/
 	void set_conf(const frame& parent, const atomv& atoms, vecv& coords, flv::const_iterator& c) {
-		const fl torsion = *c;  //Ö¸ÏòµÄÔªËØµÄÒıÓÃ
-		++c;                    //Ö¸ÏòÏÂÒ»¸öÔªËØ
-		origin = parent.local_to_lab(relative_origin);          //»ñµÃ×ø±ê
-		axis = parent.local_to_lab_direction(relative_axis);    //»ñµÃÆğµã
-		qt tmp = angle_to_quaternion(axis, torsion) * parent.orientation();//½Ç¶ÈËÄÔªÊı*frame½á¹¹ÌåÖĞorientation_qËÄÔªÊı
-		quaternion_normalize_approx(tmp); // normalization added in 1.1.2  ÅĞ¶ÏËÄÔªÊıÊÇ·ñ½üËÆ±ê×¼»¯
+		const fl torsion = *c;  //æŒ‡å‘çš„å…ƒç´ çš„å¼•ç”¨
+		++c;                    //æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+		origin = parent.local_to_lab(relative_origin);          //è·å¾—åæ ‡
+		axis = parent.local_to_lab_direction(relative_axis);    //è·å¾—èµ·ç‚¹
+		qt tmp = angle_to_quaternion(axis, torsion) * parent.orientation();//è§’åº¦å››å…ƒæ•°*frameç»“æ„ä½“ä¸­orientation_qå››å…ƒæ•°
+		quaternion_normalize_approx(tmp); // normalization added in 1.1.2  åˆ¤æ–­å››å…ƒæ•°æ˜¯å¦è¿‘ä¼¼æ ‡å‡†åŒ–
 		//quaternion_normalize(tmp); // normalization added in 1.1.2
 		set_orientation(tmp);
 		set_coords(atoms, coords);
 	}
-	/*Å¤¾Ø¼ÆÊı
-	 input¡ª¡ªs:unint
+	/*æ‰­çŸ©è®¡æ•°
+	 inputâ€”â€”s:unint
 	*/
 	void count_torsions(sz& s) const {
 		++s;
@@ -302,21 +302,21 @@ public:
 };
 
 
-/*¼Ì³Ğaxis_frame½á¹¹Ìå
+/*ç»§æ‰¿axis_frameç»“æ„ä½“
 
 */
 struct first_segment : public axis_frame {
 	first_segment(const segment& s) : axis_frame(s) {}
 	first_segment(const vec& origin_, sz begin_, sz end_, const vec& axis_root) : axis_frame(origin_, begin_, end_, axis_root) {}
-	/*ÉèÖÃ½Ç¶ÈËÄÔªÊıorientation_q=qºÍorientation_m½á¹¹Ìå
-		input¡ª¡ªatoms£ºatom½á¹¹Ìå£¬coords£ºvec½á¹¹Ìå£¬torsion£ºdouble
+	/*è®¾ç½®è§’åº¦å››å…ƒæ•°orientation_q=qå’Œorientation_mç»“æ„ä½“
+		inputâ€”â€”atomsï¼šatomç»“æ„ä½“ï¼Œcoordsï¼švecç»“æ„ä½“ï¼Œtorsionï¼šdouble
 	*/
 	void set_conf(const atomv& atoms, vecv& coords, fl torsion) {
-		set_orientation(angle_to_quaternion(axis, torsion));//½Ç¶ÈËÄÔªÊı
+		set_orientation(angle_to_quaternion(axis, torsion));//è§’åº¦å››å…ƒæ•°
   	}
 
-	/*Å¤¾Ø¼ÆÊı
-	input¡ª¡ªs:unint
+	/*æ‰­çŸ©è®¡æ•°
+	inputâ€”â€”s:unint
 	*/
 	void count_torsions(sz& s) const {
 		++s;
@@ -324,7 +324,7 @@ struct first_segment : public axis_frame {
 };
 
 /*
- »ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
+ è·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
 */
 template<typename T> // T == branch
 void branches_set_conf(std::vector<T>& b, const frame& parent, const atomv& atoms, vecv& coords, flv::const_iterator& c) {
@@ -333,9 +333,9 @@ void branches_set_conf(std::vector<T>& b, const frame& parent, const atomv& atom
 }
 
 
-/*ĞèÒª¸ù¾İbµÄÀàĞÍµ÷ÓÃº¯Êı
-	input¡ª¡ªb£ºÈÎÒâÏòÁ¿£¬origin£ºvec½á¹¹Ìå£¬forces¡¢out¡¢coords£ºvec½á¹¹ÌåÏòÁ¿
-	d£ºµü´úÆ÷
+/*éœ€è¦æ ¹æ®bçš„ç±»å‹è°ƒç”¨å‡½æ•°
+	inputâ€”â€”bï¼šä»»æ„å‘é‡ï¼Œoriginï¼švecç»“æ„ä½“ï¼Œforcesã€outã€coordsï¼švecç»“æ„ä½“å‘é‡
+	dï¼šè¿­ä»£å™¨
 */
 template<typename T> // T == branch
 void branches_derivative(const std::vector<T>& b, const vec& origin, const vecv& coords, const vecv& forces, vecp& out, flv::iterator& d) { // adds to out
@@ -349,7 +349,7 @@ void branches_derivative(const std::vector<T>& b, const vec& origin, const vecv&
 
 
 /*
-    node£ºÈÎÒâÀàĞÍ±äÁ¿ £¬children£ºtree½á¹¹ÌåÏòÁ¿
+    nodeï¼šä»»æ„ç±»å‹å˜é‡ ï¼Œchildrenï¼štreeç»“æ„ä½“å‘é‡
 	node=node_
 */
 template<typename T> // T == segment
@@ -357,72 +357,72 @@ struct tree {
 	T node;
 	std::vector< tree<T> > children;
 	tree(const T& node_) : node(node_) {}
-	/*	ÅäÖÃ£¬¸ù¾İnodeÀàĞÍÈ¥µ÷ÓÃÏà¶ÔÓÚµÄº¯Êı
-		input¡ª¡ªparent£ºframe½á¹¹Ìå£¬atoms£ºatom½á¹¹ÌåÏòÁ¿£¬coords£ºvec½á¹¹ÌåÏòÁ¿
-		c£ºµü´úÆ÷
+	/*	é…ç½®ï¼Œæ ¹æ®nodeç±»å‹å»è°ƒç”¨ç›¸å¯¹äºçš„å‡½æ•°
+		inputâ€”â€”parentï¼šframeç»“æ„ä½“ï¼Œatomsï¼šatomç»“æ„ä½“å‘é‡ï¼Œcoordsï¼švecç»“æ„ä½“å‘é‡
+		cï¼šè¿­ä»£å™¨
 	*/
 	void set_conf(const frame& parent, const atomv& atoms, vecv& coords, flv::const_iterator& c) {
 		node.set_conf(parent, atoms, coords, c);
 		branches_set_conf(children, node, atoms, coords, c);
 	}
 
-	/*	¸ù¾İnodeÀàĞÍÈ¥µ÷ÓÃÏà¶ÔÓÚµÄº¯Êı
-		input¡ª¡ªcoords¡¢forces£ºvec½á¹¹ÌåÏòÁ¿£¬p£ºµü´úÆ÷
-		output¡ª¡ªforce_torque£º<vec, vec>½á¹¹ÌåÏòÁ¿
+	/*	æ ¹æ®nodeç±»å‹å»è°ƒç”¨ç›¸å¯¹äºçš„å‡½æ•°
+		inputâ€”â€”coordsã€forcesï¼švecç»“æ„ä½“å‘é‡ï¼Œpï¼šè¿­ä»£å™¨
+		outputâ€”â€”force_torqueï¼š<vec, vec>ç»“æ„ä½“å‘é‡
 	*/
 	vecp derivative(const vecv& coords, const vecv& forces, flv::iterator& p) const {
 		vecp force_torque = node.sum_force_and_torque(coords, forces);
-		fl& d = *p; // reference   È¡µ±Ç°µü´úÆ÷Ö¸ÏòµÄÔªËØ
-		++p;        //µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
+		fl& d = *p; // reference   å–å½“å‰è¿­ä»£å™¨æŒ‡å‘çš„å…ƒç´ 
+		++p;        //è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
 		branches_derivative(children, node.get_origin(), coords, forces, force_torque, p);
 		node.set_derivative(force_torque, d);
 		return force_torque;
 	}
 };
 
-typedef tree<segment> branch;       //ĞÎ²ÎÎªsegment½á¹¹ÌåµÄtree½á¹¹Ìå
-typedef std::vector<branch> branches;  //branch½á¹¹ÌåÏòÁ¿
+typedef tree<segment> branch;       //å½¢å‚ä¸ºsegmentç»“æ„ä½“çš„treeç»“æ„ä½“
+typedef std::vector<branch> branches;  //branchç»“æ„ä½“å‘é‡
 
 template<typename Node> // Node == first_segment || rigid_body
 struct heterotree {
-	Node node;          //ÈÎÒâÀàĞÍ±äÁ¿
-	branches children;  //branch½á¹¹ÌåÏòÁ¿
+	Node node;          //ä»»æ„ç±»å‹å˜é‡
+	branches children;  //branchç»“æ„ä½“å‘é‡
 	heterotree(const Node& node_) : node(node_) {}
 	/*
-	    »ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-		input¡ª¡ªatoms£ºatom½á¹¹ÌåÏòÁ¿£¬coords£ºvec½á¹¹ÌåÏòÁ¿£¬c£ºligand_conf½á¹¹Ìå
+	    è·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+		inputâ€”â€”atomsï¼šatomç»“æ„ä½“å‘é‡ï¼Œcoordsï¼švecç»“æ„ä½“å‘é‡ï¼Œcï¼šligand_confç»“æ„ä½“
 	*/
 	void set_conf(const atomv& atoms, vecv& coords, const ligand_conf& c) {
 		node.set_conf(atoms, coords, c.rigid);
-		flv::const_iterator p = c.torsions.begin();   //pµü´úÆ÷Ö¸ÏòtorsionsÏòÁ¿µÄµÚÒ»¸öÔªËØ
+		flv::const_iterator p = c.torsions.begin();   //pè¿­ä»£å™¨æŒ‡å‘torsionså‘é‡çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
 		branches_set_conf(children, node, atoms, coords, p);
-		assert(p == c.torsions.end());               //pµü´úÆ÷Ö¸ÏòtorsionsÏòÁ¿µÄ×îºóÒ»¸öÔªËØ
+		assert(p == c.torsions.end());               //pè¿­ä»£å™¨æŒ‡å‘torsionså‘é‡çš„æœ€åä¸€ä¸ªå…ƒç´ 
 	}
 
-	/* »ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-	 input¡ª¡ªatoms£ºatom½á¹¹ÌåÏòÁ¿£¬coords£ºvec½á¹¹ÌåÏòÁ¿£¬c£ºresidue_conf½á¹¹Ìå
+	/* è·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+	 inputâ€”â€”atomsï¼šatomç»“æ„ä½“å‘é‡ï¼Œcoordsï¼švecç»“æ„ä½“å‘é‡ï¼Œcï¼šresidue_confç»“æ„ä½“
 	*/
 	void set_conf(const atomv& atoms, vecv& coords, const residue_conf& c) {
-		flv::const_iterator p = c.torsions.begin();//pµü´úÆ÷Ö¸ÏòtorsionsÏòÁ¿µÄµÚÒ»¸öÔªËØ
+		flv::const_iterator p = c.torsions.begin();//pè¿­ä»£å™¨æŒ‡å‘torsionså‘é‡çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
 		node.set_conf(atoms, coords, *p);
 		++p;
 		branches_set_conf(children, node, atoms, coords, p);
-		assert(p == c.torsions.end());               //pµü´úÆ÷Ö¸ÏòtorsionsÏòÁ¿µÄ×îºóÒ»¸öÔªËØ
+		assert(p == c.torsions.end());               //pè¿­ä»£å™¨æŒ‡å‘torsionså‘é‡çš„æœ€åä¸€ä¸ªå…ƒç´ 
 	}
 
 	/*
-	input¡ª¡ªcoords¡¢forces£ºvec½á¹¹ÌåÏòÁ¿£¬c£ºligand_change½á¹¹Ìå
+	inputâ€”â€”coordsã€forcesï¼švecç»“æ„ä½“å‘é‡ï¼Œcï¼šligand_changeç»“æ„ä½“
 	*/
 	void derivative(const vecv& coords, const vecv& forces, ligand_change& c) const {
 		vecp force_torque = node.sum_force_and_torque(coords, forces);
-		flv::iterator p = c.torsions.begin();             //pµü´úÆ÷Ö¸ÏòtorsionsÏòÁ¿µÄµÚÒ»¸öÔªËØ
+		flv::iterator p = c.torsions.begin();             //pè¿­ä»£å™¨æŒ‡å‘torsionså‘é‡çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
 		branches_derivative(children, node.get_origin(), coords, forces, force_torque, p);
 		node.set_derivative(force_torque, c.rigid);
-		assert(p == c.torsions.end());                    //pµü´úÆ÷Ö¸ÏòtorsionsÏòÁ¿µÄ×îºóÒ»¸öÔªËØ
+		assert(p == c.torsions.end());                    //pè¿­ä»£å™¨æŒ‡å‘torsionså‘é‡çš„æœ€åä¸€ä¸ªå…ƒç´ 
 	}
 
-	/*ĞèÒª¸ù¾İnodeÀàĞÍµ÷ÓÃÏà¶ÔÓÚµÄº¯Êı
-	input¡ª¡ªatoms£ºatom½á¹¹ÌåÏòÁ¿£¬coords£ºvec½á¹¹ÌåÏòÁ¿£¬c£ºresidue_conf½á¹¹Ìå
+	/*éœ€è¦æ ¹æ®nodeç±»å‹è°ƒç”¨ç›¸å¯¹äºçš„å‡½æ•°
+	inputâ€”â€”atomsï¼šatomç»“æ„ä½“å‘é‡ï¼Œcoordsï¼švecç»“æ„ä½“å‘é‡ï¼Œcï¼šresidue_confç»“æ„ä½“
 	*/
 	void derivative(const vecv& coords, const vecv& forces, residue_change& c) const {
 		vecp force_torque = node.sum_force_and_torque(coords, forces);
@@ -435,8 +435,8 @@ struct heterotree {
 	}
 };
 
-/*Å¤¾Ø¼ÆÊı
-	input¡ª¡ªt£ºÈÎÒâÀàĞÍ£¬s£ºunint
+/*æ‰­çŸ©è®¡æ•°
+	inputâ€”â€”tï¼šä»»æ„ç±»å‹ï¼Œsï¼šunint
 */
 template<typename T> // T = main_branch, branch, flexible_body
 void count_torsions(const T& t, sz& s) {
@@ -445,26 +445,26 @@ void count_torsions(const T& t, sz& s) {
 		count_torsions(t.children[i], s);
 }
 
-typedef heterotree<rigid_body> flexible_body;   //ĞÎ²ÎÎªrigid_body½á¹¹ÌåµÄheterotree½á¹¹Ìå
-typedef heterotree<first_segment> main_branch; //ĞÎ²ÎÎªfirst_segment½á¹¹ÌåµÄheterotree½á¹¹Ìå
+typedef heterotree<rigid_body> flexible_body;   //å½¢å‚ä¸ºrigid_bodyç»“æ„ä½“çš„heterotreeç»“æ„ä½“
+typedef heterotree<first_segment> main_branch; //å½¢å‚ä¸ºfirst_segmentç»“æ„ä½“çš„heterotreeç»“æ„ä½“
 
 /*
-	vector_mutable½á¹¹Ìå¼Ì³ĞÏµÍ³vectorÀà
+	vector_mutableç»“æ„ä½“ç»§æ‰¿ç³»ç»Ÿvectorç±»
 
 */
 template<typename T> // T == flexible_body || main_branch
 
 struct vector_mutable : public std::vector<T> {
 	template<typename C>
-	/*»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-		input¡ª¡ª atoms£ºatom½á¹¹ÌåÏòÁ¿£»coords£ºvec½á¹¹ÌåÏòÁ¿£»c£ºcÀàĞÍµÄÏòÁ¿
+	/*è·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+		inputâ€”â€” atomsï¼šatomç»“æ„ä½“å‘é‡ï¼›coordsï¼švecç»“æ„ä½“å‘é‡ï¼›cï¼šcç±»å‹çš„å‘é‡
 	*/
 	void set_conf(const atomv& atoms, vecv& coords, const std::vector<C>& c) { // C == ligand_conf || residue_conf
 		VINA_FOR_IN(i, (*this))                                //for(i=0;i<v.size;i++)
 			(*this)[i].set_conf(atoms, coords, c[i]);
 	}
-	/*Å¤¾Ø¼ÆÊı
-		output¡ª¡ªtmp£ºunintÏòÁ¿
+	/*æ‰­çŸ©è®¡æ•°
+		outputâ€”â€”tmpï¼šunintå‘é‡
 	*/
 	szv count_torsions() const {
 		szv tmp(this->size(), 0);
@@ -473,8 +473,8 @@ struct vector_mutable : public std::vector<T> {
 		return tmp;
 	}
 
-	/*ĞèÒª¸ù¾İcÀàĞÍµ÷ÓÃÏà¶ÔÓÚµÄº¯Êı
-		input¡ª¡ªcoords¡¢forces£ºvec½á¹¹ÌåÏòÁ¿£¬c£ºÈÎÒâÀàĞÍÏòÁ¿
+	/*éœ€è¦æ ¹æ®cç±»å‹è°ƒç”¨ç›¸å¯¹äºçš„å‡½æ•°
+		inputâ€”â€”coordsã€forcesï¼švecç»“æ„ä½“å‘é‡ï¼Œcï¼šä»»æ„ç±»å‹å‘é‡
 	
 	*/
 	template<typename C>
@@ -484,8 +484,8 @@ struct vector_mutable : public std::vector<T> {
 	}
 };
 
-/* ĞèÒª¸ù¾İt¡¢fÀàĞÍµ÷ÓÃº¯Êı         
-	input¡ª¡ªt¡¢f£ºÈÎÒâÀàĞÍ±äÁ¿£»
+/* éœ€è¦æ ¹æ®tã€fç±»å‹è°ƒç”¨å‡½æ•°         
+	inputâ€”â€”tã€fï¼šä»»æ„ç±»å‹å˜é‡ï¼›
 */
 template<typename T, typename F> // tree or heterotree - like structure
 void transform_ranges(T& t, const F& f) {

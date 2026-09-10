@@ -23,14 +23,14 @@
 #include "terms.h"
 #include "brick.h"
 
-/*		outout¡ª¡ªtmp:double ÏòÁ¿£»
-		¶¨ÒåÁËÒ»¸ödoubleÏòÁ¿£¬È»ºó½«½á¹¹Ìåconf_independent_inputsÖĞµÄ
-		num_tors¡¢num_rotors¡¢num_heavy_atoms¡¢num_hydrophobic_atoms¡¢ligand_max_num_h_bonds¡¢num_ligands¡¢ligand_lengths_sum
-		°´Ë³ĞòÌí¼Óµ½tmpµÄÏòÁ¿µÄ×îÄ©Î²Ò»¸öÔªËØºóÃæ¡£
+/*		outoutâ€”â€”tmp:double å‘é‡ï¼›
+		å®šä¹‰äº†ä¸€ä¸ªdoubleå‘é‡ï¼Œç„¶åå°†ç»“æ„ä½“conf_independent_inputsä¸­çš„
+		num_torsã€num_rotorsã€num_heavy_atomsã€num_hydrophobic_atomsã€ligand_max_num_h_bondsã€num_ligandsã€ligand_lengths_sum
+		æŒ‰é¡ºåºæ·»åŠ åˆ°tmpçš„å‘é‡çš„æœ€æœ«å°¾ä¸€ä¸ªå…ƒç´ åé¢ã€‚
 */
 
 conf_independent_inputs::operator flv() const {
-	flv tmp;                                     //doubleÏòÁ¿
+	flv tmp;                                     //doubleå‘é‡
 	tmp.push_back(num_tors);                    
 	tmp.push_back(num_rotors);
 	tmp.push_back(num_heavy_atoms);
@@ -42,14 +42,14 @@ conf_independent_inputs::operator flv() const {
 }
 
 /*	
-	input¡ª¡ªm£ºmodel½á¹¹Ìå£¬i£ºatom_index£»
-	output¡ª¡ªacc£ºunsigned
-	bonds£ºbond½á¹¹ÌåÏòÁ¿£¬µÈÓÚatom½á¹¹ÌåÖĞµÄ bonds£»
-	b£ºbond½á¹¹Ìå£»
-	a£ºatom ½á¹¹Ìå£»
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼Œiï¼šatom_indexï¼›
+	outputâ€”â€”accï¼šunsigned
+	bondsï¼šbondç»“æ„ä½“å‘é‡ï¼Œç­‰äºatomç»“æ„ä½“ä¸­çš„ bondsï¼›
+	bï¼šbondç»“æ„ä½“ï¼›
+	aï¼šatom ç»“æ„ä½“ï¼›
 
-	aÊÇÒÔbÊä³öÔ­×ÓË÷Òı»ñµÃgrid_atomsÏòÁ¿ÖĞµÄÄÚÈİ
-	Èôa²»ÊÇÇâÔòacc¼Ó1
+	aæ˜¯ä»¥bè¾“å‡ºåŸå­ç´¢å¼•è·å¾—grid_atomså‘é‡ä¸­çš„å†…å®¹
+	è‹¥aä¸æ˜¯æ°¢åˆ™accåŠ 1
 */
 unsigned conf_independent_inputs::num_bonded_heavy_atoms(const model& m, const atom_index& i) const { // FIXME? - could be static, but I don't feel like declaring function friends
 	unsigned acc = 0;
@@ -57,22 +57,22 @@ unsigned conf_independent_inputs::num_bonded_heavy_atoms(const model& m, const a
 	VINA_FOR_IN(j, bonds) {                   //for(j=0;j<bonds.size;j++)
 		const bond& b = bonds[j];
 		const atom& a = m.get_atom(b.connected_atom_index);
-		if(!a.is_hydrogen())    //ÊÇ·ñÎªÇâ(ad==6||ad==12);
+		if(!a.is_hydrogen())    //æ˜¯å¦ä¸ºæ°¢(ad==6||ad==12);
 			++acc;
 	}
 	return acc;
 }
 
-/*  ÖØÅäÌåÔ­×ÓµÄ¿ÉĞı×ª¼üÊı
-	input¡ª¡ªm£ºmodel½á¹¹Ìå£»i£ºatom_index½á¹¹Ìå
-	output¡ª¡ªacc£ºunsigned
-	bonds£ºbond½á¹¹ÌåÏòÁ¿£¬µÈÓÚatom½á¹¹ÌåÖĞµÄ bonds£»
-	b£ºbond½á¹¹Ìå£»
-	a£ºatom ½á¹¹Ìå£»
+/*  é‡é…ä½“åŸå­çš„å¯æ—‹è½¬é”®æ•°
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼›iï¼šatom_indexç»“æ„ä½“
+	outputâ€”â€”accï¼šunsigned
+	bondsï¼šbondç»“æ„ä½“å‘é‡ï¼Œç­‰äºatomç»“æ„ä½“ä¸­çš„ bondsï¼›
+	bï¼šbondç»“æ„ä½“ï¼›
+	aï¼šatom ç»“æ„ä½“ï¼›
 
-	aÊÇÒÔbÊä³öÔ­×ÓË÷Òı»ñµÃgrid_atomsÏòÁ¿ÖĞµÄÄÚÈİ
-	Èôa²»ÊÇÇâ¡¢b.rotatableÎªtrue²¢ÇÒnum_bonded_heavy_atoms½á¹¹ÌåÖĞacc¡·1
-	Ôòacc¼Ó1
+	aæ˜¯ä»¥bè¾“å‡ºåŸå­ç´¢å¼•è·å¾—grid_atomså‘é‡ä¸­çš„å†…å®¹
+	è‹¥aä¸æ˜¯æ°¢ã€b.rotatableä¸ºtrueå¹¶ä¸”num_bonded_heavy_atomsç»“æ„ä½“ä¸­accã€‹1
+	åˆ™accåŠ 1
 */
 // FIXME? - could be static, but I don't feel like declaring function friends
 unsigned conf_independent_inputs::atom_rotors(const model& m, const atom_index& i) const { // the number of rotatable bonds to heavy ligand atoms
@@ -88,11 +88,11 @@ unsigned conf_independent_inputs::atom_rotors(const model& m, const atom_index& 
 }
 
 
-/*  ÖØÅäÌåÔ­×ÓµÄ¿ÉĞı×ª¼üÊı
-input¡ª¡ªm£ºmodel½á¹¹Ìå£»
-	num_tors¡¢num_rotors¡¢num_heavy_atoms¡¢num_hydrophobic_atoms¡¢
-	ligand_max_num_h_bonds¡¢ligand_lengths_sumÕâĞ©doubleÀàĞÍÊı¾İ¶¼³õÊ¼»¯Îª0
-	num_ligandsÎªligandsµÄÔªËØ¸öÊı£¨vector_mutable¼Ì³Ğvector£©
+/*  é‡é…ä½“åŸå­çš„å¯æ—‹è½¬é”®æ•°
+inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼›
+	num_torsã€num_rotorsã€num_heavy_atomsã€num_hydrophobic_atomsã€
+	ligand_max_num_h_bondsã€ligand_lengths_sumè¿™äº›doubleç±»å‹æ•°æ®éƒ½åˆå§‹åŒ–ä¸º0
+	num_ligandsä¸ºligandsçš„å…ƒç´ ä¸ªæ•°ï¼ˆvector_mutableç»§æ‰¿vectorï¼‰
 */
 conf_independent_inputs::conf_independent_inputs(const model& m) {
 	num_tors = 0;
@@ -129,13 +129,13 @@ conf_independent_inputs::conf_independent_inputs(const model& m) {
 
 
 /*		
-		outout¡ª¡ªtmp: string ÏòÁ¿£»
-		¶¨ÒåÁËÒ»¸östringÏòÁ¿£¬È»ºó½«½á¹¹Ìåconf_independent_inputsÖĞµÄ
-		¡°num_tors¡±¡¢¡°num_rotors¡±¡¢¡°num_heavy_atoms¡±¡¢¡°num_hydrophobic_atoms¡±¡¢
-		¡°ligand_max_num_h_bonds¡±¡¢¡°num_ligands¡±¡¢¡°ligand_lengths_sum¡±×Ö·û´®
-		°´Ë³ĞòÌí¼Óµ½tmpµÄÏòÁ¿µÄ×îÄ©Î²Ò»¸öÔªËØºóÃæ¡£
-		×îºó×ª»»ÁËtmpÊ¹Æä³ÉÎªdoubleÏòÁ¿²¢ÅĞ¶Ï½»»»ºóµÄtmp doubleÏòÁ¿ÔªËØ¸öÊıÊÇ·ñÓë×ª»¯Ç°µÄtmp stringÏòÁ¿ÔªËØ¸öÊıÏàµÈ£¬
-		ÊÇµÄ»°·µ»Øtmp£¨×ª»¯Ç°µÄ£©
+		outoutâ€”â€”tmp: string å‘é‡ï¼›
+		å®šä¹‰äº†ä¸€ä¸ªstringå‘é‡ï¼Œç„¶åå°†ç»“æ„ä½“conf_independent_inputsä¸­çš„
+		â€œnum_torsâ€ã€â€œnum_rotorsâ€ã€â€œnum_heavy_atomsâ€ã€â€œnum_hydrophobic_atomsâ€ã€
+		â€œligand_max_num_h_bondsâ€ã€â€œnum_ligandsâ€ã€â€œligand_lengths_sumâ€å­—ç¬¦ä¸²
+		æŒ‰é¡ºåºæ·»åŠ åˆ°tmpçš„å‘é‡çš„æœ€æœ«å°¾ä¸€ä¸ªå…ƒç´ åé¢ã€‚
+		æœ€åè½¬æ¢äº†tmpä½¿å…¶æˆä¸ºdoubleå‘é‡å¹¶åˆ¤æ–­äº¤æ¢åçš„tmp doubleå‘é‡å…ƒç´ ä¸ªæ•°æ˜¯å¦ä¸è½¬åŒ–å‰çš„tmp stringå‘é‡å…ƒç´ ä¸ªæ•°ç›¸ç­‰ï¼Œ
+		æ˜¯çš„è¯è¿”å›tmpï¼ˆè½¬åŒ–å‰çš„ï¼‰
 */
 
 std::vector<std::string> conf_independent_inputs::get_names() const { // FIXME should probably be static
@@ -147,14 +147,14 @@ std::vector<std::string> conf_independent_inputs::get_names() const { // FIXME s
 	tmp.push_back("ligand_max_num_h_bonds");
 	tmp.push_back("num_ligands");
 	tmp.push_back("ligand_lengths_sum");
-	VINA_CHECK(static_cast<flv>(*this).size() == tmp.size()); // FIXME?  ×ª»»Ö®ºó²Ù×÷µÄ²¢·ÇÔ­ÓĞ¶ÔÏó£¬
-															   //¶øÊÇÒ»¸ö¸±±¾£¬ÊÇÒ»¸öÁÙÊ±±äÁ¿¡£
+	VINA_CHECK(static_cast<flv>(*this).size() == tmp.size()); // FIXME?  è½¬æ¢ä¹‹åæ“ä½œçš„å¹¶éåŸæœ‰å¯¹è±¡ï¼Œ
+															   //è€Œæ˜¯ä¸€ä¸ªå‰¯æœ¬ï¼Œæ˜¯ä¸€ä¸ªä¸´æ—¶å˜é‡ã€‚
 	return tmp;
 }
 
 /*
-num_tors¡¢num_rotors¡¢num_heavy_atoms¡¢num_hydrophobic_atoms¡¢
-ligand_max_num_h_bonds¡¢num_ligands¡¢ligand_lengths_sumÕâĞ©doubleÀàĞÍÊı¾İ¶¼³õÊ¼»¯Îª0
+num_torsã€num_rotorsã€num_heavy_atomsã€num_hydrophobic_atomsã€
+ligand_max_num_h_bondsã€num_ligandsã€ligand_lengths_sumè¿™äº›doubleç±»å‹æ•°æ®éƒ½åˆå§‹åŒ–ä¸º0
 */
 conf_independent_inputs::conf_independent_inputs() : 
 	num_tors(0), num_rotors(0), num_heavy_atoms(0), 
@@ -162,12 +162,12 @@ conf_independent_inputs::conf_independent_inputs() :
 	ligand_lengths_sum(0) {}
 
 /*
-	input¡ª¡ªa¡¢b£ºdoubleÏòÁ¿£»
-	inter¡ª¡ªn£ºunint
-	output¡ª¡ªacc£ºdouble£»
-	nÎªa¡¢bÏòÁ¿ÔªËØ¸öÊıµÄ×îĞ¡Öµ
+	inputâ€”â€”aã€bï¼šdoubleå‘é‡ï¼›
+	interâ€”â€”nï¼šunint
+	outputâ€”â€”accï¼šdoubleï¼›
+	nä¸ºaã€bå‘é‡å…ƒç´ ä¸ªæ•°çš„æœ€å°å€¼
 
-	demo£ºa{2£¬3£¬4£¬5}£¬a{1£¬1£¬2}£¬Ôòn=3
+	demoï¼ša{2ï¼Œ3ï¼Œ4ï¼Œ5}ï¼Œa{1ï¼Œ1ï¼Œ2}ï¼Œåˆ™n=3
 		  acc=2*1+3*1+2*4=13
 
 */
@@ -181,69 +181,69 @@ inline fl inner_product_shortest(const flv& a, const flv& b) {
 
 
 /*
-       input¡ª¡ªweights£ºdoubleÏòÁ¿£¬include_internal£ºbool£»
-	   inter¡ª¡ªeÎªfactors½á¹¹ÌåÖĞµÄe£¨doubleÏòÁ¿£©£»iÎªfactors½á¹¹ÌåÖĞµÄi£¨doubleÏòÁ¿£©£»
-	   output¡ª¡ª tmp£ºdouble
+       inputâ€”â€”weightsï¼šdoubleå‘é‡ï¼Œinclude_internalï¼šboolï¼›
+	   interâ€”â€”eä¸ºfactorsç»“æ„ä½“ä¸­çš„eï¼ˆdoubleå‘é‡ï¼‰ï¼›iä¸ºfactorsç»“æ„ä½“ä¸­çš„iï¼ˆdoubleå‘é‡ï¼‰ï¼›
+	   outputâ€”â€” tmpï¼šdouble
 
-	   demo£º
-	   e{2£¬3£¬4£¬5}£¬weights{1£¬1£¬2}£¬i{2£¬3}
-	   if£¨include_internal=false£©£¨e*weights£©
+	   demoï¼š
+	   e{2ï¼Œ3ï¼Œ4ï¼Œ5}ï¼Œweights{1ï¼Œ1ï¼Œ2}ï¼Œi{2ï¼Œ3}
+	   ifï¼ˆinclude_internal=falseï¼‰ï¼ˆe*weightsï¼‰
 			 n=3
-			 tmp=2*1+3*1+2*4=13£»
-	   else     £¨i*weights£©
+			 tmp=2*1+3*1+2*4=13ï¼›
+	   else     ï¼ˆi*weightsï¼‰
 	         n=2
 	         tmp=2*1+3*1=5
 
 */
 fl factors::eval(const flv& weights, bool include_internal) const {
-	fl tmp = inner_product_shortest(e, weights);     //eÎªfactors½á¹¹ÌåÖĞµÄe£¨doubleÏòÁ¿£©
+	fl tmp = inner_product_shortest(e, weights);     //eä¸ºfactorsç»“æ„ä½“ä¸­çš„eï¼ˆdoubleå‘é‡ï¼‰
 	if(include_internal)
-		tmp += inner_product_shortest(i, weights);   //iÎªfactors½á¹¹ÌåÖĞµÄi£¨doubleÏòÁ¿£©
+		tmp += inner_product_shortest(i, weights);   //iä¸ºfactorsç»“æ„ä½“ä¸­çš„iï¼ˆdoubleå‘é‡ï¼‰
 	return tmp;
 }
 
 
 // terms
 /*
- input¡ª¡ªenabled_only£ºbool£»
- inter¡ª¡ªtmp£º×Ö·û´®ÏòÁ¿£»
-	¸Ãº¯ÊıÍ¨¹ıÊäÈëµÄboolÀàĞÍenabled_onlyºÍterm_set½á¹¹ÌåÖĞµÄenabledµÄboolÏòÁ¿À´ÅĞ¶ÏÊÇ·ñÔÚtmpÏòÁ¿Ä©Î²Ìí¼Óterm_set½á¹¹ÌåÖĞfun[i].name
-		£¨enabled_onlyÎª0»òÕßenabled[i]´óÓÚµÈÓÚ1£©
+ inputâ€”â€”enabled_onlyï¼šboolï¼›
+ interâ€”â€”tmpï¼šå­—ç¬¦ä¸²å‘é‡ï¼›
+	è¯¥å‡½æ•°é€šè¿‡è¾“å…¥çš„boolç±»å‹enabled_onlyå’Œterm_setç»“æ„ä½“ä¸­çš„enabledçš„boolå‘é‡æ¥åˆ¤æ–­æ˜¯å¦åœ¨tmpå‘é‡æœ«å°¾æ·»åŠ term_setç»“æ„ä½“ä¸­fun[i].name
+		ï¼ˆenabled_onlyä¸º0æˆ–è€…enabled[i]å¤§äºç­‰äº1ï¼‰
 */
 std::vector<std::string> terms::get_names(bool enabled_only) const { // does not include conf-independent
 	std::vector<std::string> tmp;
-	/*ÏÈÈ·¶¨enabledÏòÁ¿µÄÔªËØ¸öÊıÊÇ·ñºÍfunÏòÁ¿ÔªËØÏàÍ¬£¬ÊÇµÄ»°¼ÌĞø·ñÔòÖÕÖ¹£»
-		×îºóÈç¹ûenabled_only²»Îª0»òÕßenabled[i]´óÓÚµÈÓÚ1ÔòÔÚtmpÏòÁ¿Ä©Î²Ìí¼Ófun[i].name£¨term½á¹¹ÌåÖĞname£©*/
-	distance_additive_terms.get_names(enabled_only, tmp);//Ò»¸ö¼Ì³ĞÁËdistance_additive_terms½á¹¹ÌåµÄterm_set½á¹¹Ìå
-	           usable_terms.get_names(enabled_only, tmp);//Ò»¸ö¼Ì³ĞÁËusable½á¹¹ÌåµÄterm_set½á¹¹Ìå£¬ÔÚÉÏÃæ´¦ÀíÍêµÄtmp×Ö·û´®ÏòÁ¿Ä©Î²Ìí¼Ó
-	         additive_terms.get_names(enabled_only, tmp);//Ò»¸ö¼Ì³ĞÁËadditive½á¹¹ÌåµÄterm_set½á¹¹Ìå£¬ÔÚÉÏÃæ´¦ÀíÍêµÄtmp×Ö·û´®ÏòÁ¿Ä©Î²Ìí¼Ó
-	   intermolecular_terms.get_names(enabled_only, tmp);//Ò»¸ö¼Ì³ĞÁËintermolecular½á¹¹ÌåµÄterm_set½á¹¹Ìå£¬ÔÚÉÏÃæ´¦ÀíÍêµÄtmp×Ö·û´®ÏòÁ¿Ä©Î²Ìí¼Ó
+	/*å…ˆç¡®å®šenabledå‘é‡çš„å…ƒç´ ä¸ªæ•°æ˜¯å¦å’Œfunå‘é‡å…ƒç´ ç›¸åŒï¼Œæ˜¯çš„è¯ç»§ç»­å¦åˆ™ç»ˆæ­¢ï¼›
+		æœ€åå¦‚æœenabled_onlyä¸ä¸º0æˆ–è€…enabled[i]å¤§äºç­‰äº1åˆ™åœ¨tmpå‘é‡æœ«å°¾æ·»åŠ fun[i].nameï¼ˆtermç»“æ„ä½“ä¸­nameï¼‰*/
+	distance_additive_terms.get_names(enabled_only, tmp);//ä¸€ä¸ªç»§æ‰¿äº†distance_additive_termsç»“æ„ä½“çš„term_setç»“æ„ä½“
+	           usable_terms.get_names(enabled_only, tmp);//ä¸€ä¸ªç»§æ‰¿äº†usableç»“æ„ä½“çš„term_setç»“æ„ä½“ï¼Œåœ¨ä¸Šé¢å¤„ç†å®Œçš„tmpå­—ç¬¦ä¸²å‘é‡æœ«å°¾æ·»åŠ 
+	         additive_terms.get_names(enabled_only, tmp);//ä¸€ä¸ªç»§æ‰¿äº†additiveç»“æ„ä½“çš„term_setç»“æ„ä½“ï¼Œåœ¨ä¸Šé¢å¤„ç†å®Œçš„tmpå­—ç¬¦ä¸²å‘é‡æœ«å°¾æ·»åŠ 
+	   intermolecular_terms.get_names(enabled_only, tmp);//ä¸€ä¸ªç»§æ‰¿äº†intermolecularç»“æ„ä½“çš„term_setç»“æ„ä½“ï¼Œåœ¨ä¸Šé¢å¤„ç†å®Œçš„tmpå­—ç¬¦ä¸²å‘é‡æœ«å°¾æ·»åŠ 
 	return tmp;
 }
 
 
 /*
-	¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-	additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
+	è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+	additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
 
 */
 sz terms::size_internal() const {
 	return distance_additive_terms.size() + usable_terms.size() + additive_terms.size();
-	//size()£º¸Ãº¯Êı·µ»ØfunÏòÁ¿ÔªËØ¸öÊı£¬term_set½á¹¹ÌåÖĞfun£¨£©ÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß
+	//size()ï¼šè¯¥å‡½æ•°è¿”å›funå‘é‡å…ƒç´ ä¸ªæ•°ï¼Œterm_setç»“æ„ä½“ä¸­funï¼ˆï¼‰ä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜
 	//
 }
 
 
 
 /*
-	input¡ª¡ªenabled_only£ºboolÀàĞÍ
-	inter¡ª¡ªenabled£ºboolÀàĞÍÏòÁ¿
-	ÔÚenabled_only=false»òÕßterm_set½á¹¹ÌåÖĞµÄenabled[i]>0Çé¿öÏÂ¶Ôfun[i]µÄÔªËØ¸öÊı½øĞĞÀÛ¼Ó£¨i=0-funÏòÁ¿ÔªËØ¸öÊı£©
+	inputâ€”â€”enabled_onlyï¼šboolç±»å‹
+	interâ€”â€”enabledï¼šboolç±»å‹å‘é‡
+	åœ¨enabled_only=falseæˆ–è€…term_setç»“æ„ä½“ä¸­çš„enabled[i]>0æƒ…å†µä¸‹å¯¹fun[i]çš„å…ƒç´ ä¸ªæ•°è¿›è¡Œç´¯åŠ ï¼ˆi=0-funå‘é‡å…ƒç´ ä¸ªæ•°ï¼‰
 */
 sz terms::size_conf_independent(bool enabled_only) const { // number of parameters does not necessarily equal the number of operators
 	sz acc = 0;
-	VINA_FOR_IN(i, conf_independent_terms)    //for(i=0;i<conf_independent_terms.size(funÏòÁ¿ÔªËØ¸öÊı);i++)
-		if(!enabled_only || conf_independent_terms.enabled[i])//enabled_onlyÎª0»òÕßenabled[i]´óÓÚµÈÓÚ1
+	VINA_FOR_IN(i, conf_independent_terms)    //for(i=0;i<conf_independent_terms.size(funå‘é‡å…ƒç´ ä¸ªæ•°);i++)
+		if(!enabled_only || conf_independent_terms.enabled[i])//enabled_onlyä¸º0æˆ–è€…enabled[i]å¤§äºç­‰äº1
 			acc += conf_independent_terms[i].size();         //conf_independent_terms[i]=fun[i]
 	return acc;
 }
@@ -251,23 +251,23 @@ sz terms::size_conf_independent(bool enabled_only) const { // number of paramete
 
 /*
 
-	Õâ¸öº¯ÊıÊÇÔÚÑ°ÕÒ distance_additive_terms.fun[i].cutoff¡¢usable_terms.fun[i].cutoff¡¢
-	additive_terms.fun[i].cutoffÖĞµÄ×î´óÖµ
+	è¿™ä¸ªå‡½æ•°æ˜¯åœ¨å¯»æ‰¾ distance_additive_terms.fun[i].cutoffã€usable_terms.fun[i].cutoffã€
+	additive_terms.fun[i].cutoffä¸­çš„æœ€å¤§å€¼
 
 */
 
 fl terms::max_r_cutoff() const {
 	fl tmp = 0;
-	tmp = (std::max)(tmp, distance_additive_terms.max_cutoff());//max_cutoff():Ñ°ÕÒfun[i].cutoffÖĞµÄ×î´óÖµ
+	tmp = (std::max)(tmp, distance_additive_terms.max_cutoff());//max_cutoff():å¯»æ‰¾fun[i].cutoffä¸­çš„æœ€å¤§å€¼
 	tmp = (std::max)(tmp,            usable_terms.max_cutoff());
 	tmp = (std::max)(tmp,          additive_terms.max_cutoff());
 	return tmp;
 }
 
 /*
-	input¡ª¡ªm£ºmodel½á¹¹Ìå£¬i¡¢j£ºatom_index½á¹¹Ìå£¬r£ºdouble£¬out£ºdoubleÏòÁ¿
-	inter¡ª¡ªa¡¢b£ºatom½á¹¹Ìå
-	a¡¢b£ºÅĞ¶Ïi¡¢jµÄ³ÉÔ±in_gridÊÇ·ñÎªÕæ£¬ÊÇÔò·µ»Øgrid_atomsÈİÆ÷µÄµÚ£¨¶ÔÏói¡¢jµÄ³ÉÔ±i¡¢jµÄÊıÖµ£©ÔªËØ³£Á¿ÒıÓÃ£¬·ñÔò·µ»ØatomsÈİÆ÷µÄµÚ£¨¶ÔÏói¡¢jµÄ³ÉÔ±i¡¢jµÄÊıÖµ£©ÔªËØ³£Á¿ÒıÓÃ
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼Œiã€jï¼šatom_indexç»“æ„ä½“ï¼Œrï¼šdoubleï¼Œoutï¼šdoubleå‘é‡
+	interâ€”â€”aã€bï¼šatomç»“æ„ä½“
+	aã€bï¼šåˆ¤æ–­iã€jçš„æˆå‘˜in_gridæ˜¯å¦ä¸ºçœŸï¼Œæ˜¯åˆ™è¿”å›grid_atomså®¹å™¨çš„ç¬¬ï¼ˆå¯¹è±¡iã€jçš„æˆå‘˜iã€jçš„æ•°å€¼ï¼‰å…ƒç´ å¸¸é‡å¼•ç”¨ï¼Œå¦åˆ™è¿”å›atomså®¹å™¨çš„ç¬¬ï¼ˆå¯¹è±¡iã€jçš„æˆå‘˜iã€jçš„æ•°å€¼ï¼‰å…ƒç´ å¸¸é‡å¼•ç”¨
 */
 void terms::eval_additive_aux(const model& m, const atom_index& i, const atom_index& j, fl r, flv& out) const { // out is added to
 	const atom& a = m.get_atom(i);
@@ -276,74 +276,74 @@ void terms::eval_additive_aux(const model& m, const atom_index& i, const atom_in
 	sz offset = 0;
 	VINA_FOR_IN(k, distance_additive_terms)                      //for(k=0;k<term_set.fun.size().size;k++)
 		if(r < distance_additive_terms[k].cutoff)                //(r<term_set<distance_additive_terms>.fun[i].cutoff)
-			out[k] += distance_additive_terms[k].eval(a, b, r);  //get£¨£©º¯ÊıÊÇ½á¹¹Ìåatom_base³ÉÔ±£¬
-															     //ÒòÎªatom_typing_use=XS£¬ËùÒÔ·µ»ØXS_TYPE_SIZE
+			out[k] += distance_additive_terms[k].eval(a, b, r);  //getï¼ˆï¼‰å‡½æ•°æ˜¯ç»“æ„ä½“atom_baseæˆå‘˜ï¼Œ
+															     //å› ä¸ºatom_typing_use=XSï¼Œæ‰€ä»¥è¿”å›XS_TYPE_SIZE
 
 	offset += distance_additive_terms.size();                    
 	VINA_FOR_IN(k, usable_terms)								 //for(k=0;k<term_set<usable_terms>.fun.size().size;k++)
 		if(r < usable_terms[k].cutoff)
-			out[offset + k] += usable_terms[k].eval(a, b, r);    //ÔÚÉÏÃæµÄout[k]ºóÃæÌí¼Ó
+			out[offset + k] += usable_terms[k].eval(a, b, r);    //åœ¨ä¸Šé¢çš„out[k]åé¢æ·»åŠ 
 
 	offset += usable_terms.size();
 	VINA_FOR_IN(k, additive_terms)							      //for(k=0;k<term_set<additive_terms>.fun.size().size;k++)                            
 		if(r < additive_terms[k].cutoff)
-			out[offset + k] += additive_terms[k].eval(m, i, j);   //ÔÚÉÏÃæµÄout[k]ºóÃæÌí¼Ó
+			out[offset + k] += additive_terms[k].eval(m, i, j);   //åœ¨ä¸Šé¢çš„out[k]åé¢æ·»åŠ 
 	
-	VINA_CHECK(offset + additive_terms.size() == size_internal());//size_internal£¨£©¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-																//additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
+	VINA_CHECK(offset + additive_terms.size() == size_internal());//size_internalï¼ˆï¼‰è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+																//additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
 }
 
 
-/*Íâ²¿ÒòËØ£¨¿ÉÄÜ°É£©
-	input¡ª¡ªm£ºmodel½á¹¹Ìå
-	output¡ª¡ªtmp£ºdoubleÏòÁ¿
+/*å¤–éƒ¨å› ç´ ï¼ˆå¯èƒ½å§ï¼‰
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“
+	outputâ€”â€”tmpï¼šdoubleå‘é‡
 
 */
 flv terms::evale(const model& m) const {
-	VINA_CHECK(m.ligands.size() == 1);      //ligandsÎªÄ£°å²ÎÊıÎªligand½á¹¹ÌåµÄvector_mutable½á¹¹Ìå
+	VINA_CHECK(m.ligands.size() == 1);      //ligandsä¸ºæ¨¡æ¿å‚æ•°ä¸ºligandç»“æ„ä½“çš„vector_mutableç»“æ„ä½“
 	VINA_CHECK(m.flex.size() == 0);
 	VINA_CHECK(m.atoms.size() == m.num_movable_atoms()); // no inflex
 
-	flv tmp(size(), 0);            //size()¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //intermolecular_termsµÄÏòÁ¿ÔªËØ¸öÊı×ÜºÍ
-	fl max_r_cutoff_sqr = sqr(max_r_cutoff()); //ÔÚÑ°ÕÒ distance_additive_terms.fun[i].cutoff¡¢usable_terms.fun[i].cutoff¡¢
-											   //additive_terms.fun[i].cutoffÖĞµÄ×î´óÖµµÄÆ½·½
+	flv tmp(size(), 0);            //size()è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //intermolecular_termsçš„å‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œ
+	fl max_r_cutoff_sqr = sqr(max_r_cutoff()); //åœ¨å¯»æ‰¾ distance_additive_terms.fun[i].cutoffã€usable_terms.fun[i].cutoffã€
+											   //additive_terms.fun[i].cutoffä¸­çš„æœ€å¤§å€¼çš„å¹³æ–¹
 
-	grid_dims box = m.movable_atoms_box(0); // add nothing£¬ÓĞ3¸öÔªËØµÄgrid_dim½á¹¹ÌåÊı×é
-	vec box_begin = grid_dims_begin(box);   //½«Èı¸ögrid_dim½á¹¹ÌåÖĞµÄbegin´æÈëÏòÁ¿
-	vec box_end   = grid_dims_end  (box);   //½«Èı¸ögrid_dim½á¹¹ÌåÖĞµÄend´æÈëÏòÁ¿
+	grid_dims box = m.movable_atoms_box(0); // add nothingï¼Œæœ‰3ä¸ªå…ƒç´ çš„grid_dimç»“æ„ä½“æ•°ç»„
+	vec box_begin = grid_dims_begin(box);   //å°†ä¸‰ä¸ªgrid_dimç»“æ„ä½“ä¸­çš„beginå­˜å…¥å‘é‡
+	vec box_end   = grid_dims_end  (box);   //å°†ä¸‰ä¸ªgrid_dimç»“æ„ä½“ä¸­çš„endå­˜å…¥å‘é‡
 
-	szv relevant_atoms;                     //unintÏòÁ¿
+	szv relevant_atoms;                     //unintå‘é‡
 	VINA_FOR_IN(j, m.grid_atoms)           //for(j=0;j< m.grid_atoms.size;j++)
 		if(brick_distance_sqr(box_begin, box_end, m.grid_atoms[j].coords) < max_r_cutoff_sqr)
 			/*
-			demo£º
-			box_begin£¨1£¬2£¬3£©£¬	box_end£¨7£¬8£¬9£©£¬m.grid_atoms[j].coords£¨0£¬9£¬7£©
-			ËùÒÔ
-			closest(1£¬8£¬7)£¨closestÊÇm.grid_atoms[j].coords×î½Ó½übox_begin¡¢box_endÖĞµÄÖµ£©
-			·µ»Ø
+			demoï¼š
+			box_beginï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œ	box_endï¼ˆ7ï¼Œ8ï¼Œ9ï¼‰ï¼Œm.grid_atoms[j].coordsï¼ˆ0ï¼Œ9ï¼Œ7ï¼‰
+			æ‰€ä»¥
+			closest(1ï¼Œ8ï¼Œ7)ï¼ˆclosestæ˜¯m.grid_atoms[j].coordsæœ€æ¥è¿‘box_beginã€box_endä¸­çš„å€¼ï¼‰
+			è¿”å›
 			(1 - 0) ^ 2 + (8 - 9) ^ 2 + (7 - 7) ^ 2 = 2
-			max_r_cutoff_sqÎªdistance_additive_terms.fun[i].cutoff¡¢usable_terms.fun[i].cutoff¡¢
-			additive_terms.fun[i].cutoffÖĞµÄ×î´óÖµµÄÆ½·½
+			max_r_cutoff_sqä¸ºdistance_additive_terms.fun[i].cutoffã€usable_terms.fun[i].cutoffã€
+			additive_terms.fun[i].cutoffä¸­çš„æœ€å¤§å€¼çš„å¹³æ–¹
 			*/
-			relevant_atoms.push_back(j);    //Èç¹ûif³ÉÁ¢£¬½«j¼Óµ½relevant_atomsÏòÁ¿µÄ×îºóÃæ
+			relevant_atoms.push_back(j);    //å¦‚æœifæˆç«‹ï¼Œå°†jåŠ åˆ°relevant_atomså‘é‡çš„æœ€åé¢
 
 	VINA_FOR(i, m.num_movable_atoms()) {                 //for(i=0;i<m.num_movable_atoms;i++)
 		const vec& coords = m.coords[i];                 
 		VINA_FOR_IN(relevant_j, relevant_atoms) {        //for(relevant_j=0;relevant_j<relevant_atoms.size;relevant_j++)
-			const sz j = relevant_atoms[relevant_j];     //½«relevant_atomsÖĞµÄÔªËØ±ğÃûÎªj
-			const atom& b = m.grid_atoms[j];             //½«grid_atomsÖĞµÄÔªËØ±ğÃûÎªb
-			fl d2 = vec_distance_sqr(coords, b.coords); //¼ÆËãÁ½¸övecÖĞÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½
+			const sz j = relevant_atoms[relevant_j];     //å°†relevant_atomsä¸­çš„å…ƒç´ åˆ«åä¸ºj
+			const atom& b = m.grid_atoms[j];             //å°†grid_atomsä¸­çš„å…ƒç´ åˆ«åä¸ºb
+			fl d2 = vec_distance_sqr(coords, b.coords); //è®¡ç®—ä¸¤ä¸ªvecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹
 
-			if(d2 > max_r_cutoff_sqr) continue; // most likely scenario   if³ÉÁ¢Ö±½ÓÏÂÒ»´ÎVINA_FOR_IN
-			fl d = std::sqrt(d2);               //¶Ôd2¿ª¸ùºÅ
+			if(d2 > max_r_cutoff_sqr) continue; // most likely scenario   ifæˆç«‹ç›´æ¥ä¸‹ä¸€æ¬¡VINA_FOR_IN
+			fl d = std::sqrt(d2);               //å¯¹d2å¼€æ ¹å·
 			eval_additive_aux(m, atom_index(i, false), atom_index(j, true), d, tmp);
 		}
 	}
-	sz offset = size_internal();       //¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-										//additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
+	sz offset = size_internal();       //è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+										//additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
 	VINA_FOR_IN(k, intermolecular_terms)
 		tmp[offset + k] += intermolecular_terms[k].eval(m);
 
@@ -352,9 +352,9 @@ flv terms::evale(const model& m) const {
 }
 
 
-/*ÄÚ²¿ÒòËØ£¨¿ÉÄÜ°É£©
-	input¡ª¡ªm£ºmodel½á¹¹Ìå
-	output¡ª¡ªtmp£ºdoubleÏòÁ¿
+/*å†…éƒ¨å› ç´ ï¼ˆå¯èƒ½å§ï¼‰
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“
+	outputâ€”â€”tmpï¼šdoubleå‘é‡
 */
 
 flv terms::evali(const model& m) const {
@@ -362,25 +362,25 @@ flv terms::evali(const model& m) const {
 	VINA_CHECK(m.flex.size() == 0);
 	VINA_CHECK(m.atoms.size() == m.num_movable_atoms());
 
-	flv tmp(size_internal(), 0);                         //size_internal£¨£©¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-	                                                     //	additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
-	fl max_r_cutoff_sqr = sqr(max_r_cutoff());          //ÔÚÑ°ÕÒ distance_additive_terms.fun[i].cutoff¡¢usable_terms.fun[i].cutoff¡¢
-											            //additive_terms.fun[i].cutoffÖĞµÄ×î´óÖµµÄÆ½·½
-	const interacting_pairs& pairs = m.ligands.front().pairs;    //±ğÃûinteracting_pair½á¹¹ÌåÏòÁ¿
+	flv tmp(size_internal(), 0);                         //size_internalï¼ˆï¼‰è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+	                                                     //	additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
+	fl max_r_cutoff_sqr = sqr(max_r_cutoff());          //åœ¨å¯»æ‰¾ distance_additive_terms.fun[i].cutoffã€usable_terms.fun[i].cutoffã€
+											            //additive_terms.fun[i].cutoffä¸­çš„æœ€å¤§å€¼çš„å¹³æ–¹
+	const interacting_pairs& pairs = m.ligands.front().pairs;    //åˆ«åinteracting_pairç»“æ„ä½“å‘é‡
 	VINA_FOR_IN(i, pairs) {                                      //for(i=0;i<pairs.size;i++)
-		const interacting_pair& ip = pairs[i];                   //±ğÃûinteracting_pair½á¹¹Ìå
-		fl d2 = vec_distance_sqr(m.coords[ip.a], m.coords[ip.b]);//¼ÆËãÁ½¸övecÖĞÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½
-		if(d2 > max_r_cutoff_sqr) continue; // most likely scenario    if³ÉÁ¢Ö±½ÓÏÂÒ»¸öÑ­»·
-		fl d = std::sqrt(d2);                                    //¶Ôd2¿ª¸ùºÅ
+		const interacting_pair& ip = pairs[i];                   //åˆ«åinteracting_pairç»“æ„ä½“
+		fl d2 = vec_distance_sqr(m.coords[ip.a], m.coords[ip.b]);//è®¡ç®—ä¸¤ä¸ªvecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹
+		if(d2 > max_r_cutoff_sqr) continue; // most likely scenario    ifæˆç«‹ç›´æ¥ä¸‹ä¸€ä¸ªå¾ªç¯
+		fl d = std::sqrt(d2);                                    //å¯¹d2å¼€æ ¹å·
 		eval_additive_aux(m, atom_index(ip.a, false), atom_index(ip.b, false), d, tmp);
 	}
 	return tmp;
 }
 
 
-/*Íâ²¿ÒòËØÔöÇ¿£¬Ö»ÓĞµ¥¸öÅäÌåÏµÍ³ĞèÒªÓÃµ½Õâ¸ö³ÌĞò
-	input¡ª¡ªm£ºmodel½á¹¹Ìå
-	output¡ª¡ªtmp£ºdoubleÏòÁ¿
+/*å¤–éƒ¨å› ç´ å¢å¼ºï¼Œåªæœ‰å•ä¸ªé…ä½“ç³»ç»Ÿéœ€è¦ç”¨åˆ°è¿™ä¸ªç¨‹åº
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“
+	outputâ€”â€”tmpï¼šdoubleå‘é‡
 */
 flv terms::evale_robust(const model& m) const {
 	VINA_CHECK(m.ligands.size() == 1); // only single-ligand systems are supported by this procedure
@@ -389,57 +389,57 @@ flv terms::evale_robust(const model& m) const {
 
 	fl max_r_cutoff_sqr = sqr(max_r_cutoff());
 
-	grid_dims box = m.movable_atoms_box(0);            //add nothing£¬ÓĞ3¸öÔªËØµÄgrid_dim½á¹¹Ìå
-	vec box_begin = grid_dims_begin(box);	           //½«Èı¸ögrid_dim½á¹¹ÌåÖĞµÄbegin´æÈëÏòÁ¿
-	vec box_end = grid_dims_end(box);                  //½«Èı¸ögrid_dim½á¹¹ÌåÖĞµÄend´æÈëÏòÁ¿
+	grid_dims box = m.movable_atoms_box(0);            //add nothingï¼Œæœ‰3ä¸ªå…ƒç´ çš„grid_dimç»“æ„ä½“
+	vec box_begin = grid_dims_begin(box);	           //å°†ä¸‰ä¸ªgrid_dimç»“æ„ä½“ä¸­çš„beginå­˜å…¥å‘é‡
+	vec box_end = grid_dims_end(box);                  //å°†ä¸‰ä¸ªgrid_dimç»“æ„ä½“ä¸­çš„endå­˜å…¥å‘é‡
 
 	const sz n  = num_atom_types(m.atom_typing_used());/*n=
-														Ô­×ÓÊıÀàĞÍ
-														ELĞÍ·µ»Ø11;
-														ADĞÍ·µ»Ø20;
-														XSĞÍ·µ»Ø17;
-														SYĞÍ·µ»Ø18
+														åŸå­æ•°ç±»å‹
+														ELå‹è¿”å›11;
+														ADå‹è¿”å›20;
+														XSå‹è¿”å›17;
+														SYå‹è¿”å›18
 														*/
 
-	std::vector<atom_index> relevant_atoms;              //atom_index½á¹¹ÌåÏòÁ¿
+	std::vector<atom_index> relevant_atoms;              //atom_indexç»“æ„ä½“å‘é‡
 
 	VINA_FOR_IN(j, m.grid_atoms) {
 		const atom& a = m.grid_atoms[j];
-		const sz t = a.get(m.atom_typing_used());        //Ã¶¾ÙĞÍt¶ÔÓ¦·µ»ØÖµ
+		const sz t = a.get(m.atom_typing_used());        //æšä¸¾å‹tå¯¹åº”è¿”å›å€¼
 		if(brick_distance_sqr(box_begin, box_end, a.coords) < max_r_cutoff_sqr && t < n) // exclude, say, Hydrogens
 	          /*
-	          demo£º
-	          box_begin£¨1£¬2£¬3£©£¬	box_end£¨7£¬8£¬9£©£¬m.grid_atoms[j].coords£¨0£¬9£¬7£©
-	          ËùÒÔ
-	          closest(1£¬8£¬7)£¨closestÊÇm.grid_atoms[j].coords×î½Ó½übox_begin¡¢box_endÖĞµÄÖµ£©
-	          ·µ»Ø
+	          demoï¼š
+	          box_beginï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œ	box_endï¼ˆ7ï¼Œ8ï¼Œ9ï¼‰ï¼Œm.grid_atoms[j].coordsï¼ˆ0ï¼Œ9ï¼Œ7ï¼‰
+	          æ‰€ä»¥
+	          closest(1ï¼Œ8ï¼Œ7)ï¼ˆclosestæ˜¯m.grid_atoms[j].coordsæœ€æ¥è¿‘box_beginã€box_endä¸­çš„å€¼ï¼‰
+	          è¿”å›
 	          (1 - 0) ^ 2 + (8 - 9) ^ 2 + (7 - 7) ^ 2 = 2
-	          max_r_cutoff_sqÎªdistance_additive_terms.fun[i].cutoff¡¢usable_terms.fun[i].cutoff¡¢
-	          additive_terms.fun[i].cutoffÖĞµÄ×î´óÖµµÄÆ½·½
+	          max_r_cutoff_sqä¸ºdistance_additive_terms.fun[i].cutoffã€usable_terms.fun[i].cutoffã€
+	          additive_terms.fun[i].cutoffä¸­çš„æœ€å¤§å€¼çš„å¹³æ–¹
 	          */
-			relevant_atoms.push_back(atom_index(j, true));//½«(atom_index(j, true)´æÈërelevant_atoms½á¹¹ÌåÏòÁ¿µÄ×îºóÃæ
+			relevant_atoms.push_back(atom_index(j, true));//å°†(atom_index(j, true)å­˜å…¥relevant_atomsç»“æ„ä½“å‘é‡çš„æœ€åé¢
 	}
 
 	VINA_FOR_IN(j, m.atoms) {
 		const atom& a = m.atoms[j];
 		const vec& a_coords = m.coords[j];
-		if(m.find_ligand(j) < m.ligands.size()) continue; // skip ligand atoms, add only flex/inflex  ³ÉÁ¢Ö±½Ó½øÈëÏÂÒ»¸öÑ­»·
+		if(m.find_ligand(j) < m.ligands.size()) continue; // skip ligand atoms, add only flex/inflex  æˆç«‹ç›´æ¥è¿›å…¥ä¸‹ä¸€ä¸ªå¾ªç¯
 		const sz t = a.get(m.atom_typing_used());
 		if(brick_distance_sqr(box_begin, box_end, a_coords) < max_r_cutoff_sqr && t < n) // exclude, say, Hydrogens
-			relevant_atoms.push_back(atom_index(j, false));   //½«(atom_index(j, false)´æÈëÉÏÃæµÄrelevant_atoms½á¹¹ÌåÏòÁ¿µÄ×îºóÃæ
+			relevant_atoms.push_back(atom_index(j, false));   //å°†(atom_index(j, false)å­˜å…¥ä¸Šé¢çš„relevant_atomsç»“æ„ä½“å‘é‡çš„æœ€åé¢
 	}
 
 	VINA_FOR_IN(lig_i, m.ligands) {											
 		const ligand& lig = m.ligands[lig_i];								
 		VINA_RANGE(i, lig.begin, lig.end) {									
-			const vec& coords = m.coords[i];								//½«m½á¹¹ÌåÏòÁ¿ÖĞµÄcoordsÏòÁ¿±ğÃû
-			const atom& a = m.atoms[i];										//½«m½á¹¹ÌåÏòÁ¿ÖĞµÄatoms½á¹¹Ìå±ğÃû
-			const sz t = a.get(m.atom_typing_used());						//½«m½á¹¹ÌåÏòÁ¿ÖĞµÄm_atom_typing_used±äÁ¿±ğÃû
+			const vec& coords = m.coords[i];								//å°†mç»“æ„ä½“å‘é‡ä¸­çš„coordså‘é‡åˆ«å
+			const atom& a = m.atoms[i];										//å°†mç»“æ„ä½“å‘é‡ä¸­çš„atomsç»“æ„ä½“åˆ«å
+			const sz t = a.get(m.atom_typing_used());						//å°†mç»“æ„ä½“å‘é‡ä¸­çš„m_atom_typing_usedå˜é‡åˆ«å
 
 			if(t < n) { // exclude, say, Hydrogens
 				VINA_FOR_IN(relevant_j, relevant_atoms) {
 					const atom_index& j = relevant_atoms[relevant_j];
-					fl d2 = vec_distance_sqr(coords, m.atom_coords(j));    //¼ÆËãÁ½¸övecÖĞÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½
+					fl d2 = vec_distance_sqr(coords, m.atom_coords(j));    //è®¡ç®—ä¸¤ä¸ªvecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹
 					if(d2 > max_r_cutoff_sqr) continue; // most likely scenario
 					fl d = std::sqrt(d2);
 					eval_additive_aux(m, atom_index(i, false), j, d, tmp);
@@ -456,56 +456,56 @@ flv terms::evale_robust(const model& m) const {
 }
 
 
-/*	»ñÈ¡Íâ²¿ÄÚ²¿ÔªËØ
-	input¡ª¡ªm£ºmodel½á¹¹Ìå
-	output¡ª¡ªtmp£ºfactors½á¹¹Ìå
+/*	è·å–å¤–éƒ¨å†…éƒ¨å…ƒç´ 
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“
+	outputâ€”â€”tmpï¼šfactorsç»“æ„ä½“
 */
 factors terms::eval(const model& m) const {
 	factors tmp;
-	tmp.e = evale(m);     //Íâ²¿ÒòËØ£¨¿ÉÄÜ°É£©
-	tmp.i = evali(m);     //ÄÚ²¿ÒòËØ£¨¿ÉÄÜ°É£©
+	tmp.e = evale(m);     //å¤–éƒ¨å› ç´ ï¼ˆå¯èƒ½å§ï¼‰
+	tmp.i = evali(m);     //å†…éƒ¨å› ç´ ï¼ˆå¯èƒ½å§ï¼‰
 	return tmp;
 }
 
 
 
 /*
-	input¡ª¡ªin£ºconf_independent_inputs£»it£ºµü´úÆ÷£º
-	inter¡ª¡ªconf_independent_terms£ºÄ£°åĞÎ²ÎÎªconf_independentµÄterm_set½á¹¹Ìå
-	output¡ª¡ªx£ºdouble£»
-	if(conf_independent½á¹¹ÌåÖĞenabled[i]µÄÖµ´óÓÚ0)£¨i=0-conf_independent½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı£©
-		xÎª  x + read_iterator(i) * in.******   // read_iterator(i)Îªµü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ £¬******Ó¦¸ÃÊÇÈ¡¾öÓÚµ÷ÓÃÕâ¸öº¯ÊıµÄÇ°Ò»¸öeverthing.cppÖĞµÄº¯Êı¾ö¶¨µÄ
+	inputâ€”â€”inï¼šconf_independent_inputsï¼›itï¼šè¿­ä»£å™¨ï¼š
+	interâ€”â€”conf_independent_termsï¼šæ¨¡æ¿å½¢å‚ä¸ºconf_independentçš„term_setç»“æ„ä½“
+	outputâ€”â€”xï¼šdoubleï¼›
+	if(conf_independentç»“æ„ä½“ä¸­enabled[i]çš„å€¼å¤§äº0)ï¼ˆi=0-conf_independentç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ï¼‰
+		xä¸º  x + read_iterator(i) * in.******   // read_iterator(i)ä¸ºè¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´  ï¼Œ******åº”è¯¥æ˜¯å–å†³äºè°ƒç”¨è¿™ä¸ªå‡½æ•°çš„å‰ä¸€ä¸ªeverthing.cppä¸­çš„å‡½æ•°å†³å®šçš„
 */
 fl terms::eval_conf_independent(const conf_independent_inputs& in, fl x, flv::const_iterator& it) const { // evaluates enabled only
-	VINA_FOR_IN(i, conf_independent_terms)   //for(i=0;i<conf_independent_terms.size(funÏòÁ¿ÔªËØ¸öÊı);i++ £©
+	VINA_FOR_IN(i, conf_independent_terms)   //for(i=0;i<conf_independent_terms.size(funå‘é‡å…ƒç´ ä¸ªæ•°);i++ ï¼‰
 		if(conf_independent_terms.enabled[i]) 
 			x = conf_independent_terms[i].eval(in, x, it);     // x + read_iterator(i) * in.ligand_lengths_sum    
 	return x;
 }
 
 /*
-	input¡ª¡ªv:doubleÏòÁ¿
-	µ±distance_additive_terms¡¢usable_terms¡¢additive_terms¡¢intermolecular_terms½á¹¹ÌåÖĞµÄenabledµÄÖµ´óÓÚµÈÓÚ1Ê±
-	´ËÊ±½«µü´úÆ÷ÀïÔªËØÒÀ´Î£¨¼´vÖĞµÄÔªËØ£©Ìí¼Óµ½tmpÏòÁ¿×îÄ©Î²£¬·ñÔò²»Ìí¼Ó£»
+	inputâ€”â€”v:doubleå‘é‡
+	å½“distance_additive_termsã€usable_termsã€additive_termsã€intermolecular_termsç»“æ„ä½“ä¸­çš„enabledçš„å€¼å¤§äºç­‰äº1æ—¶
+	æ­¤æ—¶å°†è¿­ä»£å™¨é‡Œå…ƒç´ ä¾æ¬¡ï¼ˆå³vä¸­çš„å…ƒç´ ï¼‰æ·»åŠ åˆ°tmpå‘é‡æœ€æœ«å°¾ï¼Œå¦åˆ™ä¸æ·»åŠ ï¼›
 	
 */
 flv terms::filter_external(const flv& v) const {
 	flv tmp;
-	flv::const_iterator i = v.begin();      //½«µü´úÆ÷i³õÊ¼»¯ÎªÖ¸ÏòÊäÈëvÏòÁ¿µÄµÚÒ»¸öÔªËØ
-	distance_additive_terms.filter(i, tmp); //µ±term_set½á¹¹ÌåÖĞenabledµÄÖµ´óÓÚµÈÓÚ1Ê±½«´ËÊ±µü´úÆ÷ÀïÔªËØÌí¼Óµ½tmpÏòÁ¿×îÄ©Î²
+	flv::const_iterator i = v.begin();      //å°†è¿­ä»£å™¨iåˆå§‹åŒ–ä¸ºæŒ‡å‘è¾“å…¥vå‘é‡çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
+	distance_additive_terms.filter(i, tmp); //å½“term_setç»“æ„ä½“ä¸­enabledçš„å€¼å¤§äºç­‰äº1æ—¶å°†æ­¤æ—¶è¿­ä»£å™¨é‡Œå…ƒç´ æ·»åŠ åˆ°tmpå‘é‡æœ€æœ«å°¾
 	           usable_terms.filter(i, tmp);
 	         additive_terms.filter(i, tmp);
 	   intermolecular_terms.filter(i, tmp);
-	VINA_CHECK(i == v.end());              //ÅĞ¶Ïµü´úÆ÷iÊÇ·ñ±éÀúÊäÈëvÏòÁ¿
+	VINA_CHECK(i == v.end());              //åˆ¤æ–­è¿­ä»£å™¨iæ˜¯å¦éå†è¾“å…¥vå‘é‡
 	return tmp;
 }
 
 
 /*
-         input¡ª¡ªv:doubleÏòÁ¿
-         µ±distance_additive_terms¡¢usable_terms¡¢additive_terms¡¢intermolecular_terms½á¹¹ÌåÖĞµÄenabledµÄÖµ´óÓÚµÈÓÚ1Ê±
-         ´ËÊ±½«µü´úÆ÷ÀïÔªËØÒÀ´Î£¨¼´vÖĞµÄÔªËØ£©Ìí¼Óµ½tmpÏòÁ¿×îÄ©Î²£¬·ñÔò²»Ìí¼Ó
-         Í¬filter_external£¨£©º¯Êı¹¦ÄÜÒ»Ñù
+         inputâ€”â€”v:doubleå‘é‡
+         å½“distance_additive_termsã€usable_termsã€additive_termsã€intermolecular_termsç»“æ„ä½“ä¸­çš„enabledçš„å€¼å¤§äºç­‰äº1æ—¶
+         æ­¤æ—¶å°†è¿­ä»£å™¨é‡Œå…ƒç´ ä¾æ¬¡ï¼ˆå³vä¸­çš„å…ƒç´ ï¼‰æ·»åŠ åˆ°tmpå‘é‡æœ€æœ«å°¾ï¼Œå¦åˆ™ä¸æ·»åŠ 
+         åŒfilter_externalï¼ˆï¼‰å‡½æ•°åŠŸèƒ½ä¸€æ ·
 
 */
 flv terms::filter_internal(const flv& v) const {
@@ -521,9 +521,9 @@ flv terms::filter_internal(const flv& v) const {
 
 
 /*		
-		input¡ª¡ªf£ºfactors½á¹¹Ìå£»
-		inter¡ª¡ªtmp£ºfactors½á¹¹Ìå£»
-		tmp.eµÃµ½f.e¹ıÂËºóµÄÏòÁ¿£¬tmp.iµÃµ½f.i¹ıÂËºóµÄÏòÁ¿£¬×îºó·µ»Øfactors½á¹¹ÌåµÄº¯Êı¡£
+		inputâ€”â€”fï¼šfactorsç»“æ„ä½“ï¼›
+		interâ€”â€”tmpï¼šfactorsç»“æ„ä½“ï¼›
+		tmp.eå¾—åˆ°f.eè¿‡æ»¤åçš„å‘é‡ï¼Œtmp.iå¾—åˆ°f.iè¿‡æ»¤åçš„å‘é‡ï¼Œæœ€åè¿”å›factorsç»“æ„ä½“çš„å‡½æ•°ã€‚
 */
 factors terms::filter(const factors& f) const {
 	factors tmp;
@@ -534,37 +534,37 @@ factors terms::filter(const factors& f) const {
 
 
 /*
-	Õâ¸öº¯ÊıÓÃÓÚ´òÓ¡term_set½á¹¹ÌåÖĞfun[i].nameºÍ¼Ì³ĞÁËconf_independent_terms½á¹¹Ìå
-	µÄterm_set½á¹¹ÌåµÄÖĞfun[i].name£¬ÒÔ¼°funÏòÁ¿ÔªËØ¸öÊı×ÜºÍºÍcutoffÖĞµÄ×î´óÖµ
+	è¿™ä¸ªå‡½æ•°ç”¨äºæ‰“å°term_setç»“æ„ä½“ä¸­fun[i].nameå’Œç»§æ‰¿äº†conf_independent_termsç»“æ„ä½“
+	çš„term_setç»“æ„ä½“çš„ä¸­fun[i].nameï¼Œä»¥åŠfunå‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œå’Œcutoffä¸­çš„æœ€å¤§å€¼
 */
 
 void terms::display_info() const {
-	std::vector<std::string> enabled_names = get_names(true);//·µ»Ø°üº¬term_set½á¹¹ÌåÖĞfun[i].nameµÄstringÏòÁ¿£¬
+	std::vector<std::string> enabled_names = get_names(true);//è¿”å›åŒ…å«term_setç»“æ„ä½“ä¸­fun[i].nameçš„stringå‘é‡ï¼Œ
 	std::cout << "Enabled terms: \n";  
 	VINA_FOR_IN(i, enabled_names)                 //for(i=0;i<enabled_names.size;i++)
-		std::cout << enabled_names[i] << '\n';   //½«fun[i].name´òÓ¡³öÀ´
+		std::cout << enabled_names[i] << '\n';   //å°†fun[i].nameæ‰“å°å‡ºæ¥
 	std::cout << '\n';
 
 	std::vector<std::string> enabled_operators;
-	conf_independent_terms.get_names(true, enabled_operators);   //out·µ»Ø°üº¬¼Ì³ĞÁËconf_independent_terms½á¹¹Ìå
-																 //µÄterm_set½á¹¹ÌåµÄÖĞfun[i].nameµÄstringÏòÁ¿£¬
+	conf_independent_terms.get_names(true, enabled_operators);   //outè¿”å›åŒ…å«ç»§æ‰¿äº†conf_independent_termsç»“æ„ä½“
+																 //çš„term_setç»“æ„ä½“çš„ä¸­fun[i].nameçš„stringå‘é‡ï¼Œ
 	std::cout << "Enabled conf-independent operators: \n"; 
 	VINA_FOR_IN(i, enabled_operators)						//for(i=0;i<enabled_operators.size;i++)
-		std::cout << enabled_operators[i] << '\n';				//½«fun[i].name´òÓ¡³öÀ´
+		std::cout << enabled_operators[i] << '\n';				//å°†fun[i].nameæ‰“å°å‡ºæ¥
 	std::cout << '\n';
 
-	VINA_SHOW(size());                          //´òÓ¡Ò»´Îsize£¨£©=ÏòÁ¿ÔªËØ¸öÊı×ÜºÍ
-												//¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								                //usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								                //additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-									            //intermolecular_termsµÄfunÏòÁ¿ÔªËØ¸öÊı×ÜºÍ
+	VINA_SHOW(size());                          //æ‰“å°ä¸€æ¬¡sizeï¼ˆï¼‰=å‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œ
+												//è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								                //usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								                //additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+									            //intermolecular_termsçš„funå‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œ
 
-	VINA_SHOW(size_internal());               //´òÓ¡Ò»´Îsize_internal()=funÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
-											  //¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-										      //usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-										      //additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
+	VINA_SHOW(size_internal());               //æ‰“å°ä¸€æ¬¡size_internal()=funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
+											  //è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+										      //usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+										      //additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
 
-	VINA_SHOW(max_r_cutoff());              //´òÓ¡Ò»´Îmax_r_cutoff()=cutoffµÄ×î´óÖµ
-											//distance_additive_terms.fun[i].cutoff¡¢usable_terms.fun[i].cutoff¡¢
-										    //additive_terms.fun[i].cutoffÖĞµÄ×î´óÖµ
+	VINA_SHOW(max_r_cutoff());              //æ‰“å°ä¸€æ¬¡max_r_cutoff()=cutoffçš„æœ€å¤§å€¼
+											//distance_additive_terms.fun[i].cutoffã€usable_terms.fun[i].cutoffã€
+										    //additive_terms.fun[i].cutoffä¸­çš„æœ€å¤§å€¼
 }

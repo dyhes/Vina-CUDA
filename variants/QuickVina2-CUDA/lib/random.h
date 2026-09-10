@@ -28,12 +28,12 @@
 
 typedef boost::mt19937 rng;
 
-fl random_fl(fl a, fl b, rng& generator); // ÔÚdoubleÀàĞÍµÄÊäÈëa¡¢bÖ®¼äÉú³É¾ùÔÈ·Ö²¼µÄËæ»úÊı£¬²¢·µ»Øº¯Êı  doubleÀàĞÍ
-fl random_normal(fl mean, fl sigma, rng& generator); // ÔÚdoubleÀàĞÍµÄÊäÈëmean¡¢sigmaÖ®¼äÉú³ÉÕıÌ¬·Ö²¼µÄËæ»úÊı£¬²¢·µ»Øº¯Êı  doubleÀàĞÍ
-int random_int(int a, int b, rng& generator); // ÔÚintÀàĞÍµÄÊäÈëa¡¢bÖ®¼äÉú³É¾ùÔÈ·Ö²¼µÄËæ»úÕûÊı£¬²¢·µ»Øº¯Êı  intÀàĞÍ
-sz random_sz(sz a, sz b, rng& generator); // ÔÚunsigned intÀàĞÍµÄÊäÈëa¡¢bÖ®¼äÉú³É¾ùÔÈ·Ö²¼µÄËæ»úÕûÊı£¬²¢·µ»Øº¯Êı unsigned intÀàĞÍ
-vec random_inside_sphere(rng& generator); // µ±ĞÅºÅtureµ½À´µÄÊ±ºò£¬·µ»ØÒ»¸öÊı×é£¬²¢ÇÒÊı×éµÄÈı¸öÊıÔÚÒÔ0ÎªÔ²ĞÄ£¬°ë¾¶Îª1µÄÇòÌåÄÚ  double
-vec random_in_box(const vec& corner1, const vec& corner2, rng& generator); // ÊäÈëÁ½¸öÊı×é£¬²úÉúÒ»¸öËæ»úÊı×é£¬ÒªÇóÉú³ÉÔÚcorner1[i]-corner2[i]Ö®¼ä   double
-int auto_seed(); // ·µ»ØÊ±¼äºÍµ±Ç°½ø³ÌµÄ±êÊ¾·û(PID)µÄ³Ë»ı   intÀàĞÍ
+fl random_fl(fl a, fl b, rng& generator); // åœ¨doubleç±»å‹çš„è¾“å…¥aã€bä¹‹é—´ç”Ÿæˆå‡åŒ€åˆ†å¸ƒçš„éšæœºæ•°ï¼Œå¹¶è¿”å›å‡½æ•°  doubleç±»å‹
+fl random_normal(fl mean, fl sigma, rng& generator); // åœ¨doubleç±»å‹çš„è¾“å…¥meanã€sigmaä¹‹é—´ç”Ÿæˆæ­£æ€åˆ†å¸ƒçš„éšæœºæ•°ï¼Œå¹¶è¿”å›å‡½æ•°  doubleç±»å‹
+int random_int(int a, int b, rng& generator); // åœ¨intç±»å‹çš„è¾“å…¥aã€bä¹‹é—´ç”Ÿæˆå‡åŒ€åˆ†å¸ƒçš„éšæœºæ•´æ•°ï¼Œå¹¶è¿”å›å‡½æ•°  intç±»å‹
+sz random_sz(sz a, sz b, rng& generator); // åœ¨unsigned intç±»å‹çš„è¾“å…¥aã€bä¹‹é—´ç”Ÿæˆå‡åŒ€åˆ†å¸ƒçš„éšæœºæ•´æ•°ï¼Œå¹¶è¿”å›å‡½æ•° unsigned intç±»å‹
+vec random_inside_sphere(rng& generator); // å½“ä¿¡å·tureåˆ°æ¥çš„æ—¶å€™ï¼Œè¿”å›ä¸€ä¸ªæ•°ç»„ï¼Œå¹¶ä¸”æ•°ç»„çš„ä¸‰ä¸ªæ•°åœ¨ä»¥0ä¸ºåœ†å¿ƒï¼ŒåŠå¾„ä¸º1çš„çƒä½“å†…  double
+vec random_in_box(const vec& corner1, const vec& corner2, rng& generator); // è¾“å…¥ä¸¤ä¸ªæ•°ç»„ï¼Œäº§ç”Ÿä¸€ä¸ªéšæœºæ•°ç»„ï¼Œè¦æ±‚ç”Ÿæˆåœ¨corner1[i]-corner2[i]ä¹‹é—´   double
+int auto_seed(); // è¿”å›æ—¶é—´å’Œå½“å‰è¿›ç¨‹çš„æ ‡ç¤ºç¬¦(PID)çš„ä¹˜ç§¯   intç±»å‹
 
 #endif

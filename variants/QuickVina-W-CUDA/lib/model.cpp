@@ -26,17 +26,17 @@
 
 
 /*
-* º¯ÊıÄ£°åget_atom_range,»ñÈ¡Ô­×Ó¾àÀë
-* input:TÀàĞÍ¶ÔÏót£¨Èç£ºligandÀà£©
-* output£ºatom_rangeÀà
-* ×÷ÓÃ£ºÔÚÒ»¸ö½ÚµãÉÏ£¬¿½±´Ò»¸ötµÄ³ÉÔ±node(atom_rangeÀà),²¢½«tµÄ³ÉÔ±childrenÈİÆ÷µÄËùÓĞÔªËØµÄ³ÉÔ±beginµÄ×îĞ¡Öµ¸³Öµ¸ø¸Ã¿½±´µÄ³ÉÔ±begin£¬ÈİÆ÷ËùÓĞÔªËØµÄ³ÉÔ±endµÄ×î´óÖµ¸³Öµ¸ø¸Ã¿½±´µÄ³ÉÔ±end
-*        ÍêÕûËµÃ÷¼ûÍ¼Ò»
+* å‡½æ•°æ¨¡æ¿get_atom_range,è·å–åŸå­è·ç¦»
+* input:Tç±»å‹å¯¹è±¡tï¼ˆå¦‚ï¼šligandç±»ï¼‰
+* outputï¼šatom_rangeç±»
+* ä½œç”¨ï¼šåœ¨ä¸€ä¸ªèŠ‚ç‚¹ä¸Šï¼Œæ‹·è´ä¸€ä¸ªtçš„æˆå‘˜node(atom_rangeç±»),å¹¶å°†tçš„æˆå‘˜childrenå®¹å™¨çš„æ‰€æœ‰å…ƒç´ çš„æˆå‘˜beginçš„æœ€å°å€¼èµ‹å€¼ç»™è¯¥æ‹·è´çš„æˆå‘˜beginï¼Œå®¹å™¨æ‰€æœ‰å…ƒç´ çš„æˆå‘˜endçš„æœ€å¤§å€¼èµ‹å€¼ç»™è¯¥æ‹·è´çš„æˆå‘˜end
+*        å®Œæ•´è¯´æ˜è§å›¾ä¸€
 */
 
 template<typename T>
 atom_range get_atom_range(const T& t) {
-	atom_range tmp = t.node;//¶¨ÒåÒ»¸öÁÙÊ±atom_range¶ÔÏótmp£¬´æ·ÅtµÄ³ÉÔ±node
-	//±éÀútµÄ³ÉÔ±childrenÈİÆ÷,»ñµÃÈİÆ÷ËùÓĞÔªËØµÄ³ÉÔ±beginµÄ×îĞ¡Öµ²¢¸³Öµ¸øtmpµÄ³ÉÔ±begin£¬»ñµÃÈİÆ÷ËùÓĞÔªËØµÄ³ÉÔ±endµÄ×î´óÖµ²¢¸³Öµ¸øtmpµÄ³ÉÔ±end
+	atom_range tmp = t.node;//å®šä¹‰ä¸€ä¸ªä¸´æ—¶atom_rangeå¯¹è±¡tmpï¼Œå­˜æ”¾tçš„æˆå‘˜node
+	//éå†tçš„æˆå‘˜childrenå®¹å™¨,è·å¾—å®¹å™¨æ‰€æœ‰å…ƒç´ çš„æˆå‘˜beginçš„æœ€å°å€¼å¹¶èµ‹å€¼ç»™tmpçš„æˆå‘˜beginï¼Œè·å¾—å®¹å™¨æ‰€æœ‰å…ƒç´ çš„æˆå‘˜endçš„æœ€å¤§å€¼å¹¶èµ‹å€¼ç»™tmpçš„æˆå‘˜end
 	VINA_FOR_IN(i, t.children) {
 		atom_range r = get_atom_range(t.children[i]);
 		if(tmp.begin > r.begin) tmp.begin = r.begin;
@@ -46,7 +46,7 @@ atom_range get_atom_range(const T& t) {
 }
 
 
-//½á¹¹Ìåbranch_metrics£¬Ä¬ÈÏ³õÊ¼»¯unsigned intÀàĞÍµÄÊı¾İ³ÉÔ±length£¬corner2corner¾ùÎª0
+//ç»“æ„ä½“branch_metricsï¼Œé»˜è®¤åˆå§‹åŒ–unsigned intç±»å‹çš„æ•°æ®æˆå‘˜lengthï¼Œcorner2cornerå‡ä¸º0
 struct branch_metrics {
 	sz length;
 	sz corner2corner;
@@ -55,42 +55,42 @@ struct branch_metrics {
 
 
 /*
-* º¯ÊıÄ£°åget_branch_metrics
-* input:TÀàĞÍ¶ÔÏót
-* output£ºbranch_metricsÀà
-* ×÷ÓÃ£º¼ûÍ¼Ò»½âÊÍ
+* å‡½æ•°æ¨¡æ¿get_branch_metrics
+* input:Tç±»å‹å¯¹è±¡t
+* outputï¼šbranch_metricsç±»
+* ä½œç”¨ï¼šè§å›¾ä¸€è§£é‡Š
 */
 template<typename T>
 branch_metrics get_branch_metrics(const T& t) {
-	//¶¨ÒåÒ»¸öÁÙÊ±branch_metricsÀà¶ÔÏótmp£¬±£´æ·µ»ØÖµ
+	//å®šä¹‰ä¸€ä¸ªä¸´æ—¶branch_metricsç±»å¯¹è±¡tmpï¼Œä¿å­˜è¿”å›å€¼
 	branch_metrics tmp;
-	//ÅĞ¶ÏtµÄ³ÉÔ±childrenÊÇ·ñÎª¿Õ£¬Îª¿ÕÖ±½Ó·µ»ØÄ¬ÈÏ³õÊ¼»¯µÄbranch_metricsÀà¶ÔÏó£¬·ñÔò¼ÌĞøÖ´ĞĞÒÔÏÂ´úÂë£¬
+	//åˆ¤æ–­tçš„æˆå‘˜childrenæ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºç›´æ¥è¿”å›é»˜è®¤åˆå§‹åŒ–çš„branch_metricsç±»å¯¹è±¡ï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä»¥ä¸‹ä»£ç ï¼Œ
 	if(!t.children.empty()) {
-		//¶¨Òåunsigned intÀàĞÍÊı¾İcorner2corner_max£¬³õÊ¼»¯Îª0
+		//å®šä¹‰unsigned intç±»å‹æ•°æ®corner2corner_maxï¼Œåˆå§‹åŒ–ä¸º0
 		sz corner2corner_max = 0;
-		//¶¨Òåunsigned intÀàĞÍÊı¾İÈİÆ÷lengths
+		//å®šä¹‰unsigned intç±»å‹æ•°æ®å®¹å™¨lengths
 		szv lengths;
 
-		//±éÀútµÄ³ÉÔ±childrenÈİÆ÷
+		//éå†tçš„æˆå‘˜childrenå®¹å™¨
 		VINA_FOR_IN(i, t.children) {
-			branch_metrics res = get_branch_metrics(t.children[i]);//µİ¹éµ÷ÓÃ
-			if(corner2corner_max < res.corner2corner)//ÅĞ¶Ïcorner2corner_maxÊÇ·ñĞ¡ÓÚ´Ë×Ó·ÖÖ§µÄcorner2corner£¬ÊÇÔò¸³Öµcorner2corner¸øcorner2corner_max
+			branch_metrics res = get_branch_metrics(t.children[i]);//é€’å½’è°ƒç”¨
+			if(corner2corner_max < res.corner2corner)//åˆ¤æ–­corner2corner_maxæ˜¯å¦å°äºæ­¤å­åˆ†æ”¯çš„corner2cornerï¼Œæ˜¯åˆ™èµ‹å€¼corner2cornerç»™corner2corner_max
 				corner2corner_max = res.corner2corner;
-			lengths.push_back(res.length + 1); //½«×Ó·ÖÖ§µÄ³¤¶È¼ÓÒ»´æÈëÈİÆ÷lengthsÖĞ   FIXME? weird compiler warning (sz -> unsigned)
+			lengths.push_back(res.length + 1); //å°†å­åˆ†æ”¯çš„é•¿åº¦åŠ ä¸€å­˜å…¥å®¹å™¨lengthsä¸­   FIXME? weird compiler warning (sz -> unsigned)
 		}
 
-		//°´ÉıĞòÅÅĞòlengthsÈİÆ÷µÄÔªËØ
+		//æŒ‰å‡åºæ’åºlengthså®¹å™¨çš„å…ƒç´ 
 		std::sort(lengths.begin(), lengths.end());
 
-		//·µ»ØlengthsÈİÆ÷ÖĞÄ©Î²ÔªËØµÄÒıÓÃ£¬¸³Öµ¸øtmpµÄlength³ÉÔ±
+		//è¿”å›lengthså®¹å™¨ä¸­æœ«å°¾å…ƒç´ çš„å¼•ç”¨ï¼Œèµ‹å€¼ç»™tmpçš„lengthæˆå‘˜
 		tmp.length = lengths.back();
 
-		//tmpµÄlength³ÉÔ±¿½±´¸øtmpµÄcorner2corner³ÉÔ±
+		//tmpçš„lengthæˆå‘˜æ‹·è´ç»™tmpçš„corner2corneræˆå‘˜
 		tmp.corner2corner = tmp.length;
-		//Èç¹ûÈİÆ÷lengthsµÄ´óĞ¡´óÓÚµÈÓÚ2£¬tmpµÄcorner2corner³ÉÔ±¸³ÖµÎªlengths×î´óÔªËØµÄÁ½±¶
+		//å¦‚æœå®¹å™¨lengthsçš„å¤§å°å¤§äºç­‰äº2ï¼Œtmpçš„corner2corneræˆå‘˜èµ‹å€¼ä¸ºlengthsæœ€å¤§å…ƒç´ çš„ä¸¤å€
 		if(lengths.size() >= 2)
-			tmp.corner2corner += lengths[lengths.size() - 1];//°´ÓïÒå£¬ÎÒ¾õµÃ´Ë´¦Ó¦¸Ãlengths.size() - 2£¬²»ÖªµÀÊÇ²»ÊÇ³ÌĞòĞ´´íÁË
-		//Èç¹ûtmpµÄcorner2corner³ÉÔ±Ğ¡ÓÚcorner2corner_max£¬½«corner2corner_maxµÄÖµ¸³Öµ¸øcorner2corner
+			tmp.corner2corner += lengths[lengths.size() - 1];//æŒ‰è¯­ä¹‰ï¼Œæˆ‘è§‰å¾—æ­¤å¤„åº”è¯¥lengths.size() - 2ï¼Œä¸çŸ¥é“æ˜¯ä¸æ˜¯ç¨‹åºå†™é”™äº†
+		//å¦‚æœtmpçš„corner2corneræˆå‘˜å°äºcorner2corner_maxï¼Œå°†corner2corner_maxçš„å€¼èµ‹å€¼ç»™corner2corner
 		if(tmp.corner2corner < corner2corner_max)
 			tmp.corner2corner = corner2corner_max;
 	}
@@ -98,9 +98,9 @@ branch_metrics get_branch_metrics(const T& t) {
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êıligand_longest_branch
-* input:unsigned intÀàĞÍligand_number
-* output: modelµÄ³ÉÔ±ligandsÈİÆ÷µÄligand_number¸öÔªËØ¶ÔÓ¦µÄbranch_metricsÀàµÄlengthÊı¾İ
+* modelçš„æˆå‘˜å‡½æ•°ligand_longest_branch
+* input:unsigned intç±»å‹ligand_number
+* output: modelçš„æˆå‘˜ligandså®¹å™¨çš„ligand_numberä¸ªå…ƒç´ å¯¹åº”çš„branch_metricsç±»çš„lengthæ•°æ®
 */
 sz model::ligand_longest_branch(sz ligand_number) const {
 	return get_branch_metrics(ligands[ligand_number]).length;
@@ -108,20 +108,20 @@ sz model::ligand_longest_branch(sz ligand_number) const {
 
 
 /*
-* modelµÄ³ÉÔ±º¯Êılength
-* input:unsigned intÀàĞÍligand_number
-* output: modelµÄ³ÉÔ±ligandsÈİÆ÷µÄligand_number¸öÔªËØ¶ÔÓ¦µÄbranch_metricsÀàµÄcorner2cornerÊı¾İ
+* modelçš„æˆå‘˜å‡½æ•°length
+* input:unsigned intç±»å‹ligand_number
+* output: modelçš„æˆå‘˜ligandså®¹å™¨çš„ligand_numberä¸ªå…ƒç´ å¯¹åº”çš„branch_metricsç±»çš„corner2corneræ•°æ®
 */
 sz model::ligand_length(sz ligand_number) const {
 	return get_branch_metrics(ligands[ligand_number]).corner2corner;
 }
 
 /*
-* ligandµÄ³ÉÔ±º¯Êıset_range
-* input:ÎŞ
-* output: ÎŞ
-* ×÷ÓÃ£º»ñÈ¡ligandµÄ³ÉÔ±nodeµÄbegin£¬ºÍÆäËùÓĞºó´úµÄ³ÉÔ±nodeµÄbegin£¬ÕÒµ½×îĞ¡Öµ¸³Öµ¸øbegin
-*       »ñÈ¡ligandµÄ³ÉÔ±nodeµÄend£¬  ºÍÆäËùÓĞºó´úµÄ³ÉÔ±nodeµÄend£¬  ÕÒµ½×î´óÖµ¸³Öµ¸øend
+* ligandçš„æˆå‘˜å‡½æ•°set_range
+* input:æ— 
+* output: æ— 
+* ä½œç”¨ï¼šè·å–ligandçš„æˆå‘˜nodeçš„beginï¼Œå’Œå…¶æ‰€æœ‰åä»£çš„æˆå‘˜nodeçš„beginï¼Œæ‰¾åˆ°æœ€å°å€¼èµ‹å€¼ç»™begin
+*       è·å–ligandçš„æˆå‘˜nodeçš„endï¼Œ  å’Œå…¶æ‰€æœ‰åä»£çš„æˆå‘˜nodeçš„endï¼Œ  æ‰¾åˆ°æœ€å¤§å€¼èµ‹å€¼ç»™end
 */
 void ligand::set_range() {
 	atom_range tmp = get_atom_range(*this);
@@ -134,13 +134,13 @@ void ligand::set_range() {
 // FIXME hairy code - needs to be extensively commented, asserted, reviewed and tested
 
 /*
-* ½á¹¹Ìå£ºappender_info
-* ³ÉÔ±£º1.unsigend intÀàĞÍgrid_atoms_size£¬m_num_movable_atoms£¬atoms_size
-*       2.¹¹Ôìº¯Êıº¯Êı£º
-*           ³õÊ¼»¯Ê±ÊäÈëÒ»¸ömodel¶ÔÏó£¬
-*           model¶ÔÏóµÄ³ÉÔ±grid_atomsÈİÆ÷´óĞ¡¸³Öµ¸øgrid_atoms_size£¬
-*           model¶ÔÏóµÄ³ÉÔ±m_num_movable_atoms¸³Öµ¸øm_num_movable_atoms£¬
-*           model¶ÔÏóµÄ³ÉÔ±atomsÈİÆ÷´óĞ¡¸³Öµ¸øatoms_size
+* ç»“æ„ä½“ï¼šappender_info
+* æˆå‘˜ï¼š1.unsigend intç±»å‹grid_atoms_sizeï¼Œm_num_movable_atomsï¼Œatoms_size
+*       2.æ„é€ å‡½æ•°å‡½æ•°ï¼š
+*           åˆå§‹åŒ–æ—¶è¾“å…¥ä¸€ä¸ªmodelå¯¹è±¡ï¼Œ
+*           modelå¯¹è±¡çš„æˆå‘˜grid_atomså®¹å™¨å¤§å°èµ‹å€¼ç»™grid_atoms_sizeï¼Œ
+*           modelå¯¹è±¡çš„æˆå‘˜m_num_movable_atomsèµ‹å€¼ç»™m_num_movable_atomsï¼Œ
+*           modelå¯¹è±¡çš„æˆå‘˜atomså®¹å™¨å¤§å°èµ‹å€¼ç»™atoms_size
 */
 struct appender_info {
 	sz grid_atoms_size;
@@ -151,81 +151,81 @@ struct appender_info {
 };
 
 /*
-* Àà£ºappender
-* ³ÉÔ±£ºprivate:1.appender_infoÀàa_info
-*               2.appender_infoÀàb_info
-*               3.³£Á¿º¯Êınew_grid_index£º
-*							input:unsigned intÀàĞÍx
-*							output:unsigned intÀàĞÍ
-*							×÷ÓÃ£º¸ù¾İappenderÀàµÄ²¼¶ûÖµis_a£¬ÎªÕæ·µ»Øx£¬Îª¼Ù·µ»Øa_infoµÄ³ÉÔ±grid_atoms_size+x
+* ç±»ï¼šappender
+* æˆå‘˜ï¼šprivate:1.appender_infoç±»a_info
+*               2.appender_infoç±»b_info
+*               3.å¸¸é‡å‡½æ•°new_grid_indexï¼š
+*							input:unsigned intç±»å‹x
+*							output:unsigned intç±»å‹
+*							ä½œç”¨ï¼šæ ¹æ®appenderç±»çš„å¸ƒå°”å€¼is_aï¼Œä¸ºçœŸè¿”å›xï¼Œä¸ºå‡è¿”å›a_infoçš„æˆå‘˜grid_atoms_size+x
 *       
-*		public: 1.boolÀàĞÍis_a
-*			    2.¹¹Ôìº¯Êı£ºÊäÈëÁ½¸ömodelÀà¶ÔÏó£¬·Ö±ğ°ó¶¨µ½a_info£¬b_info£¬is_a³õÊ¼»¯ÎªÕæ
-*               3.¶¨Òåµ÷ÓÃ²Ù×÷·û£¨£©
-*							input:unsigned intÀàĞÍx
-*							output:unsigned intÀàĞÍ
-*							×÷ÓÃ£º¸ù¾İappenderÀàµÄ²¼¶ûÖµis_a£¬ÎªÕæÅĞ¶ÏxÊÇ·ñĞ¡ÓÚa_info¶ÔÏóµÄm_num_movable_atoms£¬ÎªÕæ·µ»Øx
-*																												Îª¼Ù·µ»Øb_info¶ÔÏóµÄm_num_movable_atoms+x
-*															  ÎªÕæÅĞ¶ÏxÊÇ·ñĞ¡ÓÚb_info¶ÔÏóµÄm_num_movable_atoms£¬ÎªÕæ·µ»Øa_info¶ÔÏóµÄm_num_movable_atoms+x															
-*                											  												    Îª¼Ù·µ»Øa_info¶ÔÏóµÄatoms_size+x
-*               4.ÖØÔØµ÷ÓÃ²Ù×÷·û£¨£©
-* 							input:atom_indexÀà¶ÔÏóx
-* 							output:atom_indexÀà
-* 							×÷ÓÃ£º½«x¿½±´¸øtmp£¬ÅĞ¶ÏtmpµÄ³ÉÔ±in_gridÊÇ·ñÎªÕæ£¬ÊÇÔòÁîtmpµÄ³ÉÔ±iµÈÓÚ½«ÊäÈëtmpµÄ³ÉÔ±inew_grid_indexºóµÄ·µ»ØÖµ
-*																			  ·ñÔòÁîtmpµÄ³ÉÔ±iµÈÓÚ½«ÊäÈëtmpµÄ³ÉÔ±operatorºóµÄ·µ»ØÖµ
-*                                 ·µ»Øtmp
-*				5.³£Á¿º¯Êıupdate
-*							input:interacting_pairÀàÒıÓÃip
-* 							output:ÎŞ
-* 							×÷ÓÃ£º½«ipµÄ³ÉÔ±aÊäÈëoperator()º¯Êı·µ»ØĞÂµÄipµÄ³ÉÔ±a
-*                 				  ½«ipµÄ³ÉÔ±bÊäÈëoperator()º¯Êı·µ»ØĞÂµÄipµÄ³ÉÔ±b
-*				6.ÖØÔØupdate
-*							input:Ê¸Á¿vecµÄÒıÓÃ
-* 							output:ÎŞ
-* 							×÷ÓÃ£ºÎŞ
-*				7.ÖØÔØupdate
-*							input:ligandÀàÒıÓÃlig
-*							output:ÎŞ
-*							×÷ÓÃ£º£¨1£©	1.½«´ËappenderÀà¶ÔÏó(*this)´«Èëtransformº¯ÊıÖĞ
-*									    2.»ñÈ¡ligµÄ³ÉÔ±beginºÍend£¬¼ÆËãdiff = end + begin
-*									    3.¸ù¾İÉÏÊö¶¨ÒåµÄ¶¨Òåµ÷ÓÃ²Ù×÷·û£¨£©£¬¶Ô*thisÊ¹ÓÃµ÷ÓÃ²Ù×÷·û¼ÆËã£¨*this)(begin)£¬²¢¸³Öµ¸øbegin
-*									    4.¼ÆËãend = begin + diff  
-* 								  £¨2£© 1.¸üĞÂligµÄ³ÉÔ±nodeµÄ³ÉÔ±beginºÍend£¬¼°ÆäËùÓĞºó´úµÄ³ÉÔ±nodeµÄ³ÉÔ±beginºÍend
-* 									    2.ºó´ú»ñÈ¡·½Ê½ÎªÀıÈç£ººóÒ»´úlig.children[i]£¬ºó¶ş´úlig.children[i][j],ºóÈı´úlig.children[i][j][k]........µÈµÈ£¬Ö±µ½ËùÓĞµÄºó´úÃ»ÓĞº¢×ÓÎªÖ¹
-* 									    3.ËùÓĞ¸öÌå¸üĞÂ·½Ê½¾ùÏàÍ¬£¬¾ÙÒ»ÀıËµÃ÷£¬ÆäËû¾ùÏàÍ¬
-* 									    4.¼ÆËãdiff= end - begin;½«beginÊäÈë±¾appenderÀàµ÷ÓÃ²Ù×÷·û£¨£©£¬»ñÈ¡ĞÂbegin;ÖØĞÂ¼ÆËãend = begin + diff
-* 								  £¨3£©±éÀúlig³ÉÔ±pairs£¬½«pairsµÄÔªËØÊäÈëupdate(interacting_pair& ip)£¬»ñÈ¡¸üĞÂºóµÄpairs
-* 								  £¨4£©±éÀúlig³ÉÔ±cont£¬½«contµÄÔªËØÊäÈëupdate(parsed_line& p)£¬»ñÈ¡¸üĞÂºóµÄcont
-*				8.ÖØÔØupdate
-*							input:residueÀàÒıÓÃr
-* 							output:ÎŞ
-* 							×÷ÓÃ£º1.¸üĞÂrµÄ³ÉÔ±nodeµÄ³ÉÔ±beginºÍend£¬¼°ÆäËùÓĞºó´úµÄ³ÉÔ±nodeµÄ³ÉÔ±beginºÍend
-* 							      2.ºó´ú»ñÈ¡·½Ê½ÎªÀıÈç£ººóÒ»´úr.children[i]£¬ºó¶ş´úr.children[i][j],ºóÈı´úr.children[i][j][k]........µÈµÈ£¬Ö±µ½ËùÓĞµÄºó´úÃ»ÓĞº¢×ÓÎªÖ¹
-* 								  3.ËùÓĞ¸öÌå¸üĞÂ·½Ê½¾ùÏàÍ¬£¬¾ÙÒ»ÀıËµÃ÷£¬ÆäËû¾ùÏàÍ¬
-* 							      4.¼ÆËãdiff= end - begin;½«beginÊäÈë±¾appenderÀàµ÷ÓÃ²Ù×÷·û£¨£©£¬»ñÈ¡ĞÂbegin;ÖØĞÂ¼ÆËãend = begin + diff
-*               9.ÖØÔØupdate
-*							input:parsed_lineÀàÒıÓÃp
-*                           output:ÎŞ
-*							×÷ÓÃ£ºÅĞ¶ÏpµÄoptionalÀà¶ÔÏóÊÇ·ñÎª¿Õ£¬²»Îª¿ÕÔò½«optionalÀà¶ÔÏóµÄÔªËØÊäÈëº¯Êıoperator()ÖĞ£¬·µ»ØÖµÖØĞÂ¸³Öµ¸øoptionalÀà¶ÔÏó
-*               10.ÖØÔØupdate
-*							input:atomÀàÒıÓÃa
-* 							output:ÎŞ
-* 							×÷ÓÃ:±éÀúaµÄ³ÉÔ±bondsµÄÔªËØ£¬½«ÔªËØµÄ³ÉÔ±connected_atom_indexÊäÈëÖØÔØµÄoperatorº¯Êı£¬¸üĞÂconnected_atom_index
-*				11.º¯ÊıÄ£°å£ºappend
-*                  input:TÀàĞÍµÄÈİÆ÷ÒıÓÃa£¬TÀàĞÍµÄ³£Á¿ÈİÆ÷ÒıÓÃb         
-*				   output:ÎŞ				
-* 				   ×÷ÓÃ£º1.»ñÈ¡aÈİÆ÷µÄ´óĞ¡a_sz				
-* 					     2.½«ÈİÆ÷bµÄÔªËØÌí¼Óµ½ÈİÆ÷aÎ²²¿				
-* 				         3.½«is_aµÄÖµ¸³ÎªÕæ£¬¸üĞÂÈİÆ÷aÔ­À´µÄÔªËØ£¬½«ÆäÃ¿¸öÔªËØ¸ù¾İTÒÀ´Î´«½ø¶ÔÓ¦ÖØÔØ°æ±¾updateº¯Êı
-* 				         4.½«is_aµÄÖµ¸³Îª¼Ù£¬¸üĞÂÈİÆ÷aĞÂÌí¼ÓµÄÔªËØ£¬½«ÆäÃ¿¸öÔªËØ¸ù¾İTÒÀ´Î´«½ø¶ÔÓ¦ÖØÔØ°æ±¾updateº¯Êı
-*				12.º¯ÊıÄ£°å£ºcoords_append
-* 				   input:TÀàĞÍµÄÈİÆ÷ÒıÓÃa£¬TÀàĞÍµÄ³£Á¿ÈİÆ÷ÒıÓÃb         
-* 				   output:ÎŞ				
-* 				   ×÷ÓÃ£º1.¹¹ÔìbµÄ¿½±´b_copy
-*						 2.½«is_aµÄÖµ¸³ÎªÕæ£¬¸üĞÂÈİÆ÷aµÄÔªËØ£¬½«ÆäÃ¿¸öÔªËØ¸ù¾İTÒÀ´Î´«½ø¶ÔÓ¦ÖØÔØ°æ±¾updateº¯Êı
-*						 3.½«is_aµÄÖµ¸³Îª¼Ù£¬¸üĞÂÈİÆ÷b_copyµÄÔªËØ£¬½«ÆäÃ¿¸öÔªËØ¸ù¾İTÒÀ´Î´«½ø¶ÔÓ¦ÖØÔØ°æ±¾updateº¯Êı
-*					     4.½«b_copyÈİÆ÷Í·²¿Ò»²¿·ÖÔªËØ£¨b_info³ÉÔ±m_num_movable_atoms´óĞ¡ÊıÄ¿£©²åÈëaµÄÄ³Ò»ÔªËØ£¨ÏÂ±êÎªa_info³ÉÔ±m_num_movable_atomsb_info´óĞ¡£©Ç°
-* 					     5.½«b_copyÈİÆ÷Ê£ÏÂÔªËØ²åÈëaµÄÎ²²¿
+*		public: 1.boolç±»å‹is_a
+*			    2.æ„é€ å‡½æ•°ï¼šè¾“å…¥ä¸¤ä¸ªmodelç±»å¯¹è±¡ï¼Œåˆ†åˆ«ç»‘å®šåˆ°a_infoï¼Œb_infoï¼Œis_aåˆå§‹åŒ–ä¸ºçœŸ
+*               3.å®šä¹‰è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰
+*							input:unsigned intç±»å‹x
+*							output:unsigned intç±»å‹
+*							ä½œç”¨ï¼šæ ¹æ®appenderç±»çš„å¸ƒå°”å€¼is_aï¼Œä¸ºçœŸåˆ¤æ–­xæ˜¯å¦å°äºa_infoå¯¹è±¡çš„m_num_movable_atomsï¼Œä¸ºçœŸè¿”å›x
+*																												ä¸ºå‡è¿”å›b_infoå¯¹è±¡çš„m_num_movable_atoms+x
+*															  ä¸ºçœŸåˆ¤æ–­xæ˜¯å¦å°äºb_infoå¯¹è±¡çš„m_num_movable_atomsï¼Œä¸ºçœŸè¿”å›a_infoå¯¹è±¡çš„m_num_movable_atoms+x															
+*                											  												    ä¸ºå‡è¿”å›a_infoå¯¹è±¡çš„atoms_size+x
+*               4.é‡è½½è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰
+* 							input:atom_indexç±»å¯¹è±¡x
+* 							output:atom_indexç±»
+* 							ä½œç”¨ï¼šå°†xæ‹·è´ç»™tmpï¼Œåˆ¤æ–­tmpçš„æˆå‘˜in_gridæ˜¯å¦ä¸ºçœŸï¼Œæ˜¯åˆ™ä»¤tmpçš„æˆå‘˜iç­‰äºå°†è¾“å…¥tmpçš„æˆå‘˜inew_grid_indexåçš„è¿”å›å€¼
+*																			  å¦åˆ™ä»¤tmpçš„æˆå‘˜iç­‰äºå°†è¾“å…¥tmpçš„æˆå‘˜operatoråçš„è¿”å›å€¼
+*                                 è¿”å›tmp
+*				5.å¸¸é‡å‡½æ•°update
+*							input:interacting_pairç±»å¼•ç”¨ip
+* 							output:æ— 
+* 							ä½œç”¨ï¼šå°†ipçš„æˆå‘˜aè¾“å…¥operator()å‡½æ•°è¿”å›æ–°çš„ipçš„æˆå‘˜a
+*                 				  å°†ipçš„æˆå‘˜bè¾“å…¥operator()å‡½æ•°è¿”å›æ–°çš„ipçš„æˆå‘˜b
+*				6.é‡è½½update
+*							input:çŸ¢é‡vecçš„å¼•ç”¨
+* 							output:æ— 
+* 							ä½œç”¨ï¼šæ— 
+*				7.é‡è½½update
+*							input:ligandç±»å¼•ç”¨lig
+*							output:æ— 
+*							ä½œç”¨ï¼šï¼ˆ1ï¼‰	1.å°†æ­¤appenderç±»å¯¹è±¡(*this)ä¼ å…¥transformå‡½æ•°ä¸­
+*									    2.è·å–ligçš„æˆå‘˜beginå’Œendï¼Œè®¡ç®—diff = end + begin
+*									    3.æ ¹æ®ä¸Šè¿°å®šä¹‰çš„å®šä¹‰è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰ï¼Œå¯¹*thisä½¿ç”¨è°ƒç”¨æ“ä½œç¬¦è®¡ç®—ï¼ˆ*this)(begin)ï¼Œå¹¶èµ‹å€¼ç»™begin
+*									    4.è®¡ç®—end = begin + diff  
+* 								  ï¼ˆ2ï¼‰ 1.æ›´æ–°ligçš„æˆå‘˜nodeçš„æˆå‘˜beginå’Œendï¼ŒåŠå…¶æ‰€æœ‰åä»£çš„æˆå‘˜nodeçš„æˆå‘˜beginå’Œend
+* 									    2.åä»£è·å–æ–¹å¼ä¸ºä¾‹å¦‚ï¼šåä¸€ä»£lig.children[i]ï¼ŒåäºŒä»£lig.children[i][j],åä¸‰ä»£lig.children[i][j][k]........ç­‰ç­‰ï¼Œç›´åˆ°æ‰€æœ‰çš„åä»£æ²¡æœ‰å­©å­ä¸ºæ­¢
+* 									    3.æ‰€æœ‰ä¸ªä½“æ›´æ–°æ–¹å¼å‡ç›¸åŒï¼Œä¸¾ä¸€ä¾‹è¯´æ˜ï¼Œå…¶ä»–å‡ç›¸åŒ
+* 									    4.è®¡ç®—diff= end - begin;å°†beginè¾“å…¥æœ¬appenderç±»è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰ï¼Œè·å–æ–°begin;é‡æ–°è®¡ç®—end = begin + diff
+* 								  ï¼ˆ3ï¼‰éå†ligæˆå‘˜pairsï¼Œå°†pairsçš„å…ƒç´ è¾“å…¥update(interacting_pair& ip)ï¼Œè·å–æ›´æ–°åçš„pairs
+* 								  ï¼ˆ4ï¼‰éå†ligæˆå‘˜contï¼Œå°†contçš„å…ƒç´ è¾“å…¥update(parsed_line& p)ï¼Œè·å–æ›´æ–°åçš„cont
+*				8.é‡è½½update
+*							input:residueç±»å¼•ç”¨r
+* 							output:æ— 
+* 							ä½œç”¨ï¼š1.æ›´æ–°rçš„æˆå‘˜nodeçš„æˆå‘˜beginå’Œendï¼ŒåŠå…¶æ‰€æœ‰åä»£çš„æˆå‘˜nodeçš„æˆå‘˜beginå’Œend
+* 							      2.åä»£è·å–æ–¹å¼ä¸ºä¾‹å¦‚ï¼šåä¸€ä»£r.children[i]ï¼ŒåäºŒä»£r.children[i][j],åä¸‰ä»£r.children[i][j][k]........ç­‰ç­‰ï¼Œç›´åˆ°æ‰€æœ‰çš„åä»£æ²¡æœ‰å­©å­ä¸ºæ­¢
+* 								  3.æ‰€æœ‰ä¸ªä½“æ›´æ–°æ–¹å¼å‡ç›¸åŒï¼Œä¸¾ä¸€ä¾‹è¯´æ˜ï¼Œå…¶ä»–å‡ç›¸åŒ
+* 							      4.è®¡ç®—diff= end - begin;å°†beginè¾“å…¥æœ¬appenderç±»è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰ï¼Œè·å–æ–°begin;é‡æ–°è®¡ç®—end = begin + diff
+*               9.é‡è½½update
+*							input:parsed_lineç±»å¼•ç”¨p
+*                           output:æ— 
+*							ä½œç”¨ï¼šåˆ¤æ–­pçš„optionalç±»å¯¹è±¡æ˜¯å¦ä¸ºç©ºï¼Œä¸ä¸ºç©ºåˆ™å°†optionalç±»å¯¹è±¡çš„å…ƒç´ è¾“å…¥å‡½æ•°operator()ä¸­ï¼Œè¿”å›å€¼é‡æ–°èµ‹å€¼ç»™optionalç±»å¯¹è±¡
+*               10.é‡è½½update
+*							input:atomç±»å¼•ç”¨a
+* 							output:æ— 
+* 							ä½œç”¨:éå†açš„æˆå‘˜bondsçš„å…ƒç´ ï¼Œå°†å…ƒç´ çš„æˆå‘˜connected_atom_indexè¾“å…¥é‡è½½çš„operatorå‡½æ•°ï¼Œæ›´æ–°connected_atom_index
+*				11.å‡½æ•°æ¨¡æ¿ï¼šappend
+*                  input:Tç±»å‹çš„å®¹å™¨å¼•ç”¨aï¼ŒTç±»å‹çš„å¸¸é‡å®¹å™¨å¼•ç”¨b         
+*				   output:æ— 				
+* 				   ä½œç”¨ï¼š1.è·å–aå®¹å™¨çš„å¤§å°a_sz				
+* 					     2.å°†å®¹å™¨bçš„å…ƒç´ æ·»åŠ åˆ°å®¹å™¨aå°¾éƒ¨				
+* 				         3.å°†is_açš„å€¼èµ‹ä¸ºçœŸï¼Œæ›´æ–°å®¹å™¨aåŸæ¥çš„å…ƒç´ ï¼Œå°†å…¶æ¯ä¸ªå…ƒç´ æ ¹æ®Tä¾æ¬¡ä¼ è¿›å¯¹åº”é‡è½½ç‰ˆæœ¬updateå‡½æ•°
+* 				         4.å°†is_açš„å€¼èµ‹ä¸ºå‡ï¼Œæ›´æ–°å®¹å™¨aæ–°æ·»åŠ çš„å…ƒç´ ï¼Œå°†å…¶æ¯ä¸ªå…ƒç´ æ ¹æ®Tä¾æ¬¡ä¼ è¿›å¯¹åº”é‡è½½ç‰ˆæœ¬updateå‡½æ•°
+*				12.å‡½æ•°æ¨¡æ¿ï¼šcoords_append
+* 				   input:Tç±»å‹çš„å®¹å™¨å¼•ç”¨aï¼ŒTç±»å‹çš„å¸¸é‡å®¹å™¨å¼•ç”¨b         
+* 				   output:æ— 				
+* 				   ä½œç”¨ï¼š1.æ„é€ bçš„æ‹·è´b_copy
+*						 2.å°†is_açš„å€¼èµ‹ä¸ºçœŸï¼Œæ›´æ–°å®¹å™¨açš„å…ƒç´ ï¼Œå°†å…¶æ¯ä¸ªå…ƒç´ æ ¹æ®Tä¾æ¬¡ä¼ è¿›å¯¹åº”é‡è½½ç‰ˆæœ¬updateå‡½æ•°
+*						 3.å°†is_açš„å€¼èµ‹ä¸ºå‡ï¼Œæ›´æ–°å®¹å™¨b_copyçš„å…ƒç´ ï¼Œå°†å…¶æ¯ä¸ªå…ƒç´ æ ¹æ®Tä¾æ¬¡ä¼ è¿›å¯¹åº”é‡è½½ç‰ˆæœ¬updateå‡½æ•°
+*					     4.å°†b_copyå®¹å™¨å¤´éƒ¨ä¸€éƒ¨åˆ†å…ƒç´ ï¼ˆb_infoæˆå‘˜m_num_movable_atomså¤§å°æ•°ç›®ï¼‰æ’å…¥açš„æŸä¸€å…ƒç´ ï¼ˆä¸‹æ ‡ä¸ºa_infoæˆå‘˜m_num_movable_atomsb_infoå¤§å°ï¼‰å‰
+* 					     5.å°†b_copyå®¹å™¨å‰©ä¸‹å…ƒç´ æ’å…¥açš„å°¾éƒ¨
 */
 
 class appender {
@@ -326,38 +326,38 @@ public:
 
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıappend
-* input:modelÀà³£Á¿ÒıÓÃm
-* ouput:ÎŞ
-* ×÷ÓÃ£º1.¼ì²é±¾modelÀà¶ÔÏóµÄm_atom_typing_usedÓëÊäÈëµÄmodelÀà¶ÔÏóµÄm_atom_typing_usedÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*       2.ÓÃ±¾modelÀà¶ÔÏóÓëÊäÈëmodelÀà¶ÔÏó´´½¨Ò»¸öappenderÀàt
-*		3.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±other_pairsÈİÆ÷µÄÔªËØÌí¼Óµ½±¾modelÀà¶ÔÏó³ÉÔ±other_pairsÈİÆ÷Î²²¿£¬²¢¸ù¾İmodel.appendº¯ÊıµÄ¸üĞÂËã·¨¶Ô±¾modelÀà¶ÔÏó³ÉÔ±other_pairsÈİÆ÷µÄÔªËØ½øĞĞ¸üĞÂ	
-*		4.i´Ó0Ñ­»·µ½£¨±¾model³ÉÔ±atomsµÄ´óĞ¡-1£©
-*				j´Ó0Ñ­»·µ½£¨ÊäÈëmodel³ÉÔ±atomsµÄ´óĞ¡-1£©
-*						Èç¹ûi´óÓÚµÈÓÚ±¾model³ÉÔ±m_num_movable_atoms²¢ÇÒj´óÓÚµÈÓÚÊäÈëmodel³ÉÔ±m_num_movable_atoms£¬ÔòÖ±½ÓÖ´ĞĞÏÂÒ»´ÎÑ­»·
-*						½«±¾model³ÉÔ±atomsµÄµÚi¸öÔªËØ°ó¶¨µ½a£¬ÊäÈëmodel³ÉÔ±atomsµÄµÚj¸öÔªËØ°ó¶¨µ½b
-*						½«±¾model³ÉÔ±m_atom_typing_usedÊäÈëaµÄgetº¯Êı£¬»ñµÃ·µ»ØÖµt1£¬¼´m_atom_typing_used¶ÔÓ¦Ğ¡Ğ´ĞÎÊ½¶ÔÓ¦µÄunsignd intÊı
-*						½«ÊäÈëmodel³ÉÔ±m_atom_typing_usedÊäÈëbµÄgetº¯Êı£¬»ñµÃ·µ»ØÖµt2£¬¼´m_atom_typing_used¶ÔÓ¦Ğ¡Ğ´ĞÎÊ½¶ÔÓ¦µÄunsignd intÊı
-*						½«±¾model³ÉÔ±m_atom_typing_usedÊäÈëº¯Êınum_atom_types»ñµÃ·µ»ØÖµn
-*						Èç¹ûtiºÍt2¾ùĞ¡ÓÚn£¬
-*									½«tµÄ³ÉÔ±is_aÉèÖÃÎªÕæ£¬½«iÊäÈët£¬»ñÈ¡·µ»ØÖµnew_i;ÔÙ½«tµÄ³ÉÔ±is_aÉèÖÃÎª¼Ù£¬½«jÊäÈët£¬»ñÈ¡·µ»ØÖµnew_j
-*									Èç¹ût1<=t2,µÃµ½type_pair_index = t1 + t2*(t2+1)/2£¬·ñÔòtype_pair_index = t2 + t1*(t1+1)/2
-*									´´½¨interacting_pair¶ÔÏó£¬ÓÃtype_pair_index£¬new_i, new_j³õÊ¼»¯£¬²¢½«¸Ã¶ÔÏóÌí¼Óµ½other_pairsÎ²²¿
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°append
+* input:modelç±»å¸¸é‡å¼•ç”¨m
+* ouput:æ— 
+* ä½œç”¨ï¼š1.æ£€æŸ¥æœ¬modelç±»å¯¹è±¡çš„m_atom_typing_usedä¸è¾“å…¥çš„modelç±»å¯¹è±¡çš„m_atom_typing_usedæ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*       2.ç”¨æœ¬modelç±»å¯¹è±¡ä¸è¾“å…¥modelç±»å¯¹è±¡åˆ›å»ºä¸€ä¸ªappenderç±»t
+*		3.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜other_pairså®¹å™¨çš„å…ƒç´ æ·»åŠ åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜other_pairså®¹å™¨å°¾éƒ¨ï¼Œå¹¶æ ¹æ®model.appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹æœ¬modelç±»å¯¹è±¡æˆå‘˜other_pairså®¹å™¨çš„å…ƒç´ è¿›è¡Œæ›´æ–°	
+*		4.iä»0å¾ªç¯åˆ°ï¼ˆæœ¬modelæˆå‘˜atomsçš„å¤§å°-1ï¼‰
+*				jä»0å¾ªç¯åˆ°ï¼ˆè¾“å…¥modelæˆå‘˜atomsçš„å¤§å°-1ï¼‰
+*						å¦‚æœiå¤§äºç­‰äºæœ¬modelæˆå‘˜m_num_movable_atomså¹¶ä¸”jå¤§äºç­‰äºè¾“å…¥modelæˆå‘˜m_num_movable_atomsï¼Œåˆ™ç›´æ¥æ‰§è¡Œä¸‹ä¸€æ¬¡å¾ªç¯
+*						å°†æœ¬modelæˆå‘˜atomsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°aï¼Œè¾“å…¥modelæˆå‘˜atomsçš„ç¬¬jä¸ªå…ƒç´ ç»‘å®šåˆ°b
+*						å°†æœ¬modelæˆå‘˜m_atom_typing_usedè¾“å…¥açš„getå‡½æ•°ï¼Œè·å¾—è¿”å›å€¼t1ï¼Œå³m_atom_typing_usedå¯¹åº”å°å†™å½¢å¼å¯¹åº”çš„unsignd intæ•°
+*						å°†è¾“å…¥modelæˆå‘˜m_atom_typing_usedè¾“å…¥bçš„getå‡½æ•°ï¼Œè·å¾—è¿”å›å€¼t2ï¼Œå³m_atom_typing_usedå¯¹åº”å°å†™å½¢å¼å¯¹åº”çš„unsignd intæ•°
+*						å°†æœ¬modelæˆå‘˜m_atom_typing_usedè¾“å…¥å‡½æ•°num_atom_typesè·å¾—è¿”å›å€¼n
+*						å¦‚æœtiå’Œt2å‡å°äºnï¼Œ
+*									å°†tçš„æˆå‘˜is_aè®¾ç½®ä¸ºçœŸï¼Œå°†iè¾“å…¥tï¼Œè·å–è¿”å›å€¼new_i;å†å°†tçš„æˆå‘˜is_aè®¾ç½®ä¸ºå‡ï¼Œå°†jè¾“å…¥tï¼Œè·å–è¿”å›å€¼new_j
+*									å¦‚æœt1<=t2,å¾—åˆ°type_pair_index = t1 + t2*(t2+1)/2ï¼Œå¦åˆ™type_pair_index = t2 + t1*(t1+1)/2
+*									åˆ›å»ºinteracting_pairå¯¹è±¡ï¼Œç”¨type_pair_indexï¼Œnew_i, new_jåˆå§‹åŒ–ï¼Œå¹¶å°†è¯¥å¯¹è±¡æ·»åŠ åˆ°other_pairså°¾éƒ¨
 *
-*		5.¼ì²é±¾model¶ÔÏó³ÉÔ±minus_forcesµÄ´óĞ¡ÓëcoordsµÄ´óĞ¡ÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
-*		6.¼ì²éÊäÈëmodel¶ÔÏó³ÉÔ±minus_forcesµÄ´óĞ¡ÓëcoordsµÄ´óĞ¡ÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
+*		5.æ£€æŸ¥æœ¬modelå¯¹è±¡æˆå‘˜minus_forcesçš„å¤§å°ä¸coordsçš„å¤§å°æ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
+*		6.æ£€æŸ¥è¾“å…¥modelå¯¹è±¡æˆå‘˜minus_forcesçš„å¤§å°ä¸coordsçš„å¤§å°æ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
 * 
-*		7.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±internal_coordsÈİÆ÷µÄÔªËØ²åÈëµ½±¾modelÀà¶ÔÏó³ÉÔ±internal_coordssÈİÆ÷ÊÊµ±Î»ÖÃ£¨¸ù¾İcoords_appendº¯ÊıµÄ¸üĞÂËã·¨¶Ôinternal_coords½øĞĞ¸üĞÂ£©
-*		8.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±coords         ÈİÆ÷µÄÔªËØ²åÈëµ½±¾modelÀà¶ÔÏó³ÉÔ±coords          ÈİÆ÷ÊÊµ±Î»ÖÃ£¨¸ù¾İcoords_appendº¯ÊıµÄ¸üĞÂËã·¨¶Ôcoords         ½øĞĞ¸üĞÂ£©
-*		9.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±minus_forces   ÈİÆ÷µÄÔªËØ²åÈëµ½±¾modelÀà¶ÔÏó³ÉÔ±minus_forces    ÈİÆ÷ÊÊµ±Î»ÖÃ£¨¸ù¾İcoords_appendº¯ÊıµÄ¸üĞÂËã·¨¶Ôminus_forces   ½øĞĞ¸üĞÂ£©
+*		7.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜internal_coordså®¹å™¨çš„å…ƒç´ æ’å…¥åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜internal_coordsså®¹å™¨é€‚å½“ä½ç½®ï¼ˆæ ¹æ®coords_appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹internal_coordsè¿›è¡Œæ›´æ–°ï¼‰
+*		8.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜coords         å®¹å™¨çš„å…ƒç´ æ’å…¥åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜coords          å®¹å™¨é€‚å½“ä½ç½®ï¼ˆæ ¹æ®coords_appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹coords         è¿›è¡Œæ›´æ–°ï¼‰
+*		9.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜minus_forces   å®¹å™¨çš„å…ƒç´ æ’å…¥åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜minus_forces    å®¹å™¨é€‚å½“ä½ç½®ï¼ˆæ ¹æ®coords_appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹minus_forces   è¿›è¡Œæ›´æ–°ï¼‰
 *		
-*		10.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±ligands     ÈİÆ÷µÄÔªËØÌí¼Óµ½±¾modelÀà¶ÔÏó³ÉÔ±ligands     ÈİÆ÷Î²²¿£¬²¢¸ù¾İmodel.appendº¯ÊıµÄ¸üĞÂËã·¨¶Ô±¾modelÀà¶ÔÏó³ÉÔ±ligands     ÈİÆ÷µÄÔªËØ½øĞĞ¸üĞÂ
-*		11.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±flex        ÈİÆ÷µÄÔªËØÌí¼Óµ½±¾modelÀà¶ÔÏó³ÉÔ±flex        ÈİÆ÷Î²²¿£¬²¢¸ù¾İmodel.appendº¯ÊıµÄ¸üĞÂËã·¨¶Ô±¾modelÀà¶ÔÏó³ÉÔ±flex        ÈİÆ÷µÄÔªËØ½øĞĞ¸üĞÂ
-*		12.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±flex_contextÈİÆ÷µÄÔªËØÌí¼Óµ½±¾modelÀà¶ÔÏó³ÉÔ±flex_contextÈİÆ÷Î²²¿£¬²¢¸ù¾İmodel.appendº¯ÊıµÄ¸üĞÂËã·¨¶Ô±¾modelÀà¶ÔÏó³ÉÔ±flex_contextÈİÆ÷µÄÔªËØ½øĞĞ¸üĞÂ
+*		10.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜ligands     å®¹å™¨çš„å…ƒç´ æ·»åŠ åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜ligands     å®¹å™¨å°¾éƒ¨ï¼Œå¹¶æ ¹æ®model.appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹æœ¬modelç±»å¯¹è±¡æˆå‘˜ligands     å®¹å™¨çš„å…ƒç´ è¿›è¡Œæ›´æ–°
+*		11.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜flex        å®¹å™¨çš„å…ƒç´ æ·»åŠ åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜flex        å®¹å™¨å°¾éƒ¨ï¼Œå¹¶æ ¹æ®model.appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹æœ¬modelç±»å¯¹è±¡æˆå‘˜flex        å®¹å™¨çš„å…ƒç´ è¿›è¡Œæ›´æ–°
+*		12.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜flex_contextå®¹å™¨çš„å…ƒç´ æ·»åŠ åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜flex_contextå®¹å™¨å°¾éƒ¨ï¼Œå¹¶æ ¹æ®model.appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹æœ¬modelç±»å¯¹è±¡æˆå‘˜flex_contextå®¹å™¨çš„å…ƒç´ è¿›è¡Œæ›´æ–°
 *       
-*		13.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±grid_atomsÈİÆ÷µÄÔªËØÌí¼Óµ½±¾modelÀà¶ÔÏó³ÉÔ±grid_atomsÈİÆ÷Î²²¿£¬²¢¸ù¾İmodel.appendº¯ÊıµÄ¸üĞÂËã·¨¶Ô±¾modelÀà¶ÔÏó³ÉÔ±grid_atomsÈİÆ÷µÄÔªËØ½øĞĞ¸üĞÂ
-*		14.½«ÊäÈëmodelÀà¶ÔÏó³ÉÔ±atomsÈİÆ÷µÄÔªËØ²åÈëµ½±¾modelÀà¶ÔÏó³ÉÔ±atomsÈİÆ÷ÊÊµ±Î»ÖÃ£¨¸ù¾İcoords_appendº¯ÊıµÄ¸üĞÂËã·¨¶Ôatoms½øĞĞ¸üĞÂ£©
-*		15.½«ÊäÈë¶ÔÏóµÄm_num_movable_atoms×·¼Óµ½±¾¶ÔÏóµÄm_num_movable_atoms
+*		13.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜grid_atomså®¹å™¨çš„å…ƒç´ æ·»åŠ åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜grid_atomså®¹å™¨å°¾éƒ¨ï¼Œå¹¶æ ¹æ®model.appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹æœ¬modelç±»å¯¹è±¡æˆå‘˜grid_atomså®¹å™¨çš„å…ƒç´ è¿›è¡Œæ›´æ–°
+*		14.å°†è¾“å…¥modelç±»å¯¹è±¡æˆå‘˜atomså®¹å™¨çš„å…ƒç´ æ’å…¥åˆ°æœ¬modelç±»å¯¹è±¡æˆå‘˜atomså®¹å™¨é€‚å½“ä½ç½®ï¼ˆæ ¹æ®coords_appendå‡½æ•°çš„æ›´æ–°ç®—æ³•å¯¹atomsè¿›è¡Œæ›´æ–°ï¼‰
+*		15.å°†è¾“å…¥å¯¹è±¡çš„m_num_movable_atomsè¿½åŠ åˆ°æœ¬å¯¹è±¡çš„m_num_movable_atoms
 */
 
 
@@ -413,11 +413,11 @@ void model::append(const model& m) {
 
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êısz_to_atom_index
-* input:unsigned intÀàĞÍi
-* ouput:atom_indexÀà
-* ×÷ÓÃ£ºÅĞ¶ÏiÊÇ·ñĞ¡ÓÚmodel³ÉÔ±grid_atomsµÄ´óĞ¡£¬ÊÇÔò·µ»ØÒ»¸öatom_indexÀà£¬²¢ÇÒ³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎªi£¬in_gridÎªtrue
-*                                               ·ñÔò·µ»ØÒ»¸öatom_indexÀà£¬²¢ÇÒ³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎª(i-model³ÉÔ±grid_atomsµÄ´óĞ¡)£¬in_gridÎªfalse
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°sz_to_atom_index
+* input:unsigned intç±»å‹i
+* ouput:atom_indexç±»
+* ä½œç”¨ï¼šåˆ¤æ–­iæ˜¯å¦å°äºmodelæˆå‘˜grid_atomsçš„å¤§å°ï¼Œæ˜¯åˆ™è¿”å›ä¸€ä¸ªatom_indexç±»ï¼Œå¹¶ä¸”åˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸ºiï¼Œin_gridä¸ºtrue
+*                                               å¦åˆ™è¿”å›ä¸€ä¸ªatom_indexç±»ï¼Œå¹¶ä¸”åˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸º(i-modelæˆå‘˜grid_atomsçš„å¤§å°)ï¼Œin_gridä¸ºfalse
 */
 atom_index model::sz_to_atom_index(sz i) const {
 	if(i < grid_atoms.size()) return atom_index(i                    ,  true);
@@ -425,17 +425,17 @@ atom_index model::sz_to_atom_index(sz i) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıdistance_type_between
-* input:distance_type_matrixÀà³£Á¿ÒıÓÃmobility£¬atom_indexÀà³£Á¿ÒıÓÃi£¬atom_indexÀà³£Á¿ÒıÓÃj
-* output:Ã¶¾ÙÀàĞÍdistance_type 
-*        °´ÒÔÏÂË³ĞòÑ¡ÔñÊä³ö
-*        1.iµÄ³ÉÔ±in_gridÎªÕæ²¢ÇÒjµÄ³ÉÔ±in_gridÎªÕæ·µ»ØDISTANCE_FIXED
-*        2.Ö»ÓĞiµÄ³ÉÔ±in_gridÎªÕæ£¬Ôò¸ù¾İjµÄ³ÉÔ±iÊÇ·ñĞ¡ÓÚm_num_movable_atoms£¬ÊÇ·µ»ØDISTANCE_VARIABLE£¬·ñ·µ»ØDISTANCE_FIXED
-*		 3.Ö»ÓĞjµÄ³ÉÔ±in_gridÎªÕæ£¬Ôò¸ù¾İiµÄ³ÉÔ±iÊÇ·ñĞ¡ÓÚm_num_movable_atoms£¬ÊÇ·µ»ØDISTANCE_VARIABLE£¬·ñ·µ»ØDISTANCE_FIXED
-*        4.Èç¹ûiµÄ³ÉÔ±iĞ¡ÓÚmodelµÄ³ÉÔ±atomsÈİÆ÷µÄ´óĞ¡»òÕßjµÄ³ÉÔ±iĞ¡ÓÚmodelµÄ³ÉÔ±atomsÈİÆ÷µÄ´óĞ¡ÓĞÒ»¸öÎª¼Ù£¬Ôò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*        5.Èç¹ûiµÄ³ÉÔ±iµÈÓÚjµÄ³ÉÔ±i£¬·µ»ØDISTANCE_FIXED
-*        6.Èç¹ûiµÄ³ÉÔ±iĞ¡ÓÚjµÄ³ÉÔ±i£¬½«a,b·Ö±ğÊäÈëmobilityµÄµ÷ÓÃÔËËã·û£¬·µ»Ømobility³ÉÔ±m_dataµÄµÚ£¨a + b*(b-1)/2£©ÔªËØ
-*        7.Èç¹ûiµÄ³ÉÔ±i´óÓÚjµÄ³ÉÔ±i£¬½«b,a·Ö±ğÊäÈëmobilityµÄµ÷ÓÃÔËËã·û£¬·µ»Ømobility³ÉÔ±m_dataµÄµÚ£¨b + a*(a-1)/2£©ÔªËØ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°distance_type_between
+* input:distance_type_matrixç±»å¸¸é‡å¼•ç”¨mobilityï¼Œatom_indexç±»å¸¸é‡å¼•ç”¨iï¼Œatom_indexç±»å¸¸é‡å¼•ç”¨j
+* output:æšä¸¾ç±»å‹distance_type 
+*        æŒ‰ä»¥ä¸‹é¡ºåºé€‰æ‹©è¾“å‡º
+*        1.içš„æˆå‘˜in_gridä¸ºçœŸå¹¶ä¸”jçš„æˆå‘˜in_gridä¸ºçœŸè¿”å›DISTANCE_FIXED
+*        2.åªæœ‰içš„æˆå‘˜in_gridä¸ºçœŸï¼Œåˆ™æ ¹æ®jçš„æˆå‘˜iæ˜¯å¦å°äºm_num_movable_atomsï¼Œæ˜¯è¿”å›DISTANCE_VARIABLEï¼Œå¦è¿”å›DISTANCE_FIXED
+*		 3.åªæœ‰jçš„æˆå‘˜in_gridä¸ºçœŸï¼Œåˆ™æ ¹æ®içš„æˆå‘˜iæ˜¯å¦å°äºm_num_movable_atomsï¼Œæ˜¯è¿”å›DISTANCE_VARIABLEï¼Œå¦è¿”å›DISTANCE_FIXED
+*        4.å¦‚æœiçš„æˆå‘˜iå°äºmodelçš„æˆå‘˜atomså®¹å™¨çš„å¤§å°æˆ–è€…jçš„æˆå‘˜iå°äºmodelçš„æˆå‘˜atomså®¹å™¨çš„å¤§å°æœ‰ä¸€ä¸ªä¸ºå‡ï¼Œåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*        5.å¦‚æœiçš„æˆå‘˜iç­‰äºjçš„æˆå‘˜iï¼Œè¿”å›DISTANCE_FIXED
+*        6.å¦‚æœiçš„æˆå‘˜iå°äºjçš„æˆå‘˜iï¼Œå°†a,båˆ†åˆ«è¾“å…¥mobilityçš„è°ƒç”¨è¿ç®—ç¬¦ï¼Œè¿”å›mobilityæˆå‘˜m_dataçš„ç¬¬ï¼ˆa + b*(b-1)/2ï¼‰å…ƒç´ 
+*        7.å¦‚æœiçš„æˆå‘˜iå¤§äºjçš„æˆå‘˜iï¼Œå°†b,aåˆ†åˆ«è¾“å…¥mobilityçš„è°ƒç”¨è¿ç®—ç¬¦ï¼Œè¿”å›mobilityæˆå‘˜m_dataçš„ç¬¬ï¼ˆb + a*(a-1)/2ï¼‰å…ƒç´ 
 */
 distance_type model::distance_type_between(const distance_type_matrix& mobility, const atom_index& i, const atom_index& j) const {
 	if(i.in_grid && j.in_grid) return DISTANCE_FIXED;
@@ -448,25 +448,25 @@ distance_type model::distance_type_between(const distance_type_matrix& mobility,
 	sz a = i.i;
 	sz b = j.i;
 	if(a == b) return DISTANCE_FIXED;
-	return (a < b) ? mobility(a, b) : mobility(b, a);//////////////////////////////////////²»ÖªµÀÊ²Ã´ÒâË¼
+	return (a < b) ? mobility(a, b) : mobility(b, a);//////////////////////////////////////ä¸çŸ¥é“ä»€ä¹ˆæ„æ€
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıatom_coords
-* input:atom_indexÀàÒıÓÃi
-* ouput:vecÀà³£Á¿ÒıÓÃ
-* ×÷ÓÃ£ºÅĞ¶ÏiµÄ³ÉÔ±in_gridÊÇ·ñÎªÕæ£¬ÊÇÔò·µ»ØmodelµÄ³ÉÔ±grid_atomsÈİÆ÷µÄµÚ£¨iµÄ³ÉÔ±iµÄÊıÖµ£©¸öÔªËØµÄ³ÉÔ±coordsÊ¸Á¿
-*                                   ·ñÔò·µ»ØmodelµÄ³ÉÔ±coordsÈİÆ÷µÄµÚ£¨iµÄ³ÉÔ±iµÄÊıÖµ£©¸öÔªËØ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°atom_coords
+* input:atom_indexç±»å¼•ç”¨i
+* ouput:vecç±»å¸¸é‡å¼•ç”¨
+* ä½œç”¨ï¼šåˆ¤æ–­içš„æˆå‘˜in_gridæ˜¯å¦ä¸ºçœŸï¼Œæ˜¯åˆ™è¿”å›modelçš„æˆå‘˜grid_atomså®¹å™¨çš„ç¬¬ï¼ˆiçš„æˆå‘˜içš„æ•°å€¼ï¼‰ä¸ªå…ƒç´ çš„æˆå‘˜coordsçŸ¢é‡
+*                                   å¦åˆ™è¿”å›modelçš„æˆå‘˜coordså®¹å™¨çš„ç¬¬ï¼ˆiçš„æˆå‘˜içš„æ•°å€¼ï¼‰ä¸ªå…ƒç´ 
 */
 const vec& model::atom_coords(const atom_index& i) const {
 	return i.in_grid ? grid_atoms[i.i].coords : coords[i.i];
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıdistance_sqr_between
-* input:atom_indexÀà³£Á¿ÒıÓÃa,b
-* ouput:doubleÀàĞÍÊı
-* ×÷ÓÃ£º½«a,b·Ö±ğ´«Èëatom_coordsº¯Êı£¬·µ»ØÁ½¸öÈıÎ¬Ê¸Á¿£¬·µ»ØÕâÁ½¸övecÖĞÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½ºÍ                                   
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°distance_sqr_between
+* input:atom_indexç±»å¸¸é‡å¼•ç”¨a,b
+* ouput:doubleç±»å‹æ•°
+* ä½œç”¨ï¼šå°†a,båˆ†åˆ«ä¼ å…¥atom_coordså‡½æ•°ï¼Œè¿”å›ä¸¤ä¸ªä¸‰ç»´çŸ¢é‡ï¼Œè¿”å›è¿™ä¸¤ä¸ªvecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹å’Œ                                   
 */
 fl model::distance_sqr_between(const atom_index& a, const atom_index& b) const {
 	return vec_distance_sqr(atom_coords(a), atom_coords(b));
@@ -474,11 +474,11 @@ fl model::distance_sqr_between(const atom_index& a, const atom_index& b) const {
 
 
 /*
-* ½á¹¹Ìåbond_less
-* ¶¨Òåµ÷ÓÃ²Ù×÷·û£¨£©
-* input:bondÀà³£Á¿ÒıÓÃa,b
-* ouput:²¼¶ûÖµ
-* ×÷ÓÃ£º±È½ÏaµÄ³ÉÔ±connected_atom_indexµÄ³ÉÔ±iºÍbµÄ³ÉÔ±connected_atom_indexµÄ³ÉÔ±i,Ç°Õß´ó·µ»Øfalse£¬ºóÕß´ó·µ»ØTrue
+* ç»“æ„ä½“bond_less
+* å®šä¹‰è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰
+* input:bondç±»å¸¸é‡å¼•ç”¨a,b
+* ouput:å¸ƒå°”å€¼
+* ä½œç”¨ï¼šæ¯”è¾ƒaçš„æˆå‘˜connected_atom_indexçš„æˆå‘˜iå’Œbçš„æˆå‘˜connected_atom_indexçš„æˆå‘˜i,å‰è€…å¤§è¿”å›falseï¼Œåè€…å¤§è¿”å›True
 */
 struct bond_less { // FIXME rm!?
 	bool operator()(const bond& a, const bond& b) const {
@@ -487,24 +487,24 @@ struct bond_less { // FIXME rm!?
 };
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıatom_exists_between
-* input:distance_type_matrixÀà³£Á¿ÒıÓÃmobility£¬atom_indexÀà³£Á¿ÒıÓÃa£¬atom_indexÀà³£Á¿ÒıÓÃb,unsigend intÀàĞÍvector³£Á¿ÒıÓÃrelevant_atoms
-* output:boolÖµ£¬Ñ°ÕÒÂú×ãÌõ¼şµÄÏà¹ØÔ­×ÓÊÇ·ñ´æÔÚ
-* ×÷ÓÃ£º1.¸ù¾İa£¬bµÄin_gridÊÇ·ñÎªÕæ£¬ÓĞ r2 = (grid_atoms[a.i].coords[0]-grid_atoms[b.i].coords[0])^2+(grid_atoms[a.i].coords[1]-grid_atoms[b.i].coords[1])^2+(grid_atoms[a.i].coords[2]-grid_atoms[b.i].coords[2])^2------------------------a.in_grid = TRUE  , b.in_grid = TRUE
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°atom_exists_between
+* input:distance_type_matrixç±»å¸¸é‡å¼•ç”¨mobilityï¼Œatom_indexç±»å¸¸é‡å¼•ç”¨aï¼Œatom_indexç±»å¸¸é‡å¼•ç”¨b,unsigend intç±»å‹vectorå¸¸é‡å¼•ç”¨relevant_atoms
+* output:boolå€¼ï¼Œå¯»æ‰¾æ»¡è¶³æ¡ä»¶çš„ç›¸å…³åŸå­æ˜¯å¦å­˜åœ¨
+* ä½œç”¨ï¼š1.æ ¹æ®aï¼Œbçš„in_gridæ˜¯å¦ä¸ºçœŸï¼Œæœ‰ r2 = (grid_atoms[a.i].coords[0]-grid_atoms[b.i].coords[0])^2+(grid_atoms[a.i].coords[1]-grid_atoms[b.i].coords[1])^2+(grid_atoms[a.i].coords[2]-grid_atoms[b.i].coords[2])^2------------------------a.in_grid = TRUE  , b.in_grid = TRUE
 *									    
 *									    r2 = (coords[a.i][0]-grid_atoms[b.i].coords[0])^2+(coords[a.i][1]-grid_atoms[b.i].coords[1])^2+(coords[a.i][2]-grid_atoms[b.i].coords[2])^2---------------------------------------------------------a.in_grid = FALSE , b.in_grid = TRUE 
 * 
 *										r2 = (grid_atoms[a.i].coords[0]-coords[b.i][0])^2+(grid_atoms[a.i].coords[1]-coords[b.i][1])^2+(grid_atoms[a.i].coords[2]-coords[b.i][2])^2---------------------------------------------------------a.in_grid = TRUE  , b.in_grid = FALSE
 * 
 *										r2 = (coords[a.i][0]-coords[b.i][0])^2+(coords[a.i][1]-coords[b.i][1])^2+(coords[a.i][2]-coords[b.i][2])^2------------------------------------------------------------------------------------------a.in_grid = FALSE , b.in_grid = FALSE
-*		2.±éÀúrelevant_atomsÄÚµÄÔªËØ
-*				½«relevant_atomsµÄµÚrelevant_atoms_iÔªËØ¸³Öµ¸øi
-*				ÅĞ¶ÏiÊÇ·ñĞ¡ÓÚmodel³ÉÔ±grid_atomsµÄ´óĞ¡£¬ÊÇÔò·µ»ØÒ»¸öatom_indexÀàc£¬²¢ÇÒ³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎªi£¬in_gridÎªtrue;·ñÔò·µ»ØÒ»¸öatom_indexÀàc£¬²¢ÇÒ³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎª(i-model³ÉÔ±grid_atomsµÄ´óĞ¡)£¬in_gridÎªfalse
-*		 		Èç¹û aµÈÓÚc»òÕßbµÈÓÚc Ö±½Ó½øĞĞÏÂÒ»´ÎÑ­»·                                        
-*				½«mobility, a, cÊäÈëdistance_type_betweenº¯Êı·µ»ØµÃµ½distance_typeÃ¶¾ÙÀàĞÍac
-*				½«mobility, b, cÊäÈëdistance_type_betweenº¯Êı·µ»ØµÃµ½distance_typeÃ¶¾ÙÀàĞÍbc
-*				Èç¹ûac²»µÈÓÚDISTANCE_VARIABLE£¬²¢ÇÒbc²»µÈÓÚDISTANCE_VARIABLE£¬²¢ÇÒdistance_sqr_between(a, c)Ğ¡ÓÚr2£¬²¢ÇÒdistance_sqr_between(b, c)Ğ¡ÓÚr2·µ»ØÕæ£¬ÍË³öº¯Êı
-*				ÆäÖĞdistance_sqr_between(a, c)¸ù¾İa£¬cµÄin_gridÊÇ·ñÎªÕæ£¬ÓĞ r2 = (grid_atoms[a.i].coords[0]-grid_atoms[c.i].coords[0])^2+(grid_atoms[a.i].coords[1]-grid_atoms[c.i].coords[1])^2+(grid_atoms[a.i].coords[2]-grid_atoms[c.i].coords[2])^2------------------------a.in_grid = TRUE  , c.in_grid = TRUE
+*		2.éå†relevant_atomså†…çš„å…ƒç´ 
+*				å°†relevant_atomsçš„ç¬¬relevant_atoms_iå…ƒç´ èµ‹å€¼ç»™i
+*				åˆ¤æ–­iæ˜¯å¦å°äºmodelæˆå‘˜grid_atomsçš„å¤§å°ï¼Œæ˜¯åˆ™è¿”å›ä¸€ä¸ªatom_indexç±»cï¼Œå¹¶ä¸”åˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸ºiï¼Œin_gridä¸ºtrue;å¦åˆ™è¿”å›ä¸€ä¸ªatom_indexç±»cï¼Œå¹¶ä¸”åˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸º(i-modelæˆå‘˜grid_atomsçš„å¤§å°)ï¼Œin_gridä¸ºfalse
+*		 		å¦‚æœ aç­‰äºcæˆ–è€…bç­‰äºc ç›´æ¥è¿›è¡Œä¸‹ä¸€æ¬¡å¾ªç¯                                        
+*				å°†mobility, a, cè¾“å…¥distance_type_betweenå‡½æ•°è¿”å›å¾—åˆ°distance_typeæšä¸¾ç±»å‹ac
+*				å°†mobility, b, cè¾“å…¥distance_type_betweenå‡½æ•°è¿”å›å¾—åˆ°distance_typeæšä¸¾ç±»å‹bc
+*				å¦‚æœacä¸ç­‰äºDISTANCE_VARIABLEï¼Œå¹¶ä¸”bcä¸ç­‰äºDISTANCE_VARIABLEï¼Œå¹¶ä¸”distance_sqr_between(a, c)å°äºr2ï¼Œå¹¶ä¸”distance_sqr_between(b, c)å°äºr2è¿”å›çœŸï¼Œé€€å‡ºå‡½æ•°
+*				å…¶ä¸­distance_sqr_between(a, c)æ ¹æ®aï¼Œcçš„in_gridæ˜¯å¦ä¸ºçœŸï¼Œæœ‰ r2 = (grid_atoms[a.i].coords[0]-grid_atoms[c.i].coords[0])^2+(grid_atoms[a.i].coords[1]-grid_atoms[c.i].coords[1])^2+(grid_atoms[a.i].coords[2]-grid_atoms[c.i].coords[2])^2------------------------a.in_grid = TRUE  , c.in_grid = TRUE
 * 											  						    																																																							
 * 											  						        r2 = (coords[a.i][0]-grid_atoms[c.i].coords[0])^2+(coords[a.i][1]-grid_atoms[c.i].coords[1])^2+(coords[a.i][2]-grid_atoms[c.i].coords[2])^2---------------------------------------------------------a.in_grid = FALSE , c.in_grid = TRUE 
 * 																		    																																																						
@@ -512,14 +512,14 @@ struct bond_less { // FIXME rm!?
 * 																		    																																																						
 * 											  							    r2 = (coords[a.i][0]-coords[c.i][0])^2+(coords[a.i][1]-coords[c.i][1])^2+(coords[a.i][2]-coords[c.i][2])^2------------------------------------------------------------------------------------------a.in_grid = FALSE , c.in_grid = FALSE
 * 
-*				ÆäÖĞdistance_sqr_between(b, c)¸ù¾İa£¬cµÄin_gridÊÇ·ñÎªÕæ£¬ÓĞ r2 = (grid_atoms[b.i].coords[0]-grid_atoms[c.i].coords[0])^2+(grid_atoms[b.i].coords[1]-grid_atoms[c.i].coords[1])^2+(grid_atoms[b.i].coords[2]-grid_atoms[c.i].coords[2])^2------------------------b.in_grid = TRUE  , c.in_grid = TRUE
+*				å…¶ä¸­distance_sqr_between(b, c)æ ¹æ®aï¼Œcçš„in_gridæ˜¯å¦ä¸ºçœŸï¼Œæœ‰ r2 = (grid_atoms[b.i].coords[0]-grid_atoms[c.i].coords[0])^2+(grid_atoms[b.i].coords[1]-grid_atoms[c.i].coords[1])^2+(grid_atoms[b.i].coords[2]-grid_atoms[c.i].coords[2])^2------------------------b.in_grid = TRUE  , c.in_grid = TRUE
 * 											  						    																																																							
 * 											  						        r2 = (coords[b.i][0]-grid_atoms[c.i].coords[0])^2+(coords[b.i][1]-grid_atoms[c.i].coords[1])^2+(coords[b.i][2]-grid_atoms[c.i].coords[2])^2---------------------------------------------------------b.in_grid = FALSE , c.in_grid = TRUE 
 * 																		    																																																						
 * 											  							    r2 = (grid_atoms[b.i].coords[0]-coords[c.i][0])^2+(grid_atoms[b.i].coords[1]-coords[c.i][1])^2+(grid_atoms[b.i].coords[2]-coords[c.i][2])^2---------------------------------------------------------b.in_grid = TRUE  , c.in_grid = FALSE
 * 																		    																																																						
 * 											  							    r2 = (coords[b.i][0]-coords[c.i][0])^2+(coords[a.i][1]-coords[b.i][1])^2+(coords[b.i][2]-coords[c.i][2])^2------------------------------------------------------------------------------------------b.in_grid = FALSE , c.in_grid = FALSE
-*		3.ÒÔÉÏ±éÀúÕÒ²»µ½Ïà¹ØµÄÔ­×Ó£¬·µ»Ø¼Ù
+*		3.ä»¥ä¸Šéå†æ‰¾ä¸åˆ°ç›¸å…³çš„åŸå­ï¼Œè¿”å›å‡
 * 
 * 
 * 
@@ -545,19 +545,19 @@ bool model::atom_exists_between(const distance_type_matrix& mobility, const atom
 }
 
 /*
-* ½á¹¹Ìåbeads
-* ³ÉÔ±ÈçÏÂ£º
-*			1.doubleÀàĞÍradius_sqr
-*			2.vectorÀàdata£¬ÔªËØÎªpairÀà£¬pairÀàµÄfirstÊı¾İ³ÉÔ±ÎªvecÀà£¬secondÊı¾İ³ÉÔ±Îªunsignd intÀàĞÍvector
-*			3.¹¹Ôìº¯Êıbeads£ºinput:unsigned intÀàĞÍreserve_size,doubleÊıradius_sqr
-*							 ×÷ÓÃ£º³õÊ¼»¯beadsÀàµÄradius_sqrÎªÊäÈëradius_sqr£¬data·ÖÅäÄÜÈİÄÉÖÁÉÙreserve_size¸öÔªËØµÄÄÚ´æ¿Õ¼ä
-*			4.º¯Êıadd£ºinput:unsigned intÀàĞÍindex,vecÀà³£Á¿ÒıÓÃcoords
-* 					   ×÷ÓÃ£º1.±éÀúvectorÀàdata
-*									Èç¹û(coords)Óë(dataµÄµÚi¸öÔªËØµÄfirstÊı¾İ³ÉÔ±)µÄÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½<radius_sqr
-*									ÍùdataµÄµÚi¸öÔªËØµÄsecondÊı¾İ³ÉÔ±Î²²¿Ìí¼ÓÔªËØindex
-*									ÍË³öº¯Êı
-*							 2.µÚÒ»²½Ã»ÓĞÕÒ¶ÔºÏÊÊÔªËØµÄÇé¿öÏÂ£¬´´½¨Ò»¸öpairÀàtmp,ÆäfirstÊı¾İ³ÉÔ±ÎªvecÀà£¬secondÊı¾İ³ÉÔ±Îªunsignd intÀàĞÍvector
-*							   ½«tmpµÄfirstÊı¾İ³ÉÔ±¸³ÖµÎªcoords£¬secondÊı¾İ³ÉÔ±Î²²¿Ìí¼Óindex£¬½«tmpÌí¼Óµ½dataÎ²²¿
+* ç»“æ„ä½“beads
+* æˆå‘˜å¦‚ä¸‹ï¼š
+*			1.doubleç±»å‹radius_sqr
+*			2.vectorç±»dataï¼Œå…ƒç´ ä¸ºpairç±»ï¼Œpairç±»çš„firstæ•°æ®æˆå‘˜ä¸ºvecç±»ï¼Œsecondæ•°æ®æˆå‘˜ä¸ºunsignd intç±»å‹vector
+*			3.æ„é€ å‡½æ•°beadsï¼šinput:unsigned intç±»å‹reserve_size,doubleæ•°radius_sqr
+*							 ä½œç”¨ï¼šåˆå§‹åŒ–beadsç±»çš„radius_sqrä¸ºè¾“å…¥radius_sqrï¼Œdataåˆ†é…èƒ½å®¹çº³è‡³å°‘reserve_sizeä¸ªå…ƒç´ çš„å†…å­˜ç©ºé—´
+*			4.å‡½æ•°addï¼šinput:unsigned intç±»å‹index,vecç±»å¸¸é‡å¼•ç”¨coords
+* 					   ä½œç”¨ï¼š1.éå†vectorç±»data
+*									å¦‚æœ(coords)ä¸(dataçš„ç¬¬iä¸ªå…ƒç´ çš„firstæ•°æ®æˆå‘˜)çš„é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹<radius_sqr
+*									å¾€dataçš„ç¬¬iä¸ªå…ƒç´ çš„secondæ•°æ®æˆå‘˜å°¾éƒ¨æ·»åŠ å…ƒç´ index
+*									é€€å‡ºå‡½æ•°
+*							 2.ç¬¬ä¸€æ­¥æ²¡æœ‰æ‰¾å¯¹åˆé€‚å…ƒç´ çš„æƒ…å†µä¸‹ï¼Œåˆ›å»ºä¸€ä¸ªpairç±»tmp,å…¶firstæ•°æ®æˆå‘˜ä¸ºvecç±»ï¼Œsecondæ•°æ®æˆå‘˜ä¸ºunsignd intç±»å‹vector
+*							   å°†tmpçš„firstæ•°æ®æˆå‘˜èµ‹å€¼ä¸ºcoordsï¼Œsecondæ•°æ®æˆå‘˜å°¾éƒ¨æ·»åŠ indexï¼Œå°†tmpæ·»åŠ åˆ°dataå°¾éƒ¨
 */
 struct beads {
 	fl radius_sqr;
@@ -578,68 +578,68 @@ struct beads {
 	}
 };
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıassign_bonds
-* input:distance_type_matrixÀà³£Á¿ÒıÓÃmobility
-* ouput:¿Õ
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍÖµbond_length_allowance_factor = 1.1 Õ³½á³¤¶ÈÔÊĞíÏµÊı
-*		  n = grid_atoms ºÍ atoms ÈİÆ÷´óĞ¡Ö®ºÍ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°assign_bonds
+* input:distance_type_matrixç±»å¸¸é‡å¼•ç”¨mobility
+* ouput:ç©º
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹å€¼bond_length_allowance_factor = 1.1 ç²˜ç»“é•¿åº¦å…è®¸ç³»æ•°
+*		  n = grid_atoms å’Œ atoms å®¹å™¨å¤§å°ä¹‹å’Œ
 *		  bead_radius = 1.5 
-*		2.¶¨ÒåÒ»¸öbeadsÀà¶ÔÏóbeads_instance£¬³õÊ¼»¯beads_instanceµÄradius_sqr = 225 ,dataµÄÔ¤Áô¿Õ¼äÎªn
-*		3.i´Ó0Ñ­»·µ½n
-*				¶¨ÒåÒ»¸öatom_indexÀài_atom_index£¬µ±0 <= i < grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎªi£¬in_gridÎªtrue£»µ±i >= grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎª(i-model³ÉÔ±grid_atomsµÄ´óĞ¡)£¬in_gridÎªfalse
-*				µ±0 <= i < grid_atoms.size()Ê±£¬½«iºÍgrid_atoms[i_atom_index.i].coordsÊäÈëbeads_instance³ÉÔ±º¯Êıadd£»µ±i >= grid_atoms.size()Ê±£¬½«iºÍcoords[i_atom_index.i]ÊäÈëbeads_instance³ÉÔ±º¯Êıadd
+*		2.å®šä¹‰ä¸€ä¸ªbeadsç±»å¯¹è±¡beads_instanceï¼Œåˆå§‹åŒ–beads_instanceçš„radius_sqr = 225 ,dataçš„é¢„ç•™ç©ºé—´ä¸ºn
+*		3.iä»0å¾ªç¯åˆ°n
+*				å®šä¹‰ä¸€ä¸ªatom_indexç±»i_atom_indexï¼Œå½“0 <= i < grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸ºiï¼Œin_gridä¸ºtrueï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸º(i-modelæˆå‘˜grid_atomsçš„å¤§å°)ï¼Œin_gridä¸ºfalse
+*				å½“0 <= i < grid_atoms.size()æ—¶ï¼Œå°†iå’Œgrid_atoms[i_atom_index.i].coordsè¾“å…¥beads_instanceæˆå‘˜å‡½æ•°addï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œå°†iå’Œcoords[i_atom_index.i]è¾“å…¥beads_instanceæˆå‘˜å‡½æ•°add
 * 
-*				µ±0 <= i < grid_atoms.size()Ê±£¬ÔÚbeads_instance.data[i](´ËiÊÇÔÚ±éÀúdata£¬·ÇÇ°Ãæi´Ó0Ñ­»·µ½n)ÄÚÑ°ÕÒµÚÒ»¸öÂú×ã[data[i].first[0] - grid_atoms[i_atom_index.i].coords[0]]^2+[data[i].first[1] - grid_atoms[i_atom_index.i].coords[1]]^2+[data[i].first[2] - grid_atoms[i_atom_index.i].coords[2]]^2<225µÄbeads_instance.dataµÄÔªËØ²¢ÔÚdata[i].secondµÄÎ²²¿´æÈëi
-*				Èç¹ûdata²»´æÔÚÂú×ãÌõ¼şµÄÔªËØ£¬¶¨ÒåÒ»¸öpairÀàtmp£¬firstÊı¾İ³ÉÔ±´æÈëgrid_atoms[i_atom_index.i].coords£¬secondÊı¾İ³ÉÔ±Î²²¿Ìí¼Ói£¬½«tmp´æÈëbeads_instance.dataÎ²²¿
+*				å½“0 <= i < grid_atoms.size()æ—¶ï¼Œåœ¨beads_instance.data[i](æ­¤iæ˜¯åœ¨éå†dataï¼Œéå‰é¢iä»0å¾ªç¯åˆ°n)å†…å¯»æ‰¾ç¬¬ä¸€ä¸ªæ»¡è¶³[data[i].first[0] - grid_atoms[i_atom_index.i].coords[0]]^2+[data[i].first[1] - grid_atoms[i_atom_index.i].coords[1]]^2+[data[i].first[2] - grid_atoms[i_atom_index.i].coords[2]]^2<225çš„beads_instance.dataçš„å…ƒç´ å¹¶åœ¨data[i].secondçš„å°¾éƒ¨å­˜å…¥i
+*				å¦‚æœdataä¸å­˜åœ¨æ»¡è¶³æ¡ä»¶çš„å…ƒç´ ï¼Œå®šä¹‰ä¸€ä¸ªpairç±»tmpï¼Œfirstæ•°æ®æˆå‘˜å­˜å…¥grid_atoms[i_atom_index.i].coordsï¼Œsecondæ•°æ®æˆå‘˜å°¾éƒ¨æ·»åŠ iï¼Œå°†tmpå­˜å…¥beads_instance.dataå°¾éƒ¨
 * 
-*				µ±i >= grid_atoms.size()Ê±£¬ÔÚbeads_instance.data[i](´ËiÊÇÔÚ±éÀúdata£¬·ÇÇ°Ãæi´Ó0Ñ­»·µ½n)ÄÚÑ°ÕÒµÚÒ»¸öÂú×ã[data[i].first[0] - coords[i_atom_index.i][0]]^2+[data[i].first[1] - coords[i_atom_index.i][1]]^2+[data[i].first[2] - coords[i_atom_index.i][2]]^2<225µÄbeads_instance.dataµÄÔªËØ²¢ÔÚdata[i].secondµÄÎ²²¿´æÈëi
-*				Èç¹ûdata²»´æÔÚÂú×ãÌõ¼şµÄÔªËØ£¬¶¨ÒåÒ»¸öpairÀàtmp£¬firstÊı¾İ³ÉÔ±´æÈëcoords[i_atom_index.i]£¬secondÊı¾İ³ÉÔ±Î²²¿Ìí¼Ói£¬½«tmp´æÈëbeads_instance.dataÎ²²¿
+*				å½“i >= grid_atoms.size()æ—¶ï¼Œåœ¨beads_instance.data[i](æ­¤iæ˜¯åœ¨éå†dataï¼Œéå‰é¢iä»0å¾ªç¯åˆ°n)å†…å¯»æ‰¾ç¬¬ä¸€ä¸ªæ»¡è¶³[data[i].first[0] - coords[i_atom_index.i][0]]^2+[data[i].first[1] - coords[i_atom_index.i][1]]^2+[data[i].first[2] - coords[i_atom_index.i][2]]^2<225çš„beads_instance.dataçš„å…ƒç´ å¹¶åœ¨data[i].secondçš„å°¾éƒ¨å­˜å…¥i
+*				å¦‚æœdataä¸å­˜åœ¨æ»¡è¶³æ¡ä»¶çš„å…ƒç´ ï¼Œå®šä¹‰ä¸€ä¸ªpairç±»tmpï¼Œfirstæ•°æ®æˆå‘˜å­˜å…¥coords[i_atom_index.i]ï¼Œsecondæ•°æ®æˆå‘˜å°¾éƒ¨æ·»åŠ iï¼Œå°†tmpå­˜å…¥beads_instance.dataå°¾éƒ¨
 * 
-*		4.i´Ó0Ñ­»·µ½n
-*				¶¨ÒåÒ»¸öatom_indexÀài_atom_index£¬µ±0 <= i < grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎªi£¬in_gridÎªtrue£»µ±i >= grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎª(i-model³ÉÔ±grid_atomsµÄ´óĞ¡)£¬in_gridÎªfalse
-*				µ±0 <= i < grid_atoms.size()Ê±£¬½«grid_atoms[i_atom_index.i].coords°ó¶¨µ½i_atom_coords£»µ±i >= grid_atoms.size()Ê±£¬½«coords[i_atom_index.i]°ó¶¨µ½i_atom_coords
-*				µ±0 <= i < grid_atoms.size()Ê±£¬½«grid_atoms[i_atom_index.i]°ó¶¨µ½i_atom£»µ±i >= grid_atoms.size()Ê±£¬½«atoms[i_atom_index.i]°ó¶¨µ½i_atom
+*		4.iä»0å¾ªç¯åˆ°n
+*				å®šä¹‰ä¸€ä¸ªatom_indexç±»i_atom_indexï¼Œå½“0 <= i < grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸ºiï¼Œin_gridä¸ºtrueï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸º(i-modelæˆå‘˜grid_atomsçš„å¤§å°)ï¼Œin_gridä¸ºfalse
+*				å½“0 <= i < grid_atoms.size()æ—¶ï¼Œå°†grid_atoms[i_atom_index.i].coordsç»‘å®šåˆ°i_atom_coordsï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œå°†coords[i_atom_index.i]ç»‘å®šåˆ°i_atom_coords
+*				å½“0 <= i < grid_atoms.size()æ—¶ï¼Œå°†grid_atoms[i_atom_index.i]ç»‘å®šåˆ°i_atomï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œå°†atoms[i_atom_index.i]ç»‘å®šåˆ°i_atom
 *				
-*				¶¨ÒåÒ»¸ödouble³£Á¿ÀàĞÍÖµmax_covalent_r = 1.74----------->atom_kind_data[i].covalent_radius×î´óÖµ     ¹²¼Û°ë¾¶
-*				¶¨ÒåÒ»¸ödoubleÀàĞÍÖµi_atom_covalent_radius = max_covalent_r = 1.74
-*				Èç¹ûi_atomµÄadĞ¡ÓÚ20£¬i_atom_covalent_radius¸³ÖµÎªatom_kind_data£¨i_atom.ad£©µÄcovalent_radius
+*				å®šä¹‰ä¸€ä¸ªdoubleå¸¸é‡ç±»å‹å€¼max_covalent_r = 1.74----------->atom_kind_data[i].covalent_radiusæœ€å¤§å€¼     å…±ä»·åŠå¾„
+*				å®šä¹‰ä¸€ä¸ªdoubleç±»å‹å€¼i_atom_covalent_radius = max_covalent_r = 1.74
+*				å¦‚æœi_atomçš„adå°äº20ï¼Œi_atom_covalent_radiusèµ‹å€¼ä¸ºatom_kind_dataï¼ˆi_atom.adï¼‰çš„covalent_radius
 * 
-*				¶¨ÒåÒ»¸öunsigned intÀàĞÍvector -->relevant_atoms
-*				¶¨ÒåÒ»¸ödouble³£Á¿ÀàĞÍÖµbead_cutoff_sqr = (15 + 1.1*(i_atom_covalent_radius+1.74))^2
+*				å®šä¹‰ä¸€ä¸ªunsigned intç±»å‹vector -->relevant_atoms
+*				å®šä¹‰ä¸€ä¸ªdoubleå¸¸é‡ç±»å‹å€¼bead_cutoff_sqr = (15 + 1.1*(i_atom_covalent_radius+1.74))^2
 * 
-*				b´Ó0Ñ­»·µ½beads_instance.dataµÄ´óĞ¡-1£¨±éÀúÔªËØ£©
-*						µ±£¨beads_instance.data[b].first[0] - i_atom_coords[0])^2 + £¨beads_instance.data[b].first[1] - i_atom_coords[1])^2+£¨beads_instance.data[b].first[2] - i_atom_coords[2])^2> bead_cutoff_sqrÊ±£¬Ö±½Ó¼ÌĞøÏÂÒ»¸öb±éÀú
-*						½«beads_instance.data[b].second°ó¶¨µ½bead_elements£¨unsigned intÀàĞÍvector£©
-*						b´Óbead_elements_iÑ­»·µ½bead_elementsµÄ´óĞ¡-1£¨±éÀúÔªËØ£©
-*								¶¨Òåj = bead_elementsµÄµÚbead_elements_i¸öÔªËØ
-*								¶¨ÒåÒ»¸öatom_indexÀàj_atom_index£¬µ±0 <= j < grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎªj£¬in_gridÎªtrue£»µ±i >= grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎª(j-model³ÉÔ±grid_atomsµÄ´óĞ¡)£¬in_gridÎªfalse
-*								µ±0 <= j < grid_atoms.size()Ê±£¬½«grid_atoms[j_atom_index.i]°ó¶¨µ½j_atom£»µ±j >= grid_atoms.size()Ê±£¬½«atoms[j_atom_index.i]°ó¶¨µ½j_atom
-*								¼ÆËãi_atomºÍj_atomµÄ¹²¼Û°ë¾¶ºÍbond_length
-*								½«mobility, i_atom_index, j_atom_indexÊäÈëdistance_type_betweenº¯Êı£¬»ñÈ¡i_atom_indexºÍj_atom_indexµÄ¾àÀëÀàĞÍdt
-*								Èç¹ûdt != DISTANCE_VARIABLE²¢ÇÒi != j£¬
-*										µ±0 <= i < grid_atoms.size()²¢ÇÒ0 <= j < grid_atoms.size()Ê±£¬Áîr2 = [grid_atoms[i_atom_index.i].coords[0]-grid_atoms[j_atom_index.i].coords[0]]^2+[grid_atoms[i_atom_index.i].coords[1]-grid_atoms[j_atom_index.i].coords[1]]^2+[grid_atoms[i_atom_index.i].coords[2]-grid_atoms[j_atom_index.i].coords[2]]^2
-*										µ±0 <= i < grid_atoms.size()²¢ÇÒj > grid_atoms.size()Ê±£¬Áîr2 = [grid_atoms[i_atom_index.i].coords[0]-coords[j_atom_index.i][0]]^2+[grid_atoms[i_atom_index.i].coords[1]-coords[j_atom_index.i][1]]^2+[grid_atoms[i_atom_index.i].coords[2]-coords[j_atom_index.i][2]]^2
-*										µ±i > grid_atoms.size()²¢ÇÒ0 <= j < grid_atoms.size()Ê±£¬Áîr2 = [coords[i_atom_index.i][0]-grid_atoms[j_atom_index.i].coords[0]]^2+[coords[i_atom_index.i][1]-grid_atoms[j_atom_index.i].coords[1]]^2+[coords[i_atom_index.i][2]-grid_atoms[j_atom_index.i].coords[2]]^2
-*										µ±i > grid_atoms.size()²¢ÇÒj > grid_atoms.size()Ê±£¬Áîr2 = [coords[i_atom_index.i][0]-coords[j_atom_index.i][0]]^2+[coords[i_atom_index.i][1]-coords[j_atom_index.i][1]]^2+[coords[i_atom_index.i][2]-coords[j_atom_index.i][2]]^2
-*										Èç¹ûr2 < (1.1*(i_atom_covalent_radius+1.74))^2
-*										relevant_atomsÎ²²¿Ìí¼Ój
+*				bä»0å¾ªç¯åˆ°beads_instance.dataçš„å¤§å°-1ï¼ˆéå†å…ƒç´ ï¼‰
+*						å½“ï¼ˆbeads_instance.data[b].first[0] - i_atom_coords[0])^2 + ï¼ˆbeads_instance.data[b].first[1] - i_atom_coords[1])^2+ï¼ˆbeads_instance.data[b].first[2] - i_atom_coords[2])^2> bead_cutoff_sqræ—¶ï¼Œç›´æ¥ç»§ç»­ä¸‹ä¸€ä¸ªbéå†
+*						å°†beads_instance.data[b].secondç»‘å®šåˆ°bead_elementsï¼ˆunsigned intç±»å‹vectorï¼‰
+*						bä»bead_elements_iå¾ªç¯åˆ°bead_elementsçš„å¤§å°-1ï¼ˆéå†å…ƒç´ ï¼‰
+*								å®šä¹‰j = bead_elementsçš„ç¬¬bead_elements_iä¸ªå…ƒç´ 
+*								å®šä¹‰ä¸€ä¸ªatom_indexç±»j_atom_indexï¼Œå½“0 <= j < grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸ºjï¼Œin_gridä¸ºtrueï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸º(j-modelæˆå‘˜grid_atomsçš„å¤§å°)ï¼Œin_gridä¸ºfalse
+*								å½“0 <= j < grid_atoms.size()æ—¶ï¼Œå°†grid_atoms[j_atom_index.i]ç»‘å®šåˆ°j_atomï¼›å½“j >= grid_atoms.size()æ—¶ï¼Œå°†atoms[j_atom_index.i]ç»‘å®šåˆ°j_atom
+*								è®¡ç®—i_atomå’Œj_atomçš„å…±ä»·åŠå¾„å’Œbond_length
+*								å°†mobility, i_atom_index, j_atom_indexè¾“å…¥distance_type_betweenå‡½æ•°ï¼Œè·å–i_atom_indexå’Œj_atom_indexçš„è·ç¦»ç±»å‹dt
+*								å¦‚æœdt != DISTANCE_VARIABLEå¹¶ä¸”i != jï¼Œ
+*										å½“0 <= i < grid_atoms.size()å¹¶ä¸”0 <= j < grid_atoms.size()æ—¶ï¼Œä»¤r2 = [grid_atoms[i_atom_index.i].coords[0]-grid_atoms[j_atom_index.i].coords[0]]^2+[grid_atoms[i_atom_index.i].coords[1]-grid_atoms[j_atom_index.i].coords[1]]^2+[grid_atoms[i_atom_index.i].coords[2]-grid_atoms[j_atom_index.i].coords[2]]^2
+*										å½“0 <= i < grid_atoms.size()å¹¶ä¸”j > grid_atoms.size()æ—¶ï¼Œä»¤r2 = [grid_atoms[i_atom_index.i].coords[0]-coords[j_atom_index.i][0]]^2+[grid_atoms[i_atom_index.i].coords[1]-coords[j_atom_index.i][1]]^2+[grid_atoms[i_atom_index.i].coords[2]-coords[j_atom_index.i][2]]^2
+*										å½“i > grid_atoms.size()å¹¶ä¸”0 <= j < grid_atoms.size()æ—¶ï¼Œä»¤r2 = [coords[i_atom_index.i][0]-grid_atoms[j_atom_index.i].coords[0]]^2+[coords[i_atom_index.i][1]-grid_atoms[j_atom_index.i].coords[1]]^2+[coords[i_atom_index.i][2]-grid_atoms[j_atom_index.i].coords[2]]^2
+*										å½“i > grid_atoms.size()å¹¶ä¸”j > grid_atoms.size()æ—¶ï¼Œä»¤r2 = [coords[i_atom_index.i][0]-coords[j_atom_index.i][0]]^2+[coords[i_atom_index.i][1]-coords[j_atom_index.i][1]]^2+[coords[i_atom_index.i][2]-coords[j_atom_index.i][2]]^2
+*										å¦‚æœr2 < (1.1*(i_atom_covalent_radius+1.74))^2
+*										relevant_atomså°¾éƒ¨æ·»åŠ j
 *				
-*				relevant_atoms_i´Ó0Ñ­»·µ½relevant_atomsµÄ´óĞ¡-1£¨±éÀúÔªËØ£©
-*						¶¨ÒåjµÈÓÚrelevant_atomsµÄrelevant_atoms_i¸öÔªËØ
-*						Èç¹ûj <= i,Ö±½Ó¼ÌĞøÏÂÒ»¸örelevant_atoms_i±éÀú
-*						¶¨ÒåÒ»¸öatom_indexÀàj_atom_index£¬µ±0 <= j < grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎªj£¬in_gridÎªtrue£»µ±i >= grid_atoms.size()Ê±£¬³õÊ¼»¯¸ÃÀàµÄ³ÉÔ±iÎª(j-model³ÉÔ±grid_atomsµÄ´óĞ¡)£¬in_gridÎªfalse
-* 						µ±0 <= j < grid_atoms.size()Ê±£¬½«grid_atoms[j_atom_index.i]°ó¶¨µ½j_atom£»µ±j >= grid_atoms.size()Ê±£¬½«atoms[j_atom_index.i]°ó¶¨µ½j_atom
-*						¼ÆËãi_atomºÍj_atomµÄ¹²¼Û°ë¾¶ºÍbond_length
-*						½«mobility, i_atom_index, j_atom_indexÊäÈëdistance_type_betweenº¯Êı£¬»ñÈ¡i_atom_indexºÍj_atom_indexµÄ¾àÀëÀàĞÍdt
-*						µ±0 <= i < grid_atoms.size()²¢ÇÒ0 <= j < grid_atoms.size()Ê±£¬Áîr2 = [grid_atoms[i_atom_index.i].coords[0]-grid_atoms[j_atom_index.i].coords[0]]^2+[grid_atoms[i_atom_index.i].coords[1]-grid_atoms[j_atom_index.i].coords[1]]^2+[grid_atoms[i_atom_index.i].coords[2]-grid_atoms[j_atom_index.i].coords[2]]^2								
-* 						µ±0 <= i < grid_atoms.size()²¢ÇÒj > grid_atoms.size()Ê±£¬Áîr2 = [grid_atoms[i_atom_index.i].coords[0]-coords[j_atom_index.i][0]]^2+[grid_atoms[i_atom_index.i].coords[1]-coords[j_atom_index.i][1]]^2+[grid_atoms[i_atom_index.i].coords[2]-coords[j_atom_index.i][2]]^2
-* 						µ±i > grid_atoms.size()²¢ÇÒ0 <= j < grid_atoms.size()Ê±£¬Áîr2 = [coords[i_atom_index.i][0]-grid_atoms[j_atom_index.i].coords[0]]^2+[coords[i_atom_index.i][1]-grid_atoms[j_atom_index.i].coords[1]]^2+[coords[i_atom_index.i][2]-grid_atoms[j_atom_index.i].coords[2]]^2
-* 						µ±i > grid_atoms.size()²¢ÇÒj > grid_atoms.size()Ê±£¬Áîr2 = [coords[i_atom_index.i][0]-coords[j_atom_index.i][0]]^2+[coords[i_atom_index.i][1]-coords[j_atom_index.i][1]]^2+[coords[i_atom_index.i][2]-coords[j_atom_index.i][2]]^2
-*						Èç¹ûr2 < (1.1*bond_length)^2²¢ÇÒmobility, i_atom_index, j_atom_index, relevant_atoms ´úÈëatom_exists_between²»ÎªÕæ£¨relevant_atomsÖĞ²»´æÔÚÓëi_atom_indexºÍj_atom_indexÂú×ãÒ»¶¨¾àÀë¹ØÏµµÄÔ­×Ó£©
-*								Èç¹ûdt µÈÓÚ DISTANCE_ROTOR£¬ÁîrotatableµÈÓÚ1£¬·ñÔòÎª0
-*								length µÈÓÚ r2µÄ¿ª·½Êı
-*								ÔÚi_atom.bondsÎ²²¿Ìí¼ÓÒ»¸öbondÔªËØ,²¢ÓÃj_atom_index, length, rotatable¶ÔÆä½øĞĞ³õÊ¼»¯
-*								ÔÚj_atom.bondsÎ²²¿Ìí¼ÓÒ»¸öbondÔªËØ,²¢ÓÃj_atom_index, length, rotatable¶ÔÆä½øĞĞ³õÊ¼»¯
+*				relevant_atoms_iä»0å¾ªç¯åˆ°relevant_atomsçš„å¤§å°-1ï¼ˆéå†å…ƒç´ ï¼‰
+*						å®šä¹‰jç­‰äºrelevant_atomsçš„relevant_atoms_iä¸ªå…ƒç´ 
+*						å¦‚æœj <= i,ç›´æ¥ç»§ç»­ä¸‹ä¸€ä¸ªrelevant_atoms_iéå†
+*						å®šä¹‰ä¸€ä¸ªatom_indexç±»j_atom_indexï¼Œå½“0 <= j < grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸ºjï¼Œin_gridä¸ºtrueï¼›å½“i >= grid_atoms.size()æ—¶ï¼Œåˆå§‹åŒ–è¯¥ç±»çš„æˆå‘˜iä¸º(j-modelæˆå‘˜grid_atomsçš„å¤§å°)ï¼Œin_gridä¸ºfalse
+* 						å½“0 <= j < grid_atoms.size()æ—¶ï¼Œå°†grid_atoms[j_atom_index.i]ç»‘å®šåˆ°j_atomï¼›å½“j >= grid_atoms.size()æ—¶ï¼Œå°†atoms[j_atom_index.i]ç»‘å®šåˆ°j_atom
+*						è®¡ç®—i_atomå’Œj_atomçš„å…±ä»·åŠå¾„å’Œbond_length
+*						å°†mobility, i_atom_index, j_atom_indexè¾“å…¥distance_type_betweenå‡½æ•°ï¼Œè·å–i_atom_indexå’Œj_atom_indexçš„è·ç¦»ç±»å‹dt
+*						å½“0 <= i < grid_atoms.size()å¹¶ä¸”0 <= j < grid_atoms.size()æ—¶ï¼Œä»¤r2 = [grid_atoms[i_atom_index.i].coords[0]-grid_atoms[j_atom_index.i].coords[0]]^2+[grid_atoms[i_atom_index.i].coords[1]-grid_atoms[j_atom_index.i].coords[1]]^2+[grid_atoms[i_atom_index.i].coords[2]-grid_atoms[j_atom_index.i].coords[2]]^2								
+* 						å½“0 <= i < grid_atoms.size()å¹¶ä¸”j > grid_atoms.size()æ—¶ï¼Œä»¤r2 = [grid_atoms[i_atom_index.i].coords[0]-coords[j_atom_index.i][0]]^2+[grid_atoms[i_atom_index.i].coords[1]-coords[j_atom_index.i][1]]^2+[grid_atoms[i_atom_index.i].coords[2]-coords[j_atom_index.i][2]]^2
+* 						å½“i > grid_atoms.size()å¹¶ä¸”0 <= j < grid_atoms.size()æ—¶ï¼Œä»¤r2 = [coords[i_atom_index.i][0]-grid_atoms[j_atom_index.i].coords[0]]^2+[coords[i_atom_index.i][1]-grid_atoms[j_atom_index.i].coords[1]]^2+[coords[i_atom_index.i][2]-grid_atoms[j_atom_index.i].coords[2]]^2
+* 						å½“i > grid_atoms.size()å¹¶ä¸”j > grid_atoms.size()æ—¶ï¼Œä»¤r2 = [coords[i_atom_index.i][0]-coords[j_atom_index.i][0]]^2+[coords[i_atom_index.i][1]-coords[j_atom_index.i][1]]^2+[coords[i_atom_index.i][2]-coords[j_atom_index.i][2]]^2
+*						å¦‚æœr2 < (1.1*bond_length)^2å¹¶ä¸”mobility, i_atom_index, j_atom_index, relevant_atoms ä»£å…¥atom_exists_betweenä¸ä¸ºçœŸï¼ˆrelevant_atomsä¸­ä¸å­˜åœ¨ä¸i_atom_indexå’Œj_atom_indexæ»¡è¶³ä¸€å®šè·ç¦»å…³ç³»çš„åŸå­ï¼‰
+*								å¦‚æœdt ç­‰äº DISTANCE_ROTORï¼Œä»¤rotatableç­‰äº1ï¼Œå¦åˆ™ä¸º0
+*								length ç­‰äº r2çš„å¼€æ–¹æ•°
+*								åœ¨i_atom.bondså°¾éƒ¨æ·»åŠ ä¸€ä¸ªbondå…ƒç´ ,å¹¶ç”¨j_atom_index, length, rotatableå¯¹å…¶è¿›è¡Œåˆå§‹åŒ–
+*								åœ¨j_atom.bondså°¾éƒ¨æ·»åŠ ä¸€ä¸ªbondå…ƒç´ ,å¹¶ç”¨j_atom_index, length, rotatableå¯¹å…¶è¿›è¡Œåˆå§‹åŒ–
 */
 void model::assign_bonds(const distance_type_matrix& mobility) { // assign bonds based on relative mobility, distance and covalent length
 	const fl bond_length_allowance_factor = 1.1;
@@ -705,13 +705,13 @@ void model::assign_bonds(const distance_type_matrix& mobility) { // assign bonds
 
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıbonded_to_HD
-* input:atomÀà³£Á¿ÒıÓÃa
-* ouput:boolÖµ
-* ×÷ÓÃ£º1.±éÀúaµÄ³ÉÔ±bondsµÄÔªËØ
-*       2.¶¨ÒåÒ»¸öÁÙÊ±bondÀà¶ÔÏó³£Á¿ÒıÓÃb£¬½«aµÄ³ÉÔ±bondsµÄµÚi¸öÔªËØ°ó¶¨µ½bÉÏ
-*       3.½«bµÄ³ÉÔ±connected_atom_indexÊäÈëget_atomº¯Êı£¬·µ»ØÒ»¸öatomÀà¶ÔÏó£¬ÅĞ¶Ï¸Ã¶ÔÏóµÄ³ÉÔ±adÊÇ·ñµÈÓÚ12£¬Èç¹ûÊÇÔòÍË³öº¯Êı·µ»Øtrue£¬·ñÔò¼ÌĞøÑ­»·
-*       4.Ñ­»·½áÊø£¬·µ»Øfalse
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°bonded_to_HD
+* input:atomç±»å¸¸é‡å¼•ç”¨a
+* ouput:boolå€¼
+* ä½œç”¨ï¼š1.éå†açš„æˆå‘˜bondsçš„å…ƒç´ 
+*       2.å®šä¹‰ä¸€ä¸ªä¸´æ—¶bondç±»å¯¹è±¡å¸¸é‡å¼•ç”¨bï¼Œå°†açš„æˆå‘˜bondsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°bä¸Š
+*       3.å°†bçš„æˆå‘˜connected_atom_indexè¾“å…¥get_atomå‡½æ•°ï¼Œè¿”å›ä¸€ä¸ªatomç±»å¯¹è±¡ï¼Œåˆ¤æ–­è¯¥å¯¹è±¡çš„æˆå‘˜adæ˜¯å¦ç­‰äº12ï¼Œå¦‚æœæ˜¯åˆ™é€€å‡ºå‡½æ•°è¿”å›trueï¼Œå¦åˆ™ç»§ç»­å¾ªç¯
+*       4.å¾ªç¯ç»“æŸï¼Œè¿”å›false
 */
 bool model::bonded_to_HD(const atom& a) const {
 	VINA_FOR_IN(i, a.bonds) {
@@ -724,13 +724,13 @@ bool model::bonded_to_HD(const atom& a) const {
 
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıbonded_to_heteroatom
-* input:atomÀà³£Á¿ÒıÓÃa
-* ouput:boolÖµ
-* ×÷ÓÃ£º1.±éÀúaµÄ³ÉÔ±bondsµÄÔªËØ
-*       2.¶¨ÒåÒ»¸öÁÙÊ±bondÀà¶ÔÏó³£Á¿ÒıÓÃb£¬½«aµÄ³ÉÔ±bondsµÄµÚi¸öÔªËØ°ó¶¨µ½aÉÏ
-*       3.½«bµÄ³ÉÔ±connected_atom_indexÊäÈëget_atomº¯Êı£¬·µ»ØÒ»¸öatomÀà¶ÔÏó£¬ÅĞ¶Ï¸Ã¶ÔÏóµÄ³ÉÔ±is_heteroatomº¯Êı·µ»ØÖµÊÇ·ñÎªÕæ£¬Èç¹ûÊÇÔòÍË³öº¯Êı·µ»Øtrue£¬·ñÔò¼ÌĞøÑ­»·
-*       4.Ñ­»·½áÊø£¬·µ»Øfalse
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°bonded_to_heteroatom
+* input:atomç±»å¸¸é‡å¼•ç”¨a
+* ouput:boolå€¼
+* ä½œç”¨ï¼š1.éå†açš„æˆå‘˜bondsçš„å…ƒç´ 
+*       2.å®šä¹‰ä¸€ä¸ªä¸´æ—¶bondç±»å¯¹è±¡å¸¸é‡å¼•ç”¨bï¼Œå°†açš„æˆå‘˜bondsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°aä¸Š
+*       3.å°†bçš„æˆå‘˜connected_atom_indexè¾“å…¥get_atomå‡½æ•°ï¼Œè¿”å›ä¸€ä¸ªatomç±»å¯¹è±¡ï¼Œåˆ¤æ–­è¯¥å¯¹è±¡çš„æˆå‘˜is_heteroatomå‡½æ•°è¿”å›å€¼æ˜¯å¦ä¸ºçœŸï¼Œå¦‚æœæ˜¯åˆ™é€€å‡ºå‡½æ•°è¿”å›trueï¼Œå¦åˆ™ç»§ç»­å¾ªç¯
+*       4.å¾ªç¯ç»“æŸï¼Œè¿”å›false
 */
 bool model::bonded_to_heteroatom(const atom& a) const {
 	VINA_FOR_IN(i, a.bonds) {
@@ -742,30 +742,30 @@ bool model::bonded_to_heteroatom(const atom& a) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıassign_types
-* input:ÎŞ
-* ouput:ÎŞ
-* ×÷ÓÃ£ºi´Ó0Ñ­»·µ½£¨model³ÉÔ±grid_atomsµÄ´óĞ¡ºÍatomsµÄ´óĞ¡Ö®ºÍ-1£©
-*				½«iÊäÈëµ½model³ÉÔ±º¯Êısz_to_atom_index£¬·µ»ØµÄÖµ¸³Öµµ½aiÉÏ£¬µ±0<=i<=(grid_atomsµÄ´óĞ¡-1)Ê±£¬aiÎªatom_index(i,true)£¬·ñÔòÎªatom_index(i - grid_atoms.size(), false)
-*				½«aiÊäÈëmodel³ÉÔ±º¯Êıget_atom£¬aiÎªatom_index(i,true)Ê±£¬»ñµÃmodel³ÉÔ±grid_atomsµÄµÚ£¨aiµÄ³ÉÔ±i£©¸öÔªËØ£¬aiÎªatom_index(i - grid_atoms.size(), false)Ê±£¬»ñµÃmodel³ÉÔ±atomsµÄµÚi£¨aiµÄ³ÉÔ±i£©¸öÔªËØ£¬·µ»ØµÄÖµ°ó¶¨µ½aÉÏ
-*				¸øaµÄ³ÉÔ±el¸³Öµ£¬ÈôaµÄ³ÉÔ±ad==20ÇÒaµÄ³ÉÔ±xs==16 Ôòel=10£¬·ñÔòel=adÊäÈëad_type_to_el_typeº¯ÊıºóµÄ·µ»ØÖµ
-*				½«aµÄ³ÉÔ±xs°ó¶¨µ½xÉÏ
-*				¶¨ÒåÒ»¸öboolÖµacceptor£¬Èç¹ûaµÄ³ÉÔ±adµÈÓÚ9»òÕß10£¬acceptorÎªtrue,·ñÔòÎªfalse
-*				¶¨ÒåÒ»¸öboolÖµdonor_NorO£¬Èç¹ûaµÄ³ÉÔ±elµÈÓÚ10»òÕß½«aÊäÈëmodel³ÉÔ±º¯Êıbonded_to_HD·µ»ØÎªÕæ£¬donor_NorOÎªtrue,·ñÔòÎªfalse
-*				¸ù¾İaµÄ³ÉÔ±el´óĞ¡Îªx¸³Öµ
-*							µ±el =  EL_TYPE_H    =  0Ê±£¬²»Ö´ĞĞÈÎºÎ²Ù×÷
-* 							µ±el =  EL_TYPE_C    =  1Ê±£¬½«aÊäÈëmodel³ÉÔ±º¯Êıbonded_to_heteroatom£¬·µ»ØÕæx¸³ÖµÎª1£¬·ñÔòx¸³ÖµÎª0
-* 							µ±el =  EL_TYPE_N    =  2Ê±£¬Èç¹ûacceptorºÍdonor_NorO¾ùÎªÕæ£¬x¸³ÖµÎª5£¬Ö»ÓĞacceptorÎªÕæx¸³ÖµÎª4£¬Ö»ÓĞdonor_NorOÎªÕæx¸³ÖµÎª3£¬¶¼Îª¼Ùx¸³ÖµÎª2
-* 							µ±el =  EL_TYPE_O    =  3Ê±£¬Èç¹ûacceptorºÍdonor_NorO¾ùÎªÕæ£¬x¸³ÖµÎª9£¬Ö»ÓĞacceptorÎªÕæx¸³ÖµÎª8£¬Ö»ÓĞdonor_NorOÎªÕæx¸³ÖµÎª7£¬¶¼Îª¼Ùx¸³ÖµÎª6
-* 							µ±el =  EL_TYPE_S    =  4Ê±£¬x¸³ÖµÎªXS_TYPE_S_P   = 10
-* 							µ±el =  EL_TYPE_P    =  5Ê±£¬x¸³ÖµÎªXS_TYPE_P_P   = 11
-* 							µ±el =  EL_TYPE_F    =  6Ê±£¬x¸³ÖµÎªXS_TYPE_F_H   = 12
-* 							µ±el =  EL_TYPE_Cl   =  7Ê±£¬x¸³ÖµÎªXS_TYPE_Cl_H  = 13
-* 							µ±el =  EL_TYPE_Br   =  8Ê±£¬x¸³ÖµÎªXS_TYPE_Br_H  = 14
-* 							µ±el =  EL_TYPE_I    =  9Ê±£¬x¸³ÖµÎªXS_TYPE_I_H   = 15
-* 							µ±el =  EL_TYPE_Met  = 10Ê±£¬x¸³ÖµÎªXS_TYPE_Met_D = 16
-* 							µ±el =  EL_TYPE_SIZE = 11Ê±£¬²»Ö´ĞĞÈÎºÎ²Ù×÷
-*							¾ù²»ÊÇ£¬±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°assign_types
+* input:æ— 
+* ouput:æ— 
+* ä½œç”¨ï¼šiä»0å¾ªç¯åˆ°ï¼ˆmodelæˆå‘˜grid_atomsçš„å¤§å°å’Œatomsçš„å¤§å°ä¹‹å’Œ-1ï¼‰
+*				å°†iè¾“å…¥åˆ°modelæˆå‘˜å‡½æ•°sz_to_atom_indexï¼Œè¿”å›çš„å€¼èµ‹å€¼åˆ°aiä¸Šï¼Œå½“0<=i<=(grid_atomsçš„å¤§å°-1)æ—¶ï¼Œaiä¸ºatom_index(i,true)ï¼Œå¦åˆ™ä¸ºatom_index(i - grid_atoms.size(), false)
+*				å°†aiè¾“å…¥modelæˆå‘˜å‡½æ•°get_atomï¼Œaiä¸ºatom_index(i,true)æ—¶ï¼Œè·å¾—modelæˆå‘˜grid_atomsçš„ç¬¬ï¼ˆaiçš„æˆå‘˜iï¼‰ä¸ªå…ƒç´ ï¼Œaiä¸ºatom_index(i - grid_atoms.size(), false)æ—¶ï¼Œè·å¾—modelæˆå‘˜atomsçš„ç¬¬iï¼ˆaiçš„æˆå‘˜iï¼‰ä¸ªå…ƒç´ ï¼Œè¿”å›çš„å€¼ç»‘å®šåˆ°aä¸Š
+*				ç»™açš„æˆå‘˜elèµ‹å€¼ï¼Œè‹¥açš„æˆå‘˜ad==20ä¸”açš„æˆå‘˜xs==16 åˆ™el=10ï¼Œå¦åˆ™el=adè¾“å…¥ad_type_to_el_typeå‡½æ•°åçš„è¿”å›å€¼
+*				å°†açš„æˆå‘˜xsç»‘å®šåˆ°xä¸Š
+*				å®šä¹‰ä¸€ä¸ªboolå€¼acceptorï¼Œå¦‚æœaçš„æˆå‘˜adç­‰äº9æˆ–è€…10ï¼Œacceptorä¸ºtrue,å¦åˆ™ä¸ºfalse
+*				å®šä¹‰ä¸€ä¸ªboolå€¼donor_NorOï¼Œå¦‚æœaçš„æˆå‘˜elç­‰äº10æˆ–è€…å°†aè¾“å…¥modelæˆå‘˜å‡½æ•°bonded_to_HDè¿”å›ä¸ºçœŸï¼Œdonor_NorOä¸ºtrue,å¦åˆ™ä¸ºfalse
+*				æ ¹æ®açš„æˆå‘˜elå¤§å°ä¸ºxèµ‹å€¼
+*							å½“el =  EL_TYPE_H    =  0æ—¶ï¼Œä¸æ‰§è¡Œä»»ä½•æ“ä½œ
+* 							å½“el =  EL_TYPE_C    =  1æ—¶ï¼Œå°†aè¾“å…¥modelæˆå‘˜å‡½æ•°bonded_to_heteroatomï¼Œè¿”å›çœŸxèµ‹å€¼ä¸º1ï¼Œå¦åˆ™xèµ‹å€¼ä¸º0
+* 							å½“el =  EL_TYPE_N    =  2æ—¶ï¼Œå¦‚æœacceptorå’Œdonor_NorOå‡ä¸ºçœŸï¼Œxèµ‹å€¼ä¸º5ï¼Œåªæœ‰acceptorä¸ºçœŸxèµ‹å€¼ä¸º4ï¼Œåªæœ‰donor_NorOä¸ºçœŸxèµ‹å€¼ä¸º3ï¼Œéƒ½ä¸ºå‡xèµ‹å€¼ä¸º2
+* 							å½“el =  EL_TYPE_O    =  3æ—¶ï¼Œå¦‚æœacceptorå’Œdonor_NorOå‡ä¸ºçœŸï¼Œxèµ‹å€¼ä¸º9ï¼Œåªæœ‰acceptorä¸ºçœŸxèµ‹å€¼ä¸º8ï¼Œåªæœ‰donor_NorOä¸ºçœŸxèµ‹å€¼ä¸º7ï¼Œéƒ½ä¸ºå‡xèµ‹å€¼ä¸º6
+* 							å½“el =  EL_TYPE_S    =  4æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_S_P   = 10
+* 							å½“el =  EL_TYPE_P    =  5æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_P_P   = 11
+* 							å½“el =  EL_TYPE_F    =  6æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_F_H   = 12
+* 							å½“el =  EL_TYPE_Cl   =  7æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_Cl_H  = 13
+* 							å½“el =  EL_TYPE_Br   =  8æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_Br_H  = 14
+* 							å½“el =  EL_TYPE_I    =  9æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_I_H   = 15
+* 							å½“el =  EL_TYPE_Met  = 10æ—¶ï¼Œxèµ‹å€¼ä¸ºXS_TYPE_Met_D = 16
+* 							å½“el =  EL_TYPE_SIZE = 11æ—¶ï¼Œä¸æ‰§è¡Œä»»ä½•æ“ä½œ
+*							å‡ä¸æ˜¯ï¼ŒæŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 *
 */
 void model::assign_types() {
@@ -797,12 +797,12 @@ void model::assign_types() {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıfind_ligand
-* input:unsigned intÀàĞÍa
-* ouput:unsigned intÀàĞÍÖµ
-* ×÷ÓÃ£º1.±éÀúmodelµÄ³ÉÔ±ligandsÈİÆ÷
-*       2.ÕÒµ½µÚÒ»¸öaÔÚligandsÈİÆ÷ÔªËØµÄ³ÉÔ±beginºÍend·¶Î§Ö®ÄÚµÄÔªËØ£¬·µ»ØÆäÏÂ±ê
-*       3.Ã»ÓĞ·ûºÏÌõ¼şµÄÔò·µ»ØligandsÈİÆ÷µÄ´óĞ¡
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°find_ligand
+* input:unsigned intç±»å‹a
+* ouput:unsigned intç±»å‹å€¼
+* ä½œç”¨ï¼š1.éå†modelçš„æˆå‘˜ligandså®¹å™¨
+*       2.æ‰¾åˆ°ç¬¬ä¸€ä¸ªaåœ¨ligandså®¹å™¨å…ƒç´ çš„æˆå‘˜beginå’ŒendèŒƒå›´ä¹‹å†…çš„å…ƒç´ ï¼Œè¿”å›å…¶ä¸‹æ ‡
+*       3.æ²¡æœ‰ç¬¦åˆæ¡ä»¶çš„åˆ™è¿”å›ligandså®¹å™¨çš„å¤§å°
 */
 sz model::find_ligand(sz a) const {
 	VINA_FOR_IN(i, ligands)
@@ -812,17 +812,17 @@ sz model::find_ligand(sz a) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıbonded_to
-* input:unsigned intÀàĞÍa£¬n£¬unsigned intÀàĞÍÈİÆ÷out
-* ouput:unsigned intÀàĞÍÖµ
-* ×÷ÓÃ£º1.ÅĞ¶ÏaÊÇ·ñÔÚÈİÆ÷outÄÚ£¬ÊÇÔòº¯Êı½áÊø£¬·ñÔò¼ÌĞøÖ´ĞĞÓàÏÂÓï¾ä
-*       2.½«a¼ÓÈëµ½ÈİÆ÷outÎ²²¿
-*       3.ÅĞ¶ÏnÊÇ·ñ´óÓÚ0£¬ÊÇÔò¼ÌĞøÖ´ĞĞÓàÏÂÓï¾ä£¬·ñÔòº¯Êı½áÊø
-*		4.±éÀúatomsÈİÆ÷µÚa¸öÔªËØµÄ³ÉÔ±bondsÈİÆ÷
-*       5.½«atomsÈİÆ÷µÚa¸öÔªËØµÄ³ÉÔ±bondsÈİÆ÷µÚi¸öÔªËØ°ó¶¨µ½bÉÏ
-*       6.ÅĞ¶ÏbµÄ³ÉÔ±connected_atom_indexÀàµÄ³ÉÔ±in_gridÊÇ·ñÎªÕæ£¬ÊÇÔòº¯Êı½áÊø£¬·ñÔò¼ÌĞøÖ´ĞĞÓàÏÂÓï¾ä
-*       7.½«bµÄ³ÉÔ±connected_atom_indexÀàµÄ³ÉÔ±i£¬n-1,outÊäÈëbonded_to
-* Ä¿µÄ£º½«·ûºÏÉÏÊö¹æÔòµÄatmosµÄÏÂ±ê°´Á¬½ÓË³ĞòÒÀ´Î´æÈëoutÎ²²¿£¬¹æÔò¼ûÍ¼Èı
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°bonded_to
+* input:unsigned intç±»å‹aï¼Œnï¼Œunsigned intç±»å‹å®¹å™¨out
+* ouput:unsigned intç±»å‹å€¼
+* ä½œç”¨ï¼š1.åˆ¤æ–­aæ˜¯å¦åœ¨å®¹å™¨outå†…ï¼Œæ˜¯åˆ™å‡½æ•°ç»“æŸï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä½™ä¸‹è¯­å¥
+*       2.å°†aåŠ å…¥åˆ°å®¹å™¨outå°¾éƒ¨
+*       3.åˆ¤æ–­næ˜¯å¦å¤§äº0ï¼Œæ˜¯åˆ™ç»§ç»­æ‰§è¡Œä½™ä¸‹è¯­å¥ï¼Œå¦åˆ™å‡½æ•°ç»“æŸ
+*		4.éå†atomså®¹å™¨ç¬¬aä¸ªå…ƒç´ çš„æˆå‘˜bondså®¹å™¨
+*       5.å°†atomså®¹å™¨ç¬¬aä¸ªå…ƒç´ çš„æˆå‘˜bondså®¹å™¨ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°bä¸Š
+*       6.åˆ¤æ–­bçš„æˆå‘˜connected_atom_indexç±»çš„æˆå‘˜in_gridæ˜¯å¦ä¸ºçœŸï¼Œæ˜¯åˆ™å‡½æ•°ç»“æŸï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä½™ä¸‹è¯­å¥
+*       7.å°†bçš„æˆå‘˜connected_atom_indexç±»çš„æˆå‘˜iï¼Œn-1,outè¾“å…¥bonded_to
+* ç›®çš„ï¼šå°†ç¬¦åˆä¸Šè¿°è§„åˆ™çš„atmosçš„ä¸‹æ ‡æŒ‰è¿æ¥é¡ºåºä¾æ¬¡å­˜å…¥outå°¾éƒ¨ï¼Œè§„åˆ™è§å›¾ä¸‰
 */
 
 void model::bonded_to(sz a, sz n, szv& out) const {
@@ -838,12 +838,12 @@ void model::bonded_to(sz a, sz n, szv& out) const {
 }
 
 /*
-* ÖØÔØmodelµÄ³ÉÔ±º¯Êıbonded_to
-* input:unsigned intÀàĞÍa£¬n
-* ouput:unsigned intÀàĞÍvector
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸öÁÙÊ±unsigned intÀàĞÍvector¶ÔÏótmp
-*       2.µ÷ÓÃbonded_toº¯ÊıÈıÊäÈë°æ±¾£¬´«Èëa,n,tmp
-*       3.·µ»Øtmp
+* é‡è½½modelçš„æˆå‘˜å‡½æ•°bonded_to
+* input:unsigned intç±»å‹aï¼Œn
+* ouput:unsigned intç±»å‹vector
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªä¸´æ—¶unsigned intç±»å‹vectorå¯¹è±¡tmp
+*       2.è°ƒç”¨bonded_toå‡½æ•°ä¸‰è¾“å…¥ç‰ˆæœ¬ï¼Œä¼ å…¥a,n,tmp
+*       3.è¿”å›tmp
 */
 szv model::bonded_to(sz a, sz n) const {
 	szv tmp;
@@ -852,24 +852,24 @@ szv model::bonded_to(sz a, sz n) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıinitialize_pairs
-* input:distance_type_matrixÀà³£Á¿ÒıÓÃmobility
-* ouput:ÎŞ
-* ×÷ÓÃ£º±éÀúmodel³ÉÔ±atmosÄÚµÄÔªËØ
-*			ÕÒµ½µÚÒ»¸öiÔÚligandsÈİÆ÷ÔªËØµÄ³ÉÔ±beginºÍend·¶Î§Ö®ÄÚµÄÔªËØ£¬·µ»ØÆäÏÂ±ê¸³Öµ¸øi_lig
-*			½«i,3´øÈëº¯Êıbonded_to£¬·µ»ØatomsÖĞÓëiÁ¬½ÓÂú×ãÒ»¶¨¹æÔòµÄÔªËØµÄÏÂ±ê×é³ÉµÄvector--->bonded_atoms£¬¹æÔò¼ûÍ¼Èı
-*			j´Ói+1Ñ­»·µ½atoms.size()-1----------->atoms.size()ÎªatmosÈİÆ÷µÄ´óĞ¡
-*				Èç¹ûiºÍj¾ù´óÓÚmodelµÄm_num_movable_atoms£¨modelµÄÒÆ¶¯Ô­×ÓµÄÊıÁ¿£©£¬Ö±½Ó¼ÌĞøÏÂÒ»´ÎÑ­»·
-*				½«i,j´øÈëmodelÖĞ£¬·µ»ØmobilityµÄ³ÉÔ±m_data[i + j*(j-1)/2]£¬ÅĞ¶Ï·µ»ØÖµÊÇ·ñÎªDISTANCE_VARIABLE²¢ÇÒj²»ÔÚbonded_atoms£¬Èç¹û¶¼Âú×ã£¬¼ÌĞøÖ´ĞĞÏÂÃæÓï¾ä£¬·ñÔò¼ÌĞøÏÂÒ»´ÎÑ­»·
-*				½«m_atom_typing_used´úÈëatmosµÚi¸öÔªËØµÄº¯ÊıgetÖĞµÃµ½m_atom_typing_used¶ÔÓ¦µÄÕûÊıÖµ¸³¸øt1
-*				½«m_atom_typing_used´úÈëatmosµÚj¸öÔªËØµÄº¯ÊıgetÖĞµÃµ½m_atom_typing_used¶ÔÓ¦µÄÕûÊıÖµ¸³¸øt2
-*				½«m_atom_typing_used´úÈënum_atom_typesÖĞµÃµ½m_atom_typing_used¶ÔÓ¦µÄÕûÊıÖµ¸³¸øn
-*				Èç¹ût1ºÍt2¾ùĞ¡ÓÚn,¼ÌĞøÖ´ĞĞÏÂÃæÓï¾ä£¬·ñÔò¼ÌĞøÏÂÒ»´ÎÑ­»·
-*				½«n, t1, t2´úÈëtriangular_matrix_index_permissive£¨Èı½Ç¾ØÕóË÷Òı£©£¬µ±t1<t2Ê±£¬·µ»Øt1 + t2*(t2+1)/2£¬¸³Öµ¸øtype_pair_index
-*																				   µ±t1>t2Ê±£¬·µ»Øt2 + t1*(t1+1)/2£¬¸³Öµ¸øtype_pair_index
-*				¶¨ÒåÒ»¸öinteracting_pairÀàip£¬³õÊ¼»¯³õÊ¼»¯type_pair_index£¬a£¬bÎªtype_pair_index, i, j
-*				Èç¹ûi_ligĞ¡ÓÚligands£¨ÅäÌåÈİÆ÷£©´óĞ¡²¢ÇÒµÚÒ»¸öjÔÚligandsÈİÆ÷ÔªËØµÄ³ÉÔ±beginºÍend·¶Î§Ö®ÄÚµÄÔªËØ£¬·µ»ØÆäÏÂ±êµÈÓÚi_lig
-*				½«ip´æÈëligandsµÚi_lig¸öÔªËØµÄ³ÉÔ±pairsÎ²²¿£¬·ñÔò´æÈëmodelµÄother_pairsÎ²²¿
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°initialize_pairs
+* input:distance_type_matrixç±»å¸¸é‡å¼•ç”¨mobility
+* ouput:æ— 
+* ä½œç”¨ï¼šéå†modelæˆå‘˜atmoså†…çš„å…ƒç´ 
+*			æ‰¾åˆ°ç¬¬ä¸€ä¸ªiåœ¨ligandså®¹å™¨å…ƒç´ çš„æˆå‘˜beginå’ŒendèŒƒå›´ä¹‹å†…çš„å…ƒç´ ï¼Œè¿”å›å…¶ä¸‹æ ‡èµ‹å€¼ç»™i_lig
+*			å°†i,3å¸¦å…¥å‡½æ•°bonded_toï¼Œè¿”å›atomsä¸­ä¸iè¿æ¥æ»¡è¶³ä¸€å®šè§„åˆ™çš„å…ƒç´ çš„ä¸‹æ ‡ç»„æˆçš„vector--->bonded_atomsï¼Œè§„åˆ™è§å›¾ä¸‰
+*			jä»i+1å¾ªç¯åˆ°atoms.size()-1----------->atoms.size()ä¸ºatmoså®¹å™¨çš„å¤§å°
+*				å¦‚æœiå’Œjå‡å¤§äºmodelçš„m_num_movable_atomsï¼ˆmodelçš„ç§»åŠ¨åŸå­çš„æ•°é‡ï¼‰ï¼Œç›´æ¥ç»§ç»­ä¸‹ä¸€æ¬¡å¾ªç¯
+*				å°†i,jå¸¦å…¥modelä¸­ï¼Œè¿”å›mobilityçš„æˆå‘˜m_data[i + j*(j-1)/2]ï¼Œåˆ¤æ–­è¿”å›å€¼æ˜¯å¦ä¸ºDISTANCE_VARIABLEå¹¶ä¸”jä¸åœ¨bonded_atomsï¼Œå¦‚æœéƒ½æ»¡è¶³ï¼Œç»§ç»­æ‰§è¡Œä¸‹é¢è¯­å¥ï¼Œå¦åˆ™ç»§ç»­ä¸‹ä¸€æ¬¡å¾ªç¯
+*				å°†m_atom_typing_usedä»£å…¥atmosç¬¬iä¸ªå…ƒç´ çš„å‡½æ•°getä¸­å¾—åˆ°m_atom_typing_usedå¯¹åº”çš„æ•´æ•°å€¼èµ‹ç»™t1
+*				å°†m_atom_typing_usedä»£å…¥atmosç¬¬jä¸ªå…ƒç´ çš„å‡½æ•°getä¸­å¾—åˆ°m_atom_typing_usedå¯¹åº”çš„æ•´æ•°å€¼èµ‹ç»™t2
+*				å°†m_atom_typing_usedä»£å…¥num_atom_typesä¸­å¾—åˆ°m_atom_typing_usedå¯¹åº”çš„æ•´æ•°å€¼èµ‹ç»™n
+*				å¦‚æœt1å’Œt2å‡å°äºn,ç»§ç»­æ‰§è¡Œä¸‹é¢è¯­å¥ï¼Œå¦åˆ™ç»§ç»­ä¸‹ä¸€æ¬¡å¾ªç¯
+*				å°†n, t1, t2ä»£å…¥triangular_matrix_index_permissiveï¼ˆä¸‰è§’çŸ©é˜µç´¢å¼•ï¼‰ï¼Œå½“t1<t2æ—¶ï¼Œè¿”å›t1 + t2*(t2+1)/2ï¼Œèµ‹å€¼ç»™type_pair_index
+*																				   å½“t1>t2æ—¶ï¼Œè¿”å›t2 + t1*(t1+1)/2ï¼Œèµ‹å€¼ç»™type_pair_index
+*				å®šä¹‰ä¸€ä¸ªinteracting_pairç±»ipï¼Œåˆå§‹åŒ–åˆå§‹åŒ–type_pair_indexï¼Œaï¼Œbä¸ºtype_pair_index, i, j
+*				å¦‚æœi_ligå°äºligandsï¼ˆé…ä½“å®¹å™¨ï¼‰å¤§å°å¹¶ä¸”ç¬¬ä¸€ä¸ªjåœ¨ligandså®¹å™¨å…ƒç´ çš„æˆå‘˜beginå’ŒendèŒƒå›´ä¹‹å†…çš„å…ƒç´ ï¼Œè¿”å›å…¶ä¸‹æ ‡ç­‰äºi_lig
+*				å°†ipå­˜å…¥ligandsç¬¬i_ligä¸ªå…ƒç´ çš„æˆå‘˜pairså°¾éƒ¨ï¼Œå¦åˆ™å­˜å…¥modelçš„other_pairså°¾éƒ¨
 * 
 */
 void model::initialize_pairs(const distance_type_matrix& mobility) {
@@ -896,15 +896,15 @@ void model::initialize_pairs(const distance_type_matrix& mobility) {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıinitialize
-* input:distance_type_matrixÀà³£Á¿ÒıÓÃmobility
-* ouput:ÎŞ
-* ×÷ÓÃ£º±éÀúmodel³ÉÔ±ligandsÄÚµÄÔªËØ
-*			»ñÈ¡ligand[i]µÄ³ÉÔ±nodeµÄbegin£¬ºÍÆäËùÓĞºó´úµÄ³ÉÔ±nodeµÄbegin£¬ÕÒµ½×îĞ¡Öµ¸³Öµ¸øligand[i].begin
-*			»ñÈ¡ligand[i]µÄ³ÉÔ±nodeµÄend£¬  ºÍÆäËùÓĞºó´úµÄ³ÉÔ±nodeµÄend£¬  ÕÒµ½×î´óÖµ¸³Öµ¸øligand[i].end
-*		½«mobilityÊäÈëassign_bonds£¬Ñ°ÕÒ¼üºÏÔ­×Ó
-*		¸øgrid_atomsµÄÔªËØ£¬atomsµÄÔªËØ·ÖÅäÀàĞÍ
-*		½«mobilityinitialize_pairs£¬³õÊ¼»¯ÅäÌåµÄÔªËØµÄpair
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°initialize
+* input:distance_type_matrixç±»å¸¸é‡å¼•ç”¨mobility
+* ouput:æ— 
+* ä½œç”¨ï¼šéå†modelæˆå‘˜ligandså†…çš„å…ƒç´ 
+*			è·å–ligand[i]çš„æˆå‘˜nodeçš„beginï¼Œå’Œå…¶æ‰€æœ‰åä»£çš„æˆå‘˜nodeçš„beginï¼Œæ‰¾åˆ°æœ€å°å€¼èµ‹å€¼ç»™ligand[i].begin
+*			è·å–ligand[i]çš„æˆå‘˜nodeçš„endï¼Œ  å’Œå…¶æ‰€æœ‰åä»£çš„æˆå‘˜nodeçš„endï¼Œ  æ‰¾åˆ°æœ€å¤§å€¼èµ‹å€¼ç»™ligand[i].end
+*		å°†mobilityè¾“å…¥assign_bondsï¼Œå¯»æ‰¾é”®åˆåŸå­
+*		ç»™grid_atomsçš„å…ƒç´ ï¼Œatomsçš„å…ƒç´ åˆ†é…ç±»å‹
+*		å°†mobilityinitialize_pairsï¼Œåˆå§‹åŒ–é…ä½“çš„å…ƒç´ çš„pair
 */
 void model::initialize(const distance_type_matrix& mobility) {
 	VINA_FOR_IN(i, ligands)
@@ -917,11 +917,11 @@ void model::initialize(const distance_type_matrix& mobility) {
 ///////////////////  end  MODEL::INITIALIZE /////////////////////////
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êınum_internal_pairs
-* input:ÎŞ
-* ouput:unsigned intÀàĞÍÖµ
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸öÁÙÊ±unsigned intÀàĞÍÖµtmp£¬³õÊ¼»¯Îª0
-*       2.Çómodel³ÉÔ±ligandsËùÓĞÔªËØµÄ³ÉÔ±pairsµÄ´óĞ¡Ö®ºÍ£¬¸³Öµ¸øtmp²¢·µ»Ø
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°num_internal_pairs
+* input:æ— 
+* ouput:unsigned intç±»å‹å€¼
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªä¸´æ—¶unsigned intç±»å‹å€¼tmpï¼Œåˆå§‹åŒ–ä¸º0
+*       2.æ±‚modelæˆå‘˜ligandsæ‰€æœ‰å…ƒç´ çš„æˆå‘˜pairsçš„å¤§å°ä¹‹å’Œï¼Œèµ‹å€¼ç»™tmpå¹¶è¿”å›
 */
 sz model::num_internal_pairs() const {
 	sz tmp = 0;
@@ -931,16 +931,16 @@ sz model::num_internal_pairs() const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıget_movable_atom_types£¬»ñÈ¡¿ÉÒÆ¶¯µÄÔ­×ÓÀàĞÍ
-* input:atom_typeÀà¶¨ÒåµÄÃ¶¾ÙÀàĞÍt
-* ouput:unsigned intĞÍvector
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸öÁÙÊ±unsigned intĞÍvector tmp
-*       2.½«atom_typing_used_×ª»»³É¶ÔÓ¦µÄ£¨atom_typing_used_£©_TYPE_SIZE¸³Öµ¸øn
-*		3.´Ói=1Ñ­»·µ½i=m_num_movable_atoms-1
-*               £¨1£©½«model³ÉÔ±atomsµÄµÚi¸öÔªËØ°ó¶¨µ½aÉÏ
-*               £¨2£©½«atom_typing_used_×ª»»³Éa³ÉÔ±atom_typing_used_¶ÔÓ¦Ğ¡Ğ´ĞÎÊ½Ëù´ú±íµÄÊı£¬¸³Öµ¸øt
-*               £¨3£©Èç¹ûtĞ¡ÓÚn²¢ÇÒt²»ÔÚtmpÄÚ£¬½«t´æÈëtmpÎ²²¿
-*       4.·µ»Øtmp
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°get_movable_atom_typesï¼Œè·å–å¯ç§»åŠ¨çš„åŸå­ç±»å‹
+* input:atom_typeç±»å®šä¹‰çš„æšä¸¾ç±»å‹t
+* ouput:unsigned intå‹vector
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªä¸´æ—¶unsigned intå‹vector tmp
+*       2.å°†atom_typing_used_è½¬æ¢æˆå¯¹åº”çš„ï¼ˆatom_typing_used_ï¼‰_TYPE_SIZEèµ‹å€¼ç»™n
+*		3.ä»i=1å¾ªç¯åˆ°i=m_num_movable_atoms-1
+*               ï¼ˆ1ï¼‰å°†modelæˆå‘˜atomsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°aä¸Š
+*               ï¼ˆ2ï¼‰å°†atom_typing_used_è½¬æ¢æˆaæˆå‘˜atom_typing_used_å¯¹åº”å°å†™å½¢å¼æ‰€ä»£è¡¨çš„æ•°ï¼Œèµ‹å€¼ç»™t
+*               ï¼ˆ3ï¼‰å¦‚æœtå°äºnå¹¶ä¸”tä¸åœ¨tmpå†…ï¼Œå°†tå­˜å…¥tmpå°¾éƒ¨
+*       4.è¿”å›tmp
 */
 szv model::get_movable_atom_types(atom_type::t atom_typing_used_) const {
 	szv tmp;
@@ -955,12 +955,12 @@ szv model::get_movable_atom_types(atom_type::t atom_typing_used_) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıget_size
-* input:ÎŞ
-* ouput:conf_sizeÀà
-* ×÷ÓÃ£º1.»ñµÃligandsµÄÅ¤×ª¼ÆÊı±£´æÔÚÁÙÊ±tmp.ligands¶ÔÏóÖĞ
-*       2.»ñµÃflexµÄÅ¤×ª¼ÆÊı±£´æÔÚÁÙÊ±tmp.flex¶ÔÏóÖĞ
-*		3.·µ»Øtmp
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°get_size
+* input:æ— 
+* ouput:conf_sizeç±»
+* ä½œç”¨ï¼š1.è·å¾—ligandsçš„æ‰­è½¬è®¡æ•°ä¿å­˜åœ¨ä¸´æ—¶tmp.ligandså¯¹è±¡ä¸­
+*       2.è·å¾—flexçš„æ‰­è½¬è®¡æ•°ä¿å­˜åœ¨ä¸´æ—¶tmp.flexå¯¹è±¡ä¸­
+*		3.è¿”å›tmp
 */
 conf_size model::get_size() const {
 	conf_size tmp;
@@ -970,28 +970,28 @@ conf_size model::get_size() const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıget_initial_conf
-* input:ÎŞ
-* ouput:confÀà
-* ×÷ÓÃ£º1.»ñµÃligandsµÄÅ¤×ª¼ÆÊı±£´æÔÚÁÙÊ±cs.ligands¶ÔÏóÖĞ
-*       2.»ñµÃflexµÄÅ¤×ª¼ÆÊı±£´æÔÚÁÙÊ±cs.ligands¶ÔÏóÖĞ
-*		3.·µ»Øtmp
-*		4.¶¨ÒåÒ»¸öconf¶ÔÏótmp
-*		tmpÄÚ		ligandsÏòÁ¿µÄÔªËØ¸öÊıÎªcsÖĞµÄligands unintÏòÁ¿µÄÔªËØ¸öÊı;
-*					flexÏòÁ¿µÄÔªËØ¸öÊıÎªcsÖĞµÄflex uintÏòÁ¿µÄÔªËØ¸öÊı;
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°get_initial_conf
+* input:æ— 
+* ouput:confç±»
+* ä½œç”¨ï¼š1.è·å¾—ligandsçš„æ‰­è½¬è®¡æ•°ä¿å­˜åœ¨ä¸´æ—¶cs.ligandså¯¹è±¡ä¸­
+*       2.è·å¾—flexçš„æ‰­è½¬è®¡æ•°ä¿å­˜åœ¨ä¸´æ—¶cs.ligandså¯¹è±¡ä¸­
+*		3.è¿”å›tmp
+*		4.å®šä¹‰ä¸€ä¸ªconfå¯¹è±¡tmp
+*		tmpå†…		ligandså‘é‡çš„å…ƒç´ ä¸ªæ•°ä¸ºcsä¸­çš„ligands unintå‘é‡çš„å…ƒç´ ä¸ªæ•°;
+*					flexå‘é‡çš„å…ƒç´ ä¸ªæ•°ä¸ºcsä¸­çš„flex uintå‘é‡çš„å…ƒç´ ä¸ªæ•°;
 *
-*					ligands[i].torsions doubleÏòÁ¿ÖĞÔªËØ¸öÊıÎªs.ligands[ligands.size]¸ö£¬ÆäÖµ¶¼Îª0£»
-*					flex[i].torsions doubleÏòÁ¿ÖĞÔªËØ¸öÊıÎªs.flex[flex.size]¸ö£¬ÆäÖµ¶¼Îª0£»
-*		5.	²ÎÊıÉèÎªnull
-*		    tmp.ligands½á¹¹ÌåÏòÁ¿ÖĞ£º
-*		    data[0] = 0£»data[1] = 0;data[2] = 0;
-*		    orientation£ºÒ»¸öÊµ²¿Îª1£¬Ğé²¿¶¼Îª0µÄËÄÔªÊı
-*		    torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0£»
-*		    tmp.flex½á¹¹ÌåÏòÁ¿ÖĞ£º
-*		    torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0
-*		6.±éÀúligandsÄÚÔªËØ
-*			½«tmp.ligands[i].rigid.positionÉèÖÃÎªligands[i].node.origin
-*		7.·µ»Øtmp
+*					ligands[i].torsions doubleå‘é‡ä¸­å…ƒç´ ä¸ªæ•°ä¸ºs.ligands[ligands.size]ä¸ªï¼Œå…¶å€¼éƒ½ä¸º0ï¼›
+*					flex[i].torsions doubleå‘é‡ä¸­å…ƒç´ ä¸ªæ•°ä¸ºs.flex[flex.size]ä¸ªï¼Œå…¶å€¼éƒ½ä¸º0ï¼›
+*		5.	å‚æ•°è®¾ä¸ºnull
+*		    tmp.ligandsç»“æ„ä½“å‘é‡ä¸­ï¼š
+*		    data[0] = 0ï¼›data[1] = 0;data[2] = 0;
+*		    orientationï¼šä¸€ä¸ªå®éƒ¨ä¸º1ï¼Œè™šéƒ¨éƒ½ä¸º0çš„å››å…ƒæ•°
+*		    torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0ï¼›
+*		    tmp.flexç»“æ„ä½“å‘é‡ä¸­ï¼š
+*		    torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0
+*		6.éå†ligandså†…å…ƒç´ 
+*			å°†tmp.ligands[i].rigid.positionè®¾ç½®ä¸ºligands[i].node.origin
+*		7.è¿”å›tmp
 */
 conf model::get_initial_conf() const { // torsions = 0, orientations = identity, ligand positions = current
 	conf_size cs = get_size();
@@ -1003,24 +1003,24 @@ conf model::get_initial_conf() const { // torsions = 0, orientations = identity,
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êımovable_atoms_box
-* input:doubleÀàĞÍadd_to_each_dimension£¬doubleÀàĞÍgranularity£¨Á£¶È£©
-* ouput:grid_dimsÊı×é
-* ×÷ÓÃ£º1.¶¨ÒåÁ½¸övecÀàcorner1ºÍcorner2£¬²¢ÇÒ¾ù³õÊ¼»¯ÀàÄÚµÄÊı×éÔªËØÎª0
-*       2.i´Ó0Ñ­»·µ½m_num_movable_atoms£¨modelµÄ³ÉÔ±£©
-*				½«model³ÉÔ±coordsµÄµÚi¸öÔªËØ°ó¶¨µ½vÉÏ
-*				j´Ó0Ñ­»·µ½2
-*						µ±i=0Ê±»òÕßvµÄµÚj¸öÔªËØĞ¡ÓÚcorner1µÄµÚj¸öÔªËØ£¬½«vµÄµÚj¸öÔªËØ¸³Öµ¸øcorner1µÄµÚj¸öÔªËØ
-*						µ±i=0Ê±»òÕßvµÄµÚj¸öÔªËØ´óÓÚcorner1µÄµÚj¸öÔªËØ£¬½«vµÄµÚj¸öÔªËØ¸³Öµ¸øcorner1µÄµÚj¸öÔªËØ
-*		 £¨»ñµÃmodel³ÉÔ±coordsËùÓĞÔªËØµÄÊı×éÖĞÈı¸ö×ø±êµÄ×îĞ¡ÖµºÍ×î´óÖµ£¬¸³¸øcorner1, corner2£©		
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°movable_atoms_box
+* input:doubleç±»å‹add_to_each_dimensionï¼Œdoubleç±»å‹granularityï¼ˆç²’åº¦ï¼‰
+* ouput:grid_dimsæ•°ç»„
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸¤ä¸ªvecç±»corner1å’Œcorner2ï¼Œå¹¶ä¸”å‡åˆå§‹åŒ–ç±»å†…çš„æ•°ç»„å…ƒç´ ä¸º0
+*       2.iä»0å¾ªç¯åˆ°m_num_movable_atomsï¼ˆmodelçš„æˆå‘˜ï¼‰
+*				å°†modelæˆå‘˜coordsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°vä¸Š
+*				jä»0å¾ªç¯åˆ°2
+*						å½“i=0æ—¶æˆ–è€…vçš„ç¬¬jä¸ªå…ƒç´ å°äºcorner1çš„ç¬¬jä¸ªå…ƒç´ ï¼Œå°†vçš„ç¬¬jä¸ªå…ƒç´ èµ‹å€¼ç»™corner1çš„ç¬¬jä¸ªå…ƒç´ 
+*						å½“i=0æ—¶æˆ–è€…vçš„ç¬¬jä¸ªå…ƒç´ å¤§äºcorner1çš„ç¬¬jä¸ªå…ƒç´ ï¼Œå°†vçš„ç¬¬jä¸ªå…ƒç´ èµ‹å€¼ç»™corner1çš„ç¬¬jä¸ªå…ƒç´ 
+*		 ï¼ˆè·å¾—modelæˆå‘˜coordsæ‰€æœ‰å…ƒç´ çš„æ•°ç»„ä¸­ä¸‰ä¸ªåæ ‡çš„æœ€å°å€¼å’Œæœ€å¤§å€¼ï¼Œèµ‹ç»™corner1, corner2ï¼‰		
 *		3.corner1[0] = corner1[0]-add_to_each_dimension / 2, corner1[1] = corner1[1]-add_to_each_dimension / 2, corner1[2] = corner1[2]-add_to_each_dimension / 2
 * 		  corner2[0] = corner2[0]+add_to_each_dimension / 2, corner2[1] = corner2[1]+add_to_each_dimension / 2, corner2[2] = corner2[2]+add_to_each_dimension / 2
-*		4.¶¨ÒåÒ»¸ögrid_dimsÊı×égd
-*		  ¼ÆËãcorner1ºÍcorner2µÄÖĞĞÄ center[0] = 0.5 * (corner2[0] + corner1[0]) center[1] = 0.5 * (corner2[1] + corner1[1]) center[2] = 0.5 * (corner2[2] + corner1[2])
-*		  i´Ó0Ñ­»·µ½2
-*				gd[i].n = ¡¾(corner2[i] - corner1[i]) / granularity)ÏòÉÏÈ¡Õû¡¿         gd[i].n---------gd[i]µÄ³ÉÔ±n
-*				real_span = granularity*gd[i].n£¬       gd[i].begin = center[i] - real_span/2£¬          gd[i].end = center[i] + real_span/2             gd[i].begin---------gd[i]µÄ³ÉÔ±begin            gd[i].end---------gd[i]µÄ³ÉÔ±end
-*		5.·µ»Øgd
+*		4.å®šä¹‰ä¸€ä¸ªgrid_dimsæ•°ç»„gd
+*		  è®¡ç®—corner1å’Œcorner2çš„ä¸­å¿ƒ center[0] = 0.5 * (corner2[0] + corner1[0]) center[1] = 0.5 * (corner2[1] + corner1[1]) center[2] = 0.5 * (corner2[2] + corner1[2])
+*		  iä»0å¾ªç¯åˆ°2
+*				gd[i].n = ã€(corner2[i] - corner1[i]) / granularity)å‘ä¸Šå–æ•´ã€‘         gd[i].n---------gd[i]çš„æˆå‘˜n
+*				real_span = granularity*gd[i].nï¼Œ       gd[i].begin = center[i] - real_span/2ï¼Œ          gd[i].end = center[i] + real_span/2             gd[i].begin---------gd[i]çš„æˆå‘˜begin            gd[i].end---------gd[i]çš„æˆå‘˜end
+*		5.è¿”å›gd
 * 
 * 
 */
@@ -1051,39 +1051,39 @@ grid_dims model::movable_atoms_box(fl add_to_each_dimension, fl granularity) con
 }
 
 /*
-* º¯Êıstring_write_coord
-* input:unsigned intÀàĞÍi£¬doubleÀàĞÍx£¬stringÀàÒıÓÃstr
-* ouput:ÎŞ
-* ×÷ÓÃ£º1.ÏÈ¼ì²éÊäÈëiÊÇ·ñ´óÓÚ0£¬ÊÇÔò¼ÌĞøÏÂÃæ´úÂë£¬·ñÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*       2.i×Ô¼õ1
-*		3.¶¨ÒåÒ»¸östringÀàÊä³öÁ÷out
-*       4.¶Ôx½øĞĞ¸ñÊ½ÉèÖÃ±£´æÔÚoutÖĞ£¬¸ñÊ½Îªzzzz.zzz£¬ÇÒÓĞÈıÎ»ÓĞĞ§Ğ¡Êı
-*		5.½«±£´æÔÚoutÖĞµÄstring¿½±´µ½strÖĞ£¬ÆğÊ¼´¦Î»ÖÃÎªi£¨¼´ÊäÈëi¼õÈ¥1£©
+* å‡½æ•°string_write_coord
+* input:unsigned intç±»å‹iï¼Œdoubleç±»å‹xï¼Œstringç±»å¼•ç”¨str
+* ouput:æ— 
+* ä½œç”¨ï¼š1.å…ˆæ£€æŸ¥è¾“å…¥iæ˜¯å¦å¤§äº0ï¼Œæ˜¯åˆ™ç»§ç»­ä¸‹é¢ä»£ç ï¼Œå¦åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*       2.iè‡ªå‡1
+*		3.å®šä¹‰ä¸€ä¸ªstringç±»è¾“å‡ºæµout
+*       4.å¯¹xè¿›è¡Œæ ¼å¼è®¾ç½®ä¿å­˜åœ¨outä¸­ï¼Œæ ¼å¼ä¸ºzzzz.zzzï¼Œä¸”æœ‰ä¸‰ä½æœ‰æ•ˆå°æ•°
+*		5.å°†ä¿å­˜åœ¨outä¸­çš„stringæ‹·è´åˆ°strä¸­ï¼Œèµ·å§‹å¤„ä½ç½®ä¸ºiï¼ˆå³è¾“å…¥iå‡å»1ï¼‰
 */
 void string_write_coord(sz i, fl x, std::string& str) {
 	VINA_CHECK(i > 0);
 	--i;
 	std::ostringstream out;
-	//Éè¶¨µãÊä³ö¸ñÊ½,Ğ¡ÊıµãºóÓĞ6Î»Êı×Ö,ÏÔÊ¾¸¡µãÊıµÄĞ¡ÊıµãºÍĞ¡ÊıÎ»Êı
+	//è®¾å®šç‚¹è¾“å‡ºæ ¼å¼,å°æ•°ç‚¹åæœ‰6ä½æ•°å­—,æ˜¾ç¤ºæµ®ç‚¹æ•°çš„å°æ•°ç‚¹å’Œå°æ•°ä½æ•°
 	out.setf(std::ios::fixed, std::ios::floatfield);
 	out.setf(std::ios::showpoint);
-	//setw(8)ÉèÖÃÊä³ö¿í¶È£¬8¸öÕ¼Î»·û£¬ÓÒ¶ÔÆë
-	//ÉèÖÃ¸¡µãÖµµÄĞ¡Êı¾«¶ÈÎª3
+	//setw(8)è®¾ç½®è¾“å‡ºå®½åº¦ï¼Œ8ä¸ªå ä½ç¬¦ï¼Œå³å¯¹é½
+	//è®¾ç½®æµ®ç‚¹å€¼çš„å°æ•°ç²¾åº¦ä¸º3
 	out << std::setw(8) << std::setprecision(3) << x; 
-	//¼ì²éstringÊä³öÁ÷ÖĞstringµÄ´óĞ¡ÊÇ·ñµÈÓÚ8£¬²»µÈÓÚÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
+	//æ£€æŸ¥stringè¾“å‡ºæµä¸­stringçš„å¤§å°æ˜¯å¦ç­‰äº8ï¼Œä¸ç­‰äºåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 	VINA_CHECK(out.str().size() == 8); 
-	//¼ì²éstrµÄ´óĞ¡ÊÇ·ñ´óÓÚi+8£¬Ğ¡ÓÚµÈÓÚÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
+	//æ£€æŸ¥strçš„å¤§å°æ˜¯å¦å¤§äºi+8ï¼Œå°äºç­‰äºåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 	VINA_CHECK(str.size() > i + 8);
-	//½«stringÀàÊä³öÁ÷outÖĞµÄÔªËØ¸³Öµµ½strÖĞ£¬ÆğÊ¼´¦Î»ÖÃÎªi
+	//å°†stringç±»è¾“å‡ºæµoutä¸­çš„å…ƒç´ èµ‹å€¼åˆ°strä¸­ï¼Œèµ·å§‹å¤„ä½ç½®ä¸ºi
 	VINA_FOR(j, 8)
 		str[i+j] = out.str()[j];
 }
 
 /*
-* º¯Êıcoords_to_pdbqt_string
-* input:vecÀà³£Á¿ÒıÓÃcoords£¬stringÀà³£Á¿ÒıÓÃstr
-* ouput:stringÀà
-* ×÷ÓÃ£º¿½±´Ò»¸östrÎªtmp£¬²¢½«coordsµÄÈı¸öÔªËØ×ª»»³É¸ñÊ½Îªzzzz.zzz£¬ÇÒÓĞÈıÎ»ÓĞĞ§Ğ¡Êı£¬ÒÀ´Î½«0£¬1£¬2Î»ÖÃµÄÔªËØ´æÈëtmpÆğÊ¼Î»ÖÃÎª30£¬38£¬46Î»ÖÃ´¦£¬·µ»Øtmp	
+* å‡½æ•°coords_to_pdbqt_string
+* input:vecç±»å¸¸é‡å¼•ç”¨coordsï¼Œstringç±»å¸¸é‡å¼•ç”¨str
+* ouput:stringç±»
+* ä½œç”¨ï¼šæ‹·è´ä¸€ä¸ªsträ¸ºtmpï¼Œå¹¶å°†coordsçš„ä¸‰ä¸ªå…ƒç´ è½¬æ¢æˆæ ¼å¼ä¸ºzzzz.zzzï¼Œä¸”æœ‰ä¸‰ä½æœ‰æ•ˆå°æ•°ï¼Œä¾æ¬¡å°†0ï¼Œ1ï¼Œ2ä½ç½®çš„å…ƒç´ å­˜å…¥tmpèµ·å§‹ä½ç½®ä¸º30ï¼Œ38ï¼Œ46ä½ç½®å¤„ï¼Œè¿”å›tmp	
 */
 std::string coords_to_pdbqt_string(const vec& coords, const std::string& str) {
 	std::string tmp(str);
@@ -1094,13 +1094,13 @@ std::string coords_to_pdbqt_string(const vec& coords, const std::string& str) {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıwrite_context
-* input:parsed_lineÀàĞÍvector³£Á¿ÒıÓÃc£¬ofileÀàout
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°write_context
+* input:parsed_lineç±»å‹vectorå¸¸é‡å¼•ç”¨cï¼Œofileç±»out
 * ouput:void
-* ×÷ÓÃ£º1.µ÷ÓÃº¯Êıverify_bond_lengthsÑéÖ¤Á¬½Ó³¤¶È
-*		2.±éÀúcÖĞµÄÔªËØ
-*				½«cµÄµÚi¸öÔªËØµÄfirstÊı¾İ³ÉÔ±°ó¶¨µ½strÉÏ
-*				Èç¹ûcµÄµÚi¸öÔªËØµÄsecondÊı¾İ³ÉÔ±²»Îª¿Õ£¬·µ»ØcµÄµÚi¸öÔªËØµÄsecondÊı¾İ³ÉÔ±ÄÚ±£´æµÄÖµa£¬»ñÈ¡coordsµÄµÚa¸öÔªËØ£¬½«ÆäÓëstrÊäÈëµ½coords_to_pdbqt_stringº¯Êı£¬´òÓ¡·µ»ØĞÅÏ¢²¢»»ĞĞ£¬·ñÔò´òÓ¡str²¢»»ĞĞ
+* ä½œç”¨ï¼š1.è°ƒç”¨å‡½æ•°verify_bond_lengthséªŒè¯è¿æ¥é•¿åº¦
+*		2.éå†cä¸­çš„å…ƒç´ 
+*				å°†cçš„ç¬¬iä¸ªå…ƒç´ çš„firstæ•°æ®æˆå‘˜ç»‘å®šåˆ°strä¸Š
+*				å¦‚æœcçš„ç¬¬iä¸ªå…ƒç´ çš„secondæ•°æ®æˆå‘˜ä¸ä¸ºç©ºï¼Œè¿”å›cçš„ç¬¬iä¸ªå…ƒç´ çš„secondæ•°æ®æˆå‘˜å†…ä¿å­˜çš„å€¼aï¼Œè·å–coordsçš„ç¬¬aä¸ªå…ƒç´ ï¼Œå°†å…¶ä¸strè¾“å…¥åˆ°coords_to_pdbqt_stringå‡½æ•°ï¼Œæ‰“å°è¿”å›ä¿¡æ¯å¹¶æ¢è¡Œï¼Œå¦åˆ™æ‰“å°strå¹¶æ¢è¡Œ
 */
 void model::write_context(const context& c, ofile& out) const {
 	verify_bond_lengths();
@@ -1115,11 +1115,11 @@ void model::write_context(const context& c, ofile& out) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıseti
-* input:confÀà³£Á¿ÒıÓÃc
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°seti
+* input:confç±»å¸¸é‡å¼•ç”¨c
 * ouput:void
-* ×÷ÓÃ£º½«model³ÉÔ±atoms, internal_coords, ºÍc³ÉÔ±ligandsÊäÈëligandsµÄ³ÉÔ±º¯Êıset_conf    (*this)[i].set_conf(atoms, coords, c[i]);
-*       ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍinternal_coords
+* ä½œç”¨ï¼šå°†modelæˆå‘˜atoms, internal_coords, å’Œcæˆå‘˜ligandsè¾“å…¥ligandsçš„æˆå‘˜å‡½æ•°set_conf    (*this)[i].set_conf(atoms, coords, c[i]);
+*       æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œinternal_coords
 */
 void model::seti(const conf& c) {
 	ligands.set_conf(atoms, internal_coords, c.ligands);
@@ -1127,11 +1127,11 @@ void model::seti(const conf& c) {
 
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êısete
-* input:confÀà³£Á¿ÒıÓÃc
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°sete
+* input:confç±»å¸¸é‡å¼•ç”¨c
 * ouput:void
-* ×÷ÓÃ£º±éÀúc.ligandsµÄÔªËØ£¬½«model³ÉÔ±internal_coords, coords, ligands[i].begin£¨ligand³ÉÔ±£©, ligands[i].end£¨ligand³ÉÔ±£©ÊäÈëº¯Êıc.ligands[i].rigid.apply£¬»ñµÃ×ø±êcoords
-* ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords				
+* ä½œç”¨ï¼šéå†c.ligandsçš„å…ƒç´ ï¼Œå°†modelæˆå‘˜internal_coords, coords, ligands[i].beginï¼ˆligandæˆå‘˜ï¼‰, ligands[i].endï¼ˆligandæˆå‘˜ï¼‰è¾“å…¥å‡½æ•°c.ligands[i].rigid.applyï¼Œè·å¾—åæ ‡coords
+* æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords				
 */
 void model::sete(const conf& c) {
 	VINA_FOR_IN(i, ligands)
@@ -1140,10 +1140,10 @@ void model::sete(const conf& c) {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıset
-* input:confÀà³£Á¿ÒıÓÃc
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°set
+* input:confç±»å¸¸é‡å¼•ç”¨c
 * ouput:void
-* ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
+* æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
 */
 void model::set         (const conf& c) {
 	ligands.set_conf(atoms, coords, c.ligands);
@@ -1152,50 +1152,50 @@ void model::set         (const conf& c) {
 
 
 /*
-* modelµÄ³ÉÔ±º¯Êıgyration_radius
-* input:unsigned intÀàĞÍligand_number
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º¸ù¾İÊäÈëligand_number£¬µÃµ½ligandµÚligand_number¸öÔªËØ£¬»ñÈ¡ËüµÄ³ÉÔ±begin,end£¬¸ù¾İbegin,end-1·¶Î§²éÕÒatomsµÄÔªËØµÄ³ÉÔ±elÊÇ·ñµÈÓÚEL_TYPE_H
-* Çó½â¹«Ê½1£¬·µ»Ø¹«Ê½1½á¹ûµÄÖµ
+* modelçš„æˆå‘˜å‡½æ•°gyration_radius
+* input:unsigned intç±»å‹ligand_number
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼šæ ¹æ®è¾“å…¥ligand_numberï¼Œå¾—åˆ°ligandç¬¬ligand_numberä¸ªå…ƒç´ ï¼Œè·å–å®ƒçš„æˆå‘˜begin,endï¼Œæ ¹æ®begin,end-1èŒƒå›´æŸ¥æ‰¾atomsçš„å…ƒç´ çš„æˆå‘˜elæ˜¯å¦ç­‰äºEL_TYPE_H
+* æ±‚è§£å…¬å¼1ï¼Œè¿”å›å…¬å¼1ç»“æœçš„å€¼
 */
 fl model::gyration_radius(sz ligand_number) const {
 	//ligand_number
-	VINA_CHECK(ligand_number < ligands.size()); //¼ì²éligand_numberÊÇ·ñĞ¡ÓÚligandsÈİÆ÷µÄ´óĞ¡£¬²»Ğ¡ÓÚÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
+	VINA_CHECK(ligand_number < ligands.size()); //æ£€æŸ¥ligand_numberæ˜¯å¦å°äºligandså®¹å™¨çš„å¤§å°ï¼Œä¸å°äºåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 
 
-	const ligand& lig = ligands[ligand_number]; //½«ligandsÈİÆ÷µÚligand_number¸öÔªËØ°ó¶¨µ½ligÉÏ
+	const ligand& lig = ligands[ligand_number]; //å°†ligandså®¹å™¨ç¬¬ligand_numberä¸ªå…ƒç´ ç»‘å®šåˆ°ligä¸Š
 
-	//¶¨ÒåÄÚ²¿±äÁ¿doubleÀàĞÍ±äÁ¿acc = 0£¬unsignedÀàĞÍcounter = 0
+	//å®šä¹‰å†…éƒ¨å˜é‡doubleç±»å‹å˜é‡acc = 0ï¼Œunsignedç±»å‹counter = 0
 	fl acc = 0;
 	unsigned counter = 0;
-	//´ÓligµÄ³ÉÔ±begin´óĞ¡Ñ­»·µ½ligµÄ³ÉÔ±end´óĞ¡-1
+	//ä»ligçš„æˆå‘˜beginå¤§å°å¾ªç¯åˆ°ligçš„æˆå‘˜endå¤§å°-1
 	VINA_RANGE(i, lig.begin, lig.end) {
-		//Èç¹ûmodel³ÉÔ±atomsµÄµÚi¸öÔªËØµÄ³ÉÔ±el²»µÈÓÚ0
-		//acc = acc+ÔËËãcoordsµÚi¸öÔªËØºÍligµÄ³ÉÔ±nodeµÄ³ÉÔ±originÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½
-		//counter×Ô¼Ó1
+		//å¦‚æœmodelæˆå‘˜atomsçš„ç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜elä¸ç­‰äº0
+		//acc = acc+è¿ç®—coordsç¬¬iä¸ªå…ƒç´ å’Œligçš„æˆå‘˜nodeçš„æˆå‘˜originé€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹
+		//counterè‡ªåŠ 1
 		if(atoms[i].el != EL_TYPE_H) { // only heavy atoms are used
 			acc += vec_distance_sqr(coords[i], lig.node.get_origin()); // FIXME? check!
 			++counter;
 		}
 	}
-	//Èç¹ûmodel³ÉÔ±atomsÃ»ÓĞÒ»¸öÔªËØËüµÄ³ÉÔ±elµÈÓÚ0£¬·µ»Ø0£¬·ñÔò·µ»Ø¼û¹«Ê½1
+	//å¦‚æœmodelæˆå‘˜atomsæ²¡æœ‰ä¸€ä¸ªå…ƒç´ å®ƒçš„æˆå‘˜elç­‰äº0ï¼Œè¿”å›0ï¼Œå¦åˆ™è¿”å›è§å…¬å¼1
 	return (counter > 0) ? std::sqrt(acc/counter) : 0;
 }
 
 
 /*
-* modelµÄ³ÉÔ±º¯Êıeval_interacting_pairs   ÆÀ¹ÀÏà»¥×÷ÓÃ¶Ô
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬interacting_pairsÀà³£Á¿ÒıÓÃpairs£¬vecvÀà(vecÀàĞÍvector)³£Á¿ÒıÓÃcoords
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.·µ»ØpµÄm_cutoff_sqr¸³Öµ¸øcutoff_sqr£¨½ØÖ¹Ãæ»ı£©£¬¶¨ÒåÒ»¸ödoubleÀàĞÍe=0
-*		2.±éÀúpairsµÄÔªËØ
-*				½«µÚi¸öÔªËØ°ó¶¨µ½ipÉÏ
-*				¼ÆËãcoords[ip.a]£¨ip.a-->ipµÄ³ÉÔ±a£©ºÍcoords[ip.b]£¨ip.b-->ipµÄ³ÉÔ±b£©µÄÆ½·½¾àÀë(coords[ip.a][0]-coords[ip.b][0])^2+(coords[ip.a][1]-coords[ip.b][1])^2+(coords[ip.a][2]-coords[ip.b][2])^2£¬¸³Öµ¸ør2
-*				ÅĞ¶Ïr2ÊÇ·ñĞ¡ÓÚcutoff_sqr£¬ÊÇÔò¼ÌĞøÖ´ĞĞÏÂÃæÓï¾ä£¬·ñÔò¼ÌĞøÏÂÒ»´ÎÑ­»·
-*				½«ip.type_pair_indexºÍr2´úÈëpµÄeval_fast£¬·µ»Øp.data.m_data[ip.type_pair_index].fast[sz(factor * r2)](ÆäÖĞszÎªÇ¿ÖÆÀàĞÍ×ª»»£¬factorÎªp.data.m_data[ip.type_pair_index]µÄÊı¾İ³ÉÔ±)¸³Öµ¸øtmp
-*				µ±v < epsilon_fl£¨ÔËĞĞ±àÒë³ÌĞòµÄ¼ÆËã»úËùÄÜÊ¶±ğµÄ×îĞ¡·ÇÁã¸¡µãÊı£©Ê±£¬tmp = 0£»·ñÔòtmp = tmp*(v / (v + tmp))
-*				eÀÛ¼Ótmp
-*		3.·µ»Øe
+* modelçš„æˆå‘˜å‡½æ•°eval_interacting_pairs   è¯„ä¼°ç›¸äº’ä½œç”¨å¯¹
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œinteracting_pairsç±»å¸¸é‡å¼•ç”¨pairsï¼Œvecvç±»(vecç±»å‹vector)å¸¸é‡å¼•ç”¨coords
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.è¿”å›pçš„m_cutoff_sqrèµ‹å€¼ç»™cutoff_sqrï¼ˆæˆªæ­¢é¢ç§¯ï¼‰ï¼Œå®šä¹‰ä¸€ä¸ªdoubleç±»å‹e=0
+*		2.éå†pairsçš„å…ƒç´ 
+*				å°†ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°ipä¸Š
+*				è®¡ç®—coords[ip.a]ï¼ˆip.a-->ipçš„æˆå‘˜aï¼‰å’Œcoords[ip.b]ï¼ˆip.b-->ipçš„æˆå‘˜bï¼‰çš„å¹³æ–¹è·ç¦»(coords[ip.a][0]-coords[ip.b][0])^2+(coords[ip.a][1]-coords[ip.b][1])^2+(coords[ip.a][2]-coords[ip.b][2])^2ï¼Œèµ‹å€¼ç»™r2
+*				åˆ¤æ–­r2æ˜¯å¦å°äºcutoff_sqrï¼Œæ˜¯åˆ™ç»§ç»­æ‰§è¡Œä¸‹é¢è¯­å¥ï¼Œå¦åˆ™ç»§ç»­ä¸‹ä¸€æ¬¡å¾ªç¯
+*				å°†ip.type_pair_indexå’Œr2ä»£å…¥pçš„eval_fastï¼Œè¿”å›p.data.m_data[ip.type_pair_index].fast[sz(factor * r2)](å…¶ä¸­szä¸ºå¼ºåˆ¶ç±»å‹è½¬æ¢ï¼Œfactorä¸ºp.data.m_data[ip.type_pair_index]çš„æ•°æ®æˆå‘˜)èµ‹å€¼ç»™tmp
+*				å½“v < epsilon_flï¼ˆè¿è¡Œç¼–è¯‘ç¨‹åºçš„è®¡ç®—æœºæ‰€èƒ½è¯†åˆ«çš„æœ€å°éé›¶æµ®ç‚¹æ•°ï¼‰æ—¶ï¼Œtmp = 0ï¼›å¦åˆ™tmp = tmp*(v / (v + tmp))
+*				eç´¯åŠ tmp
+*		3.è¿”å›e
 * 
 */
 fl eval_interacting_pairs(const precalculate& p, fl v, const interacting_pairs& pairs, const vecv& coords) { // clean up
@@ -1214,28 +1214,28 @@ fl eval_interacting_pairs(const precalculate& p, fl v, const interacting_pairs& 
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êıeval_interacting_pairs_deriv   ÆÀ¹ÀÏà»¥×÷ÓÃ¶Ôµ¼Êı
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬doubleÀàĞÍÊıv£¬interacting_pairsÀà³£Á¿ÒıÓÃpairs£¬vecvÀà(vecÀàĞÍvector)³£Á¿ÒıÓÃcoords£¬vecvÀà(vecÀàĞÍvector)ÒıÓÃcoords
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.·µ»ØpµÄm_cutoff_sqr¸³Öµ¸øcutoff_sqr£¨½ØÖ¹Ãæ»ı£©£¬¶¨ÒåÒ»¸ödoubleÀàĞÍe=0
-*		2.±éÀúpairsµÄÔªËØ
-*				½«µÚi¸öÔªËØ°ó¶¨µ½ipÉÏ
-*				¼ÆËãcoords[ip.a]£¨ip.a-->ipµÄ³ÉÔ±a£©ºÍcoords[ip.b]£¨ip.b-->ipµÄ³ÉÔ±b£©µÄ²îr[0] = coords[ip.a][0]-coords[ip.b][0]£¬r[1] = coords[ip.a][1]-coords[ip.b][1]£¬r[2] = coords[ip.a][2]-coords[ip.b][2]
-*				¼ÆËãr2[0] = r[0]^2£¬r2[1] = r[1]^2£¬r2[2] = r[2]^2
-*				ÅĞ¶Ïr2ÊÇ·ñĞ¡ÓÚcutoff_sqr£¬ÊÇÔò¼ÌĞøÖ´ĞĞÏÂÃæÓï¾ä£¬·ñÔò¼ÌĞøÏÂÒ»´ÎÑ­»·
+* modelçš„æˆå‘˜å‡½æ•°eval_interacting_pairs_deriv   è¯„ä¼°ç›¸äº’ä½œç”¨å¯¹å¯¼æ•°
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œdoubleç±»å‹æ•°vï¼Œinteracting_pairsç±»å¸¸é‡å¼•ç”¨pairsï¼Œvecvç±»(vecç±»å‹vector)å¸¸é‡å¼•ç”¨coordsï¼Œvecvç±»(vecç±»å‹vector)å¼•ç”¨coords
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.è¿”å›pçš„m_cutoff_sqrèµ‹å€¼ç»™cutoff_sqrï¼ˆæˆªæ­¢é¢ç§¯ï¼‰ï¼Œå®šä¹‰ä¸€ä¸ªdoubleç±»å‹e=0
+*		2.éå†pairsçš„å…ƒç´ 
+*				å°†ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°ipä¸Š
+*				è®¡ç®—coords[ip.a]ï¼ˆip.a-->ipçš„æˆå‘˜aï¼‰å’Œcoords[ip.b]ï¼ˆip.b-->ipçš„æˆå‘˜bï¼‰çš„å·®r[0] = coords[ip.a][0]-coords[ip.b][0]ï¼Œr[1] = coords[ip.a][1]-coords[ip.b][1]ï¼Œr[2] = coords[ip.a][2]-coords[ip.b][2]
+*				è®¡ç®—r2[0] = r[0]^2ï¼Œr2[1] = r[1]^2ï¼Œr2[2] = r[2]^2
+*				åˆ¤æ–­r2æ˜¯å¦å°äºcutoff_sqrï¼Œæ˜¯åˆ™ç»§ç»­æ‰§è¡Œä¸‹é¢è¯­å¥ï¼Œå¦åˆ™ç»§ç»­ä¸‹ä¸€æ¬¡å¾ªç¯
 * 
-*				½«ip.type_pair_indexºÍr2´úÈëpµÄeval_deriv£¬·µ»Ø·µ»ØpairÀà£¨firsºÍsecondÊı¾İ³ÉÔ±¾ùÎªdouble£©pr£¬
-*				pr(p1.first  + £¨factor * r2 -  sz(factor * r2)£© * (p2.first  - p1.first), p1.second + £¨factor * r2 -  sz(factor * r2)£©* (p2.second - p1.second))£¬ÆäÖĞp1 = smooth[sz(factor * r2)]£¬p2 = smooth[sz(factor * r2)+1]¾ùÎªpairÀà
-*				(ÆäÖĞszÎªÇ¿ÖÆÀàĞÍ×ª»»£¬factorÎªp.data.m_data[ip.type_pair_index]µÄÊı¾İ³ÉÔ±£¬smoothÎªp.data.m_data[ip.type_pair_index]µÄÊı¾İ³ÉÔ±£¨pairÀàĞÍvector£©)¸³Öµ¸øpr
+*				å°†ip.type_pair_indexå’Œr2ä»£å…¥pçš„eval_derivï¼Œè¿”å›è¿”å›pairç±»ï¼ˆfirså’Œsecondæ•°æ®æˆå‘˜å‡ä¸ºdoubleï¼‰prï¼Œ
+*				pr(p1.first  + ï¼ˆfactor * r2 -  sz(factor * r2)ï¼‰ * (p2.first  - p1.first), p1.second + ï¼ˆfactor * r2 -  sz(factor * r2)ï¼‰* (p2.second - p1.second))ï¼Œå…¶ä¸­p1 = smooth[sz(factor * r2)]ï¼Œp2 = smooth[sz(factor * r2)+1]å‡ä¸ºpairç±»
+*				(å…¶ä¸­szä¸ºå¼ºåˆ¶ç±»å‹è½¬æ¢ï¼Œfactorä¸ºp.data.m_data[ip.type_pair_index]çš„æ•°æ®æˆå‘˜ï¼Œsmoothä¸ºp.data.m_data[ip.type_pair_index]çš„æ•°æ®æˆå‘˜ï¼ˆpairç±»å‹vectorï¼‰)èµ‹å€¼ç»™pr
 * 
-*				force[0] = tmp.second * r[0]£¬force[1] = tmp.second * r[1]£¬force[2] = tmp.second * r[2]         tmp.second------------>tmpµÄsecondÊı¾İ³ÉÔ±
-*				µ±tmp.first > 0 ²¢ÇÒ v <  epsilon_fl£¨ÔËĞĞ±àÒë³ÌĞòµÄ¼ÆËã»úËùÄÜÊ¶±ğµÄ×îĞ¡·ÇÁã¸¡µãÊı£©Ê±£¬tmp.first = 0£¬force[0] = 0£¬force[1] = 0£¬force[2] = 0£»
-*				µ±tmp.first > 0 ²¢ÇÒ v >= epsilon_fl£¨ÔËĞĞ±àÒë³ÌĞòµÄ¼ÆËã»úËùÄÜÊ¶±ğµÄ×îĞ¡·ÇÁã¸¡µãÊı£©Ê±£¬force[0] = force[0]*((v / (v + tmp.first))^2)£¬force[1] = force[1]*((v / (v + tmp.first))^2)£¬force[2] = force[2]*((v / (v + tmp.first))^2),
+*				force[0] = tmp.second * r[0]ï¼Œforce[1] = tmp.second * r[1]ï¼Œforce[2] = tmp.second * r[2]         tmp.second------------>tmpçš„secondæ•°æ®æˆå‘˜
+*				å½“tmp.first > 0 å¹¶ä¸” v <  epsilon_flï¼ˆè¿è¡Œç¼–è¯‘ç¨‹åºçš„è®¡ç®—æœºæ‰€èƒ½è¯†åˆ«çš„æœ€å°éé›¶æµ®ç‚¹æ•°ï¼‰æ—¶ï¼Œtmp.first = 0ï¼Œforce[0] = 0ï¼Œforce[1] = 0ï¼Œforce[2] = 0ï¼›
+*				å½“tmp.first > 0 å¹¶ä¸” v >= epsilon_flï¼ˆè¿è¡Œç¼–è¯‘ç¨‹åºçš„è®¡ç®—æœºæ‰€èƒ½è¯†åˆ«çš„æœ€å°éé›¶æµ®ç‚¹æ•°ï¼‰æ—¶ï¼Œforce[0] = force[0]*((v / (v + tmp.first))^2)ï¼Œforce[1] = force[1]*((v / (v + tmp.first))^2)ï¼Œforce[2] = force[2]*((v / (v + tmp.first))^2),
 *																									   tmp.first = tmp.first*(v / (v + tmp.first))	
-*				eÀÛ¼Ótmp.first
+*				eç´¯åŠ tmp.first
 *				forces[ip.a][0] = forces[ip.a][0] - force[0],forces[ip.a][1] = forces[ip.a][1] - force[1],forces[ip.a][2] = forces[ip.a][2] - force[2]
 *				forces[ip.b][0] = forces[ip.b][0] + force[0],forces[ip.b][1] = forces[ip.b][1] + force[1],forces[ip.b][2] = forces[ip.b][2] + force[2]
-*		3.·µ»Øe
+*		3.è¿”å›e
 * 
 */
 fl eval_interacting_pairs_deriv(const precalculate& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces) { // adds to forces  // clean up
@@ -1259,13 +1259,13 @@ fl eval_interacting_pairs_deriv(const precalculate& p, fl v, const interacting_p
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êıevali
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬vecÀà³£Á¿ÒıÓÃv
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍe=0
-*		2.±éÀúligandsµÄÔªËØ				
-*				½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,internal_coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		3.·µ»Øe
+* modelçš„æˆå‘˜å‡½æ•°evali
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œvecç±»å¸¸é‡å¼•ç”¨v
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e=0
+*		2.éå†ligandsçš„å…ƒç´ 				
+*				å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,internal_coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		3.è¿”å›e
 */
 fl model::evali(const precalculate& p,                                  const vec& v                          ) const { // clean up
 	fl e = 0;
@@ -1275,13 +1275,13 @@ fl model::evali(const precalculate& p,                                  const ve
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êıevale
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬igridÀà³£Á¿ÒıÓÃig£¬vecÀà³£Á¿ÒıÓÃv
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍe,¾ßÌå²é¿´ÊäÈëigÖĞµÄeval¶¨Òå,igÓ¦¸ÃÊÇigridÅÉÉúÀà¶ÔÏó
-*		2.±éÀúligandsµÄÔªËØ
-*				½«p,v[2],other_pairs, coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		3.·µ»Øe
+* modelçš„æˆå‘˜å‡½æ•°evale
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œigridç±»å¸¸é‡å¼•ç”¨igï¼Œvecç±»å¸¸é‡å¼•ç”¨v
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e,å…·ä½“æŸ¥çœ‹è¾“å…¥igä¸­çš„evalå®šä¹‰,igåº”è¯¥æ˜¯igridæ´¾ç”Ÿç±»å¯¹è±¡
+*		2.éå†ligandsçš„å…ƒç´ 
+*				å°†p,v[2],other_pairs, coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		3.è¿”å›e
 */
 fl model::evale(const precalculate& p, const igrid& ig, const vec& v                          ) const { // clean up
 	fl e = ig.eval(*this, v[1]);
@@ -1291,14 +1291,14 @@ fl model::evale(const precalculate& p, const igrid& ig, const vec& v            
 
 
 /*
-* modelµÄ³ÉÔ±º¯Êıeval
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬igridÀà³£Á¿ÒıÓÃig£¬vecÀà³£Á¿ÒıÓÃv£¬confÀà³£Á¿ÒıÓÃc
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-*		2.½«p,ig,vÊäÈëevaleº¯Êı£¬·µ»ØÖµ¸³Öµµ½eÉÏ
-*		3.±éÀúligandsµÄÔªËØ
-*				½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		4.·µ»Øe
+* modelçš„æˆå‘˜å‡½æ•°eval
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œigridç±»å¸¸é‡å¼•ç”¨igï¼Œvecç±»å¸¸é‡å¼•ç”¨vï¼Œconfç±»å¸¸é‡å¼•ç”¨c
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+*		2.å°†p,ig,vè¾“å…¥evaleå‡½æ•°ï¼Œè¿”å›å€¼èµ‹å€¼åˆ°eä¸Š
+*		3.éå†ligandsçš„å…ƒç´ 
+*				å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		4.è¿”å›e
 */
 fl model::eval         (const precalculate& p, const igrid& ig, const vec& v, const conf& c           ) { // clean up
 	set(c);
@@ -1309,17 +1309,17 @@ fl model::eval         (const precalculate& p, const igrid& ig, const vec& v, co
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êıeval_deriv
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬igridÀà³£Á¿ÒıÓÃig£¬vecÀà³£Á¿ÒıÓÃv£¬confÀà³£Á¿ÒıÓÃc£¬changeÀàÒıÓÃg
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-*		2.¶¨ÒåÒ»¸ödoubleÀàĞÍe,¾ßÌå²é¿´ÊäÈëigÖĞµÄeval_deriv¶¨Òå,igÓ¦¸ÃÊÇigridÅÉÉúÀà¶ÔÏó
-*		3.½«p,v[2], other_pairs, coords,minus_forcesÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		4.±éÀúligandsµÄÔªËØ
-*				½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,coord,minus_forcesÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		5.½«coords, minus_forces, g.ligandsÊäÈëligands.derivativeÖĞ£¬·Ö±ğ¶ÔligandsµÄËùÓĞÔªËØÇóµ¼Êı£¬ligands[i].derivative(coords, minus_forces, g.ligands[i])
-*		6.½«coords, minus_forces, g.flexÊäÈëflex.derivativeÖĞ£¬·Ö±ğ¶ÔflexµÄËùÓĞÔªËØÇóµ¼Êı£¬flex[i].derivative(coords, minus_forces, g.flex[i])
-*		7.·µ»Øe
+* modelçš„æˆå‘˜å‡½æ•°eval_deriv
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œigridç±»å¸¸é‡å¼•ç”¨igï¼Œvecç±»å¸¸é‡å¼•ç”¨vï¼Œconfç±»å¸¸é‡å¼•ç”¨cï¼Œchangeç±»å¼•ç”¨g
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+*		2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e,å…·ä½“æŸ¥çœ‹è¾“å…¥igä¸­çš„eval_derivå®šä¹‰,igåº”è¯¥æ˜¯igridæ´¾ç”Ÿç±»å¯¹è±¡
+*		3.å°†p,v[2], other_pairs, coords,minus_forcesè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		4.éå†ligandsçš„å…ƒç´ 
+*				å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,coord,minus_forcesè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		5.å°†coords, minus_forces, g.ligandsè¾“å…¥ligands.derivativeä¸­ï¼Œåˆ†åˆ«å¯¹ligandsçš„æ‰€æœ‰å…ƒç´ æ±‚å¯¼æ•°ï¼Œligands[i].derivative(coords, minus_forces, g.ligands[i])
+*		6.å°†coords, minus_forces, g.flexè¾“å…¥flex.derivativeä¸­ï¼Œåˆ†åˆ«å¯¹flexçš„æ‰€æœ‰å…ƒç´ æ±‚å¯¼æ•°ï¼Œflex[i].derivative(coords, minus_forces, g.flex[i])
+*		7.è¿”å›e
 */
 fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, const conf& c, change& g) { // clean up
 	set(c);
@@ -1337,40 +1337,40 @@ fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, con
 
 
 /*
-* modelµÄ³ÉÔ±º¯Êıeval_intramolecular
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬vecÀà³£Á¿ÒıÓÃv£¬confÀà³£Á¿ÒıÓÃc
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-*		2.¶¨ÒåÒ»¸ödoubleÀàĞÍe = 0
-*		3.±éÀúligandsµÄÔªËØ
-*				½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,coordsÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		4.½«m_atom_typing_usedÊäÈënum_atom_typesµÃµ½m_atom_typing_used¶ÔÓ¦µÄTYPE_SIZE£¬¸³Öµ¸ønat
-*		  ·µ»Øp.m_cutoff_sqr¸³Öµ¸øcutoff_sqr
-*		5.i´Ó0Ñ­»·µ½m_num_movable_atoms-1
-*				ÅĞ¶ÏiÊÇ·ñÔÚligandsÈİÆ÷ÈÎÒâÒ»¸öÔªËØµÄ³ÉÔ±beginºÍend·¶Î§Ö®ÄÚ£¬ÊÇÔòÖ±½ÓÏÂÒ»¸öiÑ­»·£¬·ñÔò¼ÌĞøÖ´ĞĞÒÔÏÂÓï¾ä		
-*				½«atmosµÄµÚi¸öÔªËØ°ó¶¨ÔÚaÉÏ
-*				·µ»Øm_atom_typing_used¶ÔÓ¦µÄaµÄunit±äÁ¿£¨el, ad, xs, syÖ®Ò»£©¸³Öµ¸øt1
-*				µ±t1>=natÊ±Ö±½ÓÏÂÒ»¸öiÑ­»·£¬·ñÔò¼ÌĞøÖ´ĞĞÒÔÏÂÓï¾ä
-*				j´Ó0Ñ­»·µ½grid_atoms.size()-1£¨±éÀúgrid_atomsµÄÔªËØ£©
-*						½«atmosµÄµÚj¸öÔªËØ°ó¶¨ÔÚbÉÏ
-*						·µ»Øm_atom_typing_used¶ÔÓ¦µÄbµÄunit±äÁ¿£¨el, ad, xs, syÖ®Ò»£©¸³Öµ¸øt2
-*						µ±t2>=natÊ±Ö±½ÓÏÂÒ»¸öjÑ­»·£¬·ñÔò¼ÌĞøÖ´ĞĞÒÔÏÂÓï¾ä
+* modelçš„æˆå‘˜å‡½æ•°eval_intramolecular
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œvecç±»å¸¸é‡å¼•ç”¨vï¼Œconfç±»å¸¸é‡å¼•ç”¨c
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+*		2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e = 0
+*		3.éå†ligandsçš„å…ƒç´ 
+*				å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,coordsè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		4.å°†m_atom_typing_usedè¾“å…¥num_atom_typeså¾—åˆ°m_atom_typing_usedå¯¹åº”çš„TYPE_SIZEï¼Œèµ‹å€¼ç»™nat
+*		  è¿”å›p.m_cutoff_sqrèµ‹å€¼ç»™cutoff_sqr
+*		5.iä»0å¾ªç¯åˆ°m_num_movable_atoms-1
+*				åˆ¤æ–­iæ˜¯å¦åœ¨ligandså®¹å™¨ä»»æ„ä¸€ä¸ªå…ƒç´ çš„æˆå‘˜beginå’ŒendèŒƒå›´ä¹‹å†…ï¼Œæ˜¯åˆ™ç›´æ¥ä¸‹ä¸€ä¸ªiå¾ªç¯ï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä»¥ä¸‹è¯­å¥		
+*				å°†atmosçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåœ¨aä¸Š
+*				è¿”å›m_atom_typing_usedå¯¹åº”çš„açš„unitå˜é‡ï¼ˆel, ad, xs, syä¹‹ä¸€ï¼‰èµ‹å€¼ç»™t1
+*				å½“t1>=natæ—¶ç›´æ¥ä¸‹ä¸€ä¸ªiå¾ªç¯ï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä»¥ä¸‹è¯­å¥
+*				jä»0å¾ªç¯åˆ°grid_atoms.size()-1ï¼ˆéå†grid_atomsçš„å…ƒç´ ï¼‰
+*						å°†atmosçš„ç¬¬jä¸ªå…ƒç´ ç»‘å®šåœ¨bä¸Š
+*						è¿”å›m_atom_typing_usedå¯¹åº”çš„bçš„unitå˜é‡ï¼ˆel, ad, xs, syä¹‹ä¸€ï¼‰èµ‹å€¼ç»™t2
+*						å½“t2>=natæ—¶ç›´æ¥ä¸‹ä¸€ä¸ªjå¾ªç¯ï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä»¥ä¸‹è¯­å¥
 *						r2 = (coords[i][0]-b.coords[0])^2 +(coords[i][1]-b.coords[1])^2 + (coords[i][2]-b.coords[2])^2
-*						Èç¹ûr2 < cutoff_sqr
-*								Èç¹ût1<=t2£¬type_pair_index = t1 + t2*(t2+1)/2£»Èç¹ût1>t2£¬type_pair_index = t2 + t1*(t1+1)/2
-*								this_e = p.data.m_data[type_pair_index].fast[sz(factor * r2)]£¬factorÎªp.data.m_data[type_pair_index]µÄ³ÉÔ±£¬szÎªÇ¿ÖÆÀàĞÍ×ª»»Îªunsigned int		
-*								µ±this_e>0²¢ÇÒv[1]<0.1*max_fl(µ±Ç°´¦ÀíÆ÷ÏÂdoubleĞÍ±äÁ¿×î´óÖµ)Ê±£¬Èç¹ûv[1] < epsilon_fl=2.22045e-16£¬this_e=0£¬·ñÔòthis_e=this_e*(v[1] / (v[1] + this_e))
-*								½«this_eÀÛ¼Óµ½eÉÏ
+*						å¦‚æœr2 < cutoff_sqr
+*								å¦‚æœt1<=t2ï¼Œtype_pair_index = t1 + t2*(t2+1)/2ï¼›å¦‚æœt1>t2ï¼Œtype_pair_index = t2 + t1*(t1+1)/2
+*								this_e = p.data.m_data[type_pair_index].fast[sz(factor * r2)]ï¼Œfactorä¸ºp.data.m_data[type_pair_index]çš„æˆå‘˜ï¼Œszä¸ºå¼ºåˆ¶ç±»å‹è½¬æ¢ä¸ºunsigned int		
+*								å½“this_e>0å¹¶ä¸”v[1]<0.1*max_fl(å½“å‰å¤„ç†å™¨ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼)æ—¶ï¼Œå¦‚æœv[1] < epsilon_fl=2.22045e-16ï¼Œthis_e=0ï¼Œå¦åˆ™this_e=this_e*(v[1] / (v[1] + this_e))
+*								å°†this_eç´¯åŠ åˆ°eä¸Š
 * 
-*		6.i´Ó0Ñ­»·µ½other_pairs.size-1
-*				½«other_pairsµÄµÚinteracting_pair¸öÔªËØ°ó¶¨ÔÚaÉÏ
-*				Èç¹ûpair.aÔÚligandsÈİÆ÷ÈÎÒâÒ»¸öÔªËØµÄ³ÉÔ±beginºÍend·¶Î§Ö®ÄÚ»òÕßpair.bÔÚligandsÈİÆ÷ÈÎÒâÒ»¸öÔªËØµÄ³ÉÔ±beginºÍend·¶Î§Ö®ÄÚ£¬ÔòÖ±½ÓÏÂÒ»¸öiÑ­»·£¬·ñÔò¼ÌĞøÖ´ĞĞÒÔÏÂÓï¾ä	
-*				Áîr2 = £¨coords[pair.a][0] - coords[pair.b][0]£©^2 + £¨coords[pair.a][1] - coords[pair.b][1]£©^2 + £¨coords[pair.a][2] - coords[pair.b][2]£©^2
-*				Èç¹ûr2 < cutoff_sqr
-*						this_e = p.data.m_data[pair.type_pair_index].fast[sz(factor * r2)]£¬factorÎªp.data.m_data[type_pair_index]µÄ³ÉÔ±£¬szÎªÇ¿ÖÆÀàĞÍ×ª»»Îªunsigned int		
-*						µ±this_e>0²¢ÇÒv[2]<0.1*max_fl(µ±Ç°´¦ÀíÆ÷ÏÂdoubleĞÍ±äÁ¿×î´óÖµ)Ê±£¬Èç¹ûv[2] < epsilon_fl=2.22045e-16£¬this_e=0£¬·ñÔòthis_e=this_e*(v[2] / (v[2] + this_e))
-*						½«this_eÀÛ¼Óµ½eÉÏ
-*		7.·µ»Øe
+*		6.iä»0å¾ªç¯åˆ°other_pairs.size-1
+*				å°†other_pairsçš„ç¬¬interacting_pairä¸ªå…ƒç´ ç»‘å®šåœ¨aä¸Š
+*				å¦‚æœpair.aåœ¨ligandså®¹å™¨ä»»æ„ä¸€ä¸ªå…ƒç´ çš„æˆå‘˜beginå’ŒendèŒƒå›´ä¹‹å†…æˆ–è€…pair.båœ¨ligandså®¹å™¨ä»»æ„ä¸€ä¸ªå…ƒç´ çš„æˆå‘˜beginå’ŒendèŒƒå›´ä¹‹å†…ï¼Œåˆ™ç›´æ¥ä¸‹ä¸€ä¸ªiå¾ªç¯ï¼Œå¦åˆ™ç»§ç»­æ‰§è¡Œä»¥ä¸‹è¯­å¥	
+*				ä»¤r2 = ï¼ˆcoords[pair.a][0] - coords[pair.b][0]ï¼‰^2 + ï¼ˆcoords[pair.a][1] - coords[pair.b][1]ï¼‰^2 + ï¼ˆcoords[pair.a][2] - coords[pair.b][2]ï¼‰^2
+*				å¦‚æœr2 < cutoff_sqr
+*						this_e = p.data.m_data[pair.type_pair_index].fast[sz(factor * r2)]ï¼Œfactorä¸ºp.data.m_data[type_pair_index]çš„æˆå‘˜ï¼Œszä¸ºå¼ºåˆ¶ç±»å‹è½¬æ¢ä¸ºunsigned int		
+*						å½“this_e>0å¹¶ä¸”v[2]<0.1*max_fl(å½“å‰å¤„ç†å™¨ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼)æ—¶ï¼Œå¦‚æœv[2] < epsilon_fl=2.22045e-16ï¼Œthis_e=0ï¼Œå¦åˆ™this_e=this_e*(v[2] / (v[2] + this_e))
+*						å°†this_eç´¯åŠ åˆ°eä¸Š
+*		7.è¿”å›e
 */
 fl model::eval_intramolecular(const precalculate& p, const vec& v, const conf& c) {
 	set(c);
@@ -1418,11 +1418,11 @@ fl model::eval_intramolecular(const precalculate& p, const vec& v, const conf& c
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıeval_adjusted 
-* input:scoring_functionÀà³£Á¿ÒıÓÃsf£¬precalculateÀà³£Á¿ÒıÓÃp£¬igridÀà³£Á¿ÒıÓÃig£¬vecÀà³£Á¿ÒıÓÃv£¬confÀà³£Á¿ÒıÓÃc£¬doubleÀàĞÍÊıintramolecular_energy£¨·Ö×ÓÄÚÄÜÁ¿£©
-* ouput:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.½«p, ig, v, cÊäÈëevalº¯ÊıÖĞ»ñµÃ¹À¼ÆÖµe
-*		2.½«±¾modelºÍe-intramolecular_energyÊäÈësf³ÉÔ±º¯Êıconf_independent£¬·µ»Ø¶ÀÁ¢ÅäÖÃÆÀ¹ÀÖµ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°eval_adjusted 
+* input:scoring_functionç±»å¸¸é‡å¼•ç”¨sfï¼Œprecalculateç±»å¸¸é‡å¼•ç”¨pï¼Œigridç±»å¸¸é‡å¼•ç”¨igï¼Œvecç±»å¸¸é‡å¼•ç”¨vï¼Œconfç±»å¸¸é‡å¼•ç”¨cï¼Œdoubleç±»å‹æ•°intramolecular_energyï¼ˆåˆ†å­å†…èƒ½é‡ï¼‰
+* ouput:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.å°†p, ig, v, cè¾“å…¥evalå‡½æ•°ä¸­è·å¾—ä¼°è®¡å€¼e
+*		2.å°†æœ¬modelå’Œe-intramolecular_energyè¾“å…¥sfæˆå‘˜å‡½æ•°conf_independentï¼Œè¿”å›ç‹¬ç«‹é…ç½®è¯„ä¼°å€¼
 *		
 */
 fl model::eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, const conf& c, fl intramolecular_energy) {
@@ -1431,23 +1431,23 @@ fl model::eval_adjusted      (const scoring_function& sf, const precalculate& p,
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êırmsd_lower_bound_asymmetric ÏÂ½ç·Ç¶Ô³Æ¾ù·½¸ùÎó²î
-* input:modelÀà³£Á¿ÒıÓÃx,y
-* ouput:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.»ñÈ¡xµÄ³ÉÔ±m_num_movable_atoms¸³Öµ¸øn£¬ÅĞ¶ÏnÊÇ·ñµÈÓÚyµÄ³ÉÔ±m_num_movable_atoms£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*		2.¶¨ÒåÒ»¸ödoubleÀàĞÍÊısum = 0,unsignedÀàĞÍÊıcounter = 0
-*		3.i´Ó0Ñ­»·µ½n-1
-*			½«xµÄ³ÉÔ±atomsµÄµÚi¸öÔªËØ°ó¶¨µ½aÉÏ
-*			Èç¹ûaµÄ³ÉÔ±el²»µÈÓÚ0
-*				£¨1£©¶¨ÒåÒ»¸ödoubleÀàĞÍÊır2µÈÓÚµ±Ç°´¦ÀíÆ÷ÏÂdoubleĞÍ±äÁ¿×î´óÖµ
-*				£¨2£©j´Ó0Ñ­»·µ½n-1
-*						½«yµÄ³ÉÔ±atomsµÄµÚj¸öÔªËØ°ó¶¨µ½bÉÏ
-*						Èç¹ûaµÄ³ÉÔ±elÓëbµÄ³ÉÔ±elÏàµÈ²¢ÇÒb²»ÊÇÇâÔ­×Ó£¨!(b.ad==6||b.ad==12)£©
-*							[1]¶¨ÒåÒ»¸ödoubleÀàĞÍÊıthis_r2µÈÓÚx³ÉÔ±coordsµÚi¸öÔªËØÓëy³ÉÔ±coordsµÚj¸öÔªËØÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½
-*							[2]Èç¹ûthis_r2 < r2£¬½«this_r2¸³Öµ¸ør2
-*				ÅĞ¶Ïr2<0.1*max_fl(µ±Ç°´¦ÀíÆìÏÂdoubleĞÍ±äÁ¿×î´óÖµ),Èç¹û²»Ğ¡ÓÚ±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*				½«r2ÀÛ¼Óµ½sumÉÏ£¬counter×ÔÔöÒ»
-*		4.Èç¹ûcounterµÈÓÚ0£¬·µ»Ø0£¬·ñÔò·µ»Øsum / counterµÄ¿ª·½Êı	
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°rmsd_lower_bound_asymmetric ä¸‹ç•Œéå¯¹ç§°å‡æ–¹æ ¹è¯¯å·®
+* input:modelç±»å¸¸é‡å¼•ç”¨x,y
+* ouput:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.è·å–xçš„æˆå‘˜m_num_movable_atomsèµ‹å€¼ç»™nï¼Œåˆ¤æ–­næ˜¯å¦ç­‰äºyçš„æˆå‘˜m_num_movable_atomsï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*		2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹æ•°sum = 0,unsignedç±»å‹æ•°counter = 0
+*		3.iä»0å¾ªç¯åˆ°n-1
+*			å°†xçš„æˆå‘˜atomsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°aä¸Š
+*			å¦‚æœaçš„æˆå‘˜elä¸ç­‰äº0
+*				ï¼ˆ1ï¼‰å®šä¹‰ä¸€ä¸ªdoubleç±»å‹æ•°r2ç­‰äºå½“å‰å¤„ç†å™¨ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼
+*				ï¼ˆ2ï¼‰jä»0å¾ªç¯åˆ°n-1
+*						å°†yçš„æˆå‘˜atomsçš„ç¬¬jä¸ªå…ƒç´ ç»‘å®šåˆ°bä¸Š
+*						å¦‚æœaçš„æˆå‘˜elä¸bçš„æˆå‘˜elç›¸ç­‰å¹¶ä¸”bä¸æ˜¯æ°¢åŸå­ï¼ˆ!(b.ad==6||b.ad==12)ï¼‰
+*							[1]å®šä¹‰ä¸€ä¸ªdoubleç±»å‹æ•°this_r2ç­‰äºxæˆå‘˜coordsç¬¬iä¸ªå…ƒç´ ä¸yæˆå‘˜coordsç¬¬jä¸ªå…ƒç´ é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹
+*							[2]å¦‚æœthis_r2 < r2ï¼Œå°†this_r2èµ‹å€¼ç»™r2
+*				åˆ¤æ–­r2<0.1*max_fl(å½“å‰å¤„ç†æ——ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼),å¦‚æœä¸å°äºæŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*				å°†r2ç´¯åŠ åˆ°sumä¸Šï¼Œcounterè‡ªå¢ä¸€
+*		4.å¦‚æœcounterç­‰äº0ï¼Œè¿”å›0ï¼Œå¦åˆ™è¿”å›sum / counterçš„å¼€æ–¹æ•°	
 */
 
 fl model::rmsd_lower_bound_asymmetric(const model& x, const model& y) const { // actually static
@@ -1477,10 +1477,10 @@ fl model::rmsd_lower_bound_asymmetric(const model& x, const model& y) const { //
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êırmsd_lower_bound  ÏÂÏŞ¾ù·½¸ùÎó²î
-* input:modelÀà³£Á¿ÒıÓÃm
-* ouput:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.½«*this£¨±¾model£©ºÍm°´Ë³ĞòÊäÈëº¯Êırmsd_lower_bound_asymmetric£¬½«mºÍ*this£¨±¾model£©°´Ë³ĞòÊäÈëº¯Êırmsd_lower_bound_asymmetric£¬·µ»ØÕâÁ½¸ö·µ»ØÖµ½Ï´óµÄ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°rmsd_lower_bound  ä¸‹é™å‡æ–¹æ ¹è¯¯å·®
+* input:modelç±»å¸¸é‡å¼•ç”¨m
+* ouput:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.å°†*thisï¼ˆæœ¬modelï¼‰å’ŒmæŒ‰é¡ºåºè¾“å…¥å‡½æ•°rmsd_lower_bound_asymmetricï¼Œå°†må’Œ*thisï¼ˆæœ¬modelï¼‰æŒ‰é¡ºåºè¾“å…¥å‡½æ•°rmsd_lower_bound_asymmetricï¼Œè¿”å›è¿™ä¸¤ä¸ªè¿”å›å€¼è¾ƒå¤§çš„
 */
 fl model::rmsd_lower_bound(const model& m) const {
 	return (std::max)(rmsd_lower_bound_asymmetric(*this,     m),
@@ -1488,20 +1488,20 @@ fl model::rmsd_lower_bound(const model& m) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êırmsd_upper_bound  ÉÏÏŞ¾ù·½¸ùÎó²î
-* input:modelÀà³£Á¿ÒıÓÃm
-* ouput:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¼ì²é±¾model³ÉÔ±m_num_movable_atomsÓëmµÄ³ÉÔ±m_num_movable_atomsÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*		2.¶¨ÒåÒ»¸ödoubleÀàĞÍÊısum = 0,unsignedÀàĞÍÊıcounter = 0
-*		3.i´Ó0Ñ­»·µ½£¨±¾model³ÉÔ±m_num_movable_atoms-1£©
-*			½«±¾modelµÄ³ÉÔ±atomsµÄµÚi¸öÔªËØ°ó¶¨µ½aÉÏ
-*			½«mµÄ³ÉÔ±atomsµÄµÚi¸öÔªËØ°ó¶¨µ½bÉÏ
-*			¼ì²éa³ÉÔ±adÓëbµÄ³ÉÔ±adÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*			¼ì²éa³ÉÔ±xsÓëbµÄ³ÉÔ±xsÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*			Èç¹ûa³ÉÔ±el²»µÈÓÚ0
-*				£¨1£©½«±¾model³ÉÔ±coordsµÚi¸öÔªËØÓëm³ÉÔ±coordsµÚi¸öÔªËØÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½ÀÛ¼Óµ½sumÉÏ
-*				£¨2£©counter×ÔÔöÒ»
-*		4.Èç¹ûcounterµÈÓÚ0£¬·µ»Ø0£¬·ñÔò·µ»Øsum / counterµÄ¿ª·½Êı
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°rmsd_upper_bound  ä¸Šé™å‡æ–¹æ ¹è¯¯å·®
+* input:modelç±»å¸¸é‡å¼•ç”¨m
+* ouput:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.æ£€æŸ¥æœ¬modelæˆå‘˜m_num_movable_atomsä¸mçš„æˆå‘˜m_num_movable_atomsæ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*		2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹æ•°sum = 0,unsignedç±»å‹æ•°counter = 0
+*		3.iä»0å¾ªç¯åˆ°ï¼ˆæœ¬modelæˆå‘˜m_num_movable_atoms-1ï¼‰
+*			å°†æœ¬modelçš„æˆå‘˜atomsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°aä¸Š
+*			å°†mçš„æˆå‘˜atomsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°bä¸Š
+*			æ£€æŸ¥aæˆå‘˜adä¸bçš„æˆå‘˜adæ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*			æ£€æŸ¥aæˆå‘˜xsä¸bçš„æˆå‘˜xsæ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*			å¦‚æœaæˆå‘˜elä¸ç­‰äº0
+*				ï¼ˆ1ï¼‰å°†æœ¬modelæˆå‘˜coordsç¬¬iä¸ªå…ƒç´ ä¸mæˆå‘˜coordsç¬¬iä¸ªå…ƒç´ é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹ç´¯åŠ åˆ°sumä¸Š
+*				ï¼ˆ2ï¼‰counterè‡ªå¢ä¸€
+*		4.å¦‚æœcounterç­‰äº0ï¼Œè¿”å›0ï¼Œå¦åˆ™è¿”å›sum / counterçš„å¼€æ–¹æ•°
 */
 fl model::rmsd_upper_bound(const model& m) const {
 	VINA_CHECK(m_num_movable_atoms == m.m_num_movable_atoms);
@@ -1521,25 +1521,25 @@ fl model::rmsd_upper_bound(const model& m) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êırmsd_ligands_upper_bound ÅäÌåÉÏÏŞ¾ù·½¸ùÎó²î
-* input:modelÀà³£Á¿ÒıÓÃm
-* ouput:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¼ì²é±¾model³ÉÔ±ligandsÈİÆ÷µÄ´óĞ¡ÓëmµÄ³ÉÔ±ligandsÈİÆ÷µÄ´óĞ¡ÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*		2.¶¨ÒåÒ»¸ödoubleÀàĞÍÊısum = 0,unsignedÀàĞÍÊıcounter = 0
-*		3.ligand_i´Ó0Ñ­»·µ½£¨±¾model³ÉÔ±ligandsµÄ´óĞ¡-1£©
-*			½«±¾modelµÄ³ÉÔ±ligandsµÄµÚligand_i¸öÔªËØ°ó¶¨µ½lig  ÉÏ
-*			½«  m    µÄ³ÉÔ±ligandsµÄµÚligand_i¸öÔªËØ°ó¶¨µ½m_ligÉÏ
-*			¼ì²élig³ÉÔ±beginÓëm_ligµÄ³ÉÔ±begin ÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*			¼ì²élig³ÉÔ±end  Óëm_ligµÄ³ÉÔ±end   ÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*			i´Ólig³ÉÔ±beginÑ­»·µ½£¨lig³ÉÔ±end-1£©
-*				 ½«±¾modelµÄ³ÉÔ±atmosµÄµÚi¸öÔªËØ°ó¶¨µ½aÉÏ
-* 				 ½«  m    µÄ³ÉÔ±atmosµÄµÚi¸öÔªËØ°ó¶¨µ½bÉÏ
-*				 ¼ì²éa³ÉÔ±adÓëbµÄ³ÉÔ±adÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-* 				 ¼ì²éa³ÉÔ±xsÓëbµÄ³ÉÔ±xsÊÇ·ñÏàµÈ£¬²»ÏàµÈÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-*				 Èç¹ûa³ÉÔ±el²»µÈÓÚ0
-*				 	£¨1£©½«±¾model³ÉÔ±coordsµÚi¸öÔªËØÓëm³ÉÔ±coordsµÚi¸öÔªËØÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½ÀÛ¼Óµ½sumÉÏ
-* 				 	£¨2£©counter×ÔÔöÒ»
-*		4.Èç¹ûcounterµÈÓÚ0£¬·µ»Ø0£¬·ñÔò·µ»Øsum / counterµÄ¿ª·½Êı
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°rmsd_ligands_upper_bound é…ä½“ä¸Šé™å‡æ–¹æ ¹è¯¯å·®
+* input:modelç±»å¸¸é‡å¼•ç”¨m
+* ouput:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.æ£€æŸ¥æœ¬modelæˆå‘˜ligandså®¹å™¨çš„å¤§å°ä¸mçš„æˆå‘˜ligandså®¹å™¨çš„å¤§å°æ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*		2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹æ•°sum = 0,unsignedç±»å‹æ•°counter = 0
+*		3.ligand_iä»0å¾ªç¯åˆ°ï¼ˆæœ¬modelæˆå‘˜ligandsçš„å¤§å°-1ï¼‰
+*			å°†æœ¬modelçš„æˆå‘˜ligandsçš„ç¬¬ligand_iä¸ªå…ƒç´ ç»‘å®šåˆ°lig  ä¸Š
+*			å°†  m    çš„æˆå‘˜ligandsçš„ç¬¬ligand_iä¸ªå…ƒç´ ç»‘å®šåˆ°m_ligä¸Š
+*			æ£€æŸ¥ligæˆå‘˜beginä¸m_ligçš„æˆå‘˜begin æ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*			æ£€æŸ¥ligæˆå‘˜end  ä¸m_ligçš„æˆå‘˜end   æ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*			iä»ligæˆå‘˜beginå¾ªç¯åˆ°ï¼ˆligæˆå‘˜end-1ï¼‰
+*				 å°†æœ¬modelçš„æˆå‘˜atmosçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°aä¸Š
+* 				 å°†  m    çš„æˆå‘˜atmosçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°bä¸Š
+*				 æ£€æŸ¥aæˆå‘˜adä¸bçš„æˆå‘˜adæ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+* 				 æ£€æŸ¥aæˆå‘˜xsä¸bçš„æˆå‘˜xsæ˜¯å¦ç›¸ç­‰ï¼Œä¸ç›¸ç­‰åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+*				 å¦‚æœaæˆå‘˜elä¸ç­‰äº0
+*				 	ï¼ˆ1ï¼‰å°†æœ¬modelæˆå‘˜coordsç¬¬iä¸ªå…ƒç´ ä¸mæˆå‘˜coordsç¬¬iä¸ªå…ƒç´ é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹ç´¯åŠ åˆ°sumä¸Š
+* 				 	ï¼ˆ2ï¼‰counterè‡ªå¢ä¸€
+*		4.å¦‚æœcounterç­‰äº0ï¼Œè¿”å›0ï¼Œå¦åˆ™è¿”å›sum / counterçš„å¼€æ–¹æ•°
 */
 fl model::rmsd_ligands_upper_bound(const model& m) const {
 	VINA_CHECK(ligands.size() == m.ligands.size());
@@ -1565,20 +1565,20 @@ fl model::rmsd_ligands_upper_bound(const model& m) const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıverify_bond_lengths ÑéÖ¤Á¬½Ó³¤¶È
-* input:ÎŞ
-* ouput:ÎŞ
-* ×÷ÓÃ£ºi´Ó0Ñ­»·µ½£¨model³ÉÔ±grid_atomsµÄ´óĞ¡ºÍatomsµÄ´óĞ¡Ö®ºÍ-1£©
-*				½«iÊäÈëµ½model³ÉÔ±º¯Êısz_to_atom_index£¬·µ»ØµÄÖµ¸³Öµµ½aiÉÏ£¬µ±0<=i<=(grid_atomsµÄ´óĞ¡-1)Ê±£¬aiÎªatom_index(i,true)£¬·ñÔòÎªatom_index(i - grid_atoms.size(), false)
-* 				½«aiÊäÈëmodel³ÉÔ±º¯Êıget_atom£¬aiÎªatom_index(i,true)Ê±£¬»ñµÃmodel³ÉÔ±grid_atomsµÄµÚi£¨aiµÄ³ÉÔ±i£©¸öÔªËØ£¬aiÎªatom_index(i - grid_atoms.size(), false)Ê±£¬»ñµÃmodel³ÉÔ±atomsµÄµÚi£¨aiµÄ³ÉÔ±i£©¸öÔªËØ£¬·µ»ØµÄÖµ°ó¶¨µ½aÉÏ
-* 				j´Ó0Ñ­»·µ½a³ÉÔ±bondsµÄ´óĞ¡-1
-*					a³ÉÔ±bondsµÄµÚj¸öÔªËØ°ó¶¨µ½bÉÏ
-*					½«aiÓëbµÄ³ÉÔ±connected_atom_indexÊäÈë¾àÀëÆ½·½º¯Êı£¬µÃµ½·µ»ØÖµ²¢¼ÆËã¿ª·½Êı£¬µÃµ½d£¨¼û¹«Ê½3£©
-* 					±È½ÏdÓëbµÄ³ÉÔ±length£¬ÏàµÈÔò¶¨ÒåokÎªÕæ£¬·ñÔòÎª¼Ù
-*					Èç¹ûokÎª¼Ù
-*						ÔÚ¿ØÖÆÌ¨ÏÔÊ¾d=dµÄÊıÖµ
-*						ÔÚ¿ØÖÆÌ¨ÏÔÊ¾b.length=b.lengthµÄÊıÖµ
-*					¼ì²éokÊÇ·ñÎªÕæ£¬²»ÎªÕæÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°verify_bond_lengths éªŒè¯è¿æ¥é•¿åº¦
+* input:æ— 
+* ouput:æ— 
+* ä½œç”¨ï¼šiä»0å¾ªç¯åˆ°ï¼ˆmodelæˆå‘˜grid_atomsçš„å¤§å°å’Œatomsçš„å¤§å°ä¹‹å’Œ-1ï¼‰
+*				å°†iè¾“å…¥åˆ°modelæˆå‘˜å‡½æ•°sz_to_atom_indexï¼Œè¿”å›çš„å€¼èµ‹å€¼åˆ°aiä¸Šï¼Œå½“0<=i<=(grid_atomsçš„å¤§å°-1)æ—¶ï¼Œaiä¸ºatom_index(i,true)ï¼Œå¦åˆ™ä¸ºatom_index(i - grid_atoms.size(), false)
+* 				å°†aiè¾“å…¥modelæˆå‘˜å‡½æ•°get_atomï¼Œaiä¸ºatom_index(i,true)æ—¶ï¼Œè·å¾—modelæˆå‘˜grid_atomsçš„ç¬¬iï¼ˆaiçš„æˆå‘˜iï¼‰ä¸ªå…ƒç´ ï¼Œaiä¸ºatom_index(i - grid_atoms.size(), false)æ—¶ï¼Œè·å¾—modelæˆå‘˜atomsçš„ç¬¬iï¼ˆaiçš„æˆå‘˜iï¼‰ä¸ªå…ƒç´ ï¼Œè¿”å›çš„å€¼ç»‘å®šåˆ°aä¸Š
+* 				jä»0å¾ªç¯åˆ°aæˆå‘˜bondsçš„å¤§å°-1
+*					aæˆå‘˜bondsçš„ç¬¬jä¸ªå…ƒç´ ç»‘å®šåˆ°bä¸Š
+*					å°†aiä¸bçš„æˆå‘˜connected_atom_indexè¾“å…¥è·ç¦»å¹³æ–¹å‡½æ•°ï¼Œå¾—åˆ°è¿”å›å€¼å¹¶è®¡ç®—å¼€æ–¹æ•°ï¼Œå¾—åˆ°dï¼ˆè§å…¬å¼3ï¼‰
+* 					æ¯”è¾ƒdä¸bçš„æˆå‘˜lengthï¼Œç›¸ç­‰åˆ™å®šä¹‰okä¸ºçœŸï¼Œå¦åˆ™ä¸ºå‡
+*					å¦‚æœokä¸ºå‡
+*						åœ¨æ§åˆ¶å°æ˜¾ç¤ºd=dçš„æ•°å€¼
+*						åœ¨æ§åˆ¶å°æ˜¾ç¤ºb.length=b.lengthçš„æ•°å€¼
+*					æ£€æŸ¥okæ˜¯å¦ä¸ºçœŸï¼Œä¸ä¸ºçœŸåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 *						
 *		
 */
@@ -1600,19 +1600,19 @@ void model::verify_bond_lengths() const {
 }
 
 /*
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıcheck_internal_pairs ÑéÖ¤Á¬½Ó³¤¶È
-* input:ÎŞ
-* ouput:ÎŞ
-* ×÷ÓÃ£º±éÀúmodel³ÉÔ±ÈİÆ÷ligandsµÄÔªËØ
-*			½«ligandsµÄµÚi¸öÔªËØ°ó¶¨µ½ligÉÏ
-* 			½«ligµÄ³ÉÔ±pairs°ó¶¨µ½pairsÉÏ
-*			±éÀúÈİÆ÷pairsµÄÔªËØ
-*				½«pairsµÄµÚj¸öÔªËØ°ó¶¨µ½ipÉÏ
-*				¼ì²éipµÄ³ÉÔ±aÊÇ·ñ´óÓÚµÈÓÚligµÄ³ÉÔ±begin£¬Ğ¡ÓÚÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
-* 				¼ì²éipµÄ³ÉÔ±bÊÇ·ñĞ¡ÓÚligµÄ³ÉÔ±end£¬²»Ğ¡ÓÚÔò±¨´í£¬ÖÕÖ¹³ÌĞòÖ´ĞĞ
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°check_internal_pairs éªŒè¯è¿æ¥é•¿åº¦
+* input:æ— 
+* ouput:æ— 
+* ä½œç”¨ï¼šéå†modelæˆå‘˜å®¹å™¨ligandsçš„å…ƒç´ 
+*			å°†ligandsçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°ligä¸Š
+* 			å°†ligçš„æˆå‘˜pairsç»‘å®šåˆ°pairsä¸Š
+*			éå†å®¹å™¨pairsçš„å…ƒç´ 
+*				å°†pairsçš„ç¬¬jä¸ªå…ƒç´ ç»‘å®šåˆ°ipä¸Š
+*				æ£€æŸ¥ipçš„æˆå‘˜aæ˜¯å¦å¤§äºç­‰äºligçš„æˆå‘˜beginï¼Œå°äºåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
+* 				æ£€æŸ¥ipçš„æˆå‘˜bæ˜¯å¦å°äºligçš„æˆå‘˜endï¼Œä¸å°äºåˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 *				
 *
-* ¼ì²éÅäÌåµÄbeginÊÇ·ñĞ¡ÓÚµÈÓÚÏà»¥×÷ÓÃ¶ÔµÄa£¬¼ì²éÅäÌåµÄendÊÇ·ñ´óÓÚÏà»¥×÷ÓÃ¶ÔµÄb
+* æ£€æŸ¥é…ä½“çš„beginæ˜¯å¦å°äºç­‰äºç›¸äº’ä½œç”¨å¯¹çš„aï¼Œæ£€æŸ¥é…ä½“çš„endæ˜¯å¦å¤§äºç›¸äº’ä½œç”¨å¯¹çš„b
 * 
 */
 void model::check_internal_pairs() const {
@@ -1628,15 +1628,15 @@ void model::check_internal_pairs() const {
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êı:about
-* input:ÎŞ
-* output:ÎŞ
-* ×÷ÓÃ£ºÔÚ¿ØÖÆÌ¨ÏÔÊ¾atom_typing_used()   = model³ÉÔ±m_atom_typing_usedµÄÖµ
-* 		ÔÚ¿ØÖÆÌ¨ÏÔÊ¾num_movable_atoms()  = model³ÉÔ±m_num_movable_atomsµÄÖµ
-*		ÔÚ¿ØÖÆÌ¨ÏÔÊ¾num_internal_pairs() = model³ÉÔ±ligandsËùÓĞÔªËØµÄ³ÉÔ±pairsµÄ´óĞ¡Ö®ºÍ
-* 		ÔÚ¿ØÖÆÌ¨ÏÔÊ¾num_other_pairs()	 = model³ÉÔ±other_pairsµÄ´óĞ¡
-*		ÔÚ¿ØÖÆÌ¨ÏÔÊ¾num_ligands()		 = model³ÉÔ±ligandsµÄ´óĞ¡
-* 		ÔÚ¿ØÖÆÌ¨ÏÔÊ¾num_flex()		     = model³ÉÔ±flexµÄ´óĞ¡
+* modelçš„æˆå‘˜å‡½æ•°:about
+* input:æ— 
+* output:æ— 
+* ä½œç”¨ï¼šåœ¨æ§åˆ¶å°æ˜¾ç¤ºatom_typing_used()   = modelæˆå‘˜m_atom_typing_usedçš„å€¼
+* 		åœ¨æ§åˆ¶å°æ˜¾ç¤ºnum_movable_atoms()  = modelæˆå‘˜m_num_movable_atomsçš„å€¼
+*		åœ¨æ§åˆ¶å°æ˜¾ç¤ºnum_internal_pairs() = modelæˆå‘˜ligandsæ‰€æœ‰å…ƒç´ çš„æˆå‘˜pairsçš„å¤§å°ä¹‹å’Œ
+* 		åœ¨æ§åˆ¶å°æ˜¾ç¤ºnum_other_pairs()	 = modelæˆå‘˜other_pairsçš„å¤§å°
+*		åœ¨æ§åˆ¶å°æ˜¾ç¤ºnum_ligands()		 = modelæˆå‘˜ligandsçš„å¤§å°
+* 		åœ¨æ§åˆ¶å°æ˜¾ç¤ºnum_flex()		     = modelæˆå‘˜flexçš„å¤§å°
 *
 */
 void model::about() const {
@@ -1649,31 +1649,31 @@ void model::about() const {
 }
 
 /*
-* modelµÄ³ÉÔ±º¯Êı:about
-* input:ÎŞ
-* output:ÎŞ
-* ×÷ÓÃ£º
-*		±éÀúcoordsµÄÔªËØ£¬ÔÚ¿ØÖÆÌ¨´òÓ¡aµÄ³ÉÔ±£¬¼´
-* 		´òÓ¡
+* modelçš„æˆå‘˜å‡½æ•°:about
+* input:æ— 
+* output:æ— 
+* ä½œç”¨ï¼š
+*		éå†coordsçš„å…ƒç´ ï¼Œåœ¨æ§åˆ¶å°æ‰“å°açš„æˆå‘˜ï¼Œå³
+* 		æ‰“å°
 * 			coords:
 * 			[coords[i][0],coords[i][1],coords[i][2]]
 *			........................................
-*		±éÀúinternal_coordsµÄÔªËØ£¬ÔÚ¿ØÖÆÌ¨´òÓ¡aµÄ³ÉÔ±£¬¼´
-* 		´òÓ¡
+*		éå†internal_coordsçš„å…ƒç´ ï¼Œåœ¨æ§åˆ¶å°æ‰“å°açš„æˆå‘˜ï¼Œå³
+* 		æ‰“å°
 * 			internal_coords:
 * 			[internal_coords[i][0],internal_coords[i][1],internal_coords[i][2]]
 * 			...................................................................
-*		±éÀúatomsµÄÔªËØ£¬·Ö±ğ°ó¶¨ÔÚaÉÏ£¬ÔÚ¿ØÖÆÌ¨´òÓ¡aµÄ³ÉÔ±£¬¼´
-* 		´òÓ¡
+*		éå†atomsçš„å…ƒç´ ï¼Œåˆ†åˆ«ç»‘å®šåœ¨aä¸Šï¼Œåœ¨æ§åˆ¶å°æ‰“å°açš„æˆå‘˜ï¼Œå³
+* 		æ‰“å°
 * 			atoms:
 * 			a.el a.ad a.xs a.sy a.charge
-* 			a.bondsµÄ´óĞ¡ [a.coords[0],a.coords[1],a.coords[2]]       
+* 			a.bondsçš„å¤§å° [a.coords[0],a.coords[1],a.coords[2]]       
 *			...................................................
-*		±éÀúgrid_atomsµÄÔªËØ£¬·Ö±ğ°ó¶¨ÔÚaÉÏ£¬ÔÚ¿ØÖÆÌ¨´òÓ¡aµÄ³ÉÔ±£¬¼´
-*		´òÓ¡
+*		éå†grid_atomsçš„å…ƒç´ ï¼Œåˆ†åˆ«ç»‘å®šåœ¨aä¸Šï¼Œåœ¨æ§åˆ¶å°æ‰“å°açš„æˆå‘˜ï¼Œå³
+*		æ‰“å°
 *			grid_atoms:
 *			a.el a.ad a.xs a.sy a.charge
-*			a.bondsµÄ´óĞ¡ [a.coords[0],a.coords[1],a.coords[2]]        
+*			a.bondsçš„å¤§å° [a.coords[0],a.coords[1],a.coords[2]]        
 * 		    ...................................................
 */
 void model::print_stuff() const {
@@ -1703,34 +1703,34 @@ void model::print_stuff() const {
 
 
 /*
-*input:doubleĞÍrºÍcovalent_r
-*output£ºÈô r < 0 »òÕß covalent < ÔËĞĞ±àÒë³ÌĞòµÄ¼ÆËã»úËùÄÜÊ¶±ğµÄ×îĞ¡·ÇÁã¸¡µãÊı Ê±±¨´í
-*·ñÔòr / covalent_r >2 Ê±·µ»Ø0
-*    r / covalent_r <= 2 Ê±·µ»Ø1-£¨r / covalent_r£©*£¨r / covalent_r£©/4
+*input:doubleå‹rå’Œcovalent_r
+*outputï¼šè‹¥ r < 0 æˆ–è€… covalent < è¿è¡Œç¼–è¯‘ç¨‹åºçš„è®¡ç®—æœºæ‰€èƒ½è¯†åˆ«çš„æœ€å°éé›¶æµ®ç‚¹æ•° æ—¶æŠ¥é”™
+*å¦åˆ™r / covalent_r >2 æ—¶è¿”å›0
+*    r / covalent_r <= 2 æ—¶è¿”å›1-ï¼ˆr / covalent_rï¼‰*ï¼ˆr / covalent_rï¼‰/4
 */
 fl pairwise_clash_penalty(fl r, fl covalent_r) {
 	// r = 0          -> max_penalty 
 	// r = covalent_r -> 1
 	// elsewhere      -> hyperbolic function
-	assert(r >= 0);//r<0±¨´í
-	assert(covalent_r > epsilon_fl);//covalent<ÔËĞĞ±àÒë³ÌĞòµÄ¼ÆËã»úËùÄÜÊ¶±ğµÄ×îĞ¡·ÇÁã¸¡µãÊıÊ±±¨´í
+	assert(r >= 0);//r<0æŠ¥é”™
+	assert(covalent_r > epsilon_fl);//covalent<è¿è¡Œç¼–è¯‘ç¨‹åºçš„è®¡ç®—æœºæ‰€èƒ½è¯†åˆ«çš„æœ€å°éé›¶æµ®ç‚¹æ•°æ—¶æŠ¥é”™
 	const fl x = r / covalent_r;
 	if(x > 2) return 0;
 	return 1-x*x/4;
 }
 
 /*
-* model³ÉÔ±º¯Êıclash_penalty_aux£¬³åÍ»³Í·£
-*input:interacting_pairÀàvector
-*output:douleÀàÊı
-*×÷ÓÃ£º
-*	1.¶¨ÒåÒ»¸ödouble±äÁ¿e = 0
-*	2.±éÀúvector
-*		(1)½«vectorµÄµÚi¸öÔªËØ°ó¶¨µ½ipÉÏ
-*       (2)¼ÆËã¹«Ê½2£¬µÃµ½r
-*       (3)¼ÆËãatomsµÚip.a£¨ipµÄ³ÉÔ±a£©ºÍip.b£¨ipµÄ³ÉÔ±b£©µÄ¹²¼Û°ë¾¶ºÍ£¬µÃµ½covalent_r
-*       (4)¼ÆËã³É¶Ô³åÍ»³Í·££¬½«rºÍcovalent_r´úÈëº¯Êıpairwise_clash_penalty£¬²¢½«ÆäÀÛ¼Óµ½eÉÏ
-*   3.·µ»Øe
+* modelæˆå‘˜å‡½æ•°clash_penalty_auxï¼Œå†²çªæƒ©ç½š
+*input:interacting_pairç±»vector
+*output:douleç±»æ•°
+*ä½œç”¨ï¼š
+*	1.å®šä¹‰ä¸€ä¸ªdoubleå˜é‡e = 0
+*	2.éå†vector
+*		(1)å°†vectorçš„ç¬¬iä¸ªå…ƒç´ ç»‘å®šåˆ°ipä¸Š
+*       (2)è®¡ç®—å…¬å¼2ï¼Œå¾—åˆ°r
+*       (3)è®¡ç®—atomsç¬¬ip.aï¼ˆipçš„æˆå‘˜aï¼‰å’Œip.bï¼ˆipçš„æˆå‘˜bï¼‰çš„å…±ä»·åŠå¾„å’Œï¼Œå¾—åˆ°covalent_r
+*       (4)è®¡ç®—æˆå¯¹å†²çªæƒ©ç½šï¼Œå°†rå’Œcovalent_rä»£å…¥å‡½æ•°pairwise_clash_penaltyï¼Œå¹¶å°†å…¶ç´¯åŠ åˆ°eä¸Š
+*   3.è¿”å›e
 */
 fl model::clash_penalty_aux(const interacting_pairs& pairs) const {
 	fl e = 0;
@@ -1744,15 +1744,15 @@ fl model::clash_penalty_aux(const interacting_pairs& pairs) const {
 }
 
 /*
-* model³ÉÔ±º¯Êıclash_penalty£¬³åÍ»³Í·£
-*input:ÎŞ
-*output:douleÀàÊı
-*×÷ÓÃ£º
-*	1.¶¨ÒåÒ»¸ödouble±äÁ¿e = 0
-*	2.±éÀúmodel³ÉÔ±ligands£¬
-*         ½«ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairsÊäÈëclash_penalty_aux£¬µÃµ½½á¹ûÀÛ¼Óµ½eÉÏ
-*   3.½«model³ÉÔ±other_pairsÊäÈëclash_penalty_aux£¬µÃµ½½á¹ûÀÛ¼Óµ½eÉÏ
-*   4.·µ»Øe
+* modelæˆå‘˜å‡½æ•°clash_penaltyï¼Œå†²çªæƒ©ç½š
+*input:æ— 
+*output:douleç±»æ•°
+*ä½œç”¨ï¼š
+*	1.å®šä¹‰ä¸€ä¸ªdoubleå˜é‡e = 0
+*	2.éå†modelæˆå‘˜ligandsï¼Œ
+*         å°†ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairsè¾“å…¥clash_penalty_auxï¼Œå¾—åˆ°ç»“æœç´¯åŠ åˆ°eä¸Š
+*   3.å°†modelæˆå‘˜other_pairsè¾“å…¥clash_penalty_auxï¼Œå¾—åˆ°ç»“æœç´¯åŠ åˆ°eä¸Š
+*   4.è¿”å›e
 */
 fl model::clash_penalty() const {
 	fl e = 0;

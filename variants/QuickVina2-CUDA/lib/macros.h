@@ -18,50 +18,50 @@
 
 #ifndef VINA_MACROS_H
 #define VINA_MACROS_H
-/*   i´Ó0Ñ­»·µ½VµÄ³¤¶È´Î  
-input  V £ºÈÝÆ÷  unitÀàÐÍ   i£ºÈÝÆ÷µÄÏÂ±ê  UINTÀàÐÍ       ºó½ÓÓï¾äÎÞÊä³ö   
-size_tÀàÐÍ±íÊ¾CÖÐÈÎºÎ¶ÔÏóËùÄÜ´ïµ½µÄ×î´ó³¤¶È£¬ËüÊÇÎÞ·ûºÅÕûÊý¡£
+/*   iä»Ž0å¾ªçŽ¯åˆ°Vçš„é•¿åº¦æ¬¡  
+input  V ï¼šå®¹å™¨  unitç±»åž‹   iï¼šå®¹å™¨çš„ä¸‹æ ‡  UINTç±»åž‹       åŽæŽ¥è¯­å¥æ— è¾“å‡º   
+size_tç±»åž‹è¡¨ç¤ºCä¸­ä»»ä½•å¯¹è±¡æ‰€èƒ½è¾¾åˆ°çš„æœ€å¤§é•¿åº¦ï¼Œå®ƒæ˜¯æ— ç¬¦å·æ•´æ•°ã€‚
 */
 #define VINA_FOR_IN(i, v) for(std::size_t VINA_MACROS_TMP = (v).size(), (i) = 0; (i) < VINA_MACROS_TMP; ++(i))
 
 
-//  i´Ó0Ñ­»·µ½n´Î        input  i ¡¢nUINTÀàÐÍ        ºó½ÓÓï¾äÎÞÊä³ö    size_tÀàÐÍ±íÊ¾CÖÐÈÎºÎ¶ÔÏóËùÄÜ´ïµ½µÄ×î´ó³¤¶È£¬ËüÊÇÎÞ·ûºÅÕûÊý¡£
+//  iä»Ž0å¾ªçŽ¯åˆ°næ¬¡        input  i ã€nUINTç±»åž‹        åŽæŽ¥è¯­å¥æ— è¾“å‡º    size_tç±»åž‹è¡¨ç¤ºCä¸­ä»»ä½•å¯¹è±¡æ‰€èƒ½è¾¾åˆ°çš„æœ€å¤§é•¿åº¦ï¼Œå®ƒæ˜¯æ— ç¬¦å·æ•´æ•°ã€‚
 #define VINA_FOR(i, n)    for(std::size_t VINA_MACROS_TMP = (n),        (i) = 0; (i) < VINA_MACROS_TMP; ++(i))
 
 
 
-//  i´Ó0Ñ­»·µ½n´Î            input  i¡¢n UINTÀàÐÍ         ºó½ÓÓï¾äÎÞÊä³ö
+//  iä»Ž0å¾ªçŽ¯åˆ°næ¬¡            input  iã€n UINTç±»åž‹         åŽæŽ¥è¯­å¥æ— è¾“å‡º
 #define VINA_U_FOR(i, n)  for(unsigned    VINA_MACROS_TMP = (n),        (i) = 0; (i) < VINA_MACROS_TMP; ++(i))
 
 
 
-//   i´ÓaÑ­»·µ½b´Î      input  i ¡¢a ¡¢b  UINTÀàÐÍ       ºó½ÓÓï¾äÎÞÊä³ö   size_tÀàÐÍ±íÊ¾CÖÐÈÎºÎ¶ÔÏóËùÄÜ´ïµ½µÄ×î´ó³¤¶È£¬ËüÊÇÎÞ·ûºÅÕûÊý¡£
+//   iä»Žaå¾ªçŽ¯åˆ°bæ¬¡      input  i ã€a ã€b  UINTç±»åž‹       åŽæŽ¥è¯­å¥æ— è¾“å‡º   size_tç±»åž‹è¡¨ç¤ºCä¸­ä»»ä½•å¯¹è±¡æ‰€èƒ½è¾¾åˆ°çš„æœ€å¤§é•¿åº¦ï¼Œå®ƒæ˜¯æ— ç¬¦å·æ•´æ•°ã€‚
 #define VINA_RANGE(i, a, b)   for(std::size_t VINA_MACROS_TMP = (b), (i) = (a); (i) < VINA_MACROS_TMP; ++(i))
 
 
-//   i´ÓaÑ­»·µ½b´Î       input  i ¡¢a ¡¢b  UINTÀàÐÍ       ºó½ÓÓï¾äÎÞÊä³ö
+//   iä»Žaå¾ªçŽ¯åˆ°bæ¬¡       input  i ã€a ã€b  UINTç±»åž‹       åŽæŽ¥è¯­å¥æ— è¾“å‡º
 #define VINA_U_RANGE(i, a, b) for(unsigned    VINA_MACROS_TMP = (b), (i) = (a); (i) < VINA_MACROS_TMP; ++(i))
 
 
 
-//   i´ÓaÑ­»·µ½b´Î       input  i ¡¢a  ¡¢  b  intÀàÐÍ    ºó½ÓÓï¾äÎÞÊä³ö
+//   iä»Žaå¾ªçŽ¯åˆ°bæ¬¡       input  i ã€a  ã€  b  intç±»åž‹    åŽæŽ¥è¯­å¥æ— è¾“å‡º
 #define VINA_I_RANGE(i, a, b) for(int         VINA_MACROS_TMP = (b), (i) = (a); (i) < VINA_MACROS_TMP; ++(i))
 
 
 
-//  ±éÀúÈÝÆ÷µÄËùÓÐÔªËØÖµ   input  i ¡¢v UINTÀàÐÍ  t:  vector<int>  µü´úÆ÷²»ÄÜ¸Ä±ä    ºó½ÓÓï¾äÎÞÊä³ö
+//  éåŽ†å®¹å™¨çš„æ‰€æœ‰å…ƒç´ å€¼   input  i ã€v UINTç±»åž‹  t:  vector<int>  è¿­ä»£å™¨ä¸èƒ½æ”¹å˜    åŽæŽ¥è¯­å¥æ— è¾“å‡º
 #define VINA_LOOP_CONST(t, i, v) for(t::const_iterator (i) = (v).begin(); (i) != (v).end(); ++(i))
-//  ±éÀúÈÝÆ÷µÄËùÓÐÔªËØÖµ   input  i ¡¢v UINTÀàÐÍ  t:  vector<int>  µü´úÆ÷¿ÉÒÔ¸Ä±ä 
+//  éåŽ†å®¹å™¨çš„æ‰€æœ‰å…ƒç´ å€¼   input  i ã€v UINTç±»åž‹  t:  vector<int>  è¿­ä»£å™¨å¯ä»¥æ”¹å˜ 
 #define       VINA_LOOP(t, i, v) for(t::iterator       (i) = (v).begin(); (i) != (v).end(); ++(i))
 
 
 
 
-//Ö´ÐÐ´òÓ¡Ò»´ÎÊä³ö x=        
+//æ‰§è¡Œæ‰“å°ä¸€æ¬¡è¾“å‡º x=        
 #define VINA_SHOW(x)       do { std::cout << #x << " = " << (x) << std::endl; } while(false)
-//Ö´ÐÐ´òÓ¡Ò»´ÎÊä³ö x=
+//æ‰§è¡Œæ‰“å°ä¸€æ¬¡è¾“å‡º x=
 #define VINA_SHOW_FAST(x)  do { std::cout << #x << " = " << (x) <<      '\n'; } while(false)
-//Ö´ÐÐ´òÓ¡Ò»´ÎÊä³ö x=        ÓÃÓÚÑ¸ËÙÊä³ö³ö´íÐÅÏ¢£¬ÊÇ±ê×¼´íÎó
+//æ‰§è¡Œæ‰“å°ä¸€æ¬¡è¾“å‡º x=        ç”¨äºŽè¿…é€Ÿè¾“å‡ºå‡ºé”™ä¿¡æ¯ï¼Œæ˜¯æ ‡å‡†é”™è¯¯
 #define VINA_ESHOW(x)      do { std::cerr << #x << " = " << (x) <<      '\n'; } while(false)
 
 #endif 

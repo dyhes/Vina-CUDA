@@ -26,10 +26,10 @@
 #include "quasi_newton.h"
 
 const vec authentic_v(1000, 1000, 1000); 
-/*¶¨Òå²Ù×÷·ûÖØÔØ    
-input£ºm  model    p£ºprecalculate½á¹¹Ìå  ig¡¢ig_widened£ºigrid½á¹¹Ìå   p_widened£ºp_widened½á¹¹Ìå  corner1¡¢corner2£ºÏòÁ¿   generator:Ëæ»úÊı²úÉúÆ÷
-out£ºoutput_type
-function£º¶¨Òåtmp   output_container    È»ºóµ±Ç°¶ÔÏóÖ´ĞĞparallel_mc::operator()  ¸øtmp¸³Öµ    ÅĞ¶Ïtmp²»Îª¿Õ    ²¢ÇÒ·µ»ØtmpµÄÊ×¸öÔªËØ
+/*å®šä¹‰æ“ä½œç¬¦é‡è½½    
+inputï¼šm  model    pï¼šprecalculateç»“æ„ä½“  igã€ig_widenedï¼šigridç»“æ„ä½“   p_widenedï¼šp_widenedç»“æ„ä½“  corner1ã€corner2ï¼šå‘é‡   generator:éšæœºæ•°äº§ç”Ÿå™¨
+outï¼šoutput_type
+functionï¼šå®šä¹‰tmp   output_container    ç„¶åå½“å‰å¯¹è±¡æ‰§è¡Œparallel_mc::operator()  ç»™tmpèµ‹å€¼    åˆ¤æ–­tmpä¸ä¸ºç©º    å¹¶ä¸”è¿”å›tmpçš„é¦–ä¸ªå…ƒç´ 
 */
 output_type manifold::operator()(model& m, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, rng& generator) const {
 	output_container tmp;
@@ -37,70 +37,70 @@ output_type manifold::operator()(model& m, const precalculate& p, const igrid& i
 	VINA_CHECK(!tmp.empty());
 	return tmp.front();
 }
-/*¶¨Òå½á¹¹ÌåÖ¸ÕëÀàĞÍº¯Êı  select_rs     Ö»¶Á
-* input   output_container  ½á¹¹ÌåÏòÁ¿  mf  Ö»¶Á     rstart£ºuint      Ëæ»úÊı²úÉúÆ÷ generator
-*ÅĞ¶Ï½á¹¹ÌåÏòÁ¿²»¿Õ²¢ÇÒÔªËØ¸öÊı´óÓÚµÈÓÚrstart     Ôò  ·µ»ØÕâ¸ö½á¹¹ÌåÏòÁ¿ÖĞµÄµÚi¸ö½á¹¹ÌåµØÖ·     iÎªÔÚ0-£¨ÔªËØ¸öÊı-1£©Ö®¼äµÄËæ»úÊı i 
-* ·ñÔò ·µ»Ø¿ÕÖ¸Õë
+/*å®šä¹‰ç»“æ„ä½“æŒ‡é’ˆç±»å‹å‡½æ•°  select_rs     åªè¯»
+* input   output_container  ç»“æ„ä½“å‘é‡  mf  åªè¯»     rstartï¼šuint      éšæœºæ•°äº§ç”Ÿå™¨ generator
+*åˆ¤æ–­ç»“æ„ä½“å‘é‡ä¸ç©ºå¹¶ä¸”å…ƒç´ ä¸ªæ•°å¤§äºç­‰äºrstart     åˆ™  è¿”å›è¿™ä¸ªç»“æ„ä½“å‘é‡ä¸­çš„ç¬¬iä¸ªç»“æ„ä½“åœ°å€     iä¸ºåœ¨0-ï¼ˆå…ƒç´ ä¸ªæ•°-1ï¼‰ä¹‹é—´çš„éšæœºæ•° i 
+* å¦åˆ™ è¿”å›ç©ºæŒ‡é’ˆ
 */
 const conf* select_rs(const output_container& mf, sz rstart, rng& generator) { // clean up
-	if(!mf.empty() && mf.size() >= rstart) { //ÏòÁ¿²»¿Õ²¢ÇÒÔªËØ¸öÊı´óÓÚµÈÓÚrstart
-		sz i = random_sz(0, mf.size()-1, generator);//²úÉúÒ»¸öÔÚ0-£¨ÔªËØ¸öÊı-1£©Ö®¼äµÄËæ»úÊı i uintÀàĞÍ
-		return &(mf[i].c);//·µ»ØÕâ¸ö½á¹¹ÌåÏòÁ¿ÖĞµÄµÚi¸ö½á¹¹ÌåµØÖ·
+	if(!mf.empty() && mf.size() >= rstart) { //å‘é‡ä¸ç©ºå¹¶ä¸”å…ƒç´ ä¸ªæ•°å¤§äºç­‰äºrstart
+		sz i = random_sz(0, mf.size()-1, generator);//äº§ç”Ÿä¸€ä¸ªåœ¨0-ï¼ˆå…ƒç´ ä¸ªæ•°-1ï¼‰ä¹‹é—´çš„éšæœºæ•° i uintç±»å‹
+		return &(mf[i].c);//è¿”å›è¿™ä¸ªç»“æ„ä½“å‘é‡ä¸­çš„ç¬¬iä¸ªç»“æ„ä½“åœ°å€
 	}
-	return NULL;//·ñÔòÖ¸ÕëÎª¿Õ
+	return NULL;//å¦åˆ™æŒ‡é’ˆä¸ºç©º
 }
 /*
-* ÅĞ¶Ï½á¹¹ÌåÏòÁ¿ÖĞµÄÄÚ²¿ÅäÌå±ä»¯ÊÇ·ñÏàËÆ   ²¢ÇÒ·µ»Ø×îºóÒ»´Î½á¹ûµÄÏà·´Öµ
-input£ºconfÀàĞÍ½á¹¹ÌåC   output_containerÀàĞÍ½á¹¹ÌåÏòÁ¿mf    ²¼¶ûÀàĞÍÏòÁ¿internal_too_close    double  £ºexclusion£¨ÓÃÓÚÅĞ¶ÏÏàËÆº¯Êıinternal_too_closeÖĞ×÷ÎªÅĞ¶Ï±ê×¼£©
-out£º tmp  bool
-ÅĞ¶Ï½á¹¹ÌåÏòÁ¿mf[i]ÖĞµÄ½á¹¹ÌåconfÖĞµÄ½á¹¹ÌåÏòÁ¿torsionsÊÇ·ñºÍligands½á¹¹ÌåÏòÁ¿ÖĞµÄtorsionsÏàËÆ£¬²¢ÇÒÅĞ¶Ï½á¹û¸øinternal_too_close¸³Öµ
-×îºóÒ»´ÎÅĞ¶ÏµÄ½á¹ûÊÇÏàËÆµÄ»°   ·µ»Øfause   ·ñÔò·µ»Øture
+* åˆ¤æ–­ç»“æ„ä½“å‘é‡ä¸­çš„å†…éƒ¨é…ä½“å˜åŒ–æ˜¯å¦ç›¸ä¼¼   å¹¶ä¸”è¿”å›æœ€åä¸€æ¬¡ç»“æœçš„ç›¸åå€¼
+inputï¼šconfç±»å‹ç»“æ„ä½“C   output_containerç±»å‹ç»“æ„ä½“å‘é‡mf    å¸ƒå°”ç±»å‹å‘é‡internal_too_close    double  ï¼šexclusionï¼ˆç”¨äºåˆ¤æ–­ç›¸ä¼¼å‡½æ•°internal_too_closeä¸­ä½œä¸ºåˆ¤æ–­æ ‡å‡†ï¼‰
+outï¼š tmp  bool
+åˆ¤æ–­ç»“æ„ä½“å‘é‡mf[i]ä¸­çš„ç»“æ„ä½“confä¸­çš„ç»“æ„ä½“å‘é‡torsionsæ˜¯å¦å’Œligandsç»“æ„ä½“å‘é‡ä¸­çš„torsionsç›¸ä¼¼ï¼Œå¹¶ä¸”åˆ¤æ–­ç»“æœç»™internal_too_closeèµ‹å€¼
+æœ€åä¸€æ¬¡åˆ¤æ–­çš„ç»“æœæ˜¯ç›¸ä¼¼çš„è¯   è¿”å›fause   å¦åˆ™è¿”å›ture
 
 */
 bool determine_iu(const conf& c, const output_container& mf, std::vector<bool>& internal_too_close, fl exclusion) { // clean up
 	bool tmp = true;
 	VINA_FOR_IN(i, mf) {
-		bool t = c.internal_too_close(mf[i].c, exclusion);/* ÅĞ¶Ïligands½á¹¹ÌåÏòÁ¿ÖĞµÄtorsionsÊÇ·ñºÍmf[i].conf.½á¹¹ÌåÏòÁ¿ÖĞµÄtorsionsÏàËÆÊÇµÄ»°·µ»Øtrue£¬·ñÔò·µ»Øfalse */
-		internal_too_close[i] = t;//ÅĞ¶Ï½á¹û¸øÏòÁ¿¸³Öµ
+		bool t = c.internal_too_close(mf[i].c, exclusion);/* åˆ¤æ–­ligandsç»“æ„ä½“å‘é‡ä¸­çš„torsionsæ˜¯å¦å’Œmf[i].conf.ç»“æ„ä½“å‘é‡ä¸­çš„torsionsç›¸ä¼¼æ˜¯çš„è¯è¿”å›trueï¼Œå¦åˆ™è¿”å›false */
+		internal_too_close[i] = t;//åˆ¤æ–­ç»“æœç»™å‘é‡èµ‹å€¼
 		if(t) 
-			tmp = false;//×îºóÒ»´ÎÅĞ¶ÏµÄ½á¹ûÊÇÏàËÆµÄ»°   ·µ»Øfause   ·ñÔò·µ»Øture
+			tmp = false;//æœ€åä¸€æ¬¡åˆ¤æ–­çš„ç»“æœæ˜¯ç›¸ä¼¼çš„è¯   è¿”å›fause   å¦åˆ™è¿”å›ture
 	}
 	return tmp;
 }
 /*
 
-ÅĞ¶Ï½á¹¹ÌåÏòÁ¿ÖĞµÄÄÚ²¿ÅäÌå±ä»¯ºÍÍâ²¿ÅäÌå±ä»¯ÊÇ·ñ¶¼ÏàËÆ  ÊÇµÄ»°·µ»Øfalse  ·ñÔò·µ»Øture
-input  c  conf½á¹¹Ìå   mf  output_container  £º½á¹¹ÌåÏòÁ¿   internal_too_close  boolÏòÁ¿  £¨ÄÚ²¿ÅäÌåÏàËÆµÄÅĞ¶Ï½á¹û£© exclusion£ºscale½á¹¹Ìå
+åˆ¤æ–­ç»“æ„ä½“å‘é‡ä¸­çš„å†…éƒ¨é…ä½“å˜åŒ–å’Œå¤–éƒ¨é…ä½“å˜åŒ–æ˜¯å¦éƒ½ç›¸ä¼¼  æ˜¯çš„è¯è¿”å›false  å¦åˆ™è¿”å›ture
+input  c  confç»“æ„ä½“   mf  output_container  ï¼šç»“æ„ä½“å‘é‡   internal_too_close  boolå‘é‡  ï¼ˆå†…éƒ¨é…ä½“ç›¸ä¼¼çš„åˆ¤æ–­ç»“æœï¼‰ exclusionï¼šscaleç»“æ„ä½“
 out    bool 
 
-external_too_close£ºÅĞ¶ÏÍâ²¿Æ¥Åä±ä»¯ÊÇ·ñÏàËÆ   £ºÏÈÅĞ¶Ïligands[i].rigidÖĞµÄposition¡¢orientationÊÇ·ñºÍc.ligands[i].rigidÖĞµÄposition¡¢orientationÏàËÆ£¬²»ÊÇµÄ»°·µ»Øfalse£»
-·ñÔòÅĞ¶Ïflex[i]ÖĞµÄtorsionsÏòÁ¿ºÍc.flex[i]ÖĞµÄtorsionsÏòÁ¿ÊÇ·ñÏàËÆ£¬²»ÊÇµÄ»°·µ»Øfalse£»
-Òª²»×îºó·µ»Øtrue
+external_too_closeï¼šåˆ¤æ–­å¤–éƒ¨åŒ¹é…å˜åŒ–æ˜¯å¦ç›¸ä¼¼   ï¼šå…ˆåˆ¤æ–­ligands[i].rigidä¸­çš„positionã€orientationæ˜¯å¦å’Œc.ligands[i].rigidä¸­çš„positionã€orientationç›¸ä¼¼ï¼Œä¸æ˜¯çš„è¯è¿”å›falseï¼›
+å¦åˆ™åˆ¤æ–­flex[i]ä¸­çš„torsionså‘é‡å’Œc.flex[i]ä¸­çš„torsionså‘é‡æ˜¯å¦ç›¸ä¼¼ï¼Œä¸æ˜¯çš„è¯è¿”å›falseï¼›
+è¦ä¸æœ€åè¿”å›true
 */
 
 bool conf_is_legal(const conf& c, const output_container& mf, const std::vector<bool>& internal_too_close, const scale& exclusion) {
-	assert(mf.size() == internal_too_close.size());// ÅĞ¶Ïmf½á¹¹ÌåÏòÁ¿µÄÔªËØ¸öÊıÊÇ·ñºÍinternal_too_closeÏòÁ¿µÄÔªËØ¸öÊıÏàµÈ
+	assert(mf.size() == internal_too_close.size());// åˆ¤æ–­mfç»“æ„ä½“å‘é‡çš„å…ƒç´ ä¸ªæ•°æ˜¯å¦å’Œinternal_too_closeå‘é‡çš„å…ƒç´ ä¸ªæ•°ç›¸ç­‰
 	VINA_FOR_IN(i, mf)
-		if(internal_too_close[i] && c.external_too_close(mf[i].c, exclusion))//ÅĞ¶ÏÄÚ²¿±ä»¯ºÍÍâ²¿±ä»¯ÊÇ·ñ¶¼ÏàËÆ
+		if(internal_too_close[i] && c.external_too_close(mf[i].c, exclusion))//åˆ¤æ–­å†…éƒ¨å˜åŒ–å’Œå¤–éƒ¨å˜åŒ–æ˜¯å¦éƒ½ç›¸ä¼¼
 			return false;
 	return true;
 }
-/*input   internal_conf£ºconf½á¹¹ÌåÖ»¶Á     mf£º ½á¹¹ÌåÏòÁ¿  Ö»¶Á    internal_too_close£º²¼¶ûÀàĞÍÏòÁ¿ Ö»¶Á   uniq£º bool    spread¡¢exclusion £º scale½á¹¹Ìå Ö»¶Á     rp£ºdouble  rs£º conf½á¹¹ÌåÖ¸ÕëÖ»¶Á  num_attempts£ºuint   failed £ºbool    generator£ºËæ»úÊı²úÉúÆ÷
-out£º tmp  conf½á¹¹Ìå 
-function£º  °ÑÊäÈëinternal_conf¹ı¶É¸øtmp    
-			Ñ­»·Ö´ĞĞ             num_attempts´Î  
-						1¡¢¶ÔtmpÉú³ÉÍâ²¿±ä»¯£º¸ÕĞÔ£¨Î»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø£©¡¢ÈáĞÔ£¨Å¤¾Ø£©
-						2¡¢Èç¹ûuniqÎª0ÇÒtmpÄÚ²¿ÅäÌåÍâ²¿ÅäÌå¶¼ÏàËÆ  ·µ»Øtmp   £¬
-						3¡¢Èç¹ûÖ´ĞĞµ½(attempt + 1 >= num_attempts)  Ôò·µ»Øtmp  ÇÒfailed±ä³Éture
-			Èô½Óµ½´íÎó£¬Ôò·µ»Øinternal_conf
+/*input   internal_confï¼šconfç»“æ„ä½“åªè¯»     mfï¼š ç»“æ„ä½“å‘é‡  åªè¯»    internal_too_closeï¼šå¸ƒå°”ç±»å‹å‘é‡ åªè¯»   uniqï¼š bool    spreadã€exclusion ï¼š scaleç»“æ„ä½“ åªè¯»     rpï¼šdouble  rsï¼š confç»“æ„ä½“æŒ‡é’ˆåªè¯»  num_attemptsï¼šuint   failed ï¼šbool    generatorï¼šéšæœºæ•°äº§ç”Ÿå™¨
+outï¼š tmp  confç»“æ„ä½“ 
+functionï¼š  æŠŠè¾“å…¥internal_confè¿‡æ¸¡ç»™tmp    
+			å¾ªç¯æ‰§è¡Œ             num_attemptsæ¬¡  
+						1ã€å¯¹tmpç”Ÿæˆå¤–éƒ¨å˜åŒ–ï¼šåˆšæ€§ï¼ˆä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ï¼‰ã€æŸ”æ€§ï¼ˆæ‰­çŸ©ï¼‰
+						2ã€å¦‚æœuniqä¸º0ä¸”tmpå†…éƒ¨é…ä½“å¤–éƒ¨é…ä½“éƒ½ç›¸ä¼¼  è¿”å›tmp   ï¼Œ
+						3ã€å¦‚æœæ‰§è¡Œåˆ°(attempt + 1 >= num_attempts)  åˆ™è¿”å›tmp  ä¸”failedå˜æˆture
+			è‹¥æ¥åˆ°é”™è¯¯ï¼Œåˆ™è¿”å›internal_conf
 */
 conf generate_external(const conf& internal_conf, const output_container& mf, const std::vector<bool>& internal_too_close, bool uniq, const scale& spread, const scale& exclusion, fl rp, const conf* rs, unsigned num_attempts, bool& failed, rng& generator) {
 	// FIXME if one ligand with no side chains, don't use the same (pos, orient) more than once 
 	failed = false;
-	VINA_U_FOR(attempt, num_attempts) {//for  £¨attempt=0£»attempt<num_attempts;attempt++£©
+	VINA_U_FOR(attempt, num_attempts) {//for  ï¼ˆattempt=0ï¼›attempt<num_attempts;attempt++ï¼‰
 		conf tmp(internal_conf);
-		tmp.generate_external(spread, rp, rs, generator); //Éú³ÉÍâ²¿±ä»¯£º¸ÕĞÔ£¨Î»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø£©¡¢ÈáĞÔ£¨Å¤¾Ø£©¡£
-		if(uniq || conf_is_legal(tmp, mf, internal_too_close, exclusion))//Èç¹ûuniqÎª0ÇÒtmpÄÚ²¿ÅäÌåÍâ²¿ÅäÌå¶¼ÏàËÆ  ·µ»Øtmp
+		tmp.generate_external(spread, rp, rs, generator); //ç”Ÿæˆå¤–éƒ¨å˜åŒ–ï¼šåˆšæ€§ï¼ˆä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ï¼‰ã€æŸ”æ€§ï¼ˆæ‰­çŸ©ï¼‰ã€‚
+		if(uniq || conf_is_legal(tmp, mf, internal_too_close, exclusion))//å¦‚æœuniqä¸º0ä¸”tmpå†…éƒ¨é…ä½“å¤–éƒ¨é…ä½“éƒ½ç›¸ä¼¼  è¿”å›tmp
 			return tmp;
 		if(attempt + 1 >= num_attempts) { 
 			failed = true;
@@ -112,9 +112,9 @@ conf generate_external(const conf& internal_conf, const output_container& mf, co
 }
 /*input   double   from   to    progress
 * out    double
-* function£ºÅĞ¶Ï from ÊÇ·ñ< 2.2204460492503131e-016  
-ÊÇ   return  from   
-·ñÔò   return    from * eµÄ(progress * log(to/from))´Î·½
+* functionï¼šåˆ¤æ–­ from æ˜¯å¦< 2.2204460492503131e-016  
+æ˜¯   return  from   
+å¦åˆ™   return    from * eçš„(progress * log(to/from))æ¬¡æ–¹
 */
 fl extrapolate_cap(fl from, fl to, fl progress) {
 	if(from < epsilon_fl) return from;
@@ -122,12 +122,12 @@ fl extrapolate_cap(fl from, fl to, fl progress) {
 }
 
 
-/*input   from to£º Ö»¶Á doubleÏòÁ¿   progress   £ºdouble
-out   doubleÏòÁ¿
-function£º  ¸útmp[i]¸³Öµ²¢·µ»Ø  
-ÅĞ¶Ï from[i] ÊÇ·ñ< 2.2204460492503131e-016 
-ÊÇ  tmp[i]=from[i] 
-·ñ  tmp[i]=from[i] * eµÄ(progress * log(to[i]/from[i]))´Î·½
+/*input   from toï¼š åªè¯» doubleå‘é‡   progress   ï¼šdouble
+out   doubleå‘é‡
+functionï¼š  è·Ÿtmp[i]èµ‹å€¼å¹¶è¿”å›  
+åˆ¤æ–­ from[i] æ˜¯å¦< 2.2204460492503131e-016 
+æ˜¯  tmp[i]=from[i] 
+å¦  tmp[i]=from[i] * eçš„(progress * log(to[i]/from[i]))æ¬¡æ–¹
 */
 vec extrapolate_cap(const vec& from, const vec& to, fl progress) {
 	vec tmp;
@@ -136,63 +136,63 @@ vec extrapolate_cap(const vec& from, const vec& to, fl progress) {
 	return tmp;
 }
 /*
-* ÊäÈë:   phase  :  uint , out:ÒıÓÃoutput_type½á¹¹Ìå , m£ºÒıÓÃÀàmodel, mf£ºÒıÓÃoutput_container½á¹¹ÌåÏòÁ¿ Ö»¶Á,  p£ºÒıÓÃ½á¹¹Ìåprecalculate Ö»¶Á,  ig£ºÒıÓÃ½á¹¹Ìåigrid Ö»¶Á, corner2corner¡¢init_manifold_factor£ºdouble , e_internal_stats£ºÒıÓÃ½á¹¹Ìåmanifold, par£ºÒıÓÃ½á¹¹ÌåmanifoldÖ»¶Á, rng& generator£ºËæ»úÊı²úÉúÆ÷)
-  Êä³ö£º   void
+* è¾“å…¥:   phase  :  uint , out:å¼•ç”¨output_typeç»“æ„ä½“ , mï¼šå¼•ç”¨ç±»model, mfï¼šå¼•ç”¨output_containerç»“æ„ä½“å‘é‡ åªè¯»,  pï¼šå¼•ç”¨ç»“æ„ä½“precalculate åªè¯»,  igï¼šå¼•ç”¨ç»“æ„ä½“igrid åªè¯», corner2cornerã€init_manifold_factorï¼šdouble , e_internal_statsï¼šå¼•ç”¨ç»“æ„ä½“manifold, parï¼šå¼•ç”¨ç»“æ„ä½“manifoldåªè¯», rng& generatorï¼šéšæœºæ•°äº§ç”Ÿå™¨)
+  è¾“å‡ºï¼š   void
 
-function: Ñ­»·Ö´ĞĞ  step´Ó0-num_steps
-  £û
-		1¡¢¸´ÖÆÊäÈëµÄº¯ÊıoutÉú³Écandidate£¬È»ºó¶ÔcandidateµÄÅäÖÃconfÖ´ĞĞgenerate_internalº¯ÊıÓÃÀ´Éú³ÉÅäÌåÄÚ²¿±ä»¯£ºÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø¡£
-		2¡¢ÅĞ¶Ï½á¹¹ÌåÏòÁ¿ÖĞµÄÄÚ²¿ÅäÌå±ä»¯ÊÇ·ñÏàËÆ½á¹û´æÔÚÏòÁ¿internal_too_closeÖĞ   ²¢ÇÒ·µ»Ø×îºóÒ»´Î½á¹ûµÄÏà·´Öµ
-		3¡¢¶ÔÅäÌåÖ´ĞĞsetiº¯Êı£º±éÀúc.ligandsµÄÔªËØ£¬½«model³ÉÔ±internal_coords, coords, ligands[i].begin£¨ligand³ÉÔ±£©, ligands[i].end£¨ligand³ÉÔ±£©ÊäÈëº¯Êıc.ligands[i].rigid.apply£¬»ñµÃ×ø±êcoords   ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
+function: å¾ªç¯æ‰§è¡Œ  stepä»0-num_steps
+  ï½›
+		1ã€å¤åˆ¶è¾“å…¥çš„å‡½æ•°outç”Ÿæˆcandidateï¼Œç„¶åå¯¹candidateçš„é…ç½®confæ‰§è¡Œgenerate_internalå‡½æ•°ç”¨æ¥ç”Ÿæˆé…ä½“å†…éƒ¨å˜åŒ–ï¼šä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ã€‚
+		2ã€åˆ¤æ–­ç»“æ„ä½“å‘é‡ä¸­çš„å†…éƒ¨é…ä½“å˜åŒ–æ˜¯å¦ç›¸ä¼¼ç»“æœå­˜åœ¨å‘é‡internal_too_closeä¸­   å¹¶ä¸”è¿”å›æœ€åä¸€æ¬¡ç»“æœçš„ç›¸åå€¼
+		3ã€å¯¹é…ä½“æ‰§è¡Œsetiå‡½æ•°ï¼šéå†c.ligandsçš„å…ƒç´ ï¼Œå°†modelæˆå‘˜internal_coords, coords, ligands[i].beginï¼ˆligandæˆå‘˜ï¼‰, ligands[i].endï¼ˆligandæˆå‘˜ï¼‰è¾“å…¥å‡½æ•°c.ligands[i].rigid.applyï¼Œè·å¾—åæ ‡coords   æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
 
-	                       ÆäÖĞ£ºgenerate_internalº¯ÊıµÄÊäÈë²ÎÊıÎª£ºspread.torsion, rp, rs, generator¡£
+	                       å…¶ä¸­ï¼šgenerate_internalå‡½æ•°çš„è¾“å…¥å‚æ•°ä¸ºï¼šspread.torsion, rp, rs, generatorã€‚
 
-								spread£¨scaleÀàĞÍ½á¹¹Ìå£©£º²ÎÊıÎª£¨orner2corner£¨ÊäÈë£© * manifold_factor,pi * manifold_factor,pi * manifold_factor£©
-								                         manifold_factor=init_manifold_factor(ÊäÈë) * std::exp(- par.manifold_lambda * step / par.num_steps)
-								rp                     £º 1 - std::exp(std::log(1-par.max_prob) * phase/par.num_phases)
+								spreadï¼ˆscaleç±»å‹ç»“æ„ä½“ï¼‰ï¼šå‚æ•°ä¸ºï¼ˆorner2cornerï¼ˆè¾“å…¥ï¼‰ * manifold_factor,pi * manifold_factor,pi * manifold_factorï¼‰
+								                         manifold_factor=init_manifold_factor(è¾“å…¥) * std::exp(- par.manifold_lambda * step / par.num_steps)
+								rp                     ï¼š 1 - std::exp(std::log(1-par.max_prob) * phase/par.num_phases)
 
-								rs                     £º mf½á¹¹ÌåÏòÁ¿ÖĞµÄ µÚËæ»ú¸ö½á¹¹ÌåµØÖ·
+								rs                     ï¼š mfç»“æ„ä½“å‘é‡ä¸­çš„ ç¬¬éšæœºä¸ªç»“æ„ä½“åœ°å€
 
-         4¡¢ÅĞ¶Ïrigid_trials>0
-		 5¡¢Ñ­»·Ö´ĞĞ   i´Ó0-rigid_trials
-										 £û
+         4ã€åˆ¤æ–­rigid_trials>0
+		 5ã€å¾ªç¯æ‰§è¡Œ   iä»0-rigid_trials
+										 ï½›
 
-											1¡¢¶¨ÒåboolÀàĞÍ  failed =false
-											2¡¢¶¨Òåcandidate2£¨candidateÒ»ÑùÀàĞÍµÄ½á¹¹Ìå£©²¢ÇÒ¸øÆäÖĞµÄÅäÌåconf¸³Öµ²¢¸Ä±äfailed
-																	¸³Öµ·½·¨£º
+											1ã€å®šä¹‰boolç±»å‹  failed =false
+											2ã€å®šä¹‰candidate2ï¼ˆcandidateä¸€æ ·ç±»å‹çš„ç»“æ„ä½“ï¼‰å¹¶ä¸”ç»™å…¶ä¸­çš„é…ä½“confèµ‹å€¼å¹¶æ”¹å˜failed
+																	èµ‹å€¼æ–¹æ³•ï¼š
 
 
-											3¡¢ÅĞ¶Ï£º Èç¹ûfailed=ture  ÇÒ £¨candidate_is_set=ture   »òÕß i+1 < rigid_trials £©  Ìø¹ı±¾´ÎÑ­»·
-												  ·ñÔòÖ´ĞĞº¯Êısete£º±éÀúc.ligandsµÄÔªËØ£¬½«model³ÉÔ±internal_coords, coords, ligands[i].begin£¨ligand³ÉÔ±£©, ligands[i].end£¨ligand³ÉÔ±£©ÊäÈëº¯Êıc.ligands[i].rigid.apply£¬»ñµÃ×ø±êcoords   ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
+											3ã€åˆ¤æ–­ï¼š å¦‚æœfailed=ture  ä¸” ï¼ˆcandidate_is_set=ture   æˆ–è€… i+1 < rigid_trials ï¼‰  è·³è¿‡æœ¬æ¬¡å¾ªç¯
+												  å¦åˆ™æ‰§è¡Œå‡½æ•°seteï¼šéå†c.ligandsçš„å…ƒç´ ï¼Œå°†modelæˆå‘˜internal_coords, coords, ligands[i].beginï¼ˆligandæˆå‘˜ï¼‰, ligands[i].endï¼ˆligandæˆå‘˜ï¼‰è¾“å…¥å‡½æ•°c.ligands[i].rigid.applyï¼Œè·å¾—åæ ‡coords   æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
 
-											4¡¢¶Ôcandidate2µÄe¸³Öµ£¬¸³Öµ·½·¨£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍe,¾ßÌå²é¿´ÊäÈëigÖĞµÄeval¶¨Òå,igÓ¦¸ÃÊÇigridÅÉÉúÀà¶ÔÏó
-																		 2.±éÀúligandsµÄÔªËØ ½«p,v[2],other_pairs, coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
+											4ã€å¯¹candidate2çš„eèµ‹å€¼ï¼Œèµ‹å€¼æ–¹æ³•ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e,å…·ä½“æŸ¥çœ‹è¾“å…¥igä¸­çš„evalå®šä¹‰,igåº”è¯¥æ˜¯igridæ´¾ç”Ÿç±»å¯¹è±¡
+																		 2.éå†ligandsçš„å…ƒç´  å°†p,v[2],other_pairs, coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
 
-											5¡¢ÅĞ¶Ï£º Èç¹ûcandidate_is_setÎª1²¢ÇÒ  candidate2.e < candidate.e  ÄÇÃ´²»Ö´ĞĞ
-												   ·ñÔò Ö´ĞĞ  £ûcandidate_is_set=ture  candidate = candidate2 £ı
-										   £ı
+											5ã€åˆ¤æ–­ï¼š å¦‚æœcandidate_is_setä¸º1å¹¶ä¸”  candidate2.e < candidate.e  é‚£ä¹ˆä¸æ‰§è¡Œ
+												   å¦åˆ™ æ‰§è¡Œ  ï½›candidate_is_set=ture  candidate = candidate2 ï½
+										   ï½
 
-		6¡¢¼ì²âcandidate_is_set    if£¨ture£©
-					                    £û    
-					                      1¡¢¶¨Òå 	fl e_internal = (3 * step < 2 * num_steps) ? 0 : m.evali(p, hunt_cap);
-																	ÆäÖĞ  evali×÷ÓÃ£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍe=0
-*																	                2.±éÀúligandsµÄÔªËØ   ½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,internal_coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*																	                3.·µ»Øe
+		6ã€æ£€æµ‹candidate_is_set    ifï¼ˆtureï¼‰
+					                    ï½›    
+					                      1ã€å®šä¹‰ 	fl e_internal = (3 * step < 2 * num_steps) ? 0 : m.evali(p, hunt_cap);
+																	å…¶ä¸­  evaliä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e=0
+*																	                2.éå†ligandsçš„å…ƒç´    å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,internal_coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*																	                3.è¿”å›e
 					
-					                       2¡¢ÔÚaddº¯ÊıÖĞÊäÈë²ÎÊıe_internal    À´¸Ä±äe_internal_stats£¨ÊäÈë£©ÀïµÄerror_estimate_sqrºÍx_estimate 
+					                       2ã€åœ¨addå‡½æ•°ä¸­è¾“å…¥å‚æ•°e_internal    æ¥æ”¹å˜e_internal_statsï¼ˆè¾“å…¥ï¼‰é‡Œçš„error_estimate_sqrå’Œx_estimate 
 
-																	this_error_sqr=£¨e_internal - x_estimate£©^2;
+																	this_error_sqr=ï¼ˆe_internal - x_estimateï¼‰^2;
 																	
 																	error_estimate_sqr=weight * this_error_sqr + (1 - weight) * error_estimate_sqr
 																	x_estimate         = weight * x              + (1 - weight) * x_estimate;
 
-											3¡¢¸Ä±äcandidateÖĞµÄ²ÎÊıe    candidate.e += e_internal;
+											3ã€æ”¹å˜candidateä¸­çš„å‚æ•°e    candidate.e += e_internal;
 					
-											4¡¢ÅĞ¶Ï£º   if(step == 0 || candidate.e < out.e)   out = candidate;
+											4ã€åˆ¤æ–­ï¼š   if(step == 0 || candidate.e < out.e)   out = candidate;
 
-						                     £ı
+						                     ï½
 
-	£ı
+	ï½
 		
 		
 		*/
@@ -200,42 +200,42 @@ function: Ñ­»·Ö´ĞĞ  step´Ó0-num_steps
 
 
 void manifold_phase(sz phase, output_type& out, model& m, const output_container& mf, const precalculate& p, const igrid& ig, fl corner2corner, fl init_manifold_factor, recent_history& e_internal_stats, const manifold& par, rng& generator) { // out.first is starting conf on input
-	out.e = max_fl; // ½á¹¹ÌåÀïµÄe¸³Öµ
+	out.e = max_fl; // ç»“æ„ä½“é‡Œçš„eèµ‹å€¼
 
 	const fl rp = 1 - std::exp(std::log(1-par.max_prob) * phase/par.num_phases); // 
-	//rp=1-eµÄ(log(1-max_prob)*phase/num_phases)´Î·½
-	fl e_internal_cost = par.relative_pair_cost * m.num_internal_pairs();//e_internal_cost=relative_pair_cost*pairsÏòÁ¿µÄÔªËØ¸öÊı
+	//rp=1-eçš„(log(1-max_prob)*phase/num_phases)æ¬¡æ–¹
+	fl e_internal_cost = par.relative_pair_cost * m.num_internal_pairs();//e_internal_cost=relative_pair_cost*pairså‘é‡çš„å…ƒç´ ä¸ªæ•°
 	fl e_external_cost = par.relative_pair_cost * m.num_other_pairs() + m.num_movable_atoms();
 	const sz rigid_trials = 1 +  fl_to_sz(1 + par.cost_factor * e_internal_cost / e_external_cost, 100);
-	//Ç°ÕßĞ¡ÓÚ100´óÓÚ0 ÔòÇ¿ÖÆÕûĞÎ   ÓÃÓÚÏÂ±ßµÄÅĞ¶ÏÖ´ĞĞ
+	//å‰è€…å°äº100å¤§äº0 åˆ™å¼ºåˆ¶æ•´å½¢   ç”¨äºä¸‹è¾¹çš„åˆ¤æ–­æ‰§è¡Œ
 	unsigned num_steps = (std::max)(unsigned(1), par.num_steps);
 
-	VINA_U_FOR(step, num_steps) {//Ñ­»·num_steps
+	VINA_U_FOR(step, num_steps) {//å¾ªç¯num_steps
 		const fl manifold_factor = init_manifold_factor * std::exp(- par.manifold_lambda * step / par.num_steps);
-		//ÓÃÓÚÏÂ±ßµÄscale½á¹¹ÌåµÄ³õÊ¼»¯
+		//ç”¨äºä¸‹è¾¹çš„scaleç»“æ„ä½“çš„åˆå§‹åŒ–
 		vec hunt_cap; hunt_cap = extrapolate_cap(par.hunt_cap, authentic_v, fl(step) / num_steps);
 
 		const scale spread(corner2corner * manifold_factor,
 			               pi            * manifold_factor,
-						   pi            * manifold_factor);//¶¨Òåscale½á¹¹Ìå  ²¢³õÊ¼»¯   ÓÃµ½ÁËforÑ­»·µÄÊı¾İmanifold_factor
+						   pi            * manifold_factor);//å®šä¹‰scaleç»“æ„ä½“  å¹¶åˆå§‹åŒ–   ç”¨åˆ°äº†forå¾ªç¯çš„æ•°æ®manifold_factor
 
 		sz rstart = fl_to_sz(par.rstart_fraction * par.num_phases, par.num_phases);
-		//ÓÃÓÚ¹¹³É½á¹¹ÌåÖ¸Õërs    ÓÃÓÚº¯ÊıÅĞ¶ÏÖ´ĞĞÓÃµÄ
+		//ç”¨äºæ„æˆç»“æ„ä½“æŒ‡é’ˆrs    ç”¨äºå‡½æ•°åˆ¤æ–­æ‰§è¡Œç”¨çš„
 		const conf* rs = select_rs(mf, rstart, generator);
-		//·µ»Ømf½á¹¹ÌåÏòÁ¿ÖĞµÄ µÚËæ»ú¸ö½á¹¹ÌåµØÖ·
+		//è¿”å›mfç»“æ„ä½“å‘é‡ä¸­çš„ ç¬¬éšæœºä¸ªç»“æ„ä½“åœ°å€
 		output_type candidate = out;
-		candidate.c.generate_internal(spread.torsion, rp, rs, generator); // Éú³ÉÅäÌåÄÚ²¿±ä»¯£ºÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø¡£
+		candidate.c.generate_internal(spread.torsion, rp, rs, generator); // ç”Ÿæˆé…ä½“å†…éƒ¨å˜åŒ–ï¼šä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ã€‚
 
-		std::vector<bool> internal_too_close(mf.size());//ºÍmfÒ»Ñù³¤¶ÈµÄÏòÁ¿
+		std::vector<bool> internal_too_close(mf.size());//å’Œmfä¸€æ ·é•¿åº¦çš„å‘é‡
 		bool uniq = determine_iu(candidate.c, mf, internal_too_close, par.exclusion.torsion); // internal_too_close is output
-		//ÅĞ¶Ï½á¹¹ÌåÏòÁ¿ÖĞµÄÄÚ²¿ÅäÌå±ä»¯ÊÇ·ñÏàËÆ   ²¢ÇÒ·µ»Ø×îºóÒ»´Î½á¹ûµÄÏà·´Öµ
+		//åˆ¤æ–­ç»“æ„ä½“å‘é‡ä¸­çš„å†…éƒ¨é…ä½“å˜åŒ–æ˜¯å¦ç›¸ä¼¼   å¹¶ä¸”è¿”å›æœ€åä¸€æ¬¡ç»“æœçš„ç›¸åå€¼
 		m.seti(candidate.c);
 /*SETI
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êıseti
-* input:confÀà³£Á¿ÒıÓÃc
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°seti
+* input:confç±»å¸¸é‡å¼•ç”¨c
 * ouput:void
-* ×÷ÓÃ£º½«model³ÉÔ±atoms, internal_coords, ºÍc³ÉÔ±ligandsÊäÈëligandsµÄ³ÉÔ±º¯Êıset_conf    (*this)[i].set_conf(atoms, coords, c[i]);
-*       ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍinternal_coords
+* ä½œç”¨ï¼šå°†modelæˆå‘˜atoms, internal_coords, å’Œcæˆå‘˜ligandsè¾“å…¥ligandsçš„æˆå‘˜å‡½æ•°set_conf    (*this)[i].set_conf(atoms, coords, c[i]);
+*       æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œinternal_coords
 */
 
 
@@ -245,154 +245,154 @@ void manifold_phase(sz phase, output_type& out, model& m, const output_container
 		VINA_FOR(i, rigid_trials) {
 			bool failed = false;
 			output_type candidate2(generate_external(candidate.c, mf, internal_too_close, uniq, spread, par.exclusion, rp, rs, par.num_attempts, failed, generator), 0);
-			//¿ÉÒÔ¸Ä±ä  generate_external£º failed   ²¢ÇÒ·µ»Øconf½á¹¹Ìå        ¶ø±¾¾äÊÇ  ³õÊ¼»¯   candidate2
+			//å¯ä»¥æ”¹å˜  generate_externalï¼š failed   å¹¶ä¸”è¿”å›confç»“æ„ä½“        è€Œæœ¬å¥æ˜¯  åˆå§‹åŒ–   candidate2
 			if(failed && 
 				(candidate_is_set || i+1 < rigid_trials)) // candidate is set or a chance to set it remains
-				continue;//Èç¹ûfailed=ture  ÇÒ £¨candidate_is_set=ture   »òÕß i+1 < rigid_trials £©  Ìø¹ı±¾´ÎÑ­»·
+				continue;//å¦‚æœfailed=ture  ä¸” ï¼ˆcandidate_is_set=ture   æˆ–è€… i+1 < rigid_trials ï¼‰  è·³è¿‡æœ¬æ¬¡å¾ªç¯
 			m.sete(candidate2.c);
 
 			/*SETE
-* ¶¨ÒåmodelµÄ³ÉÔ±º¯Êısete
-* input:confÀà³£Á¿ÒıÓÃc
+* å®šä¹‰modelçš„æˆå‘˜å‡½æ•°sete
+* input:confç±»å¸¸é‡å¼•ç”¨c
 * ouput:void
-* ×÷ÓÃ£º±éÀúc.ligandsµÄÔªËØ£¬½«model³ÉÔ±internal_coords, coords, ligands[i].begin£¨ligand³ÉÔ±£©, ligands[i].end£¨ligand³ÉÔ±£©ÊäÈëº¯Êıc.ligands[i].rigid.apply£¬»ñµÃ×ø±êcoords
-* ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords				
+* ä½œç”¨ï¼šéå†c.ligandsçš„å…ƒç´ ï¼Œå°†modelæˆå‘˜internal_coords, coords, ligands[i].beginï¼ˆligandæˆå‘˜ï¼‰, ligands[i].endï¼ˆligandæˆå‘˜ï¼‰è¾“å…¥å‡½æ•°c.ligands[i].rigid.applyï¼Œè·å¾—åæ ‡coords
+* æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords				
 */
 			
 			candidate2.e = m.evale(p, ig, hunt_cap);  
 
 			/*
-* modelµÄ³ÉÔ±º¯Êıevale
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬igridÀà³£Á¿ÒıÓÃig£¬vecÀà³£Á¿ÒıÓÃv
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍe,¾ßÌå²é¿´ÊäÈëigÖĞµÄeval¶¨Òå,igÓ¦¸ÃÊÇigridÅÉÉúÀà¶ÔÏó
-*		2.±éÀúligandsµÄÔªËØ
-*				½«p,v[2],other_pairs, coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		3.·µ»Øe 
+* modelçš„æˆå‘˜å‡½æ•°evale
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œigridç±»å¸¸é‡å¼•ç”¨igï¼Œvecç±»å¸¸é‡å¼•ç”¨v
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e,å…·ä½“æŸ¥çœ‹è¾“å…¥igä¸­çš„evalå®šä¹‰,igåº”è¯¥æ˜¯igridæ´¾ç”Ÿç±»å¯¹è±¡
+*		2.éå†ligandsçš„å…ƒç´ 
+*				å°†p,v[2],other_pairs, coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		3.è¿”å›e 
 */
 			if(!candidate_is_set || candidate2.e < candidate.e) {
 				candidate_is_set = true;
 				candidate = candidate2; // this works because internal conf is the same in both // FIXME inefficient, all this
-			}//Èç¹ûcandidate_is_setÎª1²¢ÇÒ  candidate2.e < candidate.e  ÄÇÃ´²»Ö´ĞĞ   ·ñÔòÖ´ĞĞ  £ûcandidate_is_set=ture  candidate = candidate2 £ı
+			}//å¦‚æœcandidate_is_setä¸º1å¹¶ä¸”  candidate2.e < candidate.e  é‚£ä¹ˆä¸æ‰§è¡Œ   å¦åˆ™æ‰§è¡Œ  ï½›candidate_is_set=ture  candidate = candidate2 ï½
 		}
 
 		VINA_CHECK(candidate_is_set);
 		if(true) {
 			fl e_internal = (3 * step < 2 * num_steps) ? 0 : m.evali(p, hunt_cap);
 			/*EVALI
-* modelµÄ³ÉÔ±º¯Êıevali
-* input:precalculateÀà³£Á¿ÒıÓÃp£¬vecÀà³£Á¿ÒıÓÃv
-* output:doubleÀàĞÍÊı
-* ×÷ÓÃ£º1.¶¨ÒåÒ»¸ödoubleÀàĞÍe=0
-*		2.±éÀúligandsµÄÔªËØ
-*				½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,internal_coordsÊäÈëeval_interacting_pairsº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-*		3.·µ»Øe
+* modelçš„æˆå‘˜å‡½æ•°evali
+* input:precalculateç±»å¸¸é‡å¼•ç”¨pï¼Œvecç±»å¸¸é‡å¼•ç”¨v
+* output:doubleç±»å‹æ•°
+* ä½œç”¨ï¼š1.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e=0
+*		2.éå†ligandsçš„å…ƒç´ 
+*				å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,internal_coordsè¾“å…¥eval_interacting_pairså‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+*		3.è¿”å›e
 */
-			e_internal_stats.add(e_internal);//¸Ä±äe_internal_statsÀïµÄerror_estimate_sqrºÍx_estimate
-			/*add£º
-	input¡ª¡ªx:double£»
-	inter¡ª¡ªthis_error_sqr£ºdouble£»
-		this_error_sqr=£¨x - x_estimate£©^2;
+			e_internal_stats.add(e_internal);//æ”¹å˜e_internal_statsé‡Œçš„error_estimate_sqrå’Œx_estimate
+			/*addï¼š
+	inputâ€”â€”x:doubleï¼›
+	interâ€”â€”this_error_sqrï¼šdoubleï¼›
+		this_error_sqr=ï¼ˆx - x_estimateï¼‰^2;
 		error_estimate_sqr=weight * this_error_sqr + (1 - weight) * error_estimate_sqr
 		x_estimate         = weight * x              + (1 - weight) * x_estimate;
 */
-			candidate.e += e_internal;//¸Ä±äe
+			candidate.e += e_internal;//æ”¹å˜e
 			if(step == 0 || candidate.e < out.e)
 				out = candidate;
 		}
 	}
 }
-/*input£º	 m,					ÒıÓÃmodelÀàĞÍ½á¹¹Ìå
-			out,				ÒıÓÃ½á¹¹ÌåÏòÁ¿output_container
-			p,                  ÒıÓÃ½á¹¹Ìåprecalculate   Ö»¶Á
-			ig_widened¡¢ ig,    ÒıÓÃ½á¹¹Ìåigrid   Ö»¶Á
-			p_widened,          ÒıÓÃ½á¹¹Ìåprecalculate   Ö»¶Á
-			corner2 corner1,    ÒıÓÃÏòÁ¿   Ö»¶Á
-			rng& generator      Ëæ»úÊı²úÉúÆ÷
-	out£º  void
+/*inputï¼š	 m,					å¼•ç”¨modelç±»å‹ç»“æ„ä½“
+			out,				å¼•ç”¨ç»“æ„ä½“å‘é‡output_container
+			p,                  å¼•ç”¨ç»“æ„ä½“precalculate   åªè¯»
+			ig_widenedã€ ig,    å¼•ç”¨ç»“æ„ä½“igrid   åªè¯»
+			p_widened,          å¼•ç”¨ç»“æ„ä½“precalculate   åªè¯»
+			corner2 corner1,    å¼•ç”¨å‘é‡   åªè¯»
+			rng& generator      éšæœºæ•°äº§ç”Ÿå™¨
+	outï¼š  void
 
-	function£º
-				1¡¢¶¨ÒåmanifoldÀàĞÍ½á¹¹Ìåtuning_par   ²¢°Ñauthentic_v¸³Öµ¸øÆ÷Æä²ÎÊıhunt_cap
-				2¡¢¶¨Òåcorner2corner  ÓÃÓÚ¸ømanifold_phaseµÄÊäÈë
-				3¡¢¶¨Òåconf_sizeÀàĞÍsºÍchangeÀàĞÍ½á¹¹ÌågS   s¸³Öµ¸øg
-				4¡¢¶¨Òårecent_historyÀàĞÍe_internal_stats  ²¢¸³Öµ
-	            5¡¢Ö´ĞĞÑ­»·  phase´Ó0-np
-							£û      1¡¢¶¨Òåoutput_typeÀàĞÍtmp²¢³õÊ¼»¯
-									2¡¢tmpÀïµÄÅäÌåconfÖ´ĞĞº¯Êırandomize£¬²ÎÊı(corner1, corner2, generator)£¬Éú³É¸ÕĞÔµÄËæ»úÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØºÍÈáĞÔÖĞµÄËæ»úÅ¤¾Ø
-									3¡¢Ö´ĞĞmanifold_phaseº¯Êı
-									4¡¢ÅĞ¶Ï£º   Èç¹ûuse_ssd£¨½á¹¹ÌåmanifoldµÄ²ÎÊı£©Îª1£¬ÄÇÃ´¶Ô½á¹¹Ìåssd_parÖ´ĞĞÖØÔØº¯Êı   ¸Ä±ätmpµÄe²ÎÊı  tmp.e=res=bfgsº¯Êı·µ»ØÖµf0
-											   ·ñÔò°Ñ½á¹¹Ìåssd_parµÄevals²ÎÊı¸³Öµ¸ø quasi_newton_par£¨quasi_newtonÀàĞÍµÄ½á¹¹Ìå£©ÀïÃæµÄmax_steps²ÎÊı
-											   È»ºó¶Ôquasi_newton_parÖ´ĞĞÖØÔØº¯Êı   ¸Ä±ätmpµÄe²ÎÊı  tmp.e=res=bfgsº¯Êı·µ»ØÖµf0
-									5¡¢tmpµÄÅäÌåconfÖ´ĞĞº¯Êıset          ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-									6¡¢¸øtmpµÄcoords¸³Öµ    Ö´ĞĞget_heavy_atom_movable_coords£¬³£Á¿º¯Êı
-									7¡¢¸´ÖÆ½á¹¹Ìåfind_closest¸øclosest_rmsd
-									8¡¢ÅĞ¶Ï£º//Èô closest_rmsdµÚÒ»¸ö²ÎÊı<outµÄÔªËØ¸öÊıÇÒ µÚ¶ş¸ö²ÎÊı<min_rmsd   ÇÒtmp.e < out[closest_rmsd.first].e
-											//Ôòout[closest_rmsd.first] = tmp
-											//·ñÔòÔÚoutµÄºóÃæ¼ÓÈëtmp
-							£ı
-						6¡¢	¶¨Òåoutput_containerÀàĞÍ null_arrayÖ»¶Á
-						7¡¢ÅĞ¶Ïout²»Îª¿Õ    ²¢¶ÔÆä²ÎÊıÅÅĞò   ÅĞ¶ÏÅÅĞòÕıÈ·
+	functionï¼š
+				1ã€å®šä¹‰manifoldç±»å‹ç»“æ„ä½“tuning_par   å¹¶æŠŠauthentic_vèµ‹å€¼ç»™å™¨å…¶å‚æ•°hunt_cap
+				2ã€å®šä¹‰corner2corner  ç”¨äºç»™manifold_phaseçš„è¾“å…¥
+				3ã€å®šä¹‰conf_sizeç±»å‹så’Œchangeç±»å‹ç»“æ„ä½“gS   sèµ‹å€¼ç»™g
+				4ã€å®šä¹‰recent_historyç±»å‹e_internal_stats  å¹¶èµ‹å€¼
+	            5ã€æ‰§è¡Œå¾ªç¯  phaseä»0-np
+							ï½›      1ã€å®šä¹‰output_typeç±»å‹tmpå¹¶åˆå§‹åŒ–
+									2ã€tmpé‡Œçš„é…ä½“confæ‰§è¡Œå‡½æ•°randomizeï¼Œå‚æ•°(corner1, corner2, generator)ï¼Œç”Ÿæˆåˆšæ€§çš„éšæœºä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©å’ŒæŸ”æ€§ä¸­çš„éšæœºæ‰­çŸ©
+									3ã€æ‰§è¡Œmanifold_phaseå‡½æ•°
+									4ã€åˆ¤æ–­ï¼š   å¦‚æœuse_ssdï¼ˆç»“æ„ä½“manifoldçš„å‚æ•°ï¼‰ä¸º1ï¼Œé‚£ä¹ˆå¯¹ç»“æ„ä½“ssd_paræ‰§è¡Œé‡è½½å‡½æ•°   æ”¹å˜tmpçš„eå‚æ•°  tmp.e=res=bfgså‡½æ•°è¿”å›å€¼f0
+											   å¦åˆ™æŠŠç»“æ„ä½“ssd_parçš„evalså‚æ•°èµ‹å€¼ç»™ quasi_newton_parï¼ˆquasi_newtonç±»å‹çš„ç»“æ„ä½“ï¼‰é‡Œé¢çš„max_stepså‚æ•°
+											   ç„¶åå¯¹quasi_newton_paræ‰§è¡Œé‡è½½å‡½æ•°   æ”¹å˜tmpçš„eå‚æ•°  tmp.e=res=bfgså‡½æ•°è¿”å›å€¼f0
+									5ã€tmpçš„é…ä½“confæ‰§è¡Œå‡½æ•°set          æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+									6ã€ç»™tmpçš„coordsèµ‹å€¼    æ‰§è¡Œget_heavy_atom_movable_coordsï¼Œå¸¸é‡å‡½æ•°
+									7ã€å¤åˆ¶ç»“æ„ä½“find_closestç»™closest_rmsd
+									8ã€åˆ¤æ–­ï¼š//è‹¥ closest_rmsdç¬¬ä¸€ä¸ªå‚æ•°<outçš„å…ƒç´ ä¸ªæ•°ä¸” ç¬¬äºŒä¸ªå‚æ•°<min_rmsd   ä¸”tmp.e < out[closest_rmsd.first].e
+											//åˆ™out[closest_rmsd.first] = tmp
+											//å¦åˆ™åœ¨outçš„åé¢åŠ å…¥tmp
+							ï½
+						6ã€	å®šä¹‰output_containerç±»å‹ null_arrayåªè¯»
+						7ã€åˆ¤æ–­outä¸ä¸ºç©º    å¹¶å¯¹å…¶å‚æ•°æ’åº   åˆ¤æ–­æ’åºæ­£ç¡®
 
 	*/
 
 
 void manifold::operator()(model& m, output_container& out, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, rng& generator) const {
 	manifold tuning_par;
-	tuning_par.hunt_cap = authentic_v;//¸øtuning_parµÄÏòÁ¿¸³Öµ
+	tuning_par.hunt_cap = authentic_v;//ç»™tuning_parçš„å‘é‡èµ‹å€¼
 
-	fl corner2corner = 0.5 * (corner2 - corner1).norm();//  norm£ºsqrt£¨sqr(data[0]) + sqr(data[1]) + sqr(data[2])£©
-	//ÓÃÓÚ¸ømanifold_phase¸³Öµ
-	conf_size s = m.get_size();//¶¨ÒåS   ÓÃÓÚ¸ø  g¸³Öµ
+	fl corner2corner = 0.5 * (corner2 - corner1).norm();//  normï¼šsqrtï¼ˆsqr(data[0]) + sqr(data[1]) + sqr(data[2])ï¼‰
+	//ç”¨äºç»™manifold_phaseèµ‹å€¼
+	conf_size s = m.get_size();//å®šä¹‰S   ç”¨äºç»™  gèµ‹å€¼
 /*get_size
-* ×÷ÓÃ£º 1.»ñµÃligandsµÄÅ¤×ª¼ÆÊı±£´æÔÚÁÙÊ±tmp.ligands¶ÔÏóÖĞ
-*       2.»ñµÃflexµÄÅ¤×ª¼ÆÊı±£´æÔÚÁÙÊ±tmp.flex¶ÔÏóÖĞ
-*		3.·µ»Øtmp¸³Öµ¸ø  s
+* ä½œç”¨ï¼š 1.è·å¾—ligandsçš„æ‰­è½¬è®¡æ•°ä¿å­˜åœ¨ä¸´æ—¶tmp.ligandså¯¹è±¡ä¸­
+*       2.è·å¾—flexçš„æ‰­è½¬è®¡æ•°ä¿å­˜åœ¨ä¸´æ—¶tmp.flexå¯¹è±¡ä¸­
+*		3.è¿”å›tmpèµ‹å€¼ç»™  s
 */
-	change g(s);//¶¨ÒåchangeÀàĞÍ½á¹¹Ìå²¢³õÊ¼»¯
+	change g(s);//å®šä¹‰changeç±»å‹ç»“æ„ä½“å¹¶åˆå§‹åŒ–
 
-	sz np = (std::max)(sz(1), num_phases);//ÓÃÓÚÑ­»·  È¡1ºÍnum_phases×î´óµÄ
-	recent_history e_internal_stats(0, 10, 10);//¶¨Òå½á¹¹Ìårecent_history²¢ÇÒ³õÊ¼»¯    ÓÃÓÚ ¸ømanifold_phase¸³Öµ
+	sz np = (std::max)(sz(1), num_phases);//ç”¨äºå¾ªç¯  å–1å’Œnum_phasesæœ€å¤§çš„
+	recent_history e_internal_stats(0, 10, 10);//å®šä¹‰ç»“æ„ä½“recent_historyå¹¶ä¸”åˆå§‹åŒ–    ç”¨äº ç»™manifold_phaseèµ‹å€¼
 
 
 
 	VINA_FOR(phase, np) {
 		output_type tmp(s, 0);
 		tmp.c.randomize(corner1, corner2, generator);
-/*Éú³É¸ÕĞÔµÄËæ»úÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØºÍÈáĞÔÖĞµÄËæ»úÅ¤¾Ø£»
-ligands½á¹¹ÌåÏòÁ¿ÖĞÉú³ÉËæ»úµÄposition½á¹¹ÌåºÍorientationËÄÔªÊıÒÔ¼°[-pi,pi]µÄËæ»úÏòÁ¿torsions£¬
-flex½á¹¹ÌåÏòÁ¿ÖĞÉú³É[-pi,pi]µÄËæ»úÏòÁ¿torsions
+/*ç”Ÿæˆåˆšæ€§çš„éšæœºä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©å’ŒæŸ”æ€§ä¸­çš„éšæœºæ‰­çŸ©ï¼›
+ligandsç»“æ„ä½“å‘é‡ä¸­ç”Ÿæˆéšæœºçš„positionç»“æ„ä½“å’Œorientationå››å…ƒæ•°ä»¥åŠ[-pi,pi]çš„éšæœºå‘é‡torsionsï¼Œ
+flexç»“æ„ä½“å‘é‡ä¸­ç”Ÿæˆ[-pi,pi]çš„éšæœºå‘é‡torsions
 */
 		manifold_phase(phase, tmp, m, out, p_widened, ig_widened, corner2corner, 1, e_internal_stats, *this, generator); // 1 - initial manifold
 		
 		
 		if(use_ssd)
-			ssd_par(m, p, ig, tmp, g, authentic_v);//£¨£©ÖØÔØ ¸Ä±ätmpµÄe²ÎÊı  tmp.e=res=bfgsº¯Êı·µ»ØÖµf0
+			ssd_par(m, p, ig, tmp, g, authentic_v);//ï¼ˆï¼‰é‡è½½ æ”¹å˜tmpçš„eå‚æ•°  tmp.e=res=bfgså‡½æ•°è¿”å›å€¼f0
 		else {
 			quasi_newton quasi_newton_par; 
 			quasi_newton_par.max_steps = ssd_par.evals;
-			quasi_newton_par(m, p, ig, tmp, g, authentic_v);//£¨£©ÖØÔØ ¸Ä±ätmpµÄe²ÎÊı  tmp.e=res=bfgsº¯Êı·µ»ØÖµf0
+			quasi_newton_par(m, p, ig, tmp, g, authentic_v);//ï¼ˆï¼‰é‡è½½ æ”¹å˜tmpçš„eå‚æ•°  tmp.e=res=bfgså‡½æ•°è¿”å›å€¼f0
 		}
 
 
 		m.set(tmp.c);
 /*set
-* ¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
+* æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
 */
-		tmp.coords = m.get_heavy_atom_movable_coords();//¸øtmpµÄcoords¸³Öµ
+		tmp.coords = m.get_heavy_atom_movable_coords();//ç»™tmpçš„coordsèµ‹å€¼
 /*
-* º¯Êı£ºget_heavy_atom_movable_coords£¬³£Á¿º¯Êı
-* function£º1.½¨Á¢Ò»¸öÁÙÊ±vecv¶ÔÏótmp
-* 2.i´Ó0±éÀúµ½m_num_movable_atoms£¬ÒÀ´ÎÅĞ¶ÏatomsµÚi¸öÔªËØµÄ³ÉÔ±elÊÇ·ñµÈÓÚ0£¬ÊÇÔòÍùtmpÎ²²¿Ìí¼Ómodel³ÉÔ±coordsÈİÆ÷µÚi¸öÔªËØ
-* 3.·µ»Øtmp
+* å‡½æ•°ï¼šget_heavy_atom_movable_coordsï¼Œå¸¸é‡å‡½æ•°
+* functionï¼š1.å»ºç«‹ä¸€ä¸ªä¸´æ—¶vecvå¯¹è±¡tmp
+* 2.iä»0éå†åˆ°m_num_movable_atomsï¼Œä¾æ¬¡åˆ¤æ–­atomsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜elæ˜¯å¦ç­‰äº0ï¼Œæ˜¯åˆ™å¾€tmpå°¾éƒ¨æ·»åŠ modelæˆå‘˜coordså®¹å™¨ç¬¬iä¸ªå…ƒç´ 
+* 3.è¿”å›tmp
 */
-		VINA_CHECK(tmp.coords.size() > 0);//ÅĞ¶ÏcoordsÊÇ·ñÎª¿Õ
+		VINA_CHECK(tmp.coords.size() > 0);//åˆ¤æ–­coordsæ˜¯å¦ä¸ºç©º
 		std::pair<sz, fl> closest_rmsd = find_closest(tmp.coords, out);
-		//¸´ÖÆfind_closest
+		//å¤åˆ¶find_closest
 		
 
-		//Èô closest_rmsdµÚÒ»¸ö²ÎÊı<outµÄÔªËØ¸öÊıÇÒ µÚ¶ş¸ö²ÎÊı<min_rmsd   ÇÒtmp.e < out[closest_rmsd.first].e
-		//Ôòout[closest_rmsd.first] = tmp
-		//·ñÔòÔÚoutµÄºóÃæ¼ÓÈëtmp
+		//è‹¥ closest_rmsdç¬¬ä¸€ä¸ªå‚æ•°<outçš„å…ƒç´ ä¸ªæ•°ä¸” ç¬¬äºŒä¸ªå‚æ•°<min_rmsd   ä¸”tmp.e < out[closest_rmsd.first].e
+		//åˆ™out[closest_rmsd.first] = tmp
+		//å¦åˆ™åœ¨outçš„åé¢åŠ å…¥tmp
 		if(closest_rmsd.first < out.size() && closest_rmsd.second < min_rmsd) { // have a very similar one
 			if(tmp.e < out[closest_rmsd.first].e) { // the new one is better, apparently
 				out[closest_rmsd.first] = tmp; // FIXME? slow
@@ -403,8 +403,8 @@ flex½á¹¹ÌåÏòÁ¿ÖĞÉú³É[-pi,pi]µÄËæ»úÏòÁ¿torsions
 		}
 	}
 	// final tunings
-	const output_container null_array;//½á¹¹ÌåÏòÁ¿
+	const output_container null_array;//ç»“æ„ä½“å‘é‡
 	VINA_CHECK(!out.empty());
-	out.sort();//½«outÖĞ½á¹¹ÌåµÄ²ÎÊı°´ÕÕÉıĞòÅÅÁĞ
-	VINA_CHECK(out.front().e <= out.back().e); // //ÑéÖ¤ÅÅĞò   make sure the sorting worked in the correct order
+	out.sort();//å°†outä¸­ç»“æ„ä½“çš„å‚æ•°æŒ‰ç…§å‡åºæ’åˆ—
+	VINA_CHECK(out.front().e <= out.back().e); // //éªŒè¯æ’åº   make sure the sorting worked in the correct order
 }

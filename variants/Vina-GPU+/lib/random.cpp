@@ -27,110 +27,110 @@
 
 
 
-/*input  a¡¢b   £ºdouble
-	out£ºrandom_fl   £ºdouble
-function:	ÔÚdoubleÀàĞÍµÄÊäÈëa¡¢bÖ®¼äÉú³É¾ùÔÈ·Ö²¼µÄËæ»úÊı£¬²¢·µ»Øº¯Êı  doubleÀàĞÍ
-			a.±£Ö¤aÔÚBµÄ×ó±ß
-			b.µ÷ÓÃbosstµÄº¯Êı  Ò»¸öÊÇÓÃÀ´Éú³ÉËæ»úÊı  ÁíÒ»¸öÊÇÖÆ¶¨Çø¼ä   ×îºó¹¹ÔìËæ»úÊıÉú³ÉÆ÷
-			c.ÑéÖ¤Ëæ»úÊı²¢·µ»ØdoubleÀàĞÍµÄËæ»úÊı
+/*input  aã€b   ï¼šdouble
+	outï¼šrandom_fl   ï¼šdouble
+function:	åœ¨doubleç±»å‹çš„è¾“å…¥aã€bä¹‹é—´ç”Ÿæˆå‡åŒ€åˆ†å¸ƒçš„éšæœºæ•°ï¼Œå¹¶è¿”å›å‡½æ•°  doubleç±»å‹
+			a.ä¿è¯aåœ¨Bçš„å·¦è¾¹
+			b.è°ƒç”¨bosstçš„å‡½æ•°  ä¸€ä¸ªæ˜¯ç”¨æ¥ç”Ÿæˆéšæœºæ•°  å¦ä¸€ä¸ªæ˜¯åˆ¶å®šåŒºé—´   æœ€åæ„é€ éšæœºæ•°ç”Ÿæˆå™¨
+			c.éªŒè¯éšæœºæ•°å¹¶è¿”å›doubleç±»å‹çš„éšæœºæ•°
 */
 
 
-fl random_fl(fl a, fl b, rng& generator) { // rngÓÃÓÚÉú³É Ëæ»úÊı
-	assert(a < b); // ±£Ö¤Çø¼ä
-	typedef boost::uniform_real<fl> distr;// Ö¸¶¨¾ùÔÈ·Ö²¼µÄÇø¼ä£¬°üº¬Á½¸ö¶Ëµã£¬È¡doubleÀàĞÍ
-	boost::variate_generator<rng&, distr> r(generator, distr(a, b));  // ¹¹Ôì·ûºÏÒªÇóµÄËæ»úÊıÉú³ÉÆ÷
+fl random_fl(fl a, fl b, rng& generator) { // rngç”¨äºç”Ÿæˆ éšæœºæ•°
+	assert(a < b); // ä¿è¯åŒºé—´
+	typedef boost::uniform_real<fl> distr;// æŒ‡å®šå‡åŒ€åˆ†å¸ƒçš„åŒºé—´ï¼ŒåŒ…å«ä¸¤ä¸ªç«¯ç‚¹ï¼Œå–doubleç±»å‹
+	boost::variate_generator<rng&, distr> r(generator, distr(a, b));  // æ„é€ ç¬¦åˆè¦æ±‚çš„éšæœºæ•°ç”Ÿæˆå™¨
 	fl tmp = r();
-	assert(tmp >= a); //ÑéÖ¤Éú³ÉËæ»úÊıÔÚÇø¼äÄÚ
+	assert(tmp >= a); //éªŒè¯ç”Ÿæˆéšæœºæ•°åœ¨åŒºé—´å†…
 	assert(tmp <= b);
 	return tmp;
 }
 
 
 
-/*input  mean¡¢sigma   £ºdouble
-	out£ºrandom_normal   £ºdouble
-function:	ÔÚdoubleÀàĞÍµÄÊäÈëmean¡¢sigmaÖ®¼äÉú³ÉÕıÌ¬·Ö²¼µÄËæ»úÊı£¬²¢·µ»Øº¯Êı  doubleÀàĞÍ
-			a.±£Ö¤sigma²»Ğ¡ÓÚ0
-			b.µ÷ÓÃbosstµÄº¯Êı  Ò»¸öÊÇÓÃÀ´Éú³ÉËæ»úÊı  ÁíÒ»¸öÊÇÖÆ¶¨·ûºÏÒªÇóÇø¼ä   ×îºó¹¹ÔìËæ»úÊıÉú³ÉÆ÷
-			c.·µ»ØdoubleÀàĞÍµÄËæ»úÊı
+/*input  meanã€sigma   ï¼šdouble
+	outï¼šrandom_normal   ï¼šdouble
+function:	åœ¨doubleç±»å‹çš„è¾“å…¥meanã€sigmaä¹‹é—´ç”Ÿæˆæ­£æ€åˆ†å¸ƒçš„éšæœºæ•°ï¼Œå¹¶è¿”å›å‡½æ•°  doubleç±»å‹
+			a.ä¿è¯sigmaä¸å°äº0
+			b.è°ƒç”¨bosstçš„å‡½æ•°  ä¸€ä¸ªæ˜¯ç”¨æ¥ç”Ÿæˆéšæœºæ•°  å¦ä¸€ä¸ªæ˜¯åˆ¶å®šç¬¦åˆè¦æ±‚åŒºé—´   æœ€åæ„é€ éšæœºæ•°ç”Ÿæˆå™¨
+			c.è¿”å›doubleç±»å‹çš„éšæœºæ•°
 */
 
 fl random_normal(fl mean, fl sigma, rng& generator) { 
-	assert(sigma >= 0); // ÕıÌ¬·Ö²¼±£Ö¤sigma´óÓÚµÈÓÚ0
-	typedef boost::normal_distribution<fl> distr; //¶¨ÒåÁËÒ»¸öÄ¬ÈÏ·µ»Ø double ĞÍ¸¡µãÖµµÄÕıÌ¬·Ö²¼
-	boost::variate_generator<rng&, distr> r(generator, distr(mean, sigma));// ¹¹Ôì·ûºÏÒªÇóµÄËæ»úÊıÉú³ÉÆ÷
+	assert(sigma >= 0); // æ­£æ€åˆ†å¸ƒä¿è¯sigmaå¤§äºç­‰äº0
+	typedef boost::normal_distribution<fl> distr; //å®šä¹‰äº†ä¸€ä¸ªé»˜è®¤è¿”å› double å‹æµ®ç‚¹å€¼çš„æ­£æ€åˆ†å¸ƒ
+	boost::variate_generator<rng&, distr> r(generator, distr(mean, sigma));// æ„é€ ç¬¦åˆè¦æ±‚çš„éšæœºæ•°ç”Ÿæˆå™¨
 	return r();
 }
 
 
-/*input  a¡¢b   £ºint
-	out£ºrandom_int   £ºint
-function:	ÔÚintÀàĞÍµÄÊäÈëa¡¢bÖ®¼äÉú³É¾ùÔÈ·Ö²¼µÄËæ»úÕûÊı£¬²¢·µ»Øº¯Êı  intÀàĞÍ
-			a.±£Ö¤aÔÚBµÄ×ó±ß
-			b.µ÷ÓÃbosstµÄº¯Êı  Ò»¸öÊÇÓÃÀ´Éú³ÉËæ»úÊı  ÁíÒ»¸öÊÇÖÆ¶¨Çø¼ä   ×îºó¹¹ÔìËæ»úÊıÉú³ÉÆ÷
-			c.ÑéÖ¤Ëæ»úÊı²¢·µ»ØintÀàĞÍµÄËæ»úÊı
+/*input  aã€b   ï¼šint
+	outï¼šrandom_int   ï¼šint
+function:	åœ¨intç±»å‹çš„è¾“å…¥aã€bä¹‹é—´ç”Ÿæˆå‡åŒ€åˆ†å¸ƒçš„éšæœºæ•´æ•°ï¼Œå¹¶è¿”å›å‡½æ•°  intç±»å‹
+			a.ä¿è¯aåœ¨Bçš„å·¦è¾¹
+			b.è°ƒç”¨bosstçš„å‡½æ•°  ä¸€ä¸ªæ˜¯ç”¨æ¥ç”Ÿæˆéšæœºæ•°  å¦ä¸€ä¸ªæ˜¯åˆ¶å®šåŒºé—´   æœ€åæ„é€ éšæœºæ•°ç”Ÿæˆå™¨
+			c.éªŒè¯éšæœºæ•°å¹¶è¿”å›intç±»å‹çš„éšæœºæ•°
 */
 
-//  ²úÉúÒ»¸öÔÚabÖ®¼äµÄËæ»úÊı  ÕûÊıÀàĞÍ
-int random_int(int a, int b, rng& generator) { // rngÓÃÓÚÉú³É Ëæ»úÊı
-	assert(a <= b); // ±£Ö¤Çø¼ä
-	typedef boost::uniform_int<int> distr;  // Ö¸¶¨¾ùÔÈ·Ö²¼µÄÇø¼ä£¬°üº¬Á½¸ö¶Ëµã£¬È¡ÕûÊıÖµ
-	boost::variate_generator<rng&, distr> r(generator, distr(a, b));   // ¹¹Ôì·ûºÏÒªÇóµÄËæ»úÊıÉú³ÉÆ÷
+//  äº§ç”Ÿä¸€ä¸ªåœ¨abä¹‹é—´çš„éšæœºæ•°  æ•´æ•°ç±»å‹
+int random_int(int a, int b, rng& generator) { // rngç”¨äºç”Ÿæˆ éšæœºæ•°
+	assert(a <= b); // ä¿è¯åŒºé—´
+	typedef boost::uniform_int<int> distr;  // æŒ‡å®šå‡åŒ€åˆ†å¸ƒçš„åŒºé—´ï¼ŒåŒ…å«ä¸¤ä¸ªç«¯ç‚¹ï¼Œå–æ•´æ•°å€¼
+	boost::variate_generator<rng&, distr> r(generator, distr(a, b));   // æ„é€ ç¬¦åˆè¦æ±‚çš„éšæœºæ•°ç”Ÿæˆå™¨
 	int tmp = r();
-	assert(tmp >= a);    //ÑéÖ¤Éú³ÉËæ»úÊıÔÚÇø¼äÄÚ
+	assert(tmp >= a);    //éªŒè¯ç”Ÿæˆéšæœºæ•°åœ¨åŒºé—´å†…
 	assert(tmp <= b);
 	return tmp;
 }
-/*input  a¡¢b   £ºunsigned int
-	out£ºrandom_int   £ºunsigned int
-function:	ÔÚunsigned intÀàĞÍµÄÊäÈëa¡¢bÖ®¼äÉú³É¾ùÔÈ·Ö²¼µÄËæ»úÕûÊı£¬²¢·µ»Øº¯Êı unsigned intÀàĞÍ
-			a.±£Ö¤aÔÚBµÄ×ó±ß  ²¢ÇÒa¡¢b²»Ğ¡ÓÚ0
-			b.µ÷ÓÃbosstµÄº¯Êı  Ò»¸öÊÇÓÃÀ´Éú³ÉËæ»úÊı  ÁíÒ»¸öÊÇÖÆ¶¨Çø¼ä   ×îºó¹¹ÔìËæ»úÊıÉú³ÉÆ÷
-			c.ÑéÖ¤Ëæ»úÊı²¢·µ»ØintÀàĞÍµÄËæ»úÊı
+/*input  aã€b   ï¼šunsigned int
+	outï¼šrandom_int   ï¼šunsigned int
+function:	åœ¨unsigned intç±»å‹çš„è¾“å…¥aã€bä¹‹é—´ç”Ÿæˆå‡åŒ€åˆ†å¸ƒçš„éšæœºæ•´æ•°ï¼Œå¹¶è¿”å›å‡½æ•° unsigned intç±»å‹
+			a.ä¿è¯aåœ¨Bçš„å·¦è¾¹  å¹¶ä¸”aã€bä¸å°äº0
+			b.è°ƒç”¨bosstçš„å‡½æ•°  ä¸€ä¸ªæ˜¯ç”¨æ¥ç”Ÿæˆéšæœºæ•°  å¦ä¸€ä¸ªæ˜¯åˆ¶å®šåŒºé—´   æœ€åæ„é€ éšæœºæ•°ç”Ÿæˆå™¨
+			c.éªŒè¯éšæœºæ•°å¹¶è¿”å›intç±»å‹çš„éšæœºæ•°
 */
-sz random_sz(sz a, sz b, rng& generator) { // ²úÉúÒ»¸öÔÚabÖ®¼äµÄËæ»úÊı  ÀàĞÍ
+sz random_sz(sz a, sz b, rng& generator) { // äº§ç”Ÿä¸€ä¸ªåœ¨abä¹‹é—´çš„éšæœºæ•°  ç±»å‹
 	assert(a <= b);
 	assert(int(a) >= 0);
-	assert(int(b) >= 0);   //±£Ö¤aÔÚBµÄ×ó±ß  ²¢ÇÒa¡¢b²»Ğ¡ÓÚ0
-	int i = random_int(int(a), int(b), generator);    //Éú³ÉËæ»úÊı
+	assert(int(b) >= 0);   //ä¿è¯aåœ¨Bçš„å·¦è¾¹  å¹¶ä¸”aã€bä¸å°äº0
+	int i = random_int(int(a), int(b), generator);    //ç”Ÿæˆéšæœºæ•°
 	assert(i >= 0);
 	assert(i >= int(a));
-	assert(i <= int(b));    // ±£Ö¤Ëæ»úÊıÔÚÇø¼äÄÚ
+	assert(i <= int(b));    // ä¿è¯éšæœºæ•°åœ¨åŒºé—´å†…
 	return static_cast<sz>(i);
 }
-/*input  true   £º int
-	out£ºtmpÊı×é   £ºdouble
-function:	µ±ĞÅºÅtureµ½À´µÄÊ±ºò£¬·µ»ØÒ»¸öÊı×é£¬²¢ÇÒÊı×éµÄÈı¸öÊıÔÚÒÔ0ÎªÔ²ĞÄ£¬°ë¾¶Îª1µÄÇòÌåÄÚ  double
-			a.Éú³ÉÈı¸öËæ»úÊı  double
-			b.×é³ÉÊı×é
-			c.ÑéÖ¤ÔÚÇòÄÚ
+/*input  true   ï¼š int
+	outï¼štmpæ•°ç»„   ï¼šdouble
+function:	å½“ä¿¡å·tureåˆ°æ¥çš„æ—¶å€™ï¼Œè¿”å›ä¸€ä¸ªæ•°ç»„ï¼Œå¹¶ä¸”æ•°ç»„çš„ä¸‰ä¸ªæ•°åœ¨ä»¥0ä¸ºåœ†å¿ƒï¼ŒåŠå¾„ä¸º1çš„çƒä½“å†…  double
+			a.ç”Ÿæˆä¸‰ä¸ªéšæœºæ•°  double
+			b.ç»„æˆæ•°ç»„
+			c.éªŒè¯åœ¨çƒå†…
 */
 vec random_inside_sphere(rng& generator) {
 	while(true) { // on average, this will have to be run about twice
-		fl r1 = random_fl(-1, 1, generator);    //²úÉú-1¡ª¡ª1µÄËæ»ú¸¡µãÊı
+		fl r1 = random_fl(-1, 1, generator);    //äº§ç”Ÿ-1â€”â€”1çš„éšæœºæµ®ç‚¹æ•°
 		fl r2 = random_fl(-1, 1, generator);
 		fl r3 = random_fl(-1, 1, generator);
 
-		vec tmp(r1, r2, r3);//°ÑÕâÈı¸öÊı×é³ÉÊı×é
-		if(sqr(tmp) < 1)//r1µÄÆ½·½+r2µÄÆ½·½+r3µÄÆ½·½ÔÙ¿ª¸ùºÅ<1  È·±£ÔÚÇòÄÚ
+		vec tmp(r1, r2, r3);//æŠŠè¿™ä¸‰ä¸ªæ•°ç»„æˆæ•°ç»„
+		if(sqr(tmp) < 1)//r1çš„å¹³æ–¹+r2çš„å¹³æ–¹+r3çš„å¹³æ–¹å†å¼€æ ¹å·<1  ç¡®ä¿åœ¨çƒå†…
 			return tmp;
 	}
 }
-/*input   corner1¡¢corner2    £º doubleÀàĞÍ  Êı×é
-	out£ºtmpÊı×é   £ºdouble
-function:	ÊäÈëÁ½¸öÊı×é£¬²úÉúÒ»¸öËæ»úÊı×é£¬ÒªÇóÉú³ÉÔÚcorner1[i]-corner2[i]Ö®¼ä   double
+/*input   corner1ã€corner2    ï¼š doubleç±»å‹  æ•°ç»„
+	outï¼štmpæ•°ç»„   ï¼šdouble
+function:	è¾“å…¥ä¸¤ä¸ªæ•°ç»„ï¼Œäº§ç”Ÿä¸€ä¸ªéšæœºæ•°ç»„ï¼Œè¦æ±‚ç”Ÿæˆåœ¨corner1[i]-corner2[i]ä¹‹é—´   double
 
 */
 vec random_in_box(const vec& corner1, const vec& corner2, rng& generator) { // expects corner1[i] < corner2[i]
-	vec tmp;  //¶¨ÒåÊı×é
-	VINA_FOR_IN(i, tmp)     //forÑ­»·  i´Ó0µ½Êı×éµÄ³¤¶È
-		tmp[i] = random_fl(corner1[i], corner2[i], generator);//Éú³ÉËæ»úÊı×é
+	vec tmp;  //å®šä¹‰æ•°ç»„
+	VINA_FOR_IN(i, tmp)     //forå¾ªç¯  iä»0åˆ°æ•°ç»„çš„é•¿åº¦
+		tmp[i] = random_fl(corner1[i], corner2[i], generator);//ç”Ÿæˆéšæœºæ•°ç»„
 	return tmp;
 }
 /*
-	out£ºauto_seed   £ºunsigned int
-function:	·µ»ØÊ±¼äºÍµ±Ç°½ø³ÌµÄ±êÊ¾·û(PID)µÄ³Ë»ı   intÀàĞÍ£¿£¿£¿£¿
+	outï¼šauto_seed   ï¼šunsigned int
+function:	è¿”å›æ—¶é—´å’Œå½“å‰è¿›ç¨‹çš„æ ‡ç¤ºç¬¦(PID)çš„ä¹˜ç§¯   intç±»å‹ï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
 */
 int auto_seed() { 
 	return my_pid() * int(std::time(NULL));

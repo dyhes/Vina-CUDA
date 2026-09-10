@@ -23,37 +23,37 @@
 #include "szv_grid.h"
 #include "brick.h"
 /*
-¶¨Òå¹¹Ôìº¯Êıszv_grid  ³õÊ¼»¯¸³Öµ  Îª½á¹¹ÌåÀïµÄ²ÎÊı m_init    m_range   m_data¸³Öµ
+å®šä¹‰æ„é€ å‡½æ•°szv_grid  åˆå§‹åŒ–èµ‹å€¼  ä¸ºç»“æ„ä½“é‡Œçš„å‚æ•° m_init    m_range   m_dataèµ‹å€¼
 */
 szv_grid::szv_grid(const model& m, const grid_dims& gd, fl cutoff_sqr) : m_data(gd[0].n, gd[1].n, gd[2].n) {
 	vec end;
 	VINA_FOR_IN(i, gd) {
 		m_init[i] = gd[i].begin;
 		end   [i] = gd[i].end;
-	}//½«grid_dimµÄdouble²ÎÊıbegin  ºÍend   ¸³Öµ
-	m_range = end - m_init;//Îªm_range¸³Öµ
+	}//å°†grid_dimçš„doubleå‚æ•°begin  å’Œend   èµ‹å€¼
+	m_range = end - m_init;//ä¸ºm_rangeèµ‹å€¼
 
-	const sz nat = num_atom_types(m.atom_typing_used());	//atom_typing_usedÃ¶¾ÙÀàĞÍ²ÎÊı //num_atom_types µÃµ½Ã¶¾Ù¶ÔÓ¦·µ»ØÖµ
+	const sz nat = num_atom_types(m.atom_typing_used());	//atom_typing_usedæšä¸¾ç±»å‹å‚æ•° //num_atom_types å¾—åˆ°æšä¸¾å¯¹åº”è¿”å›å€¼
 	
 
  
-//Èôgetº¯ÊıµÃµ½µÄt¶ÔÓ¦·µ»ØÖµ uint  <   num_atom_typesº¯ÊıµÃµ½µÄt¶ÔÓ¦·µ»ØÖµ uint  ²¢ÇÒ
-//Èı¸öÊı×é¾­¹ıº¯Êıbrick_distance_sqrµÃµ½µÄÊı double < cutoff_sqr
-//ÄÇÃ´ÔÚ relevant_indexesºó±ß¼ÓÔªËØi 
-	szv relevant_indexes;  //uintĞÍµÄÏòÁ¿
-	VINA_FOR_IN(i, m.grid_atoms) {//grid_atoms  ½á¹¹ÌåatomÀàĞÍµÄÏòÁ¿   
+//è‹¥getå‡½æ•°å¾—åˆ°çš„tå¯¹åº”è¿”å›å€¼ uint  <   num_atom_typeså‡½æ•°å¾—åˆ°çš„tå¯¹åº”è¿”å›å€¼ uint  å¹¶ä¸”
+//ä¸‰ä¸ªæ•°ç»„ç»è¿‡å‡½æ•°brick_distance_sqrå¾—åˆ°çš„æ•° double < cutoff_sqr
+//é‚£ä¹ˆåœ¨ relevant_indexesåè¾¹åŠ å…ƒç´ i 
+	szv relevant_indexes;  //uintå‹çš„å‘é‡
+	VINA_FOR_IN(i, m.grid_atoms) {//grid_atoms  ç»“æ„ä½“atomç±»å‹çš„å‘é‡   
 		const atom& a = m.grid_atoms[i];
-		if(a.get(m.atom_typing_used()) < nat && brick_distance_sqr(m_init, end, a.coords) < cutoff_sqr)//get   µÃµ½t¶ÔÓ¦·µ»ØÖµuint      atom_typing_used·µ»ØÃ¶¾ÙĞÍtÀàĞÍÊı¾İ
+		if(a.get(m.atom_typing_used()) < nat && brick_distance_sqr(m_init, end, a.coords) < cutoff_sqr)//get   å¾—åˆ°tå¯¹åº”è¿”å›å€¼uint      atom_typing_usedè¿”å›æšä¸¾å‹tç±»å‹æ•°æ®
 			relevant_indexes.push_back(i);
 	}
-	/*Ñ­»·Ö´ĞĞ 
-	x y zÎª    000   ¡¾  a=grid_atoms¡¾relevant_indexes0¡¿  ÅĞ¶Ï  Èı¸öÊı×é¾­¹ıº¯Êıbrick_distance_sqrºóÊÇ·ñ<cutoff_sqr
-	                                                    m_data[i + m_i*(j + m_j*k)]ºó¼ÓÈëÔªËØrelevant_indexes0
-			   000   ¡¾  a=grid_atoms¡¾relevant_indexes1¡¿     ÅĞ¶Ï  Èı¸öÊı×é¾­¹ıº¯Êıbrick_distance_sqrºóÊÇ·ñ<cutoff_sqr
-														m_data[i + m_i*(j + m_j*k)]ºó¼ÓÈëÔªËØrelevant_indexes1        ¡¿
-			   000   ¡¾  a=grid_atoms¡¾relevant_indexes2¡¿     ÅĞ¶Ï  Èı¸öÊı×é¾­¹ıº¯Êıbrick_distance_sqrºóÊÇ·ñ<cutoff_sqr
-														m_data[i + m_i*(j + m_j*k)]ºó¼ÓÈëÔªËØrelevant_indexes2        ¡¿
-	x y zÎª	   001  .....
+	/*å¾ªç¯æ‰§è¡Œ 
+	x y zä¸º    000   ã€  a=grid_atomsã€relevant_indexes0ã€‘  åˆ¤æ–­  ä¸‰ä¸ªæ•°ç»„ç»è¿‡å‡½æ•°brick_distance_sqråæ˜¯å¦<cutoff_sqr
+	                                                    m_data[i + m_i*(j + m_j*k)]ååŠ å…¥å…ƒç´ relevant_indexes0
+			   000   ã€  a=grid_atomsã€relevant_indexes1ã€‘     åˆ¤æ–­  ä¸‰ä¸ªæ•°ç»„ç»è¿‡å‡½æ•°brick_distance_sqråæ˜¯å¦<cutoff_sqr
+														m_data[i + m_i*(j + m_j*k)]ååŠ å…¥å…ƒç´ relevant_indexes1        ã€‘
+			   000   ã€  a=grid_atomsã€relevant_indexes2ã€‘     åˆ¤æ–­  ä¸‰ä¸ªæ•°ç»„ç»è¿‡å‡½æ•°brick_distance_sqråæ˜¯å¦<cutoff_sqr
+														m_data[i + m_i*(j + m_j*k)]ååŠ å…¥å…ƒç´ relevant_indexes2        ã€‘
+	x y zä¸º	   001  .....
 			   002  .....
 			   00m_k  ....
 			   m_im_jm_k....
@@ -70,10 +70,10 @@ szv_grid::szv_grid(const model& m, const grid_dims& gd, fl cutoff_sqr) : m_data(
 		}
 	}
 }
-/*¶¨Òådouble º¯Êıaverage_num_possibilities   
+/*å®šä¹‰double å‡½æ•°average_num_possibilities   
 * 
-Ñ­»·Ö´ĞĞ  xyz´Ó000  µ½m_im_jm_k     counter += m_data(x, y, z).size()
-·µ»ØdoubleÀàĞÍ    counter /£¨m_i*m_j*m_k£©
+å¾ªç¯æ‰§è¡Œ  xyzä»000  åˆ°m_im_jm_k     counter += m_data(x, y, z).size()
+è¿”å›doubleç±»å‹    counter /ï¼ˆm_i*m_j*m_kï¼‰
 
 */
 fl szv_grid::average_num_possibilities() const {
@@ -85,26 +85,26 @@ fl szv_grid::average_num_possibilities() const {
 	}
 	return fl(counter) / (m_data.dim0() * m_data.dim1() * m_data.dim2());
 }
-/*¶¨ÒåÖ»¶Áº¯Êıpossibilities  ·µ»ØuintĞÍÏòÁ¿    ÊäÈë³¤¶È3µÄÊı×é  coords
-* inter     ³¤¶È3uintÀàĞÍÊı×é  index
-* function  £º¸øindex[i]¸³Öµ    ·µ»Ø   m_data[index[0] + m_i*(index[1] + m_j*index[2])]      m_dataÊÇarray3d<szv>ÀàĞÍ
+/*å®šä¹‰åªè¯»å‡½æ•°possibilities  è¿”å›uintå‹å‘é‡    è¾“å…¥é•¿åº¦3çš„æ•°ç»„  coords
+* inter     é•¿åº¦3uintç±»å‹æ•°ç»„  index
+* function  ï¼šç»™index[i]èµ‹å€¼    è¿”å›   m_data[index[0] + m_i*(index[1] + m_j*index[2])]      m_dataæ˜¯array3d<szv>ç±»å‹
 */
 const szv& szv_grid::possibilities(const vec& coords) const {
 	boost::array<sz, 3> index;
-	VINA_FOR_IN(i, index) {//Ñ­»·3´Î    
-		assert(coords[i] + epsilon_fl >= m_init[i]);//ÅĞ¶ÏÌõ¼ş  epsilon_fl  £º2.2204460492503131e-016
+	VINA_FOR_IN(i, index) {//å¾ªç¯3æ¬¡    
+		assert(coords[i] + epsilon_fl >= m_init[i]);//åˆ¤æ–­æ¡ä»¶  epsilon_fl  ï¼š2.2204460492503131e-016
 		assert(coords[i] <= m_init[i] + m_range[i] + epsilon_fl);
 		const fl tmp = (coords[i] - m_init[i]) * m_data.dim(i) / m_range[i];
-		index[i] = fl_to_sz(tmp, m_data.dim(i) - 1);//Èô0<tmp<m_data.dim(i) - 1Ôò Ç¿ÖÆÕûĞÎ²¢Êä³ö
+		index[i] = fl_to_sz(tmp, m_data.dim(i) - 1);//è‹¥0<tmp<m_data.dim(i) - 1åˆ™ å¼ºåˆ¶æ•´å½¢å¹¶è¾“å‡º
 	}
-	return m_data(index[0], index[1], index[2]);//m_dataÊÇarray3d<szv>ÀàĞÍ  ·µ»Øm_data[index[0] + m_i*(index[1] + m_j*index[2])]
+	return m_data(index[0], index[1], index[2]);//m_dataæ˜¯array3d<szv>ç±»å‹  è¿”å›m_data[index[0] + m_i*(index[1] + m_j*index[2])]
 }
 
 /*input     uint  i j  k
-inter   index  tmp   ³¤¶È3µÄÊı×é
-output  ³¤¶È3µÄÊı×étmp
-function  tmp[i] = m_init[i] + m_range[i] * index[i] / m_data.dim(i);    i= 0¡¢1¡¢2
-ÆäÖĞ   index(i)= i  j   k   dim(i)=m_i;m_j;m_k;
+inter   index  tmp   é•¿åº¦3çš„æ•°ç»„
+output  é•¿åº¦3çš„æ•°ç»„tmp
+function  tmp[i] = m_init[i] + m_range[i] * index[i] / m_data.dim(i);    i= 0ã€1ã€2
+å…¶ä¸­   index(i)= i  j   k   dim(i)=m_i;m_j;m_k;
 */
 vec szv_grid::index_to_coord(sz i, sz j, sz k) const {
 	vec index(i, j, k);
@@ -113,18 +113,18 @@ vec szv_grid::index_to_coord(sz i, sz j, sz k) const {
 		tmp[n] = m_init[n] + m_range[n] * index[n] / m_data.dim(n);
 	return tmp;
 }
-/*¶¨Òågrid_dimsÀàĞÍµÄº¯Êı  szv_grid_dims    ÊäÈë  Ö»¶Ágrid_dimsÀàĞÍµÄ²ÎÊı  gd   Êä³ö  grid_dimsÀàĞÍµÄtmp
-inter£º ¶¨Òågrid_dimsÀàĞÍ²ÎÊıtmp   Àï±ß°üº¬Èı¸ögrid_dimÀàĞÍ½á¹¹Ìå
-function£º¸øtmp[i]µÄ²ÎÊıbegin   end    n¸³Öµ  È»ºó·µ»Øtmp
+/*å®šä¹‰grid_dimsç±»å‹çš„å‡½æ•°  szv_grid_dims    è¾“å…¥  åªè¯»grid_dimsç±»å‹çš„å‚æ•°  gd   è¾“å‡º  grid_dimsç±»å‹çš„tmp
+interï¼š å®šä¹‰grid_dimsç±»å‹å‚æ•°tmp   é‡Œè¾¹åŒ…å«ä¸‰ä¸ªgrid_dimç±»å‹ç»“æ„ä½“
+functionï¼šç»™tmp[i]çš„å‚æ•°begin   end    nèµ‹å€¼  ç„¶åè¿”å›tmp
 */
 grid_dims szv_grid_dims(const grid_dims& gd) {
 	grid_dims tmp;    
 	VINA_FOR_IN(i, tmp) {
-		tmp[i].begin = gd[i].begin;//grid_dimsÖĞµÄdoubleÀàĞÍ²ÎÊıbeginºÍend´«µİ
+		tmp[i].begin = gd[i].begin;//grid_dimsä¸­çš„doubleç±»å‹å‚æ•°beginå’Œendä¼ é€’
 		tmp[i].end   = gd[i].end;
 		fl n_fl = (gd[i].end - gd[i].begin) / 3; // 3A preferred size
 		int n_int = int(n_fl);
-		tmp[i].n     = (n_int < 1) ?  1 : sz(n_int);//¸øtmpµÄuintÀàĞÍ²ÎÊın¸³Öµ
+		tmp[i].n     = (n_int < 1) ?  1 : sz(n_int);//ç»™tmpçš„uintç±»å‹å‚æ•°nèµ‹å€¼
 	}
 	return tmp;
 }

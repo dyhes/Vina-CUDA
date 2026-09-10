@@ -24,7 +24,7 @@
 #define VINA_CURRENT_WEIGHTS_H
 
 #include "terms.h"
-//ÉùÃ÷ÁËcurrent_weightsº¯Êı£¬ÊäÈëÎªterms½á¹¹Ìåt£»
+//å£°æ˜äº†current_weightså‡½æ•°ï¼Œè¾“å…¥ä¸ºtermsç»“æ„ä½“tï¼›
 flv current_weights(const terms& t); // verifies size compatibility with t
 
 #endif

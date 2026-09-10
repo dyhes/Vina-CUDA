@@ -22,12 +22,12 @@
 
 #include "coords.h"
 /*
-	input¡ª¡ªa¡¢b£ºvec½á¹¹ÌåÏòÁ¿£»
-	inter¡ª¡ªacc:double;
-	demo:Ç°Ìáa¡¢bÔªËØ¸öÊıÒ»Ñù£¬²¢ÇÒ²»Îª¿Õ£¬·ñÔò·µ»Ø0
-	a{£¨7£¬8£¬9£©£¬£¨5£¬6£¬7£©}£¬b{£¨1£¬2£¬3£©£¬£¨3£¬4£¬5£©} size=2
-	acc=£¨(7-1)^2+(8-2)^2+(9-3)^2£©+£¨(5-3)^2+(6-4)^2+(7-5)^2£©=120
-	·µ»Ø £¨120/2£©^(1/2)=7.74597
+	inputâ€”â€”aã€bï¼švecç»“æ„ä½“å‘é‡ï¼›
+	interâ€”â€”acc:double;
+	demo:å‰æaã€bå…ƒç´ ä¸ªæ•°ä¸€æ ·ï¼Œå¹¶ä¸”ä¸ä¸ºç©ºï¼Œå¦åˆ™è¿”å›0
+	a{ï¼ˆ7ï¼Œ8ï¼Œ9ï¼‰ï¼Œï¼ˆ5ï¼Œ6ï¼Œ7ï¼‰}ï¼Œb{ï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œï¼ˆ3ï¼Œ4ï¼Œ5ï¼‰} size=2
+	acc=ï¼ˆ(7-1)^2+(8-2)^2+(9-3)^2ï¼‰+ï¼ˆ(5-3)^2+(6-4)^2+(7-5)^2ï¼‰=120
+	è¿”å› ï¼ˆ120/2ï¼‰^(1/2)=7.74597
 */
 fl rmsd_upper_bound(const vecv& a, const vecv& b) {
 	VINA_CHECK(a.size() == b.size());
@@ -39,12 +39,12 @@ fl rmsd_upper_bound(const vecv& a, const vecv& b) {
 
 
 /*
-	input¡ª¡ªa¡¢b.coords£ºvec½á¹¹ÌåÏòÁ¿£¬b£ºoutput_type½á¹¹ÌåÏòÁ¿
-	output¡ª¡ªtmp£º<unint,1.79769e+308>,¿ÉÒÔÓÃfirst¡¢secondµ÷ÓÃ
-	demo:Ç°Ìáa¡¢b.coordsÔªËØ¸öÊıÒ»Ñù£¬²¢ÇÒ²»Îª¿Õ£¬·ñÔò·µ»Øres=0
-	 a{£¨7£¬8£¬9£©£¬£¨5£¬6£¬7£©}£¬b.coords{£¨1£¬2£¬3£©£¬£¨3£¬4£¬5£©} size=2
-	res=[(£¨(7-1)^2+(8-2)^2+(9-3)^2£©+£¨(5-3)^2+(6-4)^2+(7-5)^2£©)/2]^(1/2)=7.74597
-	·µ»Øtmp<2,7.74597>
+	inputâ€”â€”aã€b.coordsï¼švecç»“æ„ä½“å‘é‡ï¼Œbï¼šoutput_typeç»“æ„ä½“å‘é‡
+	outputâ€”â€”tmpï¼š<unint,1.79769e+308>,å¯ä»¥ç”¨firstã€secondè°ƒç”¨
+	demo:å‰æaã€b.coordså…ƒç´ ä¸ªæ•°ä¸€æ ·ï¼Œå¹¶ä¸”ä¸ä¸ºç©ºï¼Œå¦åˆ™è¿”å›res=0
+	 a{ï¼ˆ7ï¼Œ8ï¼Œ9ï¼‰ï¼Œï¼ˆ5ï¼Œ6ï¼Œ7ï¼‰}ï¼Œb.coords{ï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œï¼ˆ3ï¼Œ4ï¼Œ5ï¼‰} size=2
+	res=[(ï¼ˆ(7-1)^2+(8-2)^2+(9-3)^2ï¼‰+ï¼ˆ(5-3)^2+(6-4)^2+(7-5)^2ï¼‰)/2]^(1/2)=7.74597
+	è¿”å›tmp<2,7.74597>
 */
 
 std::pair<sz, fl> find_closest(const vecv& a, const output_container& b) {
@@ -59,14 +59,14 @@ std::pair<sz, fl> find_closest(const vecv& a, const output_container& b) {
 
 
 /*
-	input¡ª¡ªout£ºoutput_type½á¹¹ÌåÏòÁ¿£¬t£ºoutput_type½á¹¹Ìå£¬min_rmsd£ºdouble£¬max_size£ºunint
-	¸ù¾İfind_closestº¯ÊıµÄdemo£¬closest_rmsd<2,7.74597>
-	¡¤Èç¹ûoutÏòÁ¿ÔªËØ>2£¬min_rmsd>7.74597£¨±íÊ¾ÓĞÒ»¸ö·Ç³£Ğ¡µÄÖµ£©²¢ÇÒt.e < out[2].e
+	inputâ€”â€”outï¼šoutput_typeç»“æ„ä½“å‘é‡ï¼Œtï¼šoutput_typeç»“æ„ä½“ï¼Œmin_rmsdï¼šdoubleï¼Œmax_sizeï¼šunint
+	æ ¹æ®find_closestå‡½æ•°çš„demoï¼Œclosest_rmsd<2,7.74597>
+	Â·å¦‚æœoutå‘é‡å…ƒç´ >2ï¼Œmin_rmsd>7.74597ï¼ˆè¡¨ç¤ºæœ‰ä¸€ä¸ªéå¸¸å°çš„å€¼ï¼‰å¹¶ä¸”t.e < out[2].e
 		out[2]=t;
-	¡¤·ñÔò£¨±íÊ¾Ã»ÓĞĞ¡µÄÖµ£©
-	Èç¹ûoutÏòÁ¿ÔªËØ<max_size,ÔÚoutÏòÁ¿Ä©Î²¼ÓÉÏt£¨output_type£©½á¹¹Ìå
-	·ñÔòÈç¹ûoutÏòÁ¿²»Îª¿Õ²¢ÇÒt.e < outÄ©Î²ÔªËØµÄeÖµ£¬½«outÄ©Î²ÔªËØ¸³ÖµÎªt
-	¡¤×îºó½«outÏòÁ¿ÒÔout½á¹¹ÌåÖĞe½øĞĞÉıĞòÅÅĞò
+	Â·å¦åˆ™ï¼ˆè¡¨ç¤ºæ²¡æœ‰å°çš„å€¼ï¼‰
+	å¦‚æœoutå‘é‡å…ƒç´ <max_size,åœ¨outå‘é‡æœ«å°¾åŠ ä¸Štï¼ˆoutput_typeï¼‰ç»“æ„ä½“
+	å¦åˆ™å¦‚æœoutå‘é‡ä¸ä¸ºç©ºå¹¶ä¸”t.e < outæœ«å°¾å…ƒç´ çš„eå€¼ï¼Œå°†outæœ«å°¾å…ƒç´ èµ‹å€¼ä¸ºt
+	Â·æœ€åå°†outå‘é‡ä»¥outç»“æ„ä½“ä¸­eè¿›è¡Œå‡åºæ’åº
 
 */
 void add_to_output_container(output_container& out, const output_type& t, fl min_rmsd, sz max_size) {
@@ -77,7 +77,7 @@ void add_to_output_container(output_container& out, const output_type& t, fl min
 		}
 	}
 	else { // nothing similar
-		if(out.size() < max_size)   //new¿ª±ÙµÄ¿Õ¼äÔÚ¶ÑÉÏ£¬¶øÒ»°ãÉùÃ÷µÄ±äÁ¿´æ·ÅÔÚÕ»ÉÏ
+		if(out.size() < max_size)   //newå¼€è¾Ÿçš„ç©ºé—´åœ¨å †ä¸Šï¼Œè€Œä¸€èˆ¬å£°æ˜çš„å˜é‡å­˜æ”¾åœ¨æ ˆä¸Š
 			out.push_back(new output_type(t)); // the last one had the worst energy - replacing 
 		else
 			if(!out.empty() && t.e < out.back().e) // FIXME? - just changed

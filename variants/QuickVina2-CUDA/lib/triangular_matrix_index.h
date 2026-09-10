@@ -26,9 +26,9 @@
 #include "common.h"
 
 /*
-	input¡ª¡ªn¡¢i¡¢j£ºunint£»
-	output¡ª¡ªunint£»
-	ÅÐ¶Ïi <= j < n£¬ÊÇµÄ»°·µ»Øi + j*(j+1)/2£¬·ñÔòÖÕÖ¹³ÌÐò¡£
+	inputâ€”â€”nã€iã€jï¼šunintï¼›
+	outputâ€”â€”unintï¼›
+	åˆ¤æ–­i <= j < nï¼Œæ˜¯çš„è¯è¿”å›ži + j*(j+1)/2ï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºã€‚
 
 */
 
@@ -40,11 +40,11 @@ inline sz triangular_matrix_index(sz n, sz i, sz j) {
 }
 
 /*
-         input¡ª¡ªn¡¢i¡¢j£ºunint£»
-         output¡ª¡ªunint£»
-         ÔÚj < n£¬i< nÇé¿öÏÂ£¬
-		 Èôi <= j£¬·µ»Øi + j*(j+1)/2£»
-		 ·ñÔò·µ»Øj + i*(i+1)/2
+         inputâ€”â€”nã€iã€jï¼šunintï¼›
+         outputâ€”â€”unintï¼›
+         åœ¨j < nï¼Œi< næƒ…å†µä¸‹ï¼Œ
+		 è‹¥i <= jï¼Œè¿”å›ži + j*(j+1)/2ï¼›
+		 å¦åˆ™è¿”å›žj + i*(i+1)/2
 
 */
 

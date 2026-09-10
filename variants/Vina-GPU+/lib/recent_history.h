@@ -29,23 +29,23 @@
 
 struct recent_history {
 	/*
-	½á¹¹Ìå´«½øµÄÊıÖµ£º initial_x_estimate¡¢ initial_error_estimate¡¢ lifetime£ºdouble;
-	x_estimate¡¢derror_estimate_sqr¡¢weight¶¼ÎªdoubleÀàĞÍ£»
-	               x_estimate=initial_x_estimate£»
+	ç»“æ„ä½“ä¼ è¿›çš„æ•°å€¼ï¼š initial_x_estimateã€ initial_error_estimateã€ lifetimeï¼šdouble;
+	x_estimateã€derror_estimate_sqrã€weightéƒ½ä¸ºdoubleç±»å‹ï¼›
+	               x_estimate=initial_x_estimateï¼›
 	               derror_estimate_sqr=initial_error_estimate^2;
-	               weight=1/£¨max£¨1.5£¬lifetime£©£©;
+	               weight=1/ï¼ˆmaxï¼ˆ1.5ï¼Œlifetimeï¼‰ï¼‰;
 		
 	*/
 	recent_history(fl initial_x_estimate, fl initial_error_estimate, fl lifetime)
 		: x_estimate(initial_x_estimate), error_estimate_sqr(sqr(initial_error_estimate)), weight(1/(std::max)(fl(1.5), lifetime)) {}
-	//(std::max)(fl(1.5), lifetime)ÊÇÔÚ¶ÔlifetimeºÍ1.5×÷±È½Ï
+	//(std::max)(fl(1.5), lifetime)æ˜¯åœ¨å¯¹lifetimeå’Œ1.5ä½œæ¯”è¾ƒ
 
 
 
 	/*
-		input¡ª¡ªx:double£»
-		inter¡ª¡ªthis_error_sqr£ºdouble£»
-			this_error_sqr=£¨x - x_estimate£©^2;
+		inputâ€”â€”x:doubleï¼›
+		interâ€”â€”this_error_sqrï¼šdoubleï¼›
+			this_error_sqr=ï¼ˆx - x_estimateï¼‰^2;
 			error_estimate_sqr=weight * this_error_sqr + (1 - weight) * error_estimate_sqr
 	        x_estimate         = weight * x              + (1 - weight) * x_estimate;
 	*/
@@ -57,11 +57,11 @@ struct recent_history {
 
 	/*	
 
-	input¡ª¡ªx:double£»
-	output¡ª¡ª0/1£»
-	Ê×ÏÈÊäÈëxÏÈºÍx_estimate£¨ÈôÓĞµ÷ÓÃaddº¯ÊıÔòÊÇ¸Ãº¯Êı´¦Àí¹ıµÄx_estimate£©×÷±È½Ï£¬Èôx>x_estimate Ôò·µ»Ø1£¨true£©£¬
-	·ñÔò½Ó×ÅÅĞ¶Ï(x - x_estimate)^2 < 4 * error_estimate_sqr(£¨ÈôÓĞµ÷ÓÃaddº¯ÊıÔòÊÇ¸Ãº¯Êı´¦Àí¹ıµÄerror_estimate_sqr£©),
-	ÕıÈ··µ»Ø1£¨true£©£¬·ñÔò0£¨false£©
+	inputâ€”â€”x:doubleï¼›
+	outputâ€”â€”0/1ï¼›
+	é¦–å…ˆè¾“å…¥xå…ˆå’Œx_estimateï¼ˆè‹¥æœ‰è°ƒç”¨addå‡½æ•°åˆ™æ˜¯è¯¥å‡½æ•°å¤„ç†è¿‡çš„x_estimateï¼‰ä½œæ¯”è¾ƒï¼Œè‹¥x>x_estimate åˆ™è¿”å›1ï¼ˆtrueï¼‰ï¼Œ
+	å¦åˆ™æ¥ç€åˆ¤æ–­(x - x_estimate)^2 < 4 * error_estimate_sqr(ï¼ˆè‹¥æœ‰è°ƒç”¨addå‡½æ•°åˆ™æ˜¯è¯¥å‡½æ•°å¤„ç†è¿‡çš„error_estimate_sqrï¼‰),
+	æ­£ç¡®è¿”å›1ï¼ˆtrueï¼‰ï¼Œå¦åˆ™0ï¼ˆfalseï¼‰
 	*/
 	bool possibly_smaller_than(fl x) const {
 		if(x_estimate < x) return true;

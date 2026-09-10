@@ -1,0 +1,333 @@
+MODEL 1
+REMARK VINA RESULT:      -4.4      0.000      0.000
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      45.681 111.123  80.629  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      44.607 110.443  81.350  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      43.717 110.905  81.167  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      44.512 109.484  81.017  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      46.361 112.062  81.607  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      46.405 111.933  82.823  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      46.927 113.107  80.948  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      47.844 112.906  80.664  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      45.102 111.900  79.451  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      46.002 111.827  78.349  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      46.856 111.512  78.689  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 2
+REMARK VINA RESULT:      -4.3      2.080      2.944
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      45.463 110.926  80.432  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      46.757 111.037  81.103  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      46.718 111.761  81.818  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      46.981 110.164  81.582  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      45.551 111.719  79.142  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      46.199 112.741  78.964  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      44.790 111.141  78.176  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      43.867 111.000  78.474  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      44.365 111.483  81.332  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      43.201 111.743  80.553  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      42.652 112.374  81.049  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 3
+REMARK VINA RESULT:      -4.3      1.358      1.410
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      44.953 111.217  80.130  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      43.615 111.660  80.518  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      43.101 110.888  80.940  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      43.678 112.391  81.226  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      45.848 111.358  81.346  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      45.529 111.828  82.429  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      47.095 110.890  81.076  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      47.608 111.516  80.522  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      45.469 112.076  78.980  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      46.417 113.014  79.478  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      46.741 112.677  80.331  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 4
+REMARK VINA RESULT:      -4.3      1.939      3.238
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      46.206 111.479  80.945  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      46.734 112.840  80.874  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      45.969 113.512  80.880  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      47.304 113.039  81.697  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      44.866 111.475  80.235  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      43.795 111.833  80.707  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      45.000 111.001  78.968  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      44.131 110.812  78.555  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      46.043 111.063  82.404  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      46.397 112.153  83.249  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      45.812 112.897  83.027  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 5
+REMARK VINA RESULT:      -4.2      2.100      2.773
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      45.951 111.328  80.311  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      45.988 111.918  78.975  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      45.427 112.767  78.953  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      46.942 112.192  78.738  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      44.500 111.026  80.634  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      44.090 110.108  81.331  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      43.681 111.924  80.029  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      43.258 112.528  80.676  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      46.536 112.306  81.325  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      47.091 113.423  80.638  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      47.071 113.221  79.688  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 6
+REMARK VINA RESULT:      -4.2      1.830      3.390
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      46.149 111.739  80.842  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      46.876 113.006  80.854  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      46.222 113.782  80.947  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      47.496 113.048  81.663  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      45.083 111.837  79.767  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      45.276 111.925  78.562  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      43.844 111.823  80.323  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      43.144 112.008  79.662  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      45.516 111.492  82.207  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      46.300 112.125  83.214  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      47.068 112.529  82.775  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 7
+REMARK VINA RESULT:      -4.2      0.350      1.262
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      45.442 111.263  80.725  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      44.235 111.096  81.532  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      44.438 111.299  82.509  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      43.520 111.761  81.237  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      46.391 112.152  81.506  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      47.083 113.050  81.048  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      46.386 111.813  82.822  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      46.486 110.846  82.951  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      45.085 111.902  79.387  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      46.234 111.909  78.545  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      46.906 112.467  78.971  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 8
+REMARK VINA RESULT:      -4.1      1.775      2.340
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      44.974 111.669  80.224  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      45.061 111.206  78.841  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      44.151 111.285  78.389  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      45.703 111.796  78.312  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      46.391 111.800  80.749  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      47.110 110.885  81.129  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      46.778 113.102  80.756  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      46.350 113.615  80.037  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      44.183 110.666  81.057  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      44.460 110.876  82.438  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      43.640 110.700  82.931  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL
+MODEL 9
+REMARK VINA RESULT:      -4.1      2.215      2.468
+REMARK  Name = 5951
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: OG_1  and  CB_6
+REMARK    2  A    between atoms: O_2  and  C_7
+REMARK    3  A    between atoms: N_4  and  CA_5
+REMARK    4  A    between atoms: CA_5  and  CB_6
+REMARK    5  A    between atoms: CA_5  and  C_7
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  CA  SER A   1      45.666 111.687  81.362  0.00  0.00    +0.186 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  N   SER A   1      46.956 111.099  81.005  0.00  0.00    -0.317 NA
+ATOM      3  H1  SER A   1      47.429 110.763  81.842  0.00  0.00    +0.119 HD
+ATOM      4  H2  SER A   1      46.818 110.288  80.402  0.00  0.00    +0.119 HD
+ENDBRANCH   1   2
+BRANCH   1   5
+ATOM      5  C   SER A   1      45.199 111.016  82.639  0.00  0.00    +0.324 C 
+ATOM      6  OXT SER A   1      44.642 109.930  82.725  0.00  0.00    -0.249 OA
+BRANCH   5   7
+ATOM      7  O   SER A   1      45.476 111.798  83.716  0.00  0.00    -0.479 OA
+ATOM      8  H   SER A   1      45.326 112.748  83.526  0.00  0.00    +0.295 HD
+ENDBRANCH   5   7
+ENDBRANCH   1   5
+BRANCH   1   9
+ATOM      9  CB  SER A   1      44.663 111.456  80.236  0.00  0.00    +0.185 C 
+BRANCH   9  10
+ATOM     10  OG  SER A   1      43.351 111.748  80.704  0.00  0.00    -0.393 OA
+ATOM     11  H   SER A   1      43.229 111.277  81.546  0.00  0.00    +0.209 HD
+ENDBRANCH   9  10
+ENDBRANCH   1   9
+TORSDOF 5
+ENDMDL

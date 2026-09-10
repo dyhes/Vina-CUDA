@@ -28,19 +28,19 @@
 
 
 /*
-* ¶¨Òå½á¹¹Ìå °üº¬
-* name    pathÀàĞÍ  ÎÄ¼şÂ·¾¶
-* in	   ²¼¶ûÀàĞÍ
-* ¶¨Òåº¯Êıfile_error ²¢ÇÒ°ÑnameºÍin¸³Öµ
+* å®šä¹‰ç»“æ„ä½“ åŒ…å«
+* name    pathç±»å‹  æ–‡ä»¶è·¯å¾„
+* in	   å¸ƒå°”ç±»å‹
+* å®šä¹‰å‡½æ•°file_error å¹¶ä¸”æŠŠnameå’Œinèµ‹å€¼
 */
 struct file_error {
 	path name;
 	bool in;
 	file_error(const path& name_, bool in_) : name(name_), in(in_) {}
 };
-/*¶¨Òå½á¹¹Ìåifile    ¼Ì³Ğ¸¸Ààifstream
-* ¶¨Òå¹¹Ôìº¯Êı   ÊäÈë  ÎÄ¼şÂ·¾¶name  Èç¹ûÃ»ÓĞÊäÈë  Å×³öÒì³£
-¶¨Òå¹¹Ôìº¯Êı   ÊäÈë  ÎÄ¼şÂ·¾¶name    ÊäÈëÄ£Ê½mode   Èç¹ûÃ»ÓĞÊäÈë  Å×³öÒì³£
+/*å®šä¹‰ç»“æ„ä½“ifile    ç»§æ‰¿çˆ¶ç±»ifstream
+* å®šä¹‰æ„é€ å‡½æ•°   è¾“å…¥  æ–‡ä»¶è·¯å¾„name  å¦‚æœæ²¡æœ‰è¾“å…¥  æŠ›å‡ºå¼‚å¸¸
+å®šä¹‰æ„é€ å‡½æ•°   è¾“å…¥  æ–‡ä»¶è·¯å¾„name    è¾“å…¥æ¨¡å¼mode   å¦‚æœæ²¡æœ‰è¾“å…¥  æŠ›å‡ºå¼‚å¸¸
 
 */
 struct ifile : public boost::filesystem::ifstream { // never use ifstream pointer to destroy ifile - no virtual destructors, possibly
@@ -53,9 +53,9 @@ struct ifile : public boost::filesystem::ifstream { // never use ifstream pointe
 			throw file_error(name, true);
 	}
 };
-/*¶¨Òå½á¹¹Ìåofile    ¼Ì³Ğ¸¸Ààofstream
-* ¶¨Òå¹¹Ôìº¯Êı   ÊäÈë  ÎÄ¼şÂ·¾¶name  Èç¹ûÊäÈëÊ§°Ü  Å×³öÒì³£
-¶¨Òå¹¹Ôìº¯Êı   ÊäÈë  ÎÄ¼şÂ·¾¶name    ÊäÈëÄ£Ê½mode   Èç¹ûÊäÈëÊ§°Ü  Å×³öÒì³£
+/*å®šä¹‰ç»“æ„ä½“ofile    ç»§æ‰¿çˆ¶ç±»ofstream
+* å®šä¹‰æ„é€ å‡½æ•°   è¾“å…¥  æ–‡ä»¶è·¯å¾„name  å¦‚æœè¾“å…¥å¤±è´¥  æŠ›å‡ºå¼‚å¸¸
+å®šä¹‰æ„é€ å‡½æ•°   è¾“å…¥  æ–‡ä»¶è·¯å¾„name    è¾“å…¥æ¨¡å¼mode   å¦‚æœè¾“å…¥å¤±è´¥  æŠ›å‡ºå¼‚å¸¸
 
 */
 struct ofile : public boost::filesystem::ofstream { // never use ofstream pointer to destroy ofile - no virtual destructors, possibly

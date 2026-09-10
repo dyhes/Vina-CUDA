@@ -1,7 +1,7 @@
 # Need to be modified according to different users
 WORK_DIR=/home/ubuntu/grad/variants/QuickVina2-CUDA
 BOOST_LIB_PATH=/usr
-NVCC_COMPILER=/usr/local/cuda-12.8/bin/nvcc
+NVCC_COMPILER=/usr/local/cuda/bin/nvcc
 DOCKING_BOX_SIZE=-DSMALL_BOX
 GRID_DIM=-DGRID_DIM1=64 -DGRID_DIM2=128
 
@@ -16,7 +16,7 @@ LIB3=-lm -lpthread
 LIB_PATH=-L$(BOOST_LIB_PATH)/lib/x86_64-linux-gnu
 SRC=./lib/*.cpp
 SRC_CUDA = ./inc/cuda/kernel1.cu ./inc/cuda/kernel2.cu
-MACRO= $(GRID_DIM) $(DOCKING_BOX_SIZE) -DBOOST_TIMER_ENABLE_DEPRECATED
+MACRO= $(GRID_DIM) $(DOCKING_BOX_SIZE) -DBOOST_TIMER_ENABLE_DEPRECATED -lineinfo -arch=sm_89
 
 all:out
 out:./main/main.cpp

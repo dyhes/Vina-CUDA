@@ -24,19 +24,19 @@
 #define VINA_PARSE_PDBQT_H
 
 #include "model.h"
-/*ÉùÃ÷º¯Êıparse_receptor_pdbqt
-* input£ºpathÀà³£Á¿ÒıÓÃrigid£¬pathÀà³£Á¿ÒıÓÃflex
-* output: modelÀà
+/*å£°æ˜å‡½æ•°parse_receptor_pdbqt
+* inputï¼špathç±»å¸¸é‡å¼•ç”¨rigidï¼Œpathç±»å¸¸é‡å¼•ç”¨flex
+* output: modelç±»
 */
 model parse_receptor_pdbqt(const path& rigid, const path& flex); // can throw parse_error
-/*ÖØÔØÉùÃ÷º¯Êıparse_receptor_pdbqt
-* input£ºpathÀà³£Á¿ÒıÓÃrigid
-* output: modelÀà
+/*é‡è½½å£°æ˜å‡½æ•°parse_receptor_pdbqt
+* inputï¼špathç±»å¸¸é‡å¼•ç”¨rigid
+* output: modelç±»
 */
 model parse_receptor_pdbqt(const path& rigid); // can throw parse_error
-/*ÉùÃ÷º¯Êıparse_ligand_pdbqt
-* input£ºpathÀà³£Á¿ÒıÓÃname
-* output: modelÀà
+/*å£°æ˜å‡½æ•°parse_ligand_pdbqt
+* inputï¼špathç±»å¸¸é‡å¼•ç”¨name
+* output: modelç±»
 */
 model parse_ligand_pdbqt  (const path& name); // can throw parse_error
 

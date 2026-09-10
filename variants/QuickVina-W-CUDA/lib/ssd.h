@@ -22,11 +22,11 @@
 
 
 /*
-  ±äÁ¿ÉùÃ÷ÒÔ¼°º¯ÊıÔ­ĞÍ£»
-  evals£ºunsigned£»initial_factor ¡¢min_factor¡¢up ¡¢down£ºdouble£»
-  print()º¯ÊıÎªÁËÊµÏÖ¶Ô  evals¡¢initial_factor ¡¢min_factor¡¢up ¡¢downÖµµÄÊä³ö£»
-  ÆäÖĞ¶ÔÕâËÄ¸ö±äÁ¿¸³ÁË³õÖµ£¬ evals=300¡¢initial_factor=1e-4 ¡¢min_factor=1e-6¡¢up=1.6 ¡¢down=0.5£»
-  operator£¨£©º¯ÊıÔ­ĞÍ£¬ÔÚsshÖĞ»áÊ¹ÓÃµ½£»
+  å˜é‡å£°æ˜ä»¥åŠå‡½æ•°åŸå‹ï¼›
+  evalsï¼šunsignedï¼›initial_factor ã€min_factorã€up ã€downï¼šdoubleï¼›
+  print()å‡½æ•°ä¸ºäº†å®ç°å¯¹  evalsã€initial_factor ã€min_factorã€up ã€downå€¼çš„è¾“å‡ºï¼›
+  å…¶ä¸­å¯¹è¿™å››ä¸ªå˜é‡èµ‹äº†åˆå€¼ï¼Œ evals=300ã€initial_factor=1e-4 ã€min_factor=1e-6ã€up=1.6 ã€down=0.5ï¼›
+  operatorï¼ˆï¼‰å‡½æ•°åŸå‹ï¼Œåœ¨sshä¸­ä¼šä½¿ç”¨åˆ°ï¼›
 */
 
 #ifndef VINA_SSD_H
@@ -38,10 +38,10 @@
 /*
 
 
-evals£ºunsigned£» initial_factor¡¢min_factor¡¢up¡¢down£ºdouble£»
-³õÊ¼»¯£ºevals=300£¬initial_factor=1e-4¡¢min_factor=1e-6¡¢up=1.6¡¢down=0.5£»
-ÉùÃ÷ operator()º¯ÊıÔ­ĞÍ£»
-printº¯ÊıÓÃÓÚÊä³öevals¡¢initial_factor¡¢min_factor¡¢up¡¢downµÄÖµ
+evalsï¼šunsignedï¼› initial_factorã€min_factorã€upã€downï¼šdoubleï¼›
+åˆå§‹åŒ–ï¼ševals=300ï¼Œinitial_factor=1e-4ã€min_factor=1e-6ã€up=1.6ã€down=0.5ï¼›
+å£°æ˜ operator()å‡½æ•°åŸå‹ï¼›
+printå‡½æ•°ç”¨äºè¾“å‡ºevalsã€initial_factorã€min_factorã€upã€downçš„å€¼
 
 
 */

@@ -23,7 +23,7 @@
 #ifndef VINA_MY_PID_H
 #define VINA_MY_PID_H
 
-int my_pid();//ÉùÃ÷º¯Êýmy_pid()
+int my_pid();//å£°æ˜Žå‡½æ•°my_pid()
 
 #endif
 

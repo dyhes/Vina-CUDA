@@ -54,7 +54,7 @@ __device__ inline void normalize_angle(flo* x) {
 }
 
 __device__ inline void normalize_angle_update(float* x) {
-    // Ê¹ÓÃÄ£ÔËËã½«½Ç¶È¹éÒ»»¯µ½ [-PI, PI] ·¶Î§ÄÚ
+    // ä½¿ç”¨æ¨¡è¿ç®—å°†è§’åº¦å½’ä¸€åŒ–åˆ° [-PI, PI] èŒƒå›´å†…
     *x = fmodf(*x + M_PI, 2 * M_PI) - M_PI;
 }
 
@@ -106,7 +106,7 @@ __device__ inline void angle_to_quaternion_multi(flo* qa, const flo* qb) {
 	qa[3] = tmp[0] * qb[3] + tmp[1] * qb[2] - tmp[2] * qb[1] + tmp[3] * qb[0];
 }
 
-//Í¨¹ıÊ¹ÓÃ¼Ä´æÆ÷¼õÉÙÄÚ´æ·ÃÎÊµÄ´ÎÊıºÍÊ±¼ä //lcf-update
+//é€šè¿‡ä½¿ç”¨å¯„å­˜å™¨å‡å°‘å†…å­˜è®¿é—®çš„æ¬¡æ•°å’Œæ—¶é—´ //lcf-update
 __device__ inline void angle_to_quaternion_multi_update(flo* qa, const flo* qb) {
     flo a0 = qa[0], a1 = qa[1], a2 = qa[2], a3 = qa[3];
 

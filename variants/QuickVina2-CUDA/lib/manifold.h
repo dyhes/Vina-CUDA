@@ -26,13 +26,13 @@
 // This is not used  by Vina proper any more, but "design" sort of needs it
 
 #include "ssd.h"
-/*½á¹¹ÌåssdÀàĞÍ£ºssd_par   ½á¹¹ÌåscaleÀàĞÍ£ºexclusion
-uint £ºnum_phases¡¢num_phases¡¢num_phases¡¢num_phases
-double£ºmanifold_lambda¡¢cost_factor¡¢max_prob¡¢rstart_fraction¡¢min_rmsd¡¢relative_pair_cost
-doubleÀàĞÍ³¤¶ÈÎªÈıµÄÊı×éhunt_cap       use_ssd   bool
+/*ç»“æ„ä½“ssdç±»å‹ï¼šssd_par   ç»“æ„ä½“scaleç±»å‹ï¼šexclusion
+uint ï¼šnum_phasesã€num_phasesã€num_phasesã€num_phases
+doubleï¼šmanifold_lambdaã€cost_factorã€max_probã€rstart_fractionã€min_rmsdã€relative_pair_cost
+doubleç±»å‹é•¿åº¦ä¸ºä¸‰çš„æ•°ç»„hunt_cap       use_ssd   bool
 
 
-printº¯Êı  : ´òÓ¡  
+printå‡½æ•°  : æ‰“å°  
 {ssd: evals=   , initial_factor=    , min_factor=     , up=     , down=   }
 num_phases=    ,
 num_steps=     ,
@@ -49,7 +49,7 @@ num_attempts=  ,
  use_ssd=
 
 
- manifold £º  ¹¹Ôìº¯Êı   ¸ø½á¹¹ÌåµÄ±äÁ¿¸³Öµ
+ manifold ï¼š  æ„é€ å‡½æ•°   ç»™ç»“æ„ä½“çš„å˜é‡èµ‹å€¼
 */
 struct manifold {
 	ssd ssd_par;
@@ -97,11 +97,11 @@ struct manifold {
 		  exclusion(1, pi/24, pi/12),
 	      relative_pair_cost(0.5),
 	      use_ssd(false) {}
-/*ÉùÃ÷ÔËËã·ûÖØÔØº¯Êı ÖØÔØ£¨£© ·µ»ØÀàĞÍÎªoutput_type½á¹¹Ìå
+/*å£°æ˜è¿ç®—ç¬¦é‡è½½å‡½æ•° é‡è½½ï¼ˆï¼‰ è¿”å›ç±»å‹ä¸ºoutput_typeç»“æ„ä½“
 */
 	output_type operator()(model& m, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, rng& generator) const;
 
-/*ÉùÃ÷ÔËËã·ûÖØÔØº¯Êı ÖØÔØ£¨£© ·µ»ØÀàĞÍÎª¿Õ
+/*å£°æ˜è¿ç®—ç¬¦é‡è½½å‡½æ•° é‡è½½ï¼ˆï¼‰ è¿”å›ç±»å‹ä¸ºç©º
 */
 	void operator()(model& m, output_container& out, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, rng& generator) const;
 

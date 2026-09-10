@@ -22,7 +22,7 @@
 
 #ifndef VINA_INCREMENTABLE_H
 #define VINA_INCREMENTABLE_H
-//定义结构体incrementable  包含纯虚函数  对运算符++进行重载
+//瀹氫箟缁撴瀯浣搃ncrementable  鍖呭惈绾櫄鍑芥暟  瀵硅繍绠楃++杩涜閲嶈浇
 struct incrementable {
 	virtual void operator++() = 0;
 };

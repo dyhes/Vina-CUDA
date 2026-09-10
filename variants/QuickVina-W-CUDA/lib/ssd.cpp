@@ -22,41 +22,41 @@
 
 #include "ssd.h"
 
- /*  input£º
-			m¡ª¡ªmodel½á¹¹Ìå£»p¡ª¡ªprecalculate½á¹¹Ìå£»ig¡ª¡ªigrid½á¹¹Ìå£»out¡ª¡ªoutput_type½á¹¹Ìå£»
-			g¡ª¡ªchange½á¹¹Ìå£»v¡ª¡ªvec½á¹¹Ìå
+ /*  inputï¼š
+			mâ€”â€”modelç»“æ„ä½“ï¼›pâ€”â€”precalculateç»“æ„ä½“ï¼›igâ€”â€”igridç»“æ„ä½“ï¼›outâ€”â€”output_typeç»“æ„ä½“ï¼›
+			gâ€”â€”changeç»“æ„ä½“ï¼›vâ€”â€”vecç»“æ„ä½“
 
-			¡¤eval_deriv£¨£©º¯Êı×÷ÓÃ:
-			1.¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-			2.¶¨ÒåÒ»¸ödoubleÀàĞÍe,¾ßÌå²é¿´ÊäÈëigÖĞµÄeval_deriv¶¨Òå,igÓ¦¸ÃÊÇigridÅÉÉúÀà¶ÔÏó
-			3.½«p,v[2], other_pairs, coords,minus_forcesÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-			4.±éÀúligandsµÄÔªËØ
-					½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,coord,minus_forcesÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-			5.½«coords, minus_forces, g.ligandsÊäÈëligands.derivativeÖĞ£¬·Ö±ğ¶ÔligandsµÄËùÓĞÔªËØÇóµ¼Êı£¬ligands[i].derivative(coords, minus_forces, g.ligands[i])
-			6.½«coords, minus_forces, g.flexÊäÈëflex.derivativeÖĞ£¬·Ö±ğ¶ÔflexµÄËùÓĞÔªËØÇóµ¼Êı£¬flex[i].derivative(coords, minus_forces, g.flex[i])
-			7.·µ»Øe£¨double£©
+			Â·eval_derivï¼ˆï¼‰å‡½æ•°ä½œç”¨:
+			1.æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+			2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e,å…·ä½“æŸ¥çœ‹è¾“å…¥igä¸­çš„eval_derivå®šä¹‰,igåº”è¯¥æ˜¯igridæ´¾ç”Ÿç±»å¯¹è±¡
+			3.å°†p,v[2], other_pairs, coords,minus_forcesè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+			4.éå†ligandsçš„å…ƒç´ 
+					å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,coord,minus_forcesè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+			5.å°†coords, minus_forces, g.ligandsè¾“å…¥ligands.derivativeä¸­ï¼Œåˆ†åˆ«å¯¹ligandsçš„æ‰€æœ‰å…ƒç´ æ±‚å¯¼æ•°ï¼Œligands[i].derivative(coords, minus_forces, g.ligands[i])
+			6.å°†coords, minus_forces, g.flexè¾“å…¥flex.derivativeä¸­ï¼Œåˆ†åˆ«å¯¹flexçš„æ‰€æœ‰å…ƒç´ æ±‚å¯¼æ•°ï¼Œflex[i].derivative(coords, minus_forces, g.flex[i])
+			7.è¿”å›eï¼ˆdoubleï¼‰
 
  */
 
 // clean up
 void ssd::operator()(model& m, const precalculate& p, const igrid& ig, output_type& out, change& g, const vec& v) const { // g must have correct size
-	out.e = m.eval_deriv(p, ig, v, out.c, g);			 //out½á¹¹ÌåÖĞµÄdoubleÀàĞÍe
-	fl factor = initial_factor;							 //ssd½á¹¹ÌåÖĞµÄinitial_factor±äÁ¿
+	out.e = m.eval_deriv(p, ig, v, out.c, g);			 //outç»“æ„ä½“ä¸­çš„doubleç±»å‹e
+	fl factor = initial_factor;							 //ssdç»“æ„ä½“ä¸­çš„initial_factorå˜é‡
 	VINA_U_FOR(i, evals) {								 //unsigned=unsigned int
-		if(factor < min_factor) break;					 //Èç¹ûinitial_factor<min_factor
-		output_type candidate(out);						 //out½á¹¹Ìå¸´ÖÆ¸øcandidate£¬candidate×ö¸Ä±ä²»»áÊ¹out±ä»¯
-		candidate.c.increment(g, -factor);				 //ÅäÌå¸ÕĞÔ±ä»¯ÖĞÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØÒÔ¼°ÈáĞÔÖĞÅ¤¾Ø½øĞĞ±ê×¼»¯
-		change candidate_g(g);							 //g½á¹¹Ìå¸´ÖÆ¸øcandidate_g£¬candidate_g×ö¸Ä±ä²»»áÊ¹g±ä»¯
+		if(factor < min_factor) break;					 //å¦‚æœinitial_factor<min_factor
+		output_type candidate(out);						 //outç»“æ„ä½“å¤åˆ¶ç»™candidateï¼Œcandidateåšæ”¹å˜ä¸ä¼šä½¿outå˜åŒ–
+		candidate.c.increment(g, -factor);				 //é…ä½“åˆšæ€§å˜åŒ–ä¸­ä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ä»¥åŠæŸ”æ€§ä¸­æ‰­çŸ©è¿›è¡Œæ ‡å‡†åŒ–
+		change candidate_g(g);							 //gç»“æ„ä½“å¤åˆ¶ç»™candidate_gï¼Œcandidate_gåšæ”¹å˜ä¸ä¼šä½¿gå˜åŒ–
 		candidate.e = m.eval_deriv(p, ig, v, candidate.c, candidate_g);
 		if(candidate.e <= out.e) {                
-			out = candidate;                              //candidate¸³¸øout
-			g = candidate_g;				              //candidate_g¸³¸øg	
+			out = candidate;                              //candidateèµ‹ç»™out
+			g = candidate_g;				              //candidate_gèµ‹ç»™g	
 			factor *= up;                                 //factor=factor* up
 		}
 		else {
 			factor *= down;                              //factor=factor* down
 		}
 	}
-	out.coords = m.get_heavy_atom_movable_coords();      //´Ói=0±éÀúµ½m_num_movable_atoms(model½á¹¹ÌåÖĞ),ÒÀ´ÎÅĞ¶Ïatoms£¨atom½á¹¹ÌåÏòÁ¿£©³ÉÔ±±äÁ¿elÊÇ·ñµÈÓÚ0£¬
-													     //ÊÇÔòÍùout.coordsÎ²²¿Ìí¼Ómodel³ÉÔ±coordsÈİÆ÷µÚi¸öÔªËØ
+	out.coords = m.get_heavy_atom_movable_coords();      //ä»i=0éå†åˆ°m_num_movable_atoms(modelç»“æ„ä½“ä¸­),ä¾æ¬¡åˆ¤æ–­atomsï¼ˆatomç»“æ„ä½“å‘é‡ï¼‰æˆå‘˜å˜é‡elæ˜¯å¦ç­‰äº0ï¼Œ
+													     //æ˜¯åˆ™å¾€out.coordså°¾éƒ¨æ·»åŠ modelæˆå‘˜coordså®¹å™¨ç¬¬iä¸ªå…ƒç´ 
 }

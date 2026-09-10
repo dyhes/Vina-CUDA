@@ -27,21 +27,21 @@
 
 
 /*
-* ½á¹¹Ìåpdb³ÉÔ±º¯Êıcheck¶¨Òå
-* input:Ë«¾«¶È¸¡µãÊımin_distance£¬×îĞ¡¾àÀë
-* ¸Ãº¯Êı×÷ÓÃ£º½á¹¹ÌåpdbµÄÊı¾İ³ÉÔ±ÈİÆ÷atomsÖĞ£¬¶ÔÈÎÒâÁ½¸ö½á¹¹ÌåµÄÊ¸Á¿¾àÀëĞ¡ÓÚÊäÈëË«¾«¶È¸¡µãÊımin_distanceµÄÆ½·½µÄ£¬¶¼Êä³öÌáĞÑ
-* output£ºÎŞ
+* ç»“æ„ä½“pdbæˆå‘˜å‡½æ•°checkå®šä¹‰
+* input:åŒç²¾åº¦æµ®ç‚¹æ•°min_distanceï¼Œæœ€å°è·ç¦»
+* è¯¥å‡½æ•°ä½œç”¨ï¼šç»“æ„ä½“pdbçš„æ•°æ®æˆå‘˜å®¹å™¨atomsä¸­ï¼Œå¯¹ä»»æ„ä¸¤ä¸ªç»“æ„ä½“çš„çŸ¢é‡è·ç¦»å°äºè¾“å…¥åŒç²¾åº¦æµ®ç‚¹æ•°min_distanceçš„å¹³æ–¹çš„ï¼Œéƒ½è¾“å‡ºæé†’
+* outputï¼šæ— 
 */
 void pdb::check(fl min_distance) const {
-	VINA_FOR_IN(i, atoms) { //Ñ­»·atomsÈİÆ÷ÀïËùÓĞpdb_atom½á¹¹Ìå,·Ö±ğ¶ÔÓ¦ÈİÆ÷ÏÂ±êÎªi
-		const pdb_atom& a = atoms[i];//aÒıÓÃatomsÈİÆ÷ÀïµÚi¸öpdb_atom½á¹¹Ìå
-		VINA_RANGE(j, i+1, atoms.size()) {//Ñ­»·atomsÈİÆ÷ÀïËùÓĞ´ÓµÚi+1¸öpdb_atom½á¹¹ÌåÊ£ÏÂµÄpdb_atom½á¹¹Ìå£¨°üÀ¨i+1)£¬·Ö±ğ¶ÔÓ¦ÈİÆ÷ÏÂ±êÎªj
-			const pdb_atom& b = atoms[j];//bÒıÓÃatomsÈİÆ÷ÀïµÚj¸öpdb_atom½á¹¹Ìå
-			fl d2 = vec_distance_sqr(a.coords, b.coords);//¼ÆËã½á¹¹Ìåa,bÖĞ¶ÔÓ¦coordsÊ¸Á¿µÄÆ½·½¾àÀë£¬·µ»Ø¸ødoubleÀàĞÍÊı¾İd2
+	VINA_FOR_IN(i, atoms) { //å¾ªç¯atomså®¹å™¨é‡Œæ‰€æœ‰pdb_atomç»“æ„ä½“,åˆ†åˆ«å¯¹åº”å®¹å™¨ä¸‹æ ‡ä¸ºi
+		const pdb_atom& a = atoms[i];//aå¼•ç”¨atomså®¹å™¨é‡Œç¬¬iä¸ªpdb_atomç»“æ„ä½“
+		VINA_RANGE(j, i+1, atoms.size()) {//å¾ªç¯atomså®¹å™¨é‡Œæ‰€æœ‰ä»ç¬¬i+1ä¸ªpdb_atomç»“æ„ä½“å‰©ä¸‹çš„pdb_atomç»“æ„ä½“ï¼ˆåŒ…æ‹¬i+1)ï¼Œåˆ†åˆ«å¯¹åº”å®¹å™¨ä¸‹æ ‡ä¸ºj
+			const pdb_atom& b = atoms[j];//bå¼•ç”¨atomså®¹å™¨é‡Œç¬¬jä¸ªpdb_atomç»“æ„ä½“
+			fl d2 = vec_distance_sqr(a.coords, b.coords);//è®¡ç®—ç»“æ„ä½“a,bä¸­å¯¹åº”coordsçŸ¢é‡çš„å¹³æ–¹è·ç¦»ï¼Œè¿”å›ç»™doubleç±»å‹æ•°æ®d2
 			
-			//Èç¹ûd2Ğ¡ÓÚÊäÈëµÄË«¾«¶È¸¡µãÊımin_distanceµÄÆ½·½
-			//Êä³öÌáĞÑ£º
-			//The distance between ½á¹¹ÌåaµÄid:½á¹¹ÌåaµÄname:½á¹¹ÌåaµÄelement and ½á¹¹ÌåbµÄid:½á¹¹ÌåbµÄname:½á¹¹ÌåbµÄelement is d2µÄ¿ª·½£¨»»ĞĞ£©
+			//å¦‚æœd2å°äºè¾“å…¥çš„åŒç²¾åº¦æµ®ç‚¹æ•°min_distanceçš„å¹³æ–¹
+			//è¾“å‡ºæé†’ï¼š
+			//The distance between ç»“æ„ä½“açš„id:ç»“æ„ä½“açš„name:ç»“æ„ä½“açš„element and ç»“æ„ä½“bçš„id:ç»“æ„ä½“bçš„name:ç»“æ„ä½“bçš„element is d2çš„å¼€æ–¹ï¼ˆæ¢è¡Œï¼‰
 			if(d2 < sqr(min_distance)) {
 				std::cout << "The distance between " 
 					<< a.id << ":" << a.name << ":" << a.element
@@ -55,63 +55,63 @@ void pdb::check(fl min_distance) const {
 
 
 /*
-* º¯Êı£ºstring_to_pdb_atom
-* input:stringÀàĞÍstr
-* output£º½á¹¹Ìåpdb_atom
+* å‡½æ•°ï¼šstring_to_pdb_atom
+* input:stringç±»å‹str
+* outputï¼šç»“æ„ä½“pdb_atom
 */
 
 pdb_atom string_to_pdb_atom(const std::string& str) {
-	//Èç¹ûstringÀàĞÍstr£¬×Ö·ûÊıĞ¡ÓÚ66£¬Å×³öÒì³£Ààbad_conversion()£¬ÖÕÖ¹µ±Ç°³ÌĞòµÄÖ´ĞĞ
+	//å¦‚æœstringç±»å‹strï¼Œå­—ç¬¦æ•°å°äº66ï¼ŒæŠ›å‡ºå¼‚å¸¸ç±»bad_conversion()ï¼Œç»ˆæ­¢å½“å‰ç¨‹åºçš„æ‰§è¡Œ
 	if(str.size() < 66) throw bad_conversion(); // b-factor is in 61-66
-	pdb_atom tmp;//¶¨ÒåÒ»¸ö½á¹¹Ìåpdb_atomµÄ¶ÔÏótmp
+	pdb_atom tmp;//å®šä¹‰ä¸€ä¸ªç»“æ„ä½“pdb_atomçš„å¯¹è±¡tmp
 	
-	tmp.id           = convert_substring<unsigned>   (str,  7, 11);     //½«stringÀàĞÍstr´Ó( 7-1)µ½(11-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Éunsigned       ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±id          
-	tmp.name         = convert_substring<std::string>(str, 13, 16);     //½«stringÀàĞÍstr´Ó(13-1)µ½(16-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Éstd::string    ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±name        
-	tmp.residue_id   = convert_substring<int>        (str, 23, 26);     //½«stringÀàĞÍstr´Ó(23-1)µ½(26-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Éint            ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±residue_id  
-	tmp.residue_name = convert_substring<std::string>(str, 18, 20);     //½«stringÀàĞÍstr´Ó(18-1)µ½(20-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Éstring         ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±residue_name
-	tmp.coords[0]    = convert_substring<fl>         (str, 31, 38);     //½«stringÀàĞÍstr´Ó(31-1)µ½(38-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Édouble         ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±coords[0]   
-	tmp.coords[1]    = convert_substring<fl>         (str, 39, 46);     //½«stringÀàĞÍstr´Ó(39-1)µ½(46-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Édouble         ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±coords[1]   
-	tmp.coords[2]    = convert_substring<fl>         (str, 47, 54);     //½«stringÀàĞÍstr´Ó(47-1)µ½(54-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Édouble         ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±coords[2]   
-	tmp.b_factor     = convert_substring<fl>         (str, 61, 66);     //½«stringÀàĞÍstr´Ó(61-1)µ½(66-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Édouble         ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±b_factor    
-	tmp.element      = convert_substring<std::string>(str, 77, 78);     //½«stringÀàĞÍstr´Ó(77-1)µ½(78-1)ÏÂ±êµÄ×Ö·û£¨ºöÂÔÇ°µ¼¿Õ¸ñ£©×ª»»³Éstring         ÀàĞÍÊı¾İ¸³Óè¶ÔÏótmpµÄ³ÉÔ±element     
-	//·µ»Ø½á¹¹Ìå¶ÔÏótmp
+	tmp.id           = convert_substring<unsigned>   (str,  7, 11);     //å°†stringç±»å‹strä»( 7-1)åˆ°(11-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆunsigned       ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜id          
+	tmp.name         = convert_substring<std::string>(str, 13, 16);     //å°†stringç±»å‹strä»(13-1)åˆ°(16-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆstd::string    ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜name        
+	tmp.residue_id   = convert_substring<int>        (str, 23, 26);     //å°†stringç±»å‹strä»(23-1)åˆ°(26-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆint            ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜residue_id  
+	tmp.residue_name = convert_substring<std::string>(str, 18, 20);     //å°†stringç±»å‹strä»(18-1)åˆ°(20-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆstring         ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜residue_name
+	tmp.coords[0]    = convert_substring<fl>         (str, 31, 38);     //å°†stringç±»å‹strä»(31-1)åˆ°(38-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆdouble         ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜coords[0]   
+	tmp.coords[1]    = convert_substring<fl>         (str, 39, 46);     //å°†stringç±»å‹strä»(39-1)åˆ°(46-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆdouble         ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜coords[1]   
+	tmp.coords[2]    = convert_substring<fl>         (str, 47, 54);     //å°†stringç±»å‹strä»(47-1)åˆ°(54-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆdouble         ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜coords[2]   
+	tmp.b_factor     = convert_substring<fl>         (str, 61, 66);     //å°†stringç±»å‹strä»(61-1)åˆ°(66-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆdouble         ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜b_factor    
+	tmp.element      = convert_substring<std::string>(str, 77, 78);     //å°†stringç±»å‹strä»(77-1)åˆ°(78-1)ä¸‹æ ‡çš„å­—ç¬¦ï¼ˆå¿½ç•¥å‰å¯¼ç©ºæ ¼ï¼‰è½¬æ¢æˆstring         ç±»å‹æ•°æ®èµ‹äºˆå¯¹è±¡tmpçš„æˆå‘˜element     
+	//è¿”å›ç»“æ„ä½“å¯¹è±¡tmp
 	return tmp;
 }
 
 /*
-* º¯Êı£ºparse_pdb
-* input:pathÀà£¬¶¨Òå¶ÔÏóÊ±£¬²ÎÊı´«µİÎÄ¼şÂ·¾¶
-* output£º¶ÁÈ¡ÎÄ¼şÊı¾İ²¢±£´æÆäÖĞµÄ½á¹¹Ìåpdb
+* å‡½æ•°ï¼šparse_pdb
+* input:pathç±»ï¼Œå®šä¹‰å¯¹è±¡æ—¶ï¼Œå‚æ•°ä¼ é€’æ–‡ä»¶è·¯å¾„
+* outputï¼šè¯»å–æ–‡ä»¶æ•°æ®å¹¶ä¿å­˜å…¶ä¸­çš„ç»“æ„ä½“pdb
 */
 pdb parse_pdb(const path& name) {
-	//¶¨ÒåÒ»¸ö½á¹¹ÌåifileµÄ¶ÔÏóin
+	//å®šä¹‰ä¸€ä¸ªç»“æ„ä½“ifileçš„å¯¹è±¡in
 	ifile in(name);
 
-	//¶¨ÒåÒ»¸ö½á¹¹ÌåpdbÎªtmp
+	//å®šä¹‰ä¸€ä¸ªç»“æ„ä½“pdbä¸ºtmp
 	pdb tmp;
 
-	//¶¨ÒåstringÀàĞÍstr
+	//å®šä¹‰stringç±»å‹str
 	std::string str;
 	
-	//¶¨ÒåÎŞ·ûºÅÕûĞÍcount£¬³õÊ¼ÖµÎª0
+	//å®šä¹‰æ— ç¬¦å·æ•´å‹countï¼Œåˆå§‹å€¼ä¸º0
 	unsigned count = 0;
 
-	//´ÓÊäÈëÁ÷in¶ÁÈë×Ö·û£¬´æµ½string±äÁ¿strÖĞ£¬Ã¿´Î¶ÁÈëÒ»¸öĞÂĞĞ£¬Ö±µ½¶ÁÈëÁËÎÄ¼ş½áÊø±êÖ¾
+	//ä»è¾“å…¥æµinè¯»å…¥å­—ç¬¦ï¼Œå­˜åˆ°stringå˜é‡strä¸­ï¼Œæ¯æ¬¡è¯»å…¥ä¸€ä¸ªæ–°è¡Œï¼Œç›´åˆ°è¯»å…¥äº†æ–‡ä»¶ç»“æŸæ ‡å¿—
 	while(std::getline(in, str)) {
-	//countÓÃÓÚ±£´æĞĞºÅ
+	//countç”¨äºä¿å­˜è¡Œå·
 		++count;
-	//ÅĞ¶Ïµ±Ç°×Ö·û´®ÊÇ·ñÒÔÁíÍâÒ»¸ö¸ø¶¨µÄ×Ó×Ö·û´®¡°ATOM  ¡±»òÕß"HETATM"¿ªÍ·£¬ÊÇÔòÖ´ĞĞifÓï¾äÀïµÄ²Ù×÷£¬·ñÔò¼ÌĞø¶ÁÈ¡ÏÂÒ»ĞĞ
+	//åˆ¤æ–­å½“å‰å­—ç¬¦ä¸²æ˜¯å¦ä»¥å¦å¤–ä¸€ä¸ªç»™å®šçš„å­å­—ç¬¦ä¸²â€œATOM  â€æˆ–è€…"HETATM"å¼€å¤´ï¼Œæ˜¯åˆ™æ‰§è¡Œifè¯­å¥é‡Œçš„æ“ä½œï¼Œå¦åˆ™ç»§ç»­è¯»å–ä¸‹ä¸€è¡Œ
 		if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM")) {
 			try {
 				tmp.atoms.push_back(string_to_pdb_atom(str));
-				//½«pdb_atom½á¹¹Ìå¶ÔÏóstring_to_pdb_atom´æÈëtmpµÄÊı¾İ³ÉÔ±£¬ÈİÆ÷atoms
+				//å°†pdb_atomç»“æ„ä½“å¯¹è±¡string_to_pdb_atomå­˜å…¥tmpçš„æ•°æ®æˆå‘˜ï¼Œå®¹å™¨atoms
 			}
 			catch(...) { // bad_conversion, presumably; but can lexical_cast throw its own errors?
 				throw parse_error(name, count, "ATOM syntax incorrect");
-				//ÔÚ½«str×ª»»³Éstring_to_pdb_atomÊı¾İ³ÉÔ±µÄ¹ı³Ì·¢³ÉÒì³££¬Å×³öÒì³£Ààparse_error()£¬ÖÕÖ¹µ±Ç°³ÌĞòµÄÖ´ĞĞ
+				//åœ¨å°†strè½¬æ¢æˆstring_to_pdb_atomæ•°æ®æˆå‘˜çš„è¿‡ç¨‹å‘æˆå¼‚å¸¸ï¼ŒæŠ›å‡ºå¼‚å¸¸ç±»parse_error()ï¼Œç»ˆæ­¢å½“å‰ç¨‹åºçš„æ‰§è¡Œ
 			}
 		}
 	}
 	return tmp;
-	//·µ»Ø¶ÁÈëÎÄ¼şÊı¾İºóµÄpdb¶ÔÏótmp
+	//è¿”å›è¯»å…¥æ–‡ä»¶æ•°æ®åçš„pdbå¯¹è±¡tmp
 }

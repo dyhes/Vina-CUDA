@@ -23,24 +23,24 @@
 #include "current_weights.h"
 
 /*
-	input¡ª¡ªt:terms½á¹¹Ìå
-	inter¡ª¡ªn¡¢tmp_size¡¢conf_indep_size¡¢t_size¡¢t_names_size£ºunint£»
-	output¡ª¡ªtmp:doubleÏòÁ¿
+	inputâ€”â€”t:termsç»“æ„ä½“
+	interâ€”â€”nã€tmp_sizeã€conf_indep_sizeã€t_sizeã€t_names_sizeï¼šunintï¼›
+	outputâ€”â€”tmp:doubleå‘é‡
 	
-		¶¨ÒåÁËdoubleÊı×éa[]={-0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 1.923}£»
+		å®šä¹‰äº†doubleæ•°ç»„a[]={-0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 1.923}ï¼›
 		n=6;
-		ÔÚtmpÏòÁ¿Ä©Î²ÒÀ´ÎÌí¼Óa[i]£»
-		tmp_sizeÎªÏòÁ¿tmpµÄÔªËØ¸öÊı£»
-		conf_indep_sizeÎªÔÚterm_set½á¹¹ÌåÖĞµÄenabled[i]>0ÏÂ£¬term_set½á¹¹ÌåÖĞµÄfun[i]µÄÔªËØ¸öÊı£»
-		t_sizeÎªdistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢intermolecular_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı×ÜºÍ£»
-		t_names_sizeÎªÔÚenabled[i]´óÓÚµÈÓÚ1Ê±ÔÚ×Ö·û´®ÏòÁ¿ºóÃæÒÀ´ÎÌí¼ÓÄ£°å²ÎÊıÎªdistance_additive_terms½á¹¹ÌåµÄterm_set½á¹¹Ìå¡¢
-	Ä£°å²ÎÊıÎªusable½á¹¹ÌåµÄterm_set½á¹¹Ìå¡¢Ä£°å²ÎÊıÎªadditive½á¹¹ÌåµÄterm_set½á¹¹Ìå¡¢Ä£°å²ÎÊıÎªintermolecular½á¹¹ÌåµÄterm_set½á¹¹ÌåµÄfun[i].name;
-	    ×îºóÅĞ¶Ïtmp_sizeÊÇ·ñµÈÓÚconf_indep_size+t_names_size£¬ÊÇµÄ»°·µ»ØtmpÏòÁ¿£¬·ñÔòÖÕÖ¹³ÌĞò
+		åœ¨tmpå‘é‡æœ«å°¾ä¾æ¬¡æ·»åŠ a[i]ï¼›
+		tmp_sizeä¸ºå‘é‡tmpçš„å…ƒç´ ä¸ªæ•°ï¼›
+		conf_indep_sizeä¸ºåœ¨term_setç»“æ„ä½“ä¸­çš„enabled[i]>0ä¸‹ï¼Œterm_setç»“æ„ä½“ä¸­çš„fun[i]çš„å…ƒç´ ä¸ªæ•°ï¼›
+		t_sizeä¸ºdistance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€intermolecular_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œï¼›
+		t_names_sizeä¸ºåœ¨enabled[i]å¤§äºç­‰äº1æ—¶åœ¨å­—ç¬¦ä¸²å‘é‡åé¢ä¾æ¬¡æ·»åŠ æ¨¡æ¿å‚æ•°ä¸ºdistance_additive_termsç»“æ„ä½“çš„term_setç»“æ„ä½“ã€
+	æ¨¡æ¿å‚æ•°ä¸ºusableç»“æ„ä½“çš„term_setç»“æ„ä½“ã€æ¨¡æ¿å‚æ•°ä¸ºadditiveç»“æ„ä½“çš„term_setç»“æ„ä½“ã€æ¨¡æ¿å‚æ•°ä¸ºintermolecularç»“æ„ä½“çš„term_setç»“æ„ä½“çš„fun[i].name;
+	    æœ€ååˆ¤æ–­tmp_sizeæ˜¯å¦ç­‰äºconf_indep_size+t_names_sizeï¼Œæ˜¯çš„è¯è¿”å›tmpå‘é‡ï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åº
 
 
 */
 flv current_weights(const terms& t) { // verifies size compatibility with t
-	const fl a[] = {-0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 1.923}; //aÊı×éÎªdouble
+	const fl a[] = {-0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 1.923}; //aæ•°ç»„ä¸ºdouble
 	// design.out227
 	//const fl a[] =   {-0.035579, -0.005156, 0.840245, -0.035069, 0, -0.587439, 0.3, 0}; // FROM design.out227 (FIXME 0.37)
 	//const fl a[] = {-0.035579, -0.005156, 0.840245, -0.035069, 0, -0.587439, 1.923}; // from design.out227
@@ -55,18 +55,18 @@ flv current_weights(const terms& t) { // verifies size compatibility with t
 	//{    -0.04174947,     -0.00277397,      0.67397970,     -0.05836878,     -0.57969306,      1.13869379}
 	//
 	//{    -0.02008723,     -0.00412019,      0.60584644,     -0.05019072,     -0.58100053,      1.30362853}
-	sz n = sizeof(a) / sizeof(const fl);   //sizeof£¨a£©=48¼ÆËãa¶ÔÏóËùÕ¼ÄÚ´æ¿Õ¼äµÄ´óĞ¡£¬sizeof(const fl)=8,¼´ÊÇunsigned int n=6
+	sz n = sizeof(a) / sizeof(const fl);   //sizeofï¼ˆaï¼‰=48è®¡ç®—aå¯¹è±¡æ‰€å å†…å­˜ç©ºé—´çš„å¤§å°ï¼Œsizeof(const fl)=8,å³æ˜¯unsigned int n=6
 	flv tmp;
 	VINA_FOR(i, n)						   //for(unsigned int VINA_MACROS_TMP=n,i=0; i<VINA_MACROS_TMP;i++)
-		tmp.push_back(a[i]);				//tmp×îÄ©Î²Ìí¼Óa[i]ÔªËØ
+		tmp.push_back(a[i]);				//tmpæœ€æœ«å°¾æ·»åŠ a[i]å…ƒç´ 
 	// FIXME rm
-	sz tmp_size = tmp.size();                   //tmpÔªËØ¸öÊı
-	sz conf_indep_size  = t.size_conf_independent(true);   //ÔÚterm_set½á¹¹ÌåÖĞµÄenabled[i]>0ÏÂ£¬term_set½á¹¹ÌåÖĞµÄfun[i]µÄÔªËØ¸öÊı
-	sz t_size = t.size();          //¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //intermolecular_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı×ÜºÍ
-	sz t_names_size = t.get_names(true).size();//·µ»ØtmpÏòÁ¿µÄÔªËØ¸öÊı
+	sz tmp_size = tmp.size();                   //tmpå…ƒç´ ä¸ªæ•°
+	sz conf_indep_size  = t.size_conf_independent(true);   //åœ¨term_setç»“æ„ä½“ä¸­çš„enabled[i]>0ä¸‹ï¼Œterm_setç»“æ„ä½“ä¸­çš„fun[i]çš„å…ƒç´ ä¸ªæ•°
+	sz t_size = t.size();          //è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //intermolecular_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œ
+	sz t_names_size = t.get_names(true).size();//è¿”å›tmpå‘é‡çš„å…ƒç´ ä¸ªæ•°
 
 	VINA_CHECK(tmp.size() == t.size_conf_independent(true) + t.get_names(true).size());//assert(tmp.size() == t.size_conf_independent(true) + t.get_names(true).size())
 	return tmp;

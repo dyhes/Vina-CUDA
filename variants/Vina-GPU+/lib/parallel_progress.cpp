@@ -21,7 +21,7 @@
 */
 
 
-//°üº¬parallel_progress.hÍ·ÎÄ¼ş
+//åŒ…å«parallel_progress.hå¤´æ–‡ä»¶
 #include "parallel_progress.h"
 
 //#include <boost/thread/condition.hpp> // FIXME do we need this?

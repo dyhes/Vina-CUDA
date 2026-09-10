@@ -28,9 +28,9 @@
 
 
 
-/*IN: n  UINTÀàĞÍ ¡¢x  doubleÀàĞÍ
-* out£º xµÄn´Î·½   doubleÀàĞÍ
-  function£ºÊäÈëº¯Êı²ÎÊıdoubleÀàĞÍXºÍÄ£°å²ÎÊıUINTÀàĞÍn   Êä³öxµÄn´Î·½
+/*IN: n  UINTç±»å‹ ã€x  doubleç±»å‹
+* outï¼š xçš„næ¬¡æ–¹   doubleç±»å‹
+  functionï¼šè¾“å…¥å‡½æ•°å‚æ•°doubleç±»å‹Xå’Œæ¨¡æ¿å‚æ•°UINTç±»å‹n   è¾“å‡ºxçš„næ¬¡æ–¹
 */
 template<unsigned n>
 inline fl int_pow(fl x) {

@@ -22,7 +22,7 @@
 
 #include <algorithm> // fill, etc
 
-#if 0 // use binary cache ±»×¢ÊÍµô
+#if 0 // use binary cache è¢«æ³¨é‡Šæ‰
 	// for some reason, binary archive gives four huge warnings in VC2008
 	#include <boost/archive/binary_oarchive.hpp>
 	#include <boost/archive/binary_iarchive.hpp>
@@ -47,12 +47,12 @@
 //#define DISPLAT_RUNTIME
 //end OpenCL Related
 /*
-	scoring_function_version=scoring_function_version_£ºstring£»
-	¡¤gd=gd_£ºÓĞ3¸öÔªËØµÄgrid_dim½á¹¹ÌåÊı×é£»
-	¡¤slope=slope_£ºdouble£»
-	¡¤atu=atom_typing_used_£ºatom_type½á¹¹ÌåÖĞÃ¶¾ÙĞÍ±äÁ¿t£»
-	¡¤grids=num_atom_types(atom_typing_used_)£¬
-	  atom_typing_used_£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£¬ÎªELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18 
+	scoring_function_version=scoring_function_version_ï¼šstringï¼›
+	Â·gd=gd_ï¼šæœ‰3ä¸ªå…ƒç´ çš„grid_dimç»“æ„ä½“æ•°ç»„ï¼›
+	Â·slope=slope_ï¼šdoubleï¼›
+	Â·atu=atom_typing_used_ï¼šatom_typeç»“æ„ä½“ä¸­æšä¸¾å‹å˜é‡tï¼›
+	Â·grids=num_atom_types(atom_typing_used_)ï¼Œ
+	  atom_typing_used_ï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼Œä¸ºELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18 
 
 
 */
@@ -62,58 +62,58 @@ cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_,
 
 
 /*
-	input¡ª¡ªm£ºmodel½á¹¹Ìå£¬v£ºdouble
-	output¡ª¡ªe£ºdouble
-	inter¡ª¡ªatu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t £»
-	¡¤nat£¨unint£©¡ª¡ªatuÎªELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18 £»
-	¡¤t£¨unint£©¡ª¡ªatuÎªELĞÍ·µ»Øel£¬ADĞÍ·µ»Øad£¬XSĞÍ·µ»Øxs£¬SYĞÍ·µ»Øsy,³õÊ¼»¯ el=11; ad=20; xs=17; sy=18 £»
-	¡¤ m.atoms£ºmodel½á¹¹ÌåÖĞµÄatom½á¹¹ÌåÏòÁ¿£»m.coords£ºvec½á¹¹ÌåÏòÁ¿;
-	¡¤ m.num_movable_atoms()£º·µ»Ømodel½á¹¹ÌåÖĞµÄ£¨unint£©m_num_movable_atoms±äÁ¿;
-	¡¤slope£ºdouble
-	¡¤º¯ÊıÖ÷Òª¹¦ÄÜ£º
-		´Ói=0ÖÁm_num_movable_atoms£¬
-		if(t >= nat)   Ôòi++£¬Ö±½Ó½øĞĞÏÂÒ»´ÎÑ­»·£»
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼Œvï¼šdouble
+	outputâ€”â€”eï¼šdouble
+	interâ€”â€”atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡t ï¼›
+	Â·natï¼ˆunintï¼‰â€”â€”atuä¸ºELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18 ï¼›
+	Â·tï¼ˆunintï¼‰â€”â€”atuä¸ºELå‹è¿”å›elï¼ŒADå‹è¿”å›adï¼ŒXSå‹è¿”å›xsï¼ŒSYå‹è¿”å›sy,åˆå§‹åŒ– el=11; ad=20; xs=17; sy=18 ï¼›
+	Â· m.atomsï¼šmodelç»“æ„ä½“ä¸­çš„atomç»“æ„ä½“å‘é‡ï¼›m.coordsï¼švecç»“æ„ä½“å‘é‡;
+	Â· m.num_movable_atoms()ï¼šè¿”å›modelç»“æ„ä½“ä¸­çš„ï¼ˆunintï¼‰m_num_movable_atomså˜é‡;
+	Â·slopeï¼šdouble
+	Â·å‡½æ•°ä¸»è¦åŠŸèƒ½ï¼š
+		ä»i=0è‡³m_num_movable_atomsï¼Œ
+		if(t >= nat)   åˆ™i++ï¼Œç›´æ¥è¿›è¡Œä¸‹ä¸€æ¬¡å¾ªç¯ï¼›
 		else 
-			g=grid½á¹¹ÌåÏòÁ¿µÚt¸öÔªËØ±ğÃû£»
-			m_data£¨Ä£°åĞÎ²ÎÎªdoubleµÄarrat3d Àà£©µÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0Ôò¼ÌĞø£¬·ñÔòÖÕÖ¹³ÌĞò£»          
-			e=e+g.evaluate(m.coords[i], slope, v)£»
-	    Ñ­»·½áÊø·µ»Øe£»
+			g=gridç»“æ„ä½“å‘é‡ç¬¬tä¸ªå…ƒç´ åˆ«åï¼›
+			m_dataï¼ˆæ¨¡æ¿å½¢å‚ä¸ºdoubleçš„arrat3d ç±»ï¼‰çš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0åˆ™ç»§ç»­ï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼›          
+			e=e+g.evaluate(m.coords[i], slope, v)ï¼›
+	    å¾ªç¯ç»“æŸè¿”å›eï¼›
 */
 fl cache::eval      (const model& m, fl v) const { // needs m.coords
 	fl e = 0;
-	sz nat = num_atom_types(atu);			//atu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£¬ÎªELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18 
+	sz nat = num_atom_types(atu);			//atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼Œä¸ºELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18 
 
-	VINA_FOR(i, m.num_movable_atoms()) {	  //for(i=0;i<m_num_movable_atoms;i++)£¬
-		const atom& a = m.atoms[i];           //atoms£ºatom½á¹¹ÌåÏòÁ¿
-		sz t = a.get(atu);					//atu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£¬³õÊ¼»¯el=11; ad=20; xs=17; sy=18
-		if(t >= nat) continue;              //Ìõ¼ş³ÉÁ¢Ö±½Ó½øĞĞÏÂÒ»´ÎÑ­»·£¬²»½øĞĞÏÂÃæ³ÌĞò
-		const grid& g = grids[t];           //grid½á¹¹ÌåÏòÁ¿µÚt¸öÔªËØ±ğÃû
-		assert(g.initialized());            //Èôm_data£¨Ä£°åĞÎ²ÎÎªdoubleµÄarrat3d Àà£©µÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0Ôò·µ»Ø1  ·ñÔò0
-		e += g.evaluate(m.coords[i], slope, v);   //slope£ºdouble£¬Êä³ödoubleÀàĞÍµÄÊı£¬derivÖ¸ÕëÎªnull 
+	VINA_FOR(i, m.num_movable_atoms()) {	  //for(i=0;i<m_num_movable_atoms;i++)ï¼Œ
+		const atom& a = m.atoms[i];           //atomsï¼šatomç»“æ„ä½“å‘é‡
+		sz t = a.get(atu);					//atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼Œåˆå§‹åŒ–el=11; ad=20; xs=17; sy=18
+		if(t >= nat) continue;              //æ¡ä»¶æˆç«‹ç›´æ¥è¿›è¡Œä¸‹ä¸€æ¬¡å¾ªç¯ï¼Œä¸è¿›è¡Œä¸‹é¢ç¨‹åº
+		const grid& g = grids[t];           //gridç»“æ„ä½“å‘é‡ç¬¬tä¸ªå…ƒç´ åˆ«å
+		assert(g.initialized());            //è‹¥m_dataï¼ˆæ¨¡æ¿å½¢å‚ä¸ºdoubleçš„arrat3d ç±»ï¼‰çš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0åˆ™è¿”å›1  å¦åˆ™0
+		e += g.evaluate(m.coords[i], slope, v);   //slopeï¼šdoubleï¼Œè¾“å‡ºdoubleç±»å‹çš„æ•°ï¼ŒderivæŒ‡é’ˆä¸ºnull 
 	}
 	return e;
 }
 
 
 /*
-	input¡ª¡ªm£ºmodel½á¹¹Ìå£¬v£ºdouble
-	output¡ª¡ªe£ºdouble
-	inter¡ª¡ªatu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t £»
-	¡¤nat£¨unint£©¡ª¡ªatuÎªELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18 £»
-	¡¤t£¨unint£©¡ª¡ªatuÎªELĞÍ·µ»Øel£¬ADĞÍ·µ»Øad£¬XSĞÍ·µ»Øxs£¬SYĞÍ·µ»Øsy,³õÊ¼»¯ el=11; ad=20; xs=17; sy=18 £»
-	¡¤ m.atoms£ºmodel½á¹¹ÌåÖĞµÄatom½á¹¹ÌåÏòÁ¿£»m.coords¡¢ m.minus_forces£ºvec½á¹¹ÌåÏòÁ¿;
-	¡¤ m.num_movable_atoms()£º·µ»Ømodel½á¹¹ÌåÖĞµÄ£¨unint£©m_num_movable_atoms±äÁ¿;
-	¡¤slope£ºdouble
-	¡¤º¯ÊıÖ÷Òª¹¦ÄÜ£º
-	´Ói=0ÖÁm_num_movable_atoms£¬
-	if(t >= nat)   Ôòi++²¢ÇÒ½á¹¹Ìåminus_forcesÖĞµÄdata[0] = data[1] = data[2] = 0£¬È»ºóÖ±½Ó½øĞĞÏÂÒ»´ÎÑ­»·£»
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼Œvï¼šdouble
+	outputâ€”â€”eï¼šdouble
+	interâ€”â€”atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡t ï¼›
+	Â·natï¼ˆunintï¼‰â€”â€”atuä¸ºELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18 ï¼›
+	Â·tï¼ˆunintï¼‰â€”â€”atuä¸ºELå‹è¿”å›elï¼ŒADå‹è¿”å›adï¼ŒXSå‹è¿”å›xsï¼ŒSYå‹è¿”å›sy,åˆå§‹åŒ– el=11; ad=20; xs=17; sy=18 ï¼›
+	Â· m.atomsï¼šmodelç»“æ„ä½“ä¸­çš„atomç»“æ„ä½“å‘é‡ï¼›m.coordsã€ m.minus_forcesï¼švecç»“æ„ä½“å‘é‡;
+	Â· m.num_movable_atoms()ï¼šè¿”å›modelç»“æ„ä½“ä¸­çš„ï¼ˆunintï¼‰m_num_movable_atomså˜é‡;
+	Â·slopeï¼šdouble
+	Â·å‡½æ•°ä¸»è¦åŠŸèƒ½ï¼š
+	ä»i=0è‡³m_num_movable_atomsï¼Œ
+	if(t >= nat)   åˆ™i++å¹¶ä¸”ç»“æ„ä½“minus_forcesä¸­çš„data[0] = data[1] = data[2] = 0ï¼Œç„¶åç›´æ¥è¿›è¡Œä¸‹ä¸€æ¬¡å¾ªç¯ï¼›
 	else
-	g=grid½á¹¹ÌåÏòÁ¿µÚt¸öÔªËØ±ğÃû£»
-	¶¨ÒåÁËderiv£ºvec½á¹¹Ìå
-	m_data£¨Ä£°åĞÎ²ÎÎªdoubleµÄarrat3d Àà£©µÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0Ôò¼ÌĞø£¬·ñÔòÖÕÖ¹³ÌĞò£»
-	e=e+g.evaluate(m.coords[i], slope, v£¬deriv)£»
-	m.minus_forces[i] = deriv;   //½á¹¹Ìå¸³Öµ½á¹¹Ìå
-	Ñ­»·½áÊø·µ»Øe£»
+	g=gridç»“æ„ä½“å‘é‡ç¬¬tä¸ªå…ƒç´ åˆ«åï¼›
+	å®šä¹‰äº†derivï¼švecç»“æ„ä½“
+	m_dataï¼ˆæ¨¡æ¿å½¢å‚ä¸ºdoubleçš„arrat3d ç±»ï¼‰çš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0åˆ™ç»§ç»­ï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼›
+	e=e+g.evaluate(m.coords[i], slope, vï¼Œderiv)ï¼›
+	m.minus_forces[i] = deriv;   //ç»“æ„ä½“èµ‹å€¼ç»“æ„ä½“
+	å¾ªç¯ç»“æŸè¿”å›eï¼›
 
 */
 fl cache::eval_deriv(      model& m, fl v) const { // needs m.coords, sets m.minus_forces
@@ -123,7 +123,7 @@ fl cache::eval_deriv(      model& m, fl v) const { // needs m.coords, sets m.min
 	VINA_FOR(i, m.num_movable_atoms()) {
 		const atom& a = m.atoms[i];
 		sz t = a.get(atu);
-		if(t >= nat) { m.minus_forces[i].assign(0); continue; }//½á¹¹Ìåminus_forcesÖĞµÄdata[0] = data[1] = data[2] = 0
+		if(t >= nat) { m.minus_forces[i].assign(0); continue; }//ç»“æ„ä½“minus_forcesä¸­çš„data[0] = data[1] = data[2] = 0
 		const grid& g = grids[t];
 		assert(g.initialized());
 		vec deriv;
@@ -155,7 +155,7 @@ double cache::get_slope() const {
 }
 
 
-#if 0 // No longer doing I/O of the cache  ±»×¢ÊÍµô
+#if 0 // No longer doing I/O of the cache  è¢«æ³¨é‡Šæ‰
 void cache::read(const path& p) {
 	ifile in(p, std::ios::binary);
 	iarchive ar(in);
@@ -171,8 +171,8 @@ void cache::write(const path& p) const {
 
 
 /*
-	ĞòÁĞ»¯£¬¿ÉĞòÁĞ»¯µÄ²ÎÊıÓĞscoring_function_version(string)¡¢gd(grid_dims½á¹¹Ìå)¡¢
-	atu£¨atom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t £©¡¢grids£¨grid½á¹¹ÌåÏòÁ¿£©
+	åºåˆ—åŒ–ï¼Œå¯åºåˆ—åŒ–çš„å‚æ•°æœ‰scoring_function_version(string)ã€gd(grid_dimsç»“æ„ä½“)ã€
+	atuï¼ˆatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡t ï¼‰ã€gridsï¼ˆgridç»“æ„ä½“å‘é‡ï¼‰
 */
 template<class Archive>
 void cache::save(Archive& ar, const unsigned version) const {
@@ -184,16 +184,16 @@ void cache::save(Archive& ar, const unsigned version) const {
 
 
 /*
-	·´ĞòÁĞ»¯
-	¡¤name_tmp£ºstring£»
-	¡¤gd_tmp£ºgrid_dims½á¹¹Ìå£»
-	¡¤atu_tmp£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£»
-	¡¤grids£ºgrid½á¹¹ÌåÏòÁ¿
-	Èç¹û½ÓÊÜ£¨load£©µÄºÍ·¢ËÍ£¨save£©µÄ²»ÏàÍ¬Å×³öÒì³£
+	ååºåˆ—åŒ–
+	Â·name_tmpï¼šstringï¼›
+	Â·gd_tmpï¼šgrid_dimsç»“æ„ä½“ï¼›
+	Â·atu_tmpï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼›
+	Â·gridsï¼šgridç»“æ„ä½“å‘é‡
+	å¦‚æœæ¥å—ï¼ˆloadï¼‰çš„å’Œå‘é€ï¼ˆsaveï¼‰çš„ä¸ç›¸åŒæŠ›å‡ºå¼‚å¸¸
 */
 template<class Archive>
 void cache::load(Archive& ar, const unsigned version) {
-	std::string name_tmp;       ar & name_tmp;       if(name_tmp != scoring_function_version) throw energy_mismatch();  //Å×³öÒì³£
+	std::string name_tmp;       ar & name_tmp;       if(name_tmp != scoring_function_version) throw energy_mismatch();  //æŠ›å‡ºå¼‚å¸¸
 	grid_dims   gd_tmp;         ar &   gd_tmp;       if(!eq(gd_tmp, gd))                    throw grid_dims_mismatch();
 	atom_type::t atu_tmp;       ar &  atu_tmp;       if(atu_tmp != atu)                       throw cache_mismatch();
 
@@ -202,54 +202,54 @@ void cache::load(Archive& ar, const unsigned version) {
 
 
 /*
-	input¡ª¡ªm:model½á¹¹Ìå£¬p£ºprecalculate½á¹¹Ìå
-			 atom_types_needed£ºunintÏòÁ¿£¬display_progress£ºbool;
-    inter¡ª¡ªgrids£ºgrid½á¹¹ÌåÏòÁ¿£¬gd£ºgrid_dims½á¹¹Ìå
+	inputâ€”â€”m:modelç»“æ„ä½“ï¼Œpï¼šprecalculateç»“æ„ä½“
+			 atom_types_neededï¼šunintå‘é‡ï¼Œdisplay_progressï¼šbool;
+    interâ€”â€”gridsï¼šgridç»“æ„ä½“å‘é‡ï¼Œgdï¼šgrid_dimsç»“æ„ä½“
 */
 
 void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress) {
-	szv needed;                                     //unintÏòÁ¿
+	szv needed;                                     //unintå‘é‡
 	VINA_FOR_IN(i, atom_types_needed) {            //for(i=0;i<atom_types_needed.size;i++)
-		sz t = atom_types_needed[i];               //½«atom_types_neededÏòÁ¿ÖĞµÄÔªËØÒÀ´Î¸³Öµ¸øt
-		if(!grids[t].initialized()) {              //grid½á¹¹ÌåÖĞÈıÎ¬doubleÊı×ém_dataµÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0Ôò·µ»Ø1  ·ñÔò0
-			needed.push_back(t);                   // neededÏòÁ¿Ä©Î²Ìí¼Ót
-			grids[t].init(gd);                     //¸øgrid½á¹¹ÌåÖĞµÄÎå¸övec½á¹¹Ìå¸³Öµ
+		sz t = atom_types_needed[i];               //å°†atom_types_neededå‘é‡ä¸­çš„å…ƒç´ ä¾æ¬¡èµ‹å€¼ç»™t
+		if(!grids[t].initialized()) {              //gridç»“æ„ä½“ä¸­ä¸‰ç»´doubleæ•°ç»„m_dataçš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0åˆ™è¿”å›1  å¦åˆ™0
+			needed.push_back(t);                   // neededå‘é‡æœ«å°¾æ·»åŠ t
+			grids[t].init(gd);                     //ç»™gridç»“æ„ä½“ä¸­çš„äº”ä¸ªvecç»“æ„ä½“èµ‹å€¼
 		}
 	} 
 
 
-	if(needed.empty())                             //Èç¹ûneededÎª¿Õ¼´ÉÏÃægrid½á¹¹ÌåÖĞÈıÎ¬doubleÊı×ém_dataµÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0
-		return;                                    //º¯Êı·µ»Ø¿ÕÖµ 
-												   //·ñÔòneeded²»Îª¿Õ
-	flv affinities(needed.size());                 //doubleÏòÁ¿£¬ºÍneededÏòÁ¿ÔªËØÒ»Ñù¶à
+	if(needed.empty())                             //å¦‚æœneededä¸ºç©ºå³ä¸Šé¢gridç»“æ„ä½“ä¸­ä¸‰ç»´doubleæ•°ç»„m_dataçš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0
+		return;                                    //å‡½æ•°è¿”å›ç©ºå€¼ 
+												   //å¦åˆ™neededä¸ä¸ºç©º
+	flv affinities(needed.size());                 //doubleå‘é‡ï¼Œå’Œneededå‘é‡å…ƒç´ ä¸€æ ·å¤š
 
-	sz nat = num_atom_types(atu);				   //atu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£¬ÎªELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18
+	sz nat = num_atom_types(atu);				   //atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼Œä¸ºELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18
 
-	grid& g = grids[needed.front()];               //needed.front()£º·µ»ØneededµÚÒ»¸öÔªËØµÄÒıÓÃ
+	grid& g = grids[needed.front()];               //needed.front()ï¼šè¿”å›neededç¬¬ä¸€ä¸ªå…ƒç´ çš„å¼•ç”¨
 
-	const fl cutoff_sqr = p.cutoff_sqr();          //µÈÓÚprecalculate½á¹¹ÌåÖĞµÄm_cutoff_sqr
+	const fl cutoff_sqr = p.cutoff_sqr();          //ç­‰äºprecalculateç»“æ„ä½“ä¸­çš„m_cutoff_sqr
 
-	grid_dims gd_reduced = szv_grid_dims(gd);      //gd£ºÓĞ3¸öÔªËØµÄgrid_dim½á¹¹ÌåÊı×é£¬¸ø£¨grid_dims£©tmp[i]µÄ²ÎÊıbegin   end    n¸³Öµ  È»ºó·µ»Øtmp
-	szv_grid ig(m, gd_reduced, cutoff_sqr);        //¸øindex[i]¸³Öµ    ·µ»Ø   m_data[index[0] + m_i*(index[1] + m_j*index[2])]      m_dataÊÇarray3d<szv>ÀàĞÍ       
+	grid_dims gd_reduced = szv_grid_dims(gd);      //gdï¼šæœ‰3ä¸ªå…ƒç´ çš„grid_dimç»“æ„ä½“æ•°ç»„ï¼Œç»™ï¼ˆgrid_dimsï¼‰tmp[i]çš„å‚æ•°begin   end    nèµ‹å€¼  ç„¶åè¿”å›tmp
+	szv_grid ig(m, gd_reduced, cutoff_sqr);        //ç»™index[i]èµ‹å€¼    è¿”å›   m_data[index[0] + m_i*(index[1] + m_j*index[2])]      m_dataæ˜¯array3d<szv>ç±»å‹       
 
-	VINA_FOR(x, g.m_data.dim0()) {                  //for(x=0;x<m_i;x++)£»m_i£ºarray3dÀàÖĞµÄ³ÉÔ±±äÁ¿
-		VINA_FOR(y, g.m_data.dim1()) {              //for(y=0;y<m_j;y++)£»m_j£ºarray3dÀàÖĞµÄ³ÉÔ±±äÁ¿
-			VINA_FOR(z, g.m_data.dim2()) {          //for(z=0;z<m_k;z++)£»m_k£ºarray3dÀàÖĞµÄ³ÉÔ±±äÁ¿
-				std::fill(affinities.begin(), affinities.end(), 0); //¶ÔaffinitiesÏòÁ¿Ìî³ä0
-				vec probe_coords;                  //¶¨ÒåÒ»¸övec½á¹¹Ìå
+	VINA_FOR(x, g.m_data.dim0()) {                  //for(x=0;x<m_i;x++)ï¼›m_iï¼šarray3dç±»ä¸­çš„æˆå‘˜å˜é‡
+		VINA_FOR(y, g.m_data.dim1()) {              //for(y=0;y<m_j;y++)ï¼›m_jï¼šarray3dç±»ä¸­çš„æˆå‘˜å˜é‡
+			VINA_FOR(z, g.m_data.dim2()) {          //for(z=0;z<m_k;z++)ï¼›m_kï¼šarray3dç±»ä¸­çš„æˆå‘˜å˜é‡
+				std::fill(affinities.begin(), affinities.end(), 0); //å¯¹affinitieså‘é‡å¡«å……0
+				vec probe_coords;                  //å®šä¹‰ä¸€ä¸ªvecç»“æ„ä½“
 				probe_coords = g.index_to_argument(x, y, z);
-				/*m_init¡¢m_factor_inv£ºgrid½á¹¹ÌåÖĞµÄvec½á¹¹Ìå£¬Æä¶¼ÓĞÈı¸ö±äÁ¿
-				vec£¨m_init[0] + m_factor_inv[0] * x,
+				/*m_initã€m_factor_invï¼šgridç»“æ„ä½“ä¸­çš„vecç»“æ„ä½“ï¼Œå…¶éƒ½æœ‰ä¸‰ä¸ªå˜é‡
+				vecï¼ˆm_init[0] + m_factor_inv[0] * x,
 					 m_init[1] + m_factor_inv[1] * y,
-					 m_init[2] + m_factor_inv[2] * z £©
+					 m_init[2] + m_factor_inv[2] * z ï¼‰
 				*/
-				const szv& possibilities = ig.possibilities(probe_coords);	//¸øindex[i]¸³Öµ    ·µ»Ø   m_data[index[0] + m_i*(index[1] + m_j*index[2])]£¬index¡¢ m_dataÊÇarray3d<szv>ÀàĞÍ
+				const szv& possibilities = ig.possibilities(probe_coords);	//ç»™index[i]èµ‹å€¼    è¿”å›   m_data[index[0] + m_i*(index[1] + m_j*index[2])]ï¼Œindexã€ m_dataæ˜¯array3d<szv>ç±»å‹
 				VINA_FOR_IN(possibilities_i, possibilities) {				//for(possibilities_i=0;possibilities_i<possibilities.size;possibilities_i++)
-					const sz i = possibilities[possibilities_i];			//½«possibilitiesÏòÁ¿ÔªËØÒÀ´Î¸³Öµ¸øi
-					const atom& a = m.grid_atoms[i];						//grid_atomsÏòÁ¿µÄatom½á¹¹ÌåÒÀ´ÎÒıÓÃÎªa
-					const sz t1 = a.get(atu);								//atu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£¬³õÊ¼»¯el=11; ad=20; xs=17; sy=18
+					const sz i = possibilities[possibilities_i];			//å°†possibilitieså‘é‡å…ƒç´ ä¾æ¬¡èµ‹å€¼ç»™i
+					const atom& a = m.grid_atoms[i];						//grid_atomså‘é‡çš„atomç»“æ„ä½“ä¾æ¬¡å¼•ç”¨ä¸ºa
+					const sz t1 = a.get(atu);								//atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼Œåˆå§‹åŒ–el=11; ad=20; xs=17; sy=18
 					
-					if(t1 >= nat) continue;									// Ìõ¼ş³ÉÁ¢Ö±½Ó½øĞĞÏÂÒ»´ÎÑ­»·£¬²»½øĞĞÏÂÃæ³ÌĞò
+					if(t1 >= nat) continue;									// æ¡ä»¶æˆç«‹ç›´æ¥è¿›è¡Œä¸‹ä¸€æ¬¡å¾ªç¯ï¼Œä¸è¿›è¡Œä¸‹é¢ç¨‹åº
 					const fl r2 = vec_distance_sqr(a.coords, probe_coords);
 					/*
 						demo:vec a.coords(4,4,4)
@@ -260,26 +260,26 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 
 					if(r2 <= cutoff_sqr) {                                 
 						VINA_FOR_IN(j, needed) {                           //for(j=0;j<needed.size;j++)
-							const sz t2 = needed[j];                       //½«neededÏòÁ¿ÔªËØÒÀ´Î¸³Öµ¸øt2
+							const sz t2 = needed[j];                       //å°†neededå‘é‡å…ƒç´ ä¾æ¬¡èµ‹å€¼ç»™t2
 							assert(t2 < nat);
 							const sz type_pair_index = triangular_matrix_index_permissive(num_atom_types(atu), t1, t2);
-							/*atu£ºELĞÍ·µ»Ø11;ADĞÍ·µ»Ø20;XSĞÍ·µ»Ø17;SYĞÍ·µ»Ø18
-							ÔÚt2 < num_atom_types(atu)£¬t1< num_atom_types(atu)Çé¿öÏÂ£¬
-		                    Èôt1 <= t2£¬·µ»Øt1 + t2*(t2+1)/2£»
-		                    ·ñÔò·µ»Øt2 + t1*(t1+1)/2	
+							/*atuï¼šELå‹è¿”å›11;ADå‹è¿”å›20;XSå‹è¿”å›17;SYå‹è¿”å›18
+							åœ¨t2 < num_atom_types(atu)ï¼Œt1< num_atom_types(atu)æƒ…å†µä¸‹ï¼Œ
+		                    è‹¥t1 <= t2ï¼Œè¿”å›t1 + t2*(t2+1)/2ï¼›
+		                    å¦åˆ™è¿”å›t2 + t1*(t1+1)/2	
 							*/
 							affinities[j] += p.eval_fast(type_pair_index, r2);
 						}
-					}           //if(r2 <= cutoff_sqr)½áÊø
-				}               //for(possibilities_i=0;possibilities_i<possibilities.size;possibilities_i++)½áÊø
+					}           //if(r2 <= cutoff_sqr)ç»“æŸ
+				}               //for(possibilities_i=0;possibilities_i<possibilities.size;possibilities_i++)ç»“æŸ
 				VINA_FOR_IN(j, needed) {						//for(j=0;j<needed.size;j++)
-					sz t = needed[j];							//½«neededÏòÁ¿ÔªËØÒÀ´Î¸³Öµ¸øt
+					sz t = needed[j];							//å°†neededå‘é‡å…ƒç´ ä¾æ¬¡èµ‹å€¼ç»™t
 					assert(t < nat);
 					grids[t].m_data(x, y, z) = affinities[j];   // m_data[x+ m_i*(y + m_j*z)]=affinities[j]
 				}
-			}               //for(z=0;z<m_k;z++)½áÊø
-		}					//for(y=0;y<m_j;y++)½áÊø
-	}						//for(x=0;x<m_i;x++)½áÊø
+			}               //for(z=0;z<m_k;z++)ç»“æŸ
+		}					//for(y=0;y<m_j;y++)ç»“æŸ
+	}						//for(x=0;x<m_i;x++)ç»“æŸ
 }
 
 bool cache::m_data_check(const szv_grid ig)const {
@@ -355,32 +355,32 @@ void cache::populate_cl(const model& m, const precalculate& p, const szv& atom_t
 /************************    Original Vina code    ************************/
 /**************************************************************************/
 
-	szv needed;                                     //unintÏòÁ¿
+	szv needed;                                     //unintå‘é‡
 	VINA_FOR_IN(i, atom_types_needed) {            //for(i=0;i<atom_types_needed.size;i++)
-		sz t = atom_types_needed[i];               //½«atom_types_neededÏòÁ¿ÖĞµÄÔªËØÒÀ´Î¸³Öµ¸øt
-		if (!grids[t].initialized()) {              //grid½á¹¹ÌåÖĞÈıÎ¬doubleÊı×ém_dataµÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0Ôò·µ»Ø1  ·ñÔò0
-			needed.push_back(t);                   // neededÏòÁ¿Ä©Î²Ìí¼Ót
-			grids[t].init(gd);                     //¸øgrid½á¹¹ÌåÖĞµÄÎå¸övec½á¹¹Ìå¸³Öµ
+		sz t = atom_types_needed[i];               //å°†atom_types_neededå‘é‡ä¸­çš„å…ƒç´ ä¾æ¬¡èµ‹å€¼ç»™t
+		if (!grids[t].initialized()) {              //gridç»“æ„ä½“ä¸­ä¸‰ç»´doubleæ•°ç»„m_dataçš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0åˆ™è¿”å›1  å¦åˆ™0
+			needed.push_back(t);                   // neededå‘é‡æœ«å°¾æ·»åŠ t
+			grids[t].init(gd);                     //ç»™gridç»“æ„ä½“ä¸­çš„äº”ä¸ªvecç»“æ„ä½“èµ‹å€¼
 		}
 	}
 
-	if (needed.empty())                             //Èç¹ûneededÎª¿Õ¼´ÉÏÃægrid½á¹¹ÌåÖĞÈıÎ¬doubleÊı×ém_dataµÄ²ÎÊısz m_i, m_j, m_kÍ¬Ê±>0
-		return;                                    //º¯Êı·µ»Ø¿ÕÖµ 
-												   //·ñÔòneeded²»Îª¿Õ
-	flv affinities(needed.size());                 //doubleÏòÁ¿£¬ºÍneededÏòÁ¿ÔªËØÒ»Ñù¶à
+	if (needed.empty())                             //å¦‚æœneededä¸ºç©ºå³ä¸Šé¢gridç»“æ„ä½“ä¸­ä¸‰ç»´doubleæ•°ç»„m_dataçš„å‚æ•°sz m_i, m_j, m_kåŒæ—¶>0
+		return;                                    //å‡½æ•°è¿”å›ç©ºå€¼ 
+												   //å¦åˆ™neededä¸ä¸ºç©º
+	flv affinities(needed.size());                 //doubleå‘é‡ï¼Œå’Œneededå‘é‡å…ƒç´ ä¸€æ ·å¤š
 
-	sz nat = num_atom_types(atu);				   //atu£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t£¬ÎªELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18
+	sz nat = num_atom_types(atu);				   //atuï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡tï¼Œä¸ºELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18
 
-	grid& g = grids[needed.front()];               //needed.front()£º·µ»ØneededµÚÒ»¸öÔªËØµÄÒıÓÃ
+	grid& g = grids[needed.front()];               //needed.front()ï¼šè¿”å›neededç¬¬ä¸€ä¸ªå…ƒç´ çš„å¼•ç”¨
 
-	const fl cutoff_sqr = p.cutoff_sqr();          //µÈÓÚprecalculate½á¹¹ÌåÖĞµÄm_cutoff_sqr
+	const fl cutoff_sqr = p.cutoff_sqr();          //ç­‰äºprecalculateç»“æ„ä½“ä¸­çš„m_cutoff_sqr
 
-	grid_dims gd_reduced = szv_grid_dims(gd);      //gd£ºÓĞ3¸öÔªËØµÄgrid_dim½á¹¹ÌåÊı×é£¬¸ø£¨grid_dims£©tmp[i]µÄ²ÎÊıbegin   end    n¸³Öµ  È»ºó·µ»Øtmp
-	szv_grid ig(m, gd_reduced, cutoff_sqr);        //¸øindex[i]¸³Öµ    ·µ»Ø   m_data[index[0] + m_i*(index[1] + m_j*index[2])]      m_dataÊÇarray3d<szv>ÀàĞÍ       
+	grid_dims gd_reduced = szv_grid_dims(gd);      //gdï¼šæœ‰3ä¸ªå…ƒç´ çš„grid_dimç»“æ„ä½“æ•°ç»„ï¼Œç»™ï¼ˆgrid_dimsï¼‰tmp[i]çš„å‚æ•°begin   end    nèµ‹å€¼  ç„¶åè¿”å›tmp
+	szv_grid ig(m, gd_reduced, cutoff_sqr);        //ç»™index[i]èµ‹å€¼    è¿”å›   m_data[index[0] + m_i*(index[1] + m_j*index[2])]      m_dataæ˜¯array3d<szv>ç±»å‹       
 
 	//Check if ig.m_init and ig.m_range equal to g.m_init and g.m_range, 
 	//if so, m_init and m_range can be used in kernel, otherwise, ig.m_init and ig.m_range need to be allocated 
-	///ÕâÀï½«½á¹¹Ìåszv_gridÖĞµÄ³ÉÔ±¸ÄÎªÁËpublic£¬¿ÉÒÔÖ±½Ó·ÃÎÊ
+	///è¿™é‡Œå°†ç»“æ„ä½“szv_gridä¸­çš„æˆå‘˜æ”¹ä¸ºäº†publicï¼Œå¯ä»¥ç›´æ¥è®¿é—®
 	for (int i = 0; i < 3; i++) {
 		if (ig.m_init[i] != g.m_init[i]) {
 			printf("m_init not equal!");
@@ -478,7 +478,7 @@ void cache::populate_cl(const model& m, const precalculate& p, const szv& atom_t
 	// Preparing affinities data
 	cl_mem results;
 	CreateDeviceBuffer(&results, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, (GRID_MI * GRID_MJ * GRID_MK) * sizeof(affinities_cl), context);
-	// Ìî³ä0
+	// å¡«å……0
 	float fill_data = 0;
 	//clEnqueueFillBuffer(queue, results, false, 0, (GRID_MI* GRID_MJ* GRID_MK) * sizeof(affinities_cl), &fill_data, 0, NULL, NULL); checkErr(err);
 	err = clEnqueueFillBuffer(queue, results, &fill_data, sizeof(float), 0, (GRID_MI* GRID_MJ* GRID_MK) * sizeof(affinities_cl), 0, NULL, NULL); checkErr(err);

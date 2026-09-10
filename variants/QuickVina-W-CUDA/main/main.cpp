@@ -423,10 +423,12 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 		std::string name_tmp = out_names[ligand_count];
 		// int int1 = name_tmp.find("\\"); int int2 = name_tmp.find(".pdbqt");
 		std::string name_tmp2 = name_tmp.substr(name_tmp.find("\\") + 1, name_tmp.length() - name_tmp.find("\\") - 11);
+		std::cout << "\nDiagnostic: ligand " << name_tmp2 << " out_cont size before refine: " << out_cont.size() << std::endl;
 		std::cout << "Refining ligand " << name_tmp2 << " results...";
 #ifndef NO_REFINEMENT
 		VINA_FOR_IN(i, out_cont)
 		refine_structure(m, prec, nc[ligand_count], out_cont[i], authentic_v, par.mc.ssd_par.bfgs_steps[ligand_count]);
+		std::cout << "\nDiagnostic: ligand " << name_tmp2 << " out_cont size after refine: " << out_cont.size() << std::endl;
 #endif
 		if (!out_cont.empty())
 		{
@@ -448,6 +450,7 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 
 		const fl out_min_rmsd = 1;
 		out_cont = remove_redundant(out_cont, out_min_rmsd);
+		std::cout << "Diagnostic: ligand " << name_tmp2 << " out_cont size after remove_redundant: " << out_cont.size() << std::endl;
 
 		done(verbosity, log);
 
@@ -758,10 +761,7 @@ int main(int argc, char *argv[])
 			std::cerr << "Missing thread, the recommend thread value is 8000";
 			return 1;
 		}
-		else if (thread < 1000)
-		{
-			throw usage_error("thread must be at least 1000");
-		}
+			// [PATCH] thread < 1000 restriction removed for benchmarking
 
 		if (vm.count("ligand") > 0 && vm.count("ligand_directory") == 1)
 		{

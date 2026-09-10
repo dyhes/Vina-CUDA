@@ -27,8 +27,8 @@
 #include "model.h"
 
 /*
-	¶¨ÒåÒ»¸ö×Ö·û´®name£¬
-	virtual ~term()Ğéº¯Êı£»
+	å®šä¹‰ä¸€ä¸ªå­—ç¬¦ä¸²nameï¼Œ
+	virtual ~term()è™šå‡½æ•°ï¼›
 	*/
 
 struct term {
@@ -37,13 +37,13 @@ struct term {
 };
 
 
-/*	distance_additive¼Ì³Ğ½á¹¹Ìåterm£¬¿ÉÒÔ·ÃÎÊ¸³ÖµtermÖĞµÄpublic³ÉÔ±£»
-	¶¨ÒåÒ»¸ödouble cutoff£¬
-	ÉùÃ÷ÁËÒ»¸ödoubleĞéº¯Êıeval,ÊäÈëÎªÁ½¸öatom_base½á¹¹Ìåa¡¢bºÍÒ»¸ödouble r;
-	virtual ~distance_additive()Ğéº¯Êı
+/*	distance_additiveç»§æ‰¿ç»“æ„ä½“termï¼Œå¯ä»¥è®¿é—®èµ‹å€¼termä¸­çš„publicæˆå‘˜ï¼›
+	å®šä¹‰ä¸€ä¸ªdouble cutoffï¼Œ
+	å£°æ˜äº†ä¸€ä¸ªdoubleè™šå‡½æ•°eval,è¾“å…¥ä¸ºä¸¤ä¸ªatom_baseç»“æ„ä½“aã€bå’Œä¸€ä¸ªdouble r;
+	virtual ~distance_additive()è™šå‡½æ•°
 */
 
-struct distance_additive : public term {                                        //¼Ì³Ğterm½á¹¹ÌåµÄpublic
+struct distance_additive : public term {                                        //ç»§æ‰¿termç»“æ„ä½“çš„public
 	fl cutoff;
 	distance_additive(fl cutoff_) : cutoff(cutoff_) {}
 	virtual fl eval(const atom_base& a, const atom_base& b, fl r) const = 0;
@@ -51,21 +51,21 @@ struct distance_additive : public term {                                        
 };
 
 
-/*	usable¼Ì³Ğ½á¹¹Ìådistance_additive£¬¿ÉÒÔ·ÃÎÊºÍ¸³Öµdistance_additiveµÄpublic³ÉÔ±£»
-	ÕâÀï¸Ã½á¹¹Ìåµ÷ÓÃ³õÊ¼»¯£¬½«double cuoff¸³Öµ¸ødistance_additive½á¹¹ÌåÖĞµÄdouble cuoff£¬
-	²¢¶Ô¶¨ÒåÎªatom_typeÀàÖĞÃ¶¾ÙÀàĞÍtµÄatom_typing_used¸³ÖµÎªtÃ¶¾ÙÔªËØÖĞµÄXS=2£»
-	¶¨ÒåÁËevalº¯Êı£¬ÊäÈëÎªÒ»¸öatom_base½á¹¹Ìåa¡¢atom_base½á¹¹ÌåÒÔ¼°double r£¬½á¹¹Ìåatom_base¼Ì³ĞÁË½á¹¹Ìåatom_type£¬
-	ËùÒÔa.get£¨£©µ÷ÓÃÁËatom_typeµÄ³ÉÔ±£¬¿ÉÒÔµÃÖªa.get(XS)=b.get(XS)=XS_TYPE_SIZE£¬double r=r£»
-	¶¨ÒåÁËÒ»¸ödoubleĞéº¯Êıeval¿ÉÒÔÖØĞ´,ÊäÈëÎªÁ½¸öunint t1¡¢t2ºÍÒ»¸ödouble r£»
-	virtual ~usable()Ğéº¯Êı
+/*	usableç»§æ‰¿ç»“æ„ä½“distance_additiveï¼Œå¯ä»¥è®¿é—®å’Œèµ‹å€¼distance_additiveçš„publicæˆå‘˜ï¼›
+	è¿™é‡Œè¯¥ç»“æ„ä½“è°ƒç”¨åˆå§‹åŒ–ï¼Œå°†double cuoffèµ‹å€¼ç»™distance_additiveç»“æ„ä½“ä¸­çš„double cuoffï¼Œ
+	å¹¶å¯¹å®šä¹‰ä¸ºatom_typeç±»ä¸­æšä¸¾ç±»å‹tçš„atom_typing_usedèµ‹å€¼ä¸ºtæšä¸¾å…ƒç´ ä¸­çš„XS=2ï¼›
+	å®šä¹‰äº†evalå‡½æ•°ï¼Œè¾“å…¥ä¸ºä¸€ä¸ªatom_baseç»“æ„ä½“aã€atom_baseç»“æ„ä½“ä»¥åŠdouble rï¼Œç»“æ„ä½“atom_baseç»§æ‰¿äº†ç»“æ„ä½“atom_typeï¼Œ
+	æ‰€ä»¥a.getï¼ˆï¼‰è°ƒç”¨äº†atom_typeçš„æˆå‘˜ï¼Œå¯ä»¥å¾—çŸ¥a.get(XS)=b.get(XS)=XS_TYPE_SIZEï¼Œdouble r=rï¼›
+	å®šä¹‰äº†ä¸€ä¸ªdoubleè™šå‡½æ•°evalå¯ä»¥é‡å†™,è¾“å…¥ä¸ºä¸¤ä¸ªunint t1ã€t2å’Œä¸€ä¸ªdouble rï¼›
+	virtual ~usable()è™šå‡½æ•°
 
 */
 struct usable : public distance_additive {
-	atom_type::t atom_typing_used;             //·²ÊÇ±»ËµÃ÷Îªatom_typeÀàÖĞÃ¶¾ÙÀàĞÍtµÄÀàĞÍ±äÁ¿µÄÈ¡ÖµÖ»ÄÜÊÇÃ¶¾ÙÔªËØÖĞµÄÄ³Ò»¸öÖµ¡£
+	atom_type::t atom_typing_used;             //å‡¡æ˜¯è¢«è¯´æ˜ä¸ºatom_typeç±»ä¸­æšä¸¾ç±»å‹tçš„ç±»å‹å˜é‡çš„å–å€¼åªèƒ½æ˜¯æšä¸¾å…ƒç´ ä¸­çš„æŸä¸€ä¸ªå€¼ã€‚
 	usable(fl cutoff_) : distance_additive(cutoff_), atom_typing_used(atom_type::XS) {}     //XS=2
 	fl eval(const atom_base& a, const atom_base& b, fl r) const { // should not be overriden
-		return eval(a.get(atom_typing_used), b.get(atom_typing_used), r);       //get£¨£©º¯ÊıÊÇ½á¹¹Ìåatom_base³ÉÔ±£¬
-																				//ÒòÎªatom_typing_use=XS£¬ËùÒÔ·µ»ØXS_TYPE_SIZE
+		return eval(a.get(atom_typing_used), b.get(atom_typing_used), r);       //getï¼ˆï¼‰å‡½æ•°æ˜¯ç»“æ„ä½“atom_baseæˆå‘˜ï¼Œ
+																				//å› ä¸ºatom_typing_use=XSï¼Œæ‰€ä»¥è¿”å›XS_TYPE_SIZE
 	}
 	virtual fl eval(sz t1, sz t2, fl r) const { return 0; } 
 	virtual ~usable() {}
@@ -73,24 +73,24 @@ struct usable : public distance_additive {
 
 
 
-/* additive¼Ì³Ğ½á¹¹Ìåterm
-¶¨ÒåÒ»¸ödouble cutoff£¬È»ºó±»¸³ÖµÎª¼ÆËã»úÄÜÊ¶±ğµÄdoubleÊı¿É±íÊ¾µÄ×î´óÖµ00DB17EE£»
-¶¨ÒåÁËÒ»¸ödoubleĞéº¯Êıeval,ÊäÈëÎªmodel½á¹¹ÌåmºÍÁ½¸öatom_base½á¹¹Ìåi¡¢j;
-virtual ~additive() Ğéº¯Êı
+/* additiveç»§æ‰¿ç»“æ„ä½“term
+å®šä¹‰ä¸€ä¸ªdouble cutoffï¼Œç„¶åè¢«èµ‹å€¼ä¸ºè®¡ç®—æœºèƒ½è¯†åˆ«çš„doubleæ•°å¯è¡¨ç¤ºçš„æœ€å¤§å€¼00DB17EEï¼›
+å®šä¹‰äº†ä¸€ä¸ªdoubleè™šå‡½æ•°eval,è¾“å…¥ä¸ºmodelç»“æ„ä½“må’Œä¸¤ä¸ªatom_baseç»“æ„ä½“iã€j;
+virtual ~additive() è™šå‡½æ•°
 */
 
 struct additive : public term {
 	fl cutoff;
-	additive() : cutoff(max_fl) {}                                    //¼ÆËã»úÄÜÊ¶±ğµÄdoubleÊı¿É±íÊ¾µÄ×î´óÖµ£¬ÎÒµÄ¼ÆËã»úÄÜÊ¶±ğµÄ×î´ódoubleÊıÊÇ00DB17EE
+	additive() : cutoff(max_fl) {}                                    //è®¡ç®—æœºèƒ½è¯†åˆ«çš„doubleæ•°å¯è¡¨ç¤ºçš„æœ€å¤§å€¼ï¼Œæˆ‘çš„è®¡ç®—æœºèƒ½è¯†åˆ«çš„æœ€å¤§doubleæ•°æ˜¯00DB17EE
 	virtual fl eval(const model& m, const atom_index& i, const atom_index& j) const = 0;
 	virtual ~additive() {}
 };
 
 
 
-/* intermolecular¼Ì³Ğ½á¹¹Ìåterm
+/* intermolecularç»§æ‰¿ç»“æ„ä½“term
 
-ÉùÃ÷ÁËÒ»¸ödoubleĞéº¯Êıeval,ÊäÈëÎªmodel½á¹¹Ìåm£»
+å£°æ˜äº†ä¸€ä¸ªdoubleè™šå‡½æ•°eval,è¾“å…¥ä¸ºmodelç»“æ„ä½“mï¼›
 
 */
 
@@ -103,14 +103,14 @@ struct intermolecular : public term {
 
 
 /*
-		¶¨ÒåÁËnum_tors¡¢num_rotors¡¢num_heavy_atoms¡¢num_hydrophobic_atoms¡¢
-		ligand_max_num_h_bonds¡¢num_ligands¡¢ligand_lengths_sumµÄdoubleÀàĞÍÊı¾İ£»
-		ÉùÃ÷ÁËº¯Êıoperator flv()ºÍº¯Êı get_names()
-		input¡ª¡ªm£ºmodel½á¹¹Ìå£»
-		ÉùÃ÷ÁËnum_bonded_heavy_atoms£¨£©ºÍatom_rotors()º¯Êı£¬²»¹ıÃ»ÓĞ¶¨Òå£»
-		È»ºó¾ÍÊÇÇÖÈëÊ½ĞòÁĞ»¯£¬¿ÉÒÔ½«num_tors¡¢num_rotors¡¢num_heavy_atoms¡¢num_hydrophobic_atoms¡¢
-		ligand_max_num_h_bonds¡¢num_ligands¡¢ligand_lengths_sumÕâĞ©½á¹¹Ìå³ÉÔ±´æ´¢ÔÚÎÄ¼şÖĞ»òÕßÍ¨¹ıÍøÂç·¢³öÈ¥£¬
-		µ÷ÓÃÊ±»á¾ßÌå¸ø³ö´«ÊäÀàĞÍ¡£
+		å®šä¹‰äº†num_torsã€num_rotorsã€num_heavy_atomsã€num_hydrophobic_atomsã€
+		ligand_max_num_h_bondsã€num_ligandsã€ligand_lengths_sumçš„doubleç±»å‹æ•°æ®ï¼›
+		å£°æ˜äº†å‡½æ•°operator flv()å’Œå‡½æ•° get_names()
+		inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼›
+		å£°æ˜äº†num_bonded_heavy_atomsï¼ˆï¼‰å’Œatom_rotors()å‡½æ•°ï¼Œä¸è¿‡æ²¡æœ‰å®šä¹‰ï¼›
+		ç„¶åå°±æ˜¯ä¾µå…¥å¼åºåˆ—åŒ–ï¼Œå¯ä»¥å°†num_torsã€num_rotorsã€num_heavy_atomsã€num_hydrophobic_atomsã€
+		ligand_max_num_h_bondsã€num_ligandsã€ligand_lengths_sumè¿™äº›ç»“æ„ä½“æˆå‘˜å­˜å‚¨åœ¨æ–‡ä»¶ä¸­æˆ–è€…é€šè¿‡ç½‘ç»œå‘å‡ºå»ï¼Œ
+		è°ƒç”¨æ—¶ä¼šå…·ä½“ç»™å‡ºä¼ è¾“ç±»å‹ã€‚
 		https://blog.csdn.net/zj510/article/details/8105408
 */
 struct conf_independent_inputs {
@@ -121,9 +121,9 @@ struct conf_independent_inputs {
 	fl ligand_max_num_h_bonds;
 	fl num_ligands;
 	fl ligand_lengths_sum;
-	operator flv() const;                        //ÉùÃ÷º¯Êıoperator flv()
+	operator flv() const;                        //å£°æ˜å‡½æ•°operator flv()
 	conf_independent_inputs(const model& m);
-	std::vector<std::string> get_names() const;  //ÉùÃ÷º¯Êı get_names()
+	std::vector<std::string> get_names() const;  //å£°æ˜å‡½æ•° get_names()
 	conf_independent_inputs();
 private:
 	unsigned num_bonded_heavy_atoms(const model& m, const atom_index& i) const; // FIXME? - could be static, but I don't feel like declaring function friends
@@ -144,10 +144,10 @@ private:
 
 
 /*
-¶¨ÒåÁ½¸öĞéº¯Êıeval()ºÍsize()£¨´¿Ğéº¯Êı£© 
-±äÁ¿in:conf_independent_inputs½á¹¹Ìå£»x£ºdouble£»it£ºµü´úÆ÷£»
-flv::const_iterator µü´úÆ÷¶¨Òå£¬µü´úÆ÷ÊÇÒ»ÖÖ¼ì²évectorÄÚÔªËØ²¢±éÀúÔªËØµÄÊı¾İÀàĞÍ£¬
-const_iteratorÖ»ÄÜ¶ÁÈ¡vectorÖĞµÄÔªËØ£¬²»ÄÜÓÃÓÚ¸Ä±äÆäÖµ¡£
+å®šä¹‰ä¸¤ä¸ªè™šå‡½æ•°eval()å’Œsize()ï¼ˆçº¯è™šå‡½æ•°ï¼‰ 
+å˜é‡in:conf_independent_inputsç»“æ„ä½“ï¼›xï¼šdoubleï¼›itï¼šè¿­ä»£å™¨ï¼›
+flv::const_iterator è¿­ä»£å™¨å®šä¹‰ï¼Œè¿­ä»£å™¨æ˜¯ä¸€ç§æ£€æŸ¥vectorå†…å…ƒç´ å¹¶éå†å…ƒç´ çš„æ•°æ®ç±»å‹ï¼Œ
+const_iteratoråªèƒ½è¯»å–vectorä¸­çš„å…ƒç´ ï¼Œä¸èƒ½ç”¨äºæ”¹å˜å…¶å€¼ã€‚
 */
 struct conf_independent : public term {
 	virtual fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& it) const = 0;
@@ -157,96 +157,96 @@ struct conf_independent : public term {
 
 
 /*
-inter¡ª¡ªenabled£º²¼¶ûĞÍÏòÁ¿£¬fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß£»
-			 term_set¼Ì³Ğdistance_additive£¬
-			 term_set¼Ì³Ğusable£¬
-			 term_set¼Ì³Ğadditive£¬
-			 term_set¼Ì³Ğintermolecular£¬
-			 term_set¼Ì³Ğconf_independent¡£
+interâ€”â€”enabledï¼šå¸ƒå°”å‹å‘é‡ï¼Œfunï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜ï¼›
+			 term_setç»§æ‰¿distance_additiveï¼Œ
+			 term_setç»§æ‰¿usableï¼Œ
+			 term_setç»§æ‰¿additiveï¼Œ
+			 term_setç»§æ‰¿intermolecularï¼Œ
+			 term_setç»§æ‰¿conf_independentã€‚
 */
 
 template<typename T>
 struct term_set {
 	std::vector<bool> enabled;
-	boost::ptr_vector<T> fun; // FIXME? const T?    //ÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿fun,Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß
+	boost::ptr_vector<T> fun; // FIXME? const T?    //ä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡fun,è¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜
 
 	/*
-		input¡ª¡ªe:unsigned£¬f¡ª¡ªÈÎÒâÀàĞÍÖ¸Õë£¬enabled£º²¼¶ûĞÍÏòÁ¿£¬fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß£»
-		¸Ãº¯Êı×÷ÓÃÊÇÔÚenabledÏòÁ¿×îÄ©Î²²åÈë0£¨eĞ¡ÓÚµÈÓÚ0£©¡¢1£¨e´óÓÚ0£©£¬
-		²¢ÔÚfun×îÄ©Î²Ìí¼ÓÊäÈëf¡£
+		inputâ€”â€”e:unsignedï¼Œfâ€”â€”ä»»æ„ç±»å‹æŒ‡é’ˆï¼Œenabledï¼šå¸ƒå°”å‹å‘é‡ï¼Œfunï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜ï¼›
+		è¯¥å‡½æ•°ä½œç”¨æ˜¯åœ¨enabledå‘é‡æœ€æœ«å°¾æ’å…¥0ï¼ˆeå°äºç­‰äº0ï¼‰ã€1ï¼ˆeå¤§äº0ï¼‰ï¼Œ
+		å¹¶åœ¨funæœ€æœ«å°¾æ·»åŠ è¾“å…¥fã€‚
 	*/
 	void add(unsigned e, T* f) { // FIXME? const T* ?
-		enabled.push_back(e > 0);      //ÏòÁ¿×îÄ©Î²²åÈëboolÀàĞÍÊı¾İ
+		enabled.push_back(e > 0);      //å‘é‡æœ€æœ«å°¾æ’å…¥boolç±»å‹æ•°æ®
 		fun.push_back(f);
 	}
 
 	/*
-	inter¡ª¡ªenabled£º²¼¶ûĞÍÏòÁ¿£»
-	output¡ª¡ªtmp:unsigned int ³õÊ¼ÖµÎª0£»
-	¸Ãº¯Êı·µ»ØenabledÖĞ´óÓÚµÈÓÚ1µÄÖµµÄ¸öÊı¡£
+	interâ€”â€”enabledï¼šå¸ƒå°”å‹å‘é‡ï¼›
+	outputâ€”â€”tmp:unsigned int åˆå§‹å€¼ä¸º0ï¼›
+	è¯¥å‡½æ•°è¿”å›enabledä¸­å¤§äºç­‰äº1çš„å€¼çš„ä¸ªæ•°ã€‚
 	*/
 	sz num_enabled() const {
 		sz tmp = 0;
 		VINA_FOR_IN(i, enabled)  // for (uint VINA_MACROS_TMP = enabled.size, i = 0; i<VINA_MACROS_TMP; i++)
-			if(enabled[i])      //¼ÆËãenabledÏòÁ¿ÖĞÎª1µÄÖµ
+			if(enabled[i])      //è®¡ç®—enabledå‘é‡ä¸­ä¸º1çš„å€¼
 				++tmp;
 		return tmp;
 	}
 
 /*
-input¡ª¡ªenabled_only£ºbool£»out¡ª¡ª×Ö·û´®ÏòÁ¿£»
-enabled£º²¼¶ûĞÍÏòÁ¿£¬fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß£»
-ÏÈÈ·¶¨enabledÏòÁ¿µÄÔªËØ¸öÊıÊÇ·ñºÍfunÏòÁ¿ÔªËØÏàÍ¬£¬ÊÇµÄ»°¼ÌĞø·ñÔòÖÕÖ¹£»
-×îºóÈç¹ûenabled_onlyÎª0»òÕßenabled[i]´óÓÚµÈÓÚ1ÔòÔÚout×Ö·û´®ÏòÁ¿Ä©Î²Ìí¼Ófun[i].name£¨term½á¹¹ÌåÖĞname£©
+inputâ€”â€”enabled_onlyï¼šboolï¼›outâ€”â€”å­—ç¬¦ä¸²å‘é‡ï¼›
+enabledï¼šå¸ƒå°”å‹å‘é‡ï¼Œfunï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜ï¼›
+å…ˆç¡®å®šenabledå‘é‡çš„å…ƒç´ ä¸ªæ•°æ˜¯å¦å’Œfunå‘é‡å…ƒç´ ç›¸åŒï¼Œæ˜¯çš„è¯ç»§ç»­å¦åˆ™ç»ˆæ­¢ï¼›
+æœ€åå¦‚æœenabled_onlyä¸º0æˆ–è€…enabled[i]å¤§äºç­‰äº1åˆ™åœ¨outå­—ç¬¦ä¸²å‘é‡æœ«å°¾æ·»åŠ fun[i].nameï¼ˆtermç»“æ„ä½“ä¸­nameï¼‰
 */
 	void get_names(bool enabled_only, std::vector<std::string>& out) const { // appends to "out"
 		VINA_CHECK(enabled.size() == fun.size());       //assert
 		VINA_FOR_IN(i, fun)								// for (uint VINA_MACROS_TMP = fun.size, i = 0; i<VINA_MACROS_TMP; i++)
 			if(!enabled_only || enabled[i])             
-				out.push_back(fun[i].name);              //term½á¹¹ÌåÖĞname
+				out.push_back(fun[i].name);              //termç»“æ„ä½“ä¸­name
 	}
 
 
 
 	/*
-	input¡ª¡ªin:const_iteratorµü´úÆ÷£¬out£ºdoubleÏòÁ¿
-	inter¡ª¡ªenabled£º²¼¶ûĞÍÏòÁ¿£¬fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß£»
-	ÏÈÈ·¶¨enabledÏòÁ¿µÄÔªËØ¸öÊıÊÇ·ñºÍfunÏòÁ¿ÔªËØÏàÍ¬£¬ÊÇµÄ»°¼ÌĞø·ñÔòÖÕÖ¹£»
-	×îºóµ±enabledÖĞµÄÖµ´óÓÚµÈÓÚ1Ê±½«µü´úÆ÷ÀïµÚiÔªËØÌí¼Óµ½outÏòÁ¿×îÄ©Î²£»
-	in++Ñ­»·enabled.size´Î£¬²»ÔÚifÓï¾äÖĞ
+	inputâ€”â€”in:const_iteratorè¿­ä»£å™¨ï¼Œoutï¼šdoubleå‘é‡
+	interâ€”â€”enabledï¼šå¸ƒå°”å‹å‘é‡ï¼Œfunï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜ï¼›
+	å…ˆç¡®å®šenabledå‘é‡çš„å…ƒç´ ä¸ªæ•°æ˜¯å¦å’Œfunå‘é‡å…ƒç´ ç›¸åŒï¼Œæ˜¯çš„è¯ç»§ç»­å¦åˆ™ç»ˆæ­¢ï¼›
+	æœ€åå½“enabledä¸­çš„å€¼å¤§äºç­‰äº1æ—¶å°†è¿­ä»£å™¨é‡Œç¬¬iå…ƒç´ æ·»åŠ åˆ°outå‘é‡æœ€æœ«å°¾ï¼›
+	in++å¾ªç¯enabled.sizeæ¬¡ï¼Œä¸åœ¨ifè¯­å¥ä¸­
 	*/
 	void filter(flv::const_iterator& in, flv& out) const {
 		VINA_CHECK(enabled.size() == fun.size());   // for (uint VINA_MACROS_TMP = enabled.size, i = 0; i<VINA_MACROS_TMP; i++)
 		VINA_FOR_IN(i, enabled) {
 			if(enabled[i])
-				out.push_back(*in);                 //½«µü´úÆ÷ÀïµÚiÔªËØÌí¼Óµ½outÏòÁ¿×îÄ©Î²
+				out.push_back(*in);                 //å°†è¿­ä»£å™¨é‡Œç¬¬iå…ƒç´ æ·»åŠ åˆ°outå‘é‡æœ€æœ«å°¾
 			++in;
 		}
 	}
 
 
 	/*
-	inter¡ª¡ªtmp£ºdouble
-	enabled£º²¼¶ûĞÍÏòÁ¿£¬fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß£»
-	Í¨¹ıÒ»¸öÑ­»·Ñ°ÕÒfun[i].cutoffÖĞµÄ×î´óÖµ²¢·µ»Ø£¨additive½á¹¹ÌåÖĞcutoff£©
+	interâ€”â€”tmpï¼šdouble
+	enabledï¼šå¸ƒå°”å‹å‘é‡ï¼Œfunï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜ï¼›
+	é€šè¿‡ä¸€ä¸ªå¾ªç¯å¯»æ‰¾fun[i].cutoffä¸­çš„æœ€å¤§å€¼å¹¶è¿”å›ï¼ˆadditiveç»“æ„ä½“ä¸­cutoffï¼‰
 	*/
 	fl max_cutoff() const {
 		fl tmp = 0; 
 		VINA_FOR_IN(i, fun)                          // for (uint VINA_MACROS_TMP = fun.size, i = 0; i<VINA_MACROS_TMP; i++)
-			tmp = (std::max)(tmp, fun[i].cutoff);   //additive½á¹¹ÌåÖĞcutoff
+			tmp = (std::max)(tmp, fun[i].cutoff);   //additiveç»“æ„ä½“ä¸­cutoff
 		return tmp;
 	}
 
 	/*
-	    fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß
-		¸Ãº¯Êı·µ»ØfunÏòÁ¿ÔªËØ¸öÊı
+	    funï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜
+		è¯¥å‡½æ•°è¿”å›funå‘é‡å…ƒç´ ä¸ªæ•°
 	*/
 	sz size() const { return fun.size(); }
 
 	/*
-		input¡ª¡ªunint i£»
-		fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß
-		·µ»Øfun[i]µÄÖµ£»
+		inputâ€”â€”unint iï¼›
+		funï¼šä»»æ„ç±»å‹çš„æŒ‡é’ˆå‘é‡ï¼Œè¿™ä¸ªå’Œvectorç±»ä¼¼ä¸è¿‡æ•ˆç‡æ›´é«˜
+		è¿”å›fun[i]çš„å€¼ï¼›
 	
 	*/
 	const T& operator[](sz i) const { return fun[i]; }
@@ -256,22 +256,22 @@ enabled£º²¼¶ûĞÍÏòÁ¿£¬fun£ºÈÎÒâÀàĞÍµÄÖ¸ÕëÏòÁ¿£¬Õâ¸öºÍvectorÀàËÆ²»¹ıĞ§ÂÊ¸ü¸ß£»
 
 
 /*
-	¶¨ÒåÁËdoubleÀàĞÍµÄÏòÁ¿e¡¢i£»
-	¶¨Òåsize()º¯Êı·µ»ØeÏòÁ¿ºÍiÏòÁ¿µÄÔªËØ×Ü¸öÊı£»
-	¶¨Òånum_weights£¨£©º¯Êı£¬·µ»ØeºÍiÏòÁ¿ÖĞ×î´óµÄÔªËØ¸öÊı£»
-	ÉùÃ÷ÁËeval£¨£©º¯Êı£¬·µ»ØÀàĞÍÎªdouble£»
-	È»ºó¾ÍÊÇÇÖÈëÊ½ĞòÁĞ»¯£¬¿ÉÒÔ½«e¡¢iÕâĞ©½á¹¹Ìå³ÉÔ±´æ´¢ÔÚÎÄ¼şÖĞ»òÕßÍ¨¹ıÍøÂç·¢³öÈ¥£¬
-	µ÷ÓÃÊ±»á¾ßÌå¸ø³ö´«ÊäÀàĞÍ¡£
+	å®šä¹‰äº†doubleç±»å‹çš„å‘é‡eã€iï¼›
+	å®šä¹‰size()å‡½æ•°è¿”å›eå‘é‡å’Œiå‘é‡çš„å…ƒç´ æ€»ä¸ªæ•°ï¼›
+	å®šä¹‰num_weightsï¼ˆï¼‰å‡½æ•°ï¼Œè¿”å›eå’Œiå‘é‡ä¸­æœ€å¤§çš„å…ƒç´ ä¸ªæ•°ï¼›
+	å£°æ˜äº†evalï¼ˆï¼‰å‡½æ•°ï¼Œè¿”å›ç±»å‹ä¸ºdoubleï¼›
+	ç„¶åå°±æ˜¯ä¾µå…¥å¼åºåˆ—åŒ–ï¼Œå¯ä»¥å°†eã€iè¿™äº›ç»“æ„ä½“æˆå‘˜å­˜å‚¨åœ¨æ–‡ä»¶ä¸­æˆ–è€…é€šè¿‡ç½‘ç»œå‘å‡ºå»ï¼Œ
+	è°ƒç”¨æ—¶ä¼šå…·ä½“ç»™å‡ºä¼ è¾“ç±»å‹ã€‚
 	https://blog.csdn.net/zj510/article/details/8105408
 
 */
 struct factors {
 	flv e; // external
 	flv i; // internal
-	sz size() const { return e.size() + i.size(); }       //·µ»ØeÏòÁ¿ºÍiÏòÁ¿µÄÔªËØ×Ü¸öÊı
+	sz size() const { return e.size() + i.size(); }       //è¿”å›eå‘é‡å’Œiå‘é‡çš„å…ƒç´ æ€»ä¸ªæ•°
 	//sz num_weights() const { return (std::max)(e.size(), i.size()); } // FIXME? compiler bug? getting warnings here
 	sz num_weights() const { return (e.size() > i.size()) ? e.size() : i.size(); }
-	fl eval(const flv& weights, bool include_internal) const;      //ÉùÃ÷
+	fl eval(const flv& weights, bool include_internal) const;      //å£°æ˜
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -283,51 +283,51 @@ private:
 
 
 /*
-			 term_set¼Ì³Ğdistance_additive£¬È»ºó¹¹ÔìÒ»¸ödistance_additive_terms½á¹¹Ìå
-			 term_set¼Ì³Ğusable£¬È»ºó¹¹ÔìÒ»¸öusable_terms½á¹¹Ìå
-			 term_set¼Ì³Ğadditive£¬È»ºó¹¹ÔìÒ»¸öadditive_terms½á¹¹Ìå
-			 term_set¼Ì³Ğintermolecular£¬È»ºó¹¹ÔìÒ»¸öintermolecular_terms½á¹¹Ìå
-			 term_set¼Ì³Ğconf_independent£¬È»ºó¹¹ÔìÒ»¸öconf_independent_terms½á¹¹Ìå
+			 term_setç»§æ‰¿distance_additiveï¼Œç„¶åæ„é€ ä¸€ä¸ªdistance_additive_termsç»“æ„ä½“
+			 term_setç»§æ‰¿usableï¼Œç„¶åæ„é€ ä¸€ä¸ªusable_termsç»“æ„ä½“
+			 term_setç»§æ‰¿additiveï¼Œç„¶åæ„é€ ä¸€ä¸ªadditive_termsç»“æ„ä½“
+			 term_setç»§æ‰¿intermolecularï¼Œç„¶åæ„é€ ä¸€ä¸ªintermolecular_termsç»“æ„ä½“
+			 term_setç»§æ‰¿conf_independentï¼Œç„¶åæ„é€ ä¸€ä¸ªconf_independent_termsç»“æ„ä½“
 
 */
 
 struct terms {
-	term_set<distance_additive> distance_additive_terms;    //term_set¼Ì³Ğdistance_additive£¬È»ºó¹¹ÔìÒ»¸ödistance_additive_terms½á¹¹Ìå
-	term_set<usable>            usable_terms;				//term_set¼Ì³Ğusable£¬È»ºó¹¹ÔìÒ»¸öusable_terms½á¹¹Ìå
-	term_set<additive>          additive_terms;				//term_set¼Ì³Ğadditive£¬È»ºó¹¹ÔìÒ»¸öadditive_terms½á¹¹Ìå
-	term_set<intermolecular>    intermolecular_terms;       //term_set¼Ì³Ğintermolecular£¬È»ºó¹¹ÔìÒ»¸öintermolecular_terms½á¹¹Ìå
-	term_set<conf_independent>  conf_independent_terms;     //term_set¼Ì³Ğconf_independent£¬È»ºó¹¹ÔìÒ»¸öconf_independent_terms½á¹¹Ìå    
+	term_set<distance_additive> distance_additive_terms;    //term_setç»§æ‰¿distance_additiveï¼Œç„¶åæ„é€ ä¸€ä¸ªdistance_additive_termsç»“æ„ä½“
+	term_set<usable>            usable_terms;				//term_setç»§æ‰¿usableï¼Œç„¶åæ„é€ ä¸€ä¸ªusable_termsç»“æ„ä½“
+	term_set<additive>          additive_terms;				//term_setç»§æ‰¿additiveï¼Œç„¶åæ„é€ ä¸€ä¸ªadditive_termsç»“æ„ä½“
+	term_set<intermolecular>    intermolecular_terms;       //term_setç»§æ‰¿intermolecularï¼Œç„¶åæ„é€ ä¸€ä¸ªintermolecular_termsç»“æ„ä½“
+	term_set<conf_independent>  conf_independent_terms;     //term_setç»§æ‰¿conf_independentï¼Œç„¶åæ„é€ ä¸€ä¸ªconf_independent_termsç»“æ„ä½“    
 
 	// the class takes ownership of the pointer with 'add'
-	void add(unsigned e, distance_additive* p) { distance_additive_terms.add(e, p); }//	ÔÚfun×îÄ©Î²Ìí¼Óp£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
-	void add(unsigned e, usable* p)            {            usable_terms.add(e, p); }//	ÔÚfun×îÄ©Î²Ìí¼Óp£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
-	void add(unsigned e, additive* p)          {          additive_terms.add(e, p); }//	ÔÚfun×îÄ©Î²Ìí¼Óp£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
-	void add(unsigned e, intermolecular* p)    {    intermolecular_terms.add(e, p); }//	ÔÚfun×îÄ©Î²Ìí¼Óp£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
-	void add(unsigned e, conf_independent* p)  {  conf_independent_terms.add(e, p); }//	ÔÚfun×îÄ©Î²Ìí¼Óp£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	void add(unsigned e, distance_additive* p) { distance_additive_terms.add(e, p); }//	åœ¨funæœ€æœ«å°¾æ·»åŠ pï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
+	void add(unsigned e, usable* p)            {            usable_terms.add(e, p); }//	åœ¨funæœ€æœ«å°¾æ·»åŠ pï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
+	void add(unsigned e, additive* p)          {          additive_terms.add(e, p); }//	åœ¨funæœ€æœ«å°¾æ·»åŠ pï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
+	void add(unsigned e, intermolecular* p)    {    intermolecular_terms.add(e, p); }//	åœ¨funæœ€æœ«å°¾æ·»åŠ pï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
+	void add(unsigned e, conf_independent* p)  {  conf_independent_terms.add(e, p); }//	åœ¨funæœ€æœ«å°¾æ·»åŠ pï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 
-	std::vector<std::string> get_names(bool enabled_only) const; // does not include conf-independent ÉùÃ÷º¯Êı
-	sz size_internal() const;      //ÉùÃ÷£¬¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-									//usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-	                                //additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊıµÄ×ÜºÍ
-	sz size() const { return size_internal() + intermolecular_terms.size(); }//// does not include conf-independent ÉùÃ÷º¯Êı
-								   //¸Ãº¯Êı·µ»Ødistance_additive_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //usable_terms½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-								   //additive_termsÖĞfunÏòÁ¿ÔªËØ¸öÊı¡¢
-									//intermolecular_termsµÄÏòÁ¿ÔªËØ¸öÊı×ÜºÍ
+	std::vector<std::string> get_names(bool enabled_only) const; // does not include conf-independent å£°æ˜å‡½æ•°
+	sz size_internal() const;      //å£°æ˜ï¼Œè¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+									//usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+	                                //additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°çš„æ€»å’Œ
+	sz size() const { return size_internal() + intermolecular_terms.size(); }//// does not include conf-independent å£°æ˜å‡½æ•°
+								   //è¯¥å‡½æ•°è¿”å›distance_additive_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //usable_termsç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+								   //additive_termsä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ã€
+									//intermolecular_termsçš„å‘é‡å…ƒç´ ä¸ªæ•°æ€»å’Œ
 	sz size_conf_independent(bool enabled_only) const; // number of parameters does not necessarily equal the number of operators
-	fl max_r_cutoff() const;             //ÉùÃ÷
-	flv evale(const model& m) const;    //ÉùÃ÷
-	flv evali(const model& m) const;    //ÉùÃ÷
-	flv evale_robust(const model& m) const;//ÉùÃ÷
-	factors eval(const model& m) const;    //·µ»Ø½á¹¹ÌåµÄº¯Êıshming
-	fl eval_conf_independent(const conf_independent_inputs& in, fl x, flv::const_iterator& it) const;  //ÉùÃ÷
-	flv filter_external(const flv& v) const;  //ÉùÃ÷
-	flv filter_internal(const flv& v) const;  //ÉùÃ÷
-	factors filter(const factors& f) const;   //ÉùÃ÷
-	void display_info() const;      //ÓÃÓÚ´òÓ¡Ò»Ğ©ÖØÒªµÄĞÅÏ¢
+	fl max_r_cutoff() const;             //å£°æ˜
+	flv evale(const model& m) const;    //å£°æ˜
+	flv evali(const model& m) const;    //å£°æ˜
+	flv evale_robust(const model& m) const;//å£°æ˜
+	factors eval(const model& m) const;    //è¿”å›ç»“æ„ä½“çš„å‡½æ•°shming
+	fl eval_conf_independent(const conf_independent_inputs& in, fl x, flv::const_iterator& it) const;  //å£°æ˜
+	flv filter_external(const flv& v) const;  //å£°æ˜
+	flv filter_internal(const flv& v) const;  //å£°æ˜
+	factors filter(const factors& f) const;   //å£°æ˜
+	void display_info() const;      //ç”¨äºæ‰“å°ä¸€äº›é‡è¦çš„ä¿¡æ¯
 private:
 	void eval_additive_aux(const model& m, const atom_index& i, const atom_index& j, fl r, flv& out) const; // out is added to
-	//ÉùÃ÷
+	//å£°æ˜
 };
 
 #endif

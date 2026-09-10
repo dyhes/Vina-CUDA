@@ -26,20 +26,20 @@
 
 
 /*
-      m¡ª¡ªmodel½á¹¹Ìå£»p¡ª¡ªprecalculate½á¹¹ÌåÖ¸Õë£»ig¡ª¡ªigrid½á¹¹ÌåÖ¸Õë£»
-	  v¡ª¡ªvec½á¹¹Ìå£»c¡ª¡ªconf½á¹¹Ìå£»g¡ª¡ªchange½á¹¹Ìå£»
-	 ¡¤eval_deriv£¨£©º¯Êı×÷ÓÃ:
-			1.¸ù¾İÅäÌåÅäÖÃc£¬»ñµÃ×ø±ê¡¢ÆğµãÒÔ¼°ÉèÖÃËÄÔªÊıorientation_q=q¡¢orientation_m½á¹¹ÌåºÍcoords
-			2.¶¨ÒåÒ»¸ödoubleÀàĞÍe,¾ßÌå²é¿´ÊäÈëigÖĞµÄeval_deriv¶¨Òå,igÓ¦¸ÃÊÇigridÅÉÉúÀà¶ÔÏó
-			3.½«p,v[2], other_pairs, coords,minus_forcesÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-			4.±éÀúligandsµÄÔªËØ
-					½«p,v[0],ligandsµÚi¸öÔªËØµÄ³ÉÔ±pairs,coord,minus_forcesÊäÈëeval_interacting_pairs_derivº¯Êı£¬·µ»ØÖµÀÛ¼Óµ½eÉÏ
-			5.½«coords, minus_forces, g.ligandsÊäÈëligands.derivativeÖĞ£¬·Ö±ğ¶ÔligandsµÄËùÓĞÔªËØÇóµ¼Êı£¬ligands[i].derivative(coords, minus_forces, g.ligands[i])
-			6.½«coords, minus_forces, g.flexÊäÈëflex.derivativeÖĞ£¬·Ö±ğ¶ÔflexµÄËùÓĞÔªËØÇóµ¼Êı£¬flex[i].derivative(coords, minus_forces, g.flex[i])
-			7.·µ»Øe£¨double£©
-	  ¡¤operator£¨£©º¯Êı
-			input¡ª¡ªc£ºconf½á¹¹Ìå£¬g£ºchange½á¹¹Ìå
-			ÓÃÓÚ·µ»Øeval_deriv£¨£©º¯Êı·µ»ØÖµ
+      mâ€”â€”modelç»“æ„ä½“ï¼›pâ€”â€”precalculateç»“æ„ä½“æŒ‡é’ˆï¼›igâ€”â€”igridç»“æ„ä½“æŒ‡é’ˆï¼›
+	  vâ€”â€”vecç»“æ„ä½“ï¼›câ€”â€”confç»“æ„ä½“ï¼›gâ€”â€”changeç»“æ„ä½“ï¼›
+	 Â·eval_derivï¼ˆï¼‰å‡½æ•°ä½œç”¨:
+			1.æ ¹æ®é…ä½“é…ç½®cï¼Œè·å¾—åæ ‡ã€èµ·ç‚¹ä»¥åŠè®¾ç½®å››å…ƒæ•°orientation_q=qã€orientation_mç»“æ„ä½“å’Œcoords
+			2.å®šä¹‰ä¸€ä¸ªdoubleç±»å‹e,å…·ä½“æŸ¥çœ‹è¾“å…¥igä¸­çš„eval_derivå®šä¹‰,igåº”è¯¥æ˜¯igridæ´¾ç”Ÿç±»å¯¹è±¡
+			3.å°†p,v[2], other_pairs, coords,minus_forcesè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+			4.éå†ligandsçš„å…ƒç´ 
+					å°†p,v[0],ligandsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜pairs,coord,minus_forcesè¾“å…¥eval_interacting_pairs_derivå‡½æ•°ï¼Œè¿”å›å€¼ç´¯åŠ åˆ°eä¸Š
+			5.å°†coords, minus_forces, g.ligandsè¾“å…¥ligands.derivativeä¸­ï¼Œåˆ†åˆ«å¯¹ligandsçš„æ‰€æœ‰å…ƒç´ æ±‚å¯¼æ•°ï¼Œligands[i].derivative(coords, minus_forces, g.ligands[i])
+			6.å°†coords, minus_forces, g.flexè¾“å…¥flex.derivativeä¸­ï¼Œåˆ†åˆ«å¯¹flexçš„æ‰€æœ‰å…ƒç´ æ±‚å¯¼æ•°ï¼Œflex[i].derivative(coords, minus_forces, g.flex[i])
+			7.è¿”å›eï¼ˆdoubleï¼‰
+	  Â·operatorï¼ˆï¼‰å‡½æ•°
+			inputâ€”â€”cï¼šconfç»“æ„ä½“ï¼Œgï¼šchangeç»“æ„ä½“
+			ç”¨äºè¿”å›eval_derivï¼ˆï¼‰å‡½æ•°è¿”å›å€¼
 
 
 */
@@ -58,12 +58,12 @@ struct quasi_newton_aux {
 
 
 /*
-		m¡ª¡ªmodel½á¹¹Ìå£»p¡ª¡ªprecalculate½á¹¹Ìå£»ig¡ª¡ªigrid½á¹¹Ìå£»out¡ª¡ªoutput_type£»
-		g¡ª¡ªchange½á¹¹Ìå£»v¡ª¡ªvec½á¹¹Ìå
-		out.e=res=bfgsº¯Êı·µ»ØÖµf0
+		mâ€”â€”modelç»“æ„ä½“ï¼›pâ€”â€”precalculateç»“æ„ä½“ï¼›igâ€”â€”igridç»“æ„ä½“ï¼›outâ€”â€”output_typeï¼›
+		gâ€”â€”changeç»“æ„ä½“ï¼›vâ€”â€”vecç»“æ„ä½“
+		out.e=res=bfgså‡½æ•°è¿”å›å€¼f0
 */
 void quasi_newton::operator()(model& m, const precalculate& p, const igrid& ig, output_type& out, change& g, const vec& v) const { // g must have correct size
-	quasi_newton_aux aux(&m, &p, &ig, v);                                      //auxÎªÖØ¹¹quasi_newton_aux½á¹¹Ìå
+	quasi_newton_aux aux(&m, &p, &ig, v);                                      //auxä¸ºé‡æ„quasi_newton_auxç»“æ„ä½“
 	fl res = bfgs(aux, out.c, g, max_steps, average_required_improvement, 10); //f0
 	out.e = res;                                                               
 }

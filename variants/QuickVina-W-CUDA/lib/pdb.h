@@ -27,12 +27,12 @@
 
 
 /*
-*¶¨Òå½á¹¹Ìåpdb_atom£¬Êı¾İ³ÉÔ±°üÀ¨£º
-* ÎŞ·ûºÅÀàĞÍÕûÊıid
-* stringÀàĞÍname£¬residue_name£¬element
-* intÀàĞÍresidue_id
-* ½á¹¹Ìåvec£¨Ê¸Á¿£©ÀàĞÍcoords£¬¸Ã½á¹¹ÀïÓĞÒ»¸öº¬Èı¸ödoubleÀàĞÍÊı¾İµÄÊı×é
-* doubleÀàĞÍb_factor
+*å®šä¹‰ç»“æ„ä½“pdb_atomï¼Œæ•°æ®æˆå‘˜åŒ…æ‹¬ï¼š
+* æ— ç¬¦å·ç±»å‹æ•´æ•°id
+* stringç±»å‹nameï¼Œresidue_nameï¼Œelement
+* intç±»å‹residue_id
+* ç»“æ„ä½“vecï¼ˆçŸ¢é‡ï¼‰ç±»å‹coordsï¼Œè¯¥ç»“æ„é‡Œæœ‰ä¸€ä¸ªå«ä¸‰ä¸ªdoubleç±»å‹æ•°æ®çš„æ•°ç»„
+* doubleç±»å‹b_factor
 */
 struct pdb_atom {
 	unsigned id;
@@ -46,9 +46,9 @@ struct pdb_atom {
 
 
 /*
-* ½á¹¹Ìåpdb£¬Êı¾İ³ÉÔ±°üÀ¨£º
-* ÈİÆ÷atoms£¬¸ÃÈİÆ÷°üº¬Èô¸É½á¹¹Ìåpdb_atom
-* ³ÉÔ±º¯Êıcheck()ÉùÃ÷
+* ç»“æ„ä½“pdbï¼Œæ•°æ®æˆå‘˜åŒ…æ‹¬ï¼š
+* å®¹å™¨atomsï¼Œè¯¥å®¹å™¨åŒ…å«è‹¥å¹²ç»“æ„ä½“pdb_atom
+* æˆå‘˜å‡½æ•°check()å£°æ˜
 */
 struct pdb {
 	std::vector<pdb_atom> atoms;
@@ -56,7 +56,7 @@ struct pdb {
 };
 
 
-//º¯Êıparse_pdbÉùÃ÷
+//å‡½æ•°parse_pdbå£°æ˜
 pdb parse_pdb(const path& name); // can throw parse_error
 
 #endif

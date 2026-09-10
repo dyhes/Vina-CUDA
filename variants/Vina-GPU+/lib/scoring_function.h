@@ -26,7 +26,7 @@
 #include "atom_type.h"
 
 /*
-    ¸÷ÖÖĞéº¯ÊıÔ­ĞÍ ½á¹¹ÌåÖ®ÀàµÄ¡£
+    å„ç§è™šå‡½æ•°åŸå‹ ç»“æ„ä½“ä¹‹ç±»çš„ã€‚
 */
 
 struct model; // forward declaration

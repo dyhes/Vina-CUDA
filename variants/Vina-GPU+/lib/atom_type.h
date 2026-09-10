@@ -27,16 +27,16 @@
 #include "triangular_matrix_index.h"
 
 /*
-½á¹¹Ìå
+ç»“æ„ä½“
 */
 struct atom_type {
-	enum t {EL, AD, XS, SY};					//Ã¶¾ÙĞÍ±äÁ¿t 
-	sz el, ad, xs, sy;							//uint±äÁ¿
+	enum t {EL, AD, XS, SY};					//æšä¸¾å‹å˜é‡t 
+	sz el, ad, xs, sy;							//uintå˜é‡
 
-	/*³õÊ¼»¯ el=11; ad=20; xs=17; sy=18*/
+	/*åˆå§‹åŒ– el=11; ad=20; xs=17; sy=18*/
 	atom_type() : el(EL_TYPE_SIZE), ad(AD_TYPE_SIZE), xs(XS_TYPE_SIZE), sy(SY_TYPE_SIZE) {}
 
-	//Ã¶¾ÙĞÍt¶ÔÓ¦·µ»ØÖµ
+	//æšä¸¾å‹tå¯¹åº”è¿”å›å€¼
 	sz get(t atom_typing_used) const {
 		switch(atom_typing_used) {
 			case EL: return el;
@@ -47,41 +47,41 @@ struct atom_type {
 		}
 	}
 
-	//ÊÇ·ñÎªÇâ(ad==6||ad==12);
+	//æ˜¯å¦ä¸ºæ°¢(ad==6||ad==12);
 	bool is_hydrogen() const {
 		return ad_is_hydrogen(ad);
 	}
 
-	//ÊÇ·ñÎªÔÓÔ­×Ó(ad != 1 && ad != 0  && ad != 6 && ad != 12 && ad < 20;)»òxs(X-Score)==16;
+	//æ˜¯å¦ä¸ºæ‚åŸå­(ad != 1 && ad != 0  && ad != 6 && ad != 12 && ad < 20;)æˆ–xs(X-Score)==16;
 	bool is_heteroatom() const {
 		return ad_is_heteroatom(ad) || xs == XS_TYPE_Met_D;
 	}
 
-	//ÊÇ·ñÎª¿É½ÓÊÜÀàĞÍ(ad<20 || xs==16)
+	//æ˜¯å¦ä¸ºå¯æ¥å—ç±»å‹(ad<20 || xs==16)
 	bool acceptable_type() const {
 		return ad < AD_TYPE_SIZE || xs == XS_TYPE_Met_D;
 	}
 
 	/*
-	function: el¸³Öµº¯Êı
-	Èôad==20ÇÒxs==16 Ôò el=10
-	·ñÔòel=adÊäÈëºóµÄ·µ»ØÖµ
+	function: elèµ‹å€¼å‡½æ•°
+	è‹¥ad==20ä¸”xs==16 åˆ™ el=10
+	å¦åˆ™el=adè¾“å…¥åçš„è¿”å›å€¼
 	*/
 	void assign_el() {
-		el = ad_type_to_el_type(ad);					//µÈÓÚadÊäÈëºó¶ÔÓ¦·µ»ØÖµ
+		el = ad_type_to_el_type(ad);					//ç­‰äºadè¾“å…¥åå¯¹åº”è¿”å›å€¼
 		if(ad == AD_TYPE_SIZE && xs == XS_TYPE_Met_D)	
 			el = EL_TYPE_Met;
 	}
 
-	//elÊÇ·ñÎªÍ¬Ò»ÔªËØ
+	//elæ˜¯å¦ä¸ºåŒä¸€å…ƒç´ 
 	bool same_element(const atom_type& a) const { // does not distinguish metals or unassigned types
 		return el == a.el;
 	}
 
 	/*
-	doubleĞÍ ¹²¼Û°ë¾¶
-	function:Èôad<20Ôò·µ»Ø;
-			 Èôxs==16Ôò·µ»Ø1.75
+	doubleå‹ å…±ä»·åŠå¾„
+	function:è‹¥ad<20åˆ™è¿”å›;
+			 è‹¥xs==16åˆ™è¿”å›1.75
 	*/
 	fl covalent_radius() const {
 		if(ad < AD_TYPE_SIZE)        return ad_type_property(ad).covalent_radius;
@@ -89,14 +89,14 @@ struct atom_type {
 		VINA_CHECK(false);           return 0; // never happens - placating the compiler
 	}
 	/*
-	doubleĞÍ ×î¼Ñ¹²¼Û¼ü³¤¶È
-	function: ¼ÆËã³ö ¹²¼Û°ë¾¶+x.¹²¼Û°ë¾¶
+	doubleå‹ æœ€ä½³å…±ä»·é”®é•¿åº¦
+	function: è®¡ç®—å‡º å…±ä»·åŠå¾„+x.å…±ä»·åŠå¾„
 	*/
 	fl optimal_covalent_bond_length(const atom_type& x) const {
 		return covalent_radius() + x.covalent_radius();
 	}
 
-	//²ÎÊıĞòÁĞ»¯
+	//å‚æ•°åºåˆ—åŒ–
 private:
 	friend class boost::serialization::access;
 	template<class Archive> 
@@ -109,11 +109,11 @@ private:
 };
 
 /*
-Ô­×ÓÊıÀàĞÍ
-ELĞÍ·µ»Ø11;
-ADĞÍ·µ»Ø20;
-XSĞÍ·µ»Ø17;
-SYĞÍ·µ»Ø18
+åŸå­æ•°ç±»å‹
+ELå‹è¿”å›11;
+ADå‹è¿”å›20;
+XSå‹è¿”å›17;
+SYå‹è¿”å›18
 */
 inline sz num_atom_types(atom_type::t atom_typing_used) {
 	switch(atom_typing_used) {
@@ -126,16 +126,16 @@ inline sz num_atom_types(atom_type::t atom_typing_used) {
 }
 
 /*
-»ñÈ¡ÀàĞÍ¶ÔË÷Òı
-function:·µ»ØÈı½Ç¾ØÕó×ø±ê
-		 Èôi¶ÔÓ¦½á¹¹ÌåµÄÃ¶¾ÙĞÍÖµ<=j Ôò·µ»Øi + j*(j+1)/2
-		 ·ñÔò·µ»Øj + i*(i+1)/2
+è·å–ç±»å‹å¯¹ç´¢å¼•
+function:è¿”å›ä¸‰è§’çŸ©é˜µåæ ‡
+		 è‹¥iå¯¹åº”ç»“æ„ä½“çš„æšä¸¾å‹å€¼<=j åˆ™è¿”å›i + j*(j+1)/2
+		 å¦åˆ™è¿”å›j + i*(i+1)/2
 */
 inline sz get_type_pair_index(atom_type::t atom_typing_used, const atom_type& a, const atom_type& b) { // throws error if any arg is unassigned in the given typing scheme
-	sz n = num_atom_types(atom_typing_used);			//n=Ô­×ÓÊıÀàĞÍ·µ»ØÊı¾İ
+	sz n = num_atom_types(atom_typing_used);			//n=åŸå­æ•°ç±»å‹è¿”å›æ•°æ®
 
-	sz i = a.get(atom_typing_used); VINA_CHECK(i < n);	//i=a¶ÔÓ¦Ã¶¾ÙĞÍ·µ»ØÊı¾İel, ad, xs, sy
-	sz j = b.get(atom_typing_used); VINA_CHECK(j < n);	//j=b¶ÔÓ¦Ã¶¾ÙĞÍ·µ»ØÊı¾İel, ad, xs, sy
+	sz i = a.get(atom_typing_used); VINA_CHECK(i < n);	//i=aå¯¹åº”æšä¸¾å‹è¿”å›æ•°æ®el, ad, xs, sy
+	sz j = b.get(atom_typing_used); VINA_CHECK(j < n);	//j=bå¯¹åº”æšä¸¾å‹è¿”å›æ•°æ®el, ad, xs, sy
 
 	if(i <= j) return triangular_matrix_index(n, i, j);
 	else       return triangular_matrix_index(n, j, i);

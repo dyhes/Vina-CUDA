@@ -47,7 +47,7 @@ __device__ inline int triangular_matrix_index_permissive(int n, int i, int j)
 	return (i <= j) ? triangular_matrix_index(n, i, j) : triangular_matrix_index(n, j, i);
 }
 
-// 使用 CUDA 中的__constant__ 替换 OPENCL中的__global
+// 浣跨敤 CUDA 涓殑__constant__ 鏇挎崲 OPENCL涓殑__global
 // const __global  pre_cl* pre  ---> const  pre_cl* pre
 
 __device__ inline flo eval_fast(int type_pair_index, flo r2, flo cutoff_sqr, const pre_cl *pre)

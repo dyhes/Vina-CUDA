@@ -48,21 +48,21 @@
 //end OpenCL Related
 
 struct cache_mismatch {};                   
-struct rigid_mismatch : public cache_mismatch {};     //¼Ì³Ğcache_mismatch½á¹¹Ìå
-struct grid_dims_mismatch : public cache_mismatch {};   //¼Ì³Ğcache_mismatch½á¹¹Ìå
-struct energy_mismatch : public cache_mismatch {};    //¼Ì³Ğcache_mismatch½á¹¹Ìå
+struct rigid_mismatch : public cache_mismatch {};     //ç»§æ‰¿cache_mismatchç»“æ„ä½“
+struct grid_dims_mismatch : public cache_mismatch {};   //ç»§æ‰¿cache_mismatchç»“æ„ä½“
+struct energy_mismatch : public cache_mismatch {};    //ç»§æ‰¿cache_mismatchç»“æ„ä½“
 
 
-/*¼Ì³Ğigrid½á¹¹Ìå
-	scoring_function_version_£ºstring£»
-	gd_£ºgrid_dims½á¹¹Ìå£»
-	slope_£ºdouble£»
-	atom_typing_used_£ºatom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t ¡£
+/*ç»§æ‰¿igridç»“æ„ä½“
+	scoring_function_version_ï¼šstringï¼›
+	gd_ï¼šgrid_dimsç»“æ„ä½“ï¼›
+	slope_ï¼šdoubleï¼›
+	atom_typing_used_ï¼šatom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡t ã€‚
 */
 struct cache : public igrid {
 	cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_);
 	/*
-	º¯ÊıÉùÃ÷
+	å‡½æ•°å£°æ˜
 	*/
 	fl eval      (const model& m, fl v) const; // needs m.coords // clean up
 	fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
@@ -71,26 +71,26 @@ struct cache : public igrid {
 	double get_slope() const;
 
 #if 0 // no longer doing I/O of the cache
-	void read(const path& name);         // can throw cache_mismatch¶Á»º´æ²Ù×÷
-	void write(const path& name) const;  //Ğ´»º´æ²Ù×÷
+	void read(const path& name);         // can throw cache_mismatchè¯»ç¼“å­˜æ“ä½œ
+	void write(const path& name) const;  //å†™ç¼“å­˜æ“ä½œ
 #endif
 	/*
-	º¯ÊıÉùÃ÷
+	å‡½æ•°å£°æ˜
 	*/
 	void populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress = true);
 	void populate_cl(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress = true);
 	bool m_data_check(const szv_grid ig)const;
 public:
-	std::string scoring_function_version;        //×Ö·û´®
-	atomv atoms; // for verification             //atom½á¹¹ÌåÏòÁ¿
-	grid_dims gd;                                //grid_dims½á¹¹Ìå
+	std::string scoring_function_version;        //å­—ç¬¦ä¸²
+	atomv atoms; // for verification             //atomç»“æ„ä½“å‘é‡
+	grid_dims gd;                                //grid_dimsç»“æ„ä½“
 	fl slope; // does not get (de-)serialized    //double
-	atom_type::t atu;                            //atom_type½á¹¹ÌåÖĞµÄÃ¶¾ÙĞÍ±äÁ¿t 
-	std::vector<grid> grids;                     //grid½á¹¹ÌåÏòÁ¿
+	atom_type::t atu;                            //atom_typeç»“æ„ä½“ä¸­çš„æšä¸¾å‹å˜é‡t 
+	std::vector<grid> grids;                     //gridç»“æ„ä½“å‘é‡
 	/*
-		ĞòÁĞ»¯µ÷ÓÃsaveº¯Êı;
-		·´ĞòÁĞ»¯µ÷ÓÃloadº¯Êı¡£
-		×¢ÒâĞèÒª¼ÓÈëÒ»¸öÖØÒªµÄºê£¬BOOST_SERIALIZATION_SPLIT_MEMBER 
+		åºåˆ—åŒ–è°ƒç”¨saveå‡½æ•°;
+		ååºåˆ—åŒ–è°ƒç”¨loadå‡½æ•°ã€‚
+		æ³¨æ„éœ€è¦åŠ å…¥ä¸€ä¸ªé‡è¦çš„å®ï¼ŒBOOST_SERIALIZATION_SPLIT_MEMBER 
 	*/
 	friend class boost::serialization::access;
 	template<class Archive>

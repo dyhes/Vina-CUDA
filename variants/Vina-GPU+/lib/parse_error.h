@@ -25,11 +25,11 @@
 
 #include "common.h"
 /*
-* ½á¹¹Ìåparse_error
-*Êı¾İ³ÉÔ±°üÀ¨:boost::filesystem¿âpathÀàfile;ÎŞ·ûºÅÀàĞÍÕûÊıline;stringÀàreason
-*¹¹Ôìº¯Êıparse_errorÔÚ´´½¨parse_error¶ÔÏóÊ±²ÎÊıÁĞ±í²»Ìá¹©path,line,reasonÊ±Ö´ĞĞÄ¬ÈÏ³õÊ¼»¯£¬·´Ö®ÒÀ´Î³õÊ¼»¯³ÉÔ±path,line,reason
-*pathÀàµÄ¹¹Ôìº¯Êı¿É½ÓÊÜchar*ÀàĞÍºÍstringÀàĞÍµÄ²ÎÊı¹¹Ôì£¬Ò²¿ÉÒÔÊÇÒ»¸ö×Ö·û´®µü´ú·¶Î§,Â·¾¶µÄ·Ö¸î·ûÓÉconstexpr preferred_separator¶¨Òå,UNIXÊÇÕıĞ±¸Ü(/),WINDOWSÊÇ·´Ğ±¸Ü(\),C++ÖĞĞèÒª×ªÒå;
-*³õÊ¼»¯pathÀà¶ÔÏóÊ±£¬²ÎÊıÁĞ±í´«ÈëÎÄ¼şÔÚµçÄÔµÄµØÖ· 
+* ç»“æ„ä½“parse_error
+*æ•°æ®æˆå‘˜åŒ…æ‹¬:boost::filesystemåº“pathç±»file;æ— ç¬¦å·ç±»å‹æ•´æ•°line;stringç±»reason
+*æ„é€ å‡½æ•°parse_erroråœ¨åˆ›å»ºparse_errorå¯¹è±¡æ—¶å‚æ•°åˆ—è¡¨ä¸æä¾›path,line,reasonæ—¶æ‰§è¡Œé»˜è®¤åˆå§‹åŒ–ï¼Œåä¹‹ä¾æ¬¡åˆå§‹åŒ–æˆå‘˜path,line,reason
+*pathç±»çš„æ„é€ å‡½æ•°å¯æ¥å—char*ç±»å‹å’Œstringç±»å‹çš„å‚æ•°æ„é€ ï¼Œä¹Ÿå¯ä»¥æ˜¯ä¸€ä¸ªå­—ç¬¦ä¸²è¿­ä»£èŒƒå›´,è·¯å¾„çš„åˆ†å‰²ç¬¦ç”±constexpr preferred_separatorå®šä¹‰,UNIXæ˜¯æ­£æ–œæ (/),WINDOWSæ˜¯åæ–œæ (\),C++ä¸­éœ€è¦è½¬ä¹‰;
+*åˆå§‹åŒ–pathç±»å¯¹è±¡æ—¶ï¼Œå‚æ•°åˆ—è¡¨ä¼ å…¥æ–‡ä»¶åœ¨ç”µè„‘çš„åœ°å€ 
 */
 
 struct parse_error {

@@ -25,9 +25,9 @@
 
 #include "model.h"
 /*
-      max_steps£ºunsigned£» average_required_improvement£ºdouble£» 
-      ³õÊ¼»¯£ºmax_steps=1000£¬average_required_improvement=0.0£»
-	  ÉùÃ÷ operator()º¯ÊıÔ­ĞÍ£»
+      max_stepsï¼šunsignedï¼› average_required_improvementï¼šdoubleï¼› 
+      åˆå§‹åŒ–ï¼šmax_steps=1000ï¼Œaverage_required_improvement=0.0ï¼›
+	  å£°æ˜ operator()å‡½æ•°åŸå‹ï¼›
 */
 struct quasi_newton {
 	unsigned max_steps;   

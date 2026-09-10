@@ -27,10 +27,10 @@
 #include "szv_grid.h"
 
 
-/* �̳�igrid�ṹ�壬�ýṹ�����ڱ�������������
-	m��model�ṹ�壬gd_��gd����3��Ԫ�ص�grid_dim�ṹ�����飬
-	p_��p��precalculate�ṹ��ָ�룬slope_��slope��double��
-	sgrid��szv_grid�ṹ��
+/* 继承igrid结构体，该结构体用于变量函数的声明
+	m：model结构体，gd_、gd：有3个元素的grid_dim结构体数组，
+	p_、p：precalculate结构体指针，slope_、slope：double，
+	sgrid：szv_grid结构体
 
 */
 struct non_cache : public igrid {

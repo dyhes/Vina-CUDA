@@ -1,0 +1,78 @@
+============================================================
+  Variant:  vina-cpu
+  Dataset:  CASF-2016  (ligand_pdbqt)
+  Mode:     screening
+  Targets:  57 screening targets
+  Ligands:  coreset pool (all ligands)
+  Exhaust:  8  |  max_evals=0  |  timeout=600s
+  Box:      22.5³ Å
+  Output:   /home/ubuntu/grad/experiments/Jun06_2352_CASF-2016_vina_cpu_screening
+============================================================
+Screening targets: 57  |  Ligand pool: 285
+Total docking jobs: 16245
+  [1/57] 1e66: 283/285 docked, 3743s | ETA ~4613min
+  [2/57] 1mq6: 284/285 docked, 3398s | ETA ~4098min
+  [3/57] 1nvq: 284/285 docked, 3287s | ETA ~3848min
+  [4/57] 1o3f: 284/285 docked, 3662s | ETA ~3774min
+  [5/57] 1sqa: 284/285 docked, 3823s | ETA ~3729min
+  [6/57] 1u1b: 285/285 docked, 3870s | ETA ~3596min
+  [7/57] 2al5: 283/285 docked, 5269s | ETA ~3792min
+  [8/57] 2cet: 283/285 docked, 3629s | ETA ~3745min
+  [9/57] 2fvd: 283/285 docked, 2923s | ETA ~3627min
+  [10/57] 2p15: 284/285 docked, 3287s | ETA ~3501min
+  [11/57] 2p4y: 284/285 docked, 3864s | ETA ~3426min
+  [12/57] 2qbp: 284/285 docked, 3556s | ETA ~3332min
+  [13/57] 2r9w: 285/285 docked, 3816s | ETA ~3223min
+  [14/57] 2vvn: 283/285 docked, 3911s | ETA ~3186min
+  [15/57] 2vw5: 284/285 docked, 3475s | ETA ~3095min
+  [16/57] 2x00: 284/285 docked, 3573s | ETA ~3010min
+  [17/57] 2xb8: 283/285 docked, 4649s | ETA ~2994min
+  [18/57] 2yki: 283/285 docked, 3355s | ETA ~2921min
+  [19/57] 2zcq: 284/285 docked, 3653s | ETA ~2838min
+  [20/57] 3ag9: 285/285 docked, 3763s | ETA ~2741min
+  [21/57] 3arp: 284/285 docked, 3374s | ETA ~2654min
+  [22/57] 3coy: 284/285 docked, 3400s | ETA ~2569min
+  [23/57] 3dd0: 284/285 docked, 3813s | ETA ~2496min
+  [24/57] 3e93: 283/285 docked, 4039s | ETA ~2441min
+  [25/57] 3ebp: 285/285 docked, 3964s | ETA ~2357min
+  [26/57] 3ejr: 284/285 docked, 3873s | ETA ~2285min
+  [27/57] 3f3e: 283/285 docked, 4878s | ETA ~2242min
+  [28/57] 3fv1: 283/285 docked, 4083s | ETA ~2181min
+  [29/57] 3g0w: 284/285 docked, 3825s | ETA ~2104min
+  [30/57] 3ge7: 284/285 docked, 3993s | ETA ~2030min
+  [31/57] 3gnw: 284/285 docked, 3679s | ETA ~1952min
+  [32/57] 3kr8: 283/285 docked, 4591s | ETA ~1894min
+  [33/57] 3myg: 284/285 docked, 4529s | ETA ~1825min
+  [34/57] 3nw9: 284/285 docked, 3721s | ETA ~1746min
+  [35/57] 3o9i: 283/285 docked, 3259s | ETA ~1669min
+  [36/57] 3p5o: 285/285 docked, 3767s | ETA ~1586min
+  [37/57] 3qqs: 283/285 docked, 3602s | ETA ~1513min
+  [38/57] 3u8n: 283/285 docked, 4852s | ETA ~1450min
+  [39/57] 3uex: 283/285 docked, 3664s | ETA ~1376min
+  [40/57] 3uri: 284/285 docked, 3593s | ETA ~1296min
+  [41/57] 3utu: 284/285 docked, 3396s | ETA ~1216min
+  [42/57] 3zso: 285/285 docked, 3688s | ETA ~1135min
+  [43/57] 4agq: 284/285 docked, 3549s | ETA ~1057min
+  [44/57] 4de1: 284/285 docked, 3274s | ETA ~979min
+  [45/57] 4f3c: 283/285 docked, 4850s | ETA ~910min
+  [46/57] 4gid: 284/285 docked, 4579s | ETA ~837min
+  [47/57] 4gr0: 284/285 docked, 4043s | ETA ~761min
+  [48/57] 4ivc: 284/285 docked, 4049s | ETA ~685min
+  [49/57] 4jia: 284/285 docked, 3350s | ETA ~607min
+  [50/57] 4pcs: 284/285 docked, 3785s | ETA ~531min
+  [51/57] 4rfm: 284/285 docked, 3455s | ETA ~454min
+  [52/57] 4tmn: 284/285 docked, 4067s | ETA ~379min
+  [53/57] 4twp: 283/285 docked, 4295s | ETA ~304min
+  [54/57] 4ty7: 284/285 docked, 3263s | ETA ~227min
+  [55/57] 4w9h: 284/285 docked, 3399s | ETA ~151min
+  [56/57] 5c2h: 284/285 docked, 3379s | ETA ~75min
+  [57/57] 5dwr: 284/285 docked, 3431s | ETA ~0min
+
+Done: 57/57 targets OK, 16177 total dockings, 4294.4 min
+Combined 57 score files → /home/ubuntu/grad/experiments/Jun06_2352_CASF-2016_vina_cpu_screening/combined_scores.dat
+Run screening evaluation:
+  python3 /home/ubuntu/grad/tools/screening_power_py3.py -t /home/ubuntu/grad/dataset/CASF-2016/power_screening/TargetInfo.dat -s /home/ubuntu/grad/experiments/Jun06_2352_CASF-2016_vina_cpu_screening/combined_scores.dat -p negative
+
+Output: /home/ubuntu/grad/experiments/Jun06_2352_CASF-2016_vina_cpu_screening
+  scores/*_score.dat
+  summary.csv

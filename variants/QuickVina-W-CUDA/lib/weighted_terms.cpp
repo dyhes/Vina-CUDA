@@ -24,27 +24,27 @@
 
 
 /*
-	input¡ª¡ªt£ºterms½á¹¹Ìå¡¢weights£ºdoubleÏòÁ¿£»doubleÀàĞÍcutoff_³õÊ¼»¯Îª0£¬ÊäÈë´«Èëweighted_terms½á¹¹ÌåÖĞ£»
-	inter¡ª¡ªenabled_usable_terms£ºunintÏòÁ¿ £¬atom_typing_used_£ºatom_type::tÃ¶¾ÙÀàĞÍ£»
-		Ê×ÏÈÅĞ¶ÏÄ£°å²ÎÊıÎªdistance_additiveµÄterm_set½á¹¹ÌåÖĞenabledÖĞ´óÓÚ0µÄÖµµÄ¸öÊı¡¢Ä£°å²ÎÊıÎªadditiveµÄterm_set½á¹¹ÌåÖĞenabledÖĞ´óÓÚ0µÄÖµµÄ¸öÊı
-	ºÍÄ£°å²ÎÊıÎªintermolecularµÄterm_set½á¹¹ÌåÖĞenabledÖĞ´óÓÚ0µÄÖµµÄ¸öÊı ÊÇ·ñ¶¼µÈÓÚ0£»ÊÇµÄ»°¼ÌĞø³ÌĞò£¬·ñÔòÍË³ö£»
-		if£¨Ä£°å²ÎÊıÎªusableµÄterm_set½á¹¹ÌåÖĞenabled[i]´óÓÚ0£©(i=0-Ä£°å²ÎÊıÎªusableµÄterm_set½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı£©
-			if£¨enabled_usable_termsÏòÁ¿Îª¿Õ£©{
-				atom_typing_used_µÈÓÚusable_terms.sizeÎªÄ£°å²ÎÊıÎªusableÖĞfun[i]µÄatom_typing_usedÃ¶¾ÙĞÍ£»
+	inputâ€”â€”tï¼štermsç»“æ„ä½“ã€weightsï¼šdoubleå‘é‡ï¼›doubleç±»å‹cutoff_åˆå§‹åŒ–ä¸º0ï¼Œè¾“å…¥ä¼ å…¥weighted_termsç»“æ„ä½“ä¸­ï¼›
+	interâ€”â€”enabled_usable_termsï¼šunintå‘é‡ ï¼Œatom_typing_used_ï¼šatom_type::tæšä¸¾ç±»å‹ï¼›
+		é¦–å…ˆåˆ¤æ–­æ¨¡æ¿å‚æ•°ä¸ºdistance_additiveçš„term_setç»“æ„ä½“ä¸­enabledä¸­å¤§äº0çš„å€¼çš„ä¸ªæ•°ã€æ¨¡æ¿å‚æ•°ä¸ºadditiveçš„term_setç»“æ„ä½“ä¸­enabledä¸­å¤§äº0çš„å€¼çš„ä¸ªæ•°
+	å’Œæ¨¡æ¿å‚æ•°ä¸ºintermolecularçš„term_setç»“æ„ä½“ä¸­enabledä¸­å¤§äº0çš„å€¼çš„ä¸ªæ•° æ˜¯å¦éƒ½ç­‰äº0ï¼›æ˜¯çš„è¯ç»§ç»­ç¨‹åºï¼Œå¦åˆ™é€€å‡ºï¼›
+		ifï¼ˆæ¨¡æ¿å‚æ•°ä¸ºusableçš„term_setç»“æ„ä½“ä¸­enabled[i]å¤§äº0ï¼‰(i=0-æ¨¡æ¿å‚æ•°ä¸ºusableçš„term_setç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°ï¼‰
+			ifï¼ˆenabled_usable_termså‘é‡ä¸ºç©ºï¼‰{
+				atom_typing_used_ç­‰äºusable_terms.sizeä¸ºæ¨¡æ¿å‚æ•°ä¸ºusableä¸­fun[i]çš„atom_typing_usedæšä¸¾å‹ï¼›
 		    else
-			    ÅĞ¶Ïatom_typing_used_ÊÇ·ñµÈÓÚusable_terms.sizeÎªÄ£°å²ÎÊıÎªusableÖĞfun[i]µÄatom_typing_usedÃ¶¾ÙĞÍ£»ÊÇµÄ»°¼ÌĞø·ñÔòÖÕÖ¹³ÌĞò£»
-			ÔÚenabled_usable_termsÏòÁ¿ºóÃæÌí¼ÓiĞòºÅ£»
-			cutoff_¸³ÖµÎªÄ£°å²ÎÊıÎªusableÖĞfun[i]µÄcutoff
+			    åˆ¤æ–­atom_typing_used_æ˜¯å¦ç­‰äºusable_terms.sizeä¸ºæ¨¡æ¿å‚æ•°ä¸ºusableä¸­fun[i]çš„atom_typing_usedæšä¸¾å‹ï¼›æ˜¯çš„è¯ç»§ç»­å¦åˆ™ç»ˆæ­¢ç¨‹åºï¼›
+			åœ¨enabled_usable_termså‘é‡åé¢æ·»åŠ iåºå·ï¼›
+			cutoff_èµ‹å€¼ä¸ºæ¨¡æ¿å‚æ•°ä¸ºusableä¸­fun[i]çš„cutoff
 			}
 */
 weighted_terms::weighted_terms(const terms* t, const flv& weights) : t(t), weights(weights), cutoff_(0) { // does not own t
-	VINA_CHECK(t->distance_additive_terms.num_enabled() == 0); //¸Ãº¯Êı·µ»ØÄ£°å²ÎÊıÎªdistance_additiveµÄterm_set½á¹¹ÌåÖĞenabledÖĞ´óÓÚ0µÄÖµµÄ¸öÊı
-	VINA_CHECK(t->         additive_terms.num_enabled() == 0); //¸Ãº¯Êı·µ»ØÄ£°å²ÎÊıÎªadditiveµÄterm_set½á¹¹ÌåÖĞenabledÖĞ´óÓÚ0µÄÖµµÄ¸öÊı
-	VINA_CHECK(t->   intermolecular_terms.num_enabled() == 0); //¸Ãº¯Êı·µ»ØÄ£°å²ÎÊıÎªintermolecularµÄterm_set½á¹¹ÌåÖĞenabledÖĞ´óÓÚ0µÄÖµµÄ¸öÊı      
-	VINA_FOR_IN(i, t->usable_terms)                            //for(i=0;i<usable_terms.size;i++)£¬usable_terms.sizeÎªÄ£°å²ÎÊıÎªusableµÄterm_set½á¹¹ÌåÖĞfunÏòÁ¿ÔªËØ¸öÊı
+	VINA_CHECK(t->distance_additive_terms.num_enabled() == 0); //è¯¥å‡½æ•°è¿”å›æ¨¡æ¿å‚æ•°ä¸ºdistance_additiveçš„term_setç»“æ„ä½“ä¸­enabledä¸­å¤§äº0çš„å€¼çš„ä¸ªæ•°
+	VINA_CHECK(t->         additive_terms.num_enabled() == 0); //è¯¥å‡½æ•°è¿”å›æ¨¡æ¿å‚æ•°ä¸ºadditiveçš„term_setç»“æ„ä½“ä¸­enabledä¸­å¤§äº0çš„å€¼çš„ä¸ªæ•°
+	VINA_CHECK(t->   intermolecular_terms.num_enabled() == 0); //è¯¥å‡½æ•°è¿”å›æ¨¡æ¿å‚æ•°ä¸ºintermolecularçš„term_setç»“æ„ä½“ä¸­enabledä¸­å¤§äº0çš„å€¼çš„ä¸ªæ•°      
+	VINA_FOR_IN(i, t->usable_terms)                            //for(i=0;i<usable_terms.size;i++)ï¼Œusable_terms.sizeä¸ºæ¨¡æ¿å‚æ•°ä¸ºusableçš„term_setç»“æ„ä½“ä¸­funå‘é‡å…ƒç´ ä¸ªæ•°
 		if(t->usable_terms.enabled[i]) {
-			if(enabled_usable_terms.empty())					//enabled_usable_termsÎªunintÏòÁ¿      
-				atom_typing_used_ = t->usable_terms[i].atom_typing_used;//atom_typing_used_£ºatom_type::tÃ¶¾ÙÀàĞÍ£¬usable_terms[i]=fun[i]
+			if(enabled_usable_terms.empty())					//enabled_usable_termsä¸ºunintå‘é‡      
+				atom_typing_used_ = t->usable_terms[i].atom_typing_used;//atom_typing_used_ï¼šatom_type::tæšä¸¾ç±»å‹ï¼Œusable_terms[i]=fun[i]
 			else
 				VINA_CHECK(atom_typing_used_ == t->usable_terms[i].atom_typing_used);
 
@@ -54,17 +54,17 @@ weighted_terms::weighted_terms(const terms* t, const flv& weights) : t(t), weigh
 }
 
 /*
-	input¡ª¡ªt1¡¢t2:unint,   r:double;
-	inter¡ª¡ªacc£ºdouble£¬enabled_usable_terms£ºunintÏòÁ¿£¬weights£ºdoubleÏòÁ¿£»
+	inputâ€”â€”t1ã€t2:unint,   r:double;
+	interâ€”â€”accï¼šdoubleï¼Œenabled_usable_termsï¼šunintå‘é‡ï¼Œweightsï¼šdoubleå‘é‡ï¼›
 	for(i=0;i<enabled_usable_terms.size;i++)
-   ¶Ôweight[i]ºÍ t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r) µÄ³Ë»ı½øĞĞÀÛ¼Ó
-   ÕâÀïÓĞÒ»¸öÎÊÌât->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r)ÊÇ·µ»Ø0£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿£¿
+   å¯¹weight[i]å’Œ t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r) çš„ä¹˜ç§¯è¿›è¡Œç´¯åŠ 
+   è¿™é‡Œæœ‰ä¸€ä¸ªé—®é¢˜t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r)æ˜¯è¿”å›0ï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
 */
 
 fl weighted_terms::eval(sz t1, sz t2, fl r) const { // intentionally not checking for cutoff
 	fl acc = 0;
 	VINA_FOR_IN(i, enabled_usable_terms)                  //for(i=0;i<enabled_usable_terms.size;i++)
-		acc += weights[i] * t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r);     // t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r)·µ»Ø0£¿£¿£¿£¿
+		acc += weights[i] * t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r);     // t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r)è¿”å›0ï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
 	return acc;
 }
 
@@ -72,18 +72,18 @@ fl weighted_terms::eval(sz t1, sz t2, fl r) const { // intentionally not checkin
 
 
 /*
-	input¡ª¡ªm:model½á¹¹Ìå,e:double;
-	inter¡ª¡ªenabled_usable_terms£ºunintÏòÁ¿£¬weights£ºdoubleÏòÁ¿£¬it£ºµü´úÆ÷£¬in£º²ÎÊıÎªmodel½á¹¹ÌåµÄconf_independent_inputs½á¹¹Ìå£»
-	output¡ª¡ªtmp£ºdopuble
-	itµü´úÆ÷Ö¸ÏòweightsÏòÁ¿ÖĞµÚenabled_usable_termsÏòÁ¿ÔªËØ¸öÊıµÄÔªËØ£»
-	tmpµÈÓÚe + read_iterator(i) * in.******   // read_iterator(i)Îªµü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ £¬******Ó¦¸ÃÊÇÈ¡¾öÓÚµ÷ÓÃÕâ¸öº¯ÊıµÄÇ°Ò»¸öeverthing.cppÖĞµÄº¯Êı¾ö¶¨µÄ
-	×îºóÅĞ¶ÏitÊÇ·ñÖ¸ÏòweightsÏòÁ¿µÄ×îºóÒ»Î»£¬ÊÇµÄ»°·µ»Øtmp
+	inputâ€”â€”m:modelç»“æ„ä½“,e:double;
+	interâ€”â€”enabled_usable_termsï¼šunintå‘é‡ï¼Œweightsï¼šdoubleå‘é‡ï¼Œitï¼šè¿­ä»£å™¨ï¼Œinï¼šå‚æ•°ä¸ºmodelç»“æ„ä½“çš„conf_independent_inputsç»“æ„ä½“ï¼›
+	outputâ€”â€”tmpï¼šdopuble
+	itè¿­ä»£å™¨æŒ‡å‘weightså‘é‡ä¸­ç¬¬enabled_usable_termså‘é‡å…ƒç´ ä¸ªæ•°çš„å…ƒç´ ï¼›
+	tmpç­‰äºe + read_iterator(i) * in.******   // read_iterator(i)ä¸ºè¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´  ï¼Œ******åº”è¯¥æ˜¯å–å†³äºè°ƒç”¨è¿™ä¸ªå‡½æ•°çš„å‰ä¸€ä¸ªeverthing.cppä¸­çš„å‡½æ•°å†³å®šçš„
+	æœ€ååˆ¤æ–­itæ˜¯å¦æŒ‡å‘weightså‘é‡çš„æœ€åä¸€ä½ï¼Œæ˜¯çš„è¯è¿”å›tmp
 */
 
 fl weighted_terms::conf_independent(const model& m, fl e) const {
-	flv::const_iterator it = weights.begin() + enabled_usable_terms.size();     //Ö¸ÏòweightsÏòÁ¿ÖĞµÚenabled_usable_termsÏòÁ¿ÔªËØ¸öÊıµÄÔªËØ
+	flv::const_iterator it = weights.begin() + enabled_usable_terms.size();     //æŒ‡å‘weightså‘é‡ä¸­ç¬¬enabled_usable_termså‘é‡å…ƒç´ ä¸ªæ•°çš„å…ƒç´ 
 	conf_independent_inputs in(m); // FIXME quite inefficient, but I think speed is irrelevant here, right?
 	fl tmp = t->eval_conf_independent(in, e, it);
-	assert(it == weights.end());        //ÅĞ¶ÏitÊÇ·ñÖ¸ÏòweightsÏòÁ¿µÄ×îºóÒ»Î»
+	assert(it == weights.end());        //åˆ¤æ–­itæ˜¯å¦æŒ‡å‘weightså‘é‡çš„æœ€åä¸€ä½
 	return tmp;
 }

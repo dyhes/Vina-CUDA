@@ -26,21 +26,21 @@
 #include "terms.h"
 
 /*
-	weighted_terms½á¹¹Ìå¼Ì³Ğscoring_function½á¹¹Ìå
-	t¡ª¡ªterms½á¹¹Ìå£¬weights¡ª¡ªdoubleÏòÁ¿£¬cutoff_¡ª¡ªdouble£»
-	atom_typing_used_¡ª¡ªatom_type::tÃ¶¾ÙÀàĞÍ£»
+	weighted_termsç»“æ„ä½“ç»§æ‰¿scoring_functionç»“æ„ä½“
+	tâ€”â€”termsç»“æ„ä½“ï¼Œweightsâ€”â€”doubleå‘é‡ï¼Œcutoff_â€”â€”doubleï¼›
+	atom_typing_used_â€”â€”atom_type::tæšä¸¾ç±»å‹ï¼›
 
-	¶¨ÒåÁËÒ»¸ö·µ»ØÖµÎªatom_typing_used_Ã¶¾ÙÀàĞÍµÄº¯Êıatom_typing_used£¨£©£»
-	¶¨ÒåÁËÒ»¸ö·µ»ØÖµÎªcutoff_ doubleÀàĞÍµÄº¯Êıcutoff£¨£©£»
-	ÉùÃ÷ÁËeval£¨£©ºÍconf_independent£¨£©º¯Êı
+	å®šä¹‰äº†ä¸€ä¸ªè¿”å›å€¼ä¸ºatom_typing_used_æšä¸¾ç±»å‹çš„å‡½æ•°atom_typing_usedï¼ˆï¼‰ï¼›
+	å®šä¹‰äº†ä¸€ä¸ªè¿”å›å€¼ä¸ºcutoff_ doubleç±»å‹çš„å‡½æ•°cutoffï¼ˆï¼‰ï¼›
+	å£°æ˜äº†evalï¼ˆï¼‰å’Œconf_independentï¼ˆï¼‰å‡½æ•°
 
 
 
 */
 struct weighted_terms : public scoring_function {
 	weighted_terms(const terms* t, const flv& weights); // does not own t
-	atom_type::t atom_typing_used() const { return atom_typing_used_; }	//¶¨ÒåÁËÒ»¸ö·µ»ØÖµÎªatom_typing_used_Ã¶¾ÙÀàĞÍµÄº¯Êıatom_typing_used£¨£©£»
-	fl cutoff() const { return cutoff_; }                              //¶¨ÒåÁËÒ»¸ö·µ»ØÖµÎªcutoff_ doubleÀàĞÍµÄº¯Êıcutoff£¨£©£»
+	atom_type::t atom_typing_used() const { return atom_typing_used_; }	//å®šä¹‰äº†ä¸€ä¸ªè¿”å›å€¼ä¸ºatom_typing_used_æšä¸¾ç±»å‹çš„å‡½æ•°atom_typing_usedï¼ˆï¼‰ï¼›
+	fl cutoff() const { return cutoff_; }                              //å®šä¹‰äº†ä¸€ä¸ªè¿”å›å€¼ä¸ºcutoff_ doubleç±»å‹çš„å‡½æ•°cutoffï¼ˆï¼‰ï¼›
 	fl eval(sz t1, sz t2, fl r) const; // intentionally not checking for cutoff
 	fl conf_independent(const model& m, fl e) const;
 private:

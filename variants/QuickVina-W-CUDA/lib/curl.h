@@ -25,13 +25,13 @@
 
 #include "common.h"
 
-#if 1 // prefer this to "hard curl"? Ò»¶¨»áÖ´ÐÐ
+#if 1 // prefer this to "hard curl"? ä¸€å®šä¼šæ‰§è¡Œ
 
 /*
-	input¡ª¡ªe¡¢v£ºdouble£»deriv£ºÈÎÒâÀàÐÍ
-	ÏÈÅÐ¶Ïe > 0²¢ÇÒv < 0.1*max_fl(µ±Ç°´¦ÀíÆ÷ÏÂdoubleÐÍ±äÁ¿×î´óÖµ)
-	Èç¹ûv<2.22045e-16 ,e=0£¬deriv=0·ñÔò
-	e=e*v / (v + e)£¬deriv=deriv*v / (v + e)
+	inputâ€”â€”eã€vï¼šdoubleï¼›derivï¼šä»»æ„ç±»åž‹
+	å…ˆåˆ¤æ–­e > 0å¹¶ä¸”v < 0.1*max_fl(å½“å‰å¤„ç†å™¨ä¸‹doubleåž‹å˜é‡æœ€å¤§å€¼)
+	å¦‚æžœv<2.22045e-16 ,e=0ï¼Œderiv=0å¦åˆ™
+	e=e*v / (v + e)ï¼Œderiv=deriv*v / (v + e)
 */
 template<typename T> // T = fl or vec
 void curl(fl& e, T& deriv, fl v) {
@@ -42,22 +42,22 @@ void curl(fl& e, T& deriv, fl v) {
 	}   
 }
 /*
-	input¡ª¡ªe¡¢v£ºdouble
-	ÏÈÅÐ¶Ïe > 0²¢ÇÒv < 0.1*max_fl(µ±Ç°´¦ÀíÆ÷ÏÂdoubleÐÍ±äÁ¿×î´óÖµ)
-		Èç¹ûv<2.22045e-16 ,e=0£¬·ñÔò
+	inputâ€”â€”eã€vï¼šdouble
+	å…ˆåˆ¤æ–­e > 0å¹¶ä¸”v < 0.1*max_fl(å½“å‰å¤„ç†å™¨ä¸‹doubleåž‹å˜é‡æœ€å¤§å€¼)
+		å¦‚æžœv<2.22045e-16 ,e=0ï¼Œå¦åˆ™
 		e=e*v / (v + e)
 */
 inline void curl(fl& e, fl v) {
-	if(e > 0 && not_max(v)) {           //v<0.1*max_fl(µ±Ç°´¦ÀíÆ÷ÏÂdoubleÐÍ±äÁ¿×î´óÖµ)
+	if(e > 0 && not_max(v)) {           //v<0.1*max_fl(å½“å‰å¤„ç†å™¨ä¸‹doubleåž‹å˜é‡æœ€å¤§å€¼)
 		fl tmp = (v < epsilon_fl) ? 0 : (v / (v + e));    //epsilon_fl=2.22045e-16
 		e *= tmp;
 	}
 }
 
-#else      //±»×¢ÊÍµô
+#else      //è¢«æ³¨é‡ŠæŽ‰
 /*
-	input¡ª¡ªe¡¢v£ºdouble£»deriv£ºÈÎÒâÀàÐÍ
-	Èç¹ûe<v ,e=v£¬deriv=0
+	inputâ€”â€”eã€vï¼šdoubleï¼›derivï¼šä»»æ„ç±»åž‹
+	å¦‚æžœe<v ,e=vï¼Œderiv=0
 */
 template<typename T> // T = fl or vec
 void curl(fl& e, T& deriv, fl v) {
@@ -68,8 +68,8 @@ void curl(fl& e, T& deriv, fl v) {
 }
 
 /*
-	input¡ª¡ªe¡¢v£ºdouble
-	Èç¹ûe<v ,e=v
+	inputâ€”â€”eã€vï¼šdouble
+	å¦‚æžœe<v ,e=v
 */
 inline void curl(fl& e, fl v) {
 	if(e > v) {

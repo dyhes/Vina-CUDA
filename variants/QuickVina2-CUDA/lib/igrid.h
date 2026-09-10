@@ -25,11 +25,11 @@
 
 #include "common.h"
 #include "grid.h"
-//ÉùÃ÷½á¹¹Ìåmodle
+//å£°æ˜ç»“æ„ä½“modle
 struct model; // forward declaration
-//½á¹¹Ìåigrid    °üº¬doubleÀàĞÍ´¿Ğéº¯Êıº¯Êı 
-//´¿Ğéº¯Êı  eval   ÊäÈëmodelÀàĞÍ½á¹¹ÌåÖ»¶Á    m   double  v  
-//´¿Ğéº¯Êı  eval_deriv    ÊäÈëmodelÀàĞÍ½á¹¹Ìå   m   double  v  
+//ç»“æ„ä½“igrid    åŒ…å«doubleç±»å‹çº¯è™šå‡½æ•°å‡½æ•° 
+//çº¯è™šå‡½æ•°  eval   è¾“å…¥modelç±»å‹ç»“æ„ä½“åªè¯»    m   double  v  
+//çº¯è™šå‡½æ•°  eval_deriv    è¾“å…¥modelç±»å‹ç»“æ„ä½“   m   double  v  
 
 struct igrid { // grids interface (that cache, etc. conform to)
 	virtual fl eval      (const model& m, fl v) const = 0; // needs m.coords // clean up

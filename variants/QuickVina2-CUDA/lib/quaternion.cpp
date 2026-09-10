@@ -21,28 +21,28 @@ The Scripps Research Institute
 */
 
 #include "quaternion.h"
-/*	ÅĞ¶ÏÊÇ·ñËÄÔªÊı±ê×¼»¯
-                        input¡ª¡ªq£ºËÄÔªÊıÖ÷ÒªÓÃÓÚĞı×ª£¬
-                        ·µ»ØÖµÎªboolÀàĞÍµÄº¯Êı£¬
-                        eq(boost::math::abs(q), 1)   ¡ª¡ªabs(boost::math::abs(q) - 1)<0.001£¬·µ»Ø1·ñÔò0£¬abs(q) ÎªÏµÊıµÄÆ½·½Ïà¼Ó¿ª¸ùºÅ£¬ÕâÀïÊ¹ÓÃµÄÊÇÏµÍ³º¯Êı¼ÆËãËÄÔªÊı¾ø¶ÔÖµ;
-                        eq(quaternion_norm_sqr(q), 1)¡ª¡ªabs(quaternion_norm_sqr(q) - 1)<0.001£¬·µ»Ø1·ñÔò0£¬quaternion_norm_sqr(q)¼ÆËãËÄÔªÊıÏµÊıµÄÆ½·½Ïà¼Ó½á¹û
-                        Á½Õß½øĞĞÏàÓë·µ»Ø×îÖÕ½á¹û
+/*	åˆ¤æ–­æ˜¯å¦å››å…ƒæ•°æ ‡å‡†åŒ–
+                        inputâ€”â€”qï¼šå››å…ƒæ•°ä¸»è¦ç”¨äºæ—‹è½¬ï¼Œ
+                        è¿”å›å€¼ä¸ºboolç±»å‹çš„å‡½æ•°ï¼Œ
+                        eq(boost::math::abs(q), 1)   â€”â€”abs(boost::math::abs(q) - 1)<0.001ï¼Œè¿”å›1å¦åˆ™0ï¼Œabs(q) ä¸ºç³»æ•°çš„å¹³æ–¹ç›¸åŠ å¼€æ ¹å·ï¼Œè¿™é‡Œä½¿ç”¨çš„æ˜¯ç³»ç»Ÿå‡½æ•°è®¡ç®—å››å…ƒæ•°ç»å¯¹å€¼;
+                        eq(quaternion_norm_sqr(q), 1)â€”â€”abs(quaternion_norm_sqr(q) - 1)<0.001ï¼Œè¿”å›1å¦åˆ™0ï¼Œquaternion_norm_sqr(q)è®¡ç®—å››å…ƒæ•°ç³»æ•°çš„å¹³æ–¹ç›¸åŠ ç»“æœ
+                        ä¸¤è€…è¿›è¡Œç›¸ä¸è¿”å›æœ€ç»ˆç»“æœ
 */
 bool quaternion_is_normalized(const qt& q) { // not in the interface, used in assertions
 	return eq(quaternion_norm_sqr(q), 1) && eq(boost::math::abs(q), 1);
 }
 
 
-/*	ÅĞ¶ÏËÄÔªÊıÊÇ·ñ½üËÆÏàµÈ
-	input¡ª¡ªa¡¢b£ºËÄÔªÊı£»
+/*	åˆ¤æ–­å››å…ƒæ•°æ˜¯å¦è¿‘ä¼¼ç›¸ç­‰
+	inputâ€”â€”aã€bï¼šå››å…ƒæ•°ï¼›
 
-	¼ÙÉèconst qt qt_identity(1, 2, 3, 4);
-	R_component_1()//ËÄÔªÊıµÚÒ»¸öÔªËØ1;
-	R_component_2()//ËÄÔªÊıµÚÒ»¸öÔªËØ2;
-	R_component_3()//ËÄÔªÊıµÚÒ»¸öÔªËØ3;
-	R_component_4()//ËÄÔªÊıµÚÒ»¸öÔªËØ4;
+	å‡è®¾const qt qt_identity(1, 2, 3, 4);
+	R_component_1()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 1;
+	R_component_2()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 2;
+	R_component_3()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 3;
+	R_component_4()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 4;
 
-	eq(a.R_component_1(), b.R_component_1())Õâ¸öº¯ÊıÈç¹ûa.R_component_1()-b.R_component_1()µÄ²îµÄ¾ø¶ÔÖµĞ¡ÓÚ0.001Ôò·µ»Øtrue£¬·ñÔòfalse
+	eq(a.R_component_1(), b.R_component_1())è¿™ä¸ªå‡½æ•°å¦‚æœa.R_component_1()-b.R_component_1()çš„å·®çš„ç»å¯¹å€¼å°äº0.001åˆ™è¿”å›trueï¼Œå¦åˆ™false
 
 
 */
@@ -56,33 +56,33 @@ bool eq(const qt& a, const qt& b) { // elementwise approximate equality - may re
 
 
 
-/*	½Ç¶ÈËÄÔªÊı
-	input¡ª¡ªaxis£ºvec½á¹¹Ìå£»angle£ºdouble£»
-	Ê×ÏÈÅĞ¶Ïaxis½á¹¹ÌåÖĞ(data[0]^2+data[1]^2+data[2]^2)^(1/2)Óë1µÄ²îµÄ¾ø¶ÔÖµÊÇ·ñĞ¡ÓÚ0.001£¬ÊÇµÄ»°¼ÌĞø£¬·ñÔòÖÕÖ¹£¨ÊÇ·ñ±ê×¼»¯£©
-	normalize_angle(angle)ÓÃÀ´½Ç¶È¹éÒ»»¯£»
-	·µ»ØËÄÔªÊı£¨cos£¨angle/2£©£¬sin£¨angle/2£©*data[0]£¬sin£¨angle/2£©*data[1]£¬sin£¨angle/2£©*data[2]£©
+/*	è§’åº¦å››å…ƒæ•°
+	inputâ€”â€”axisï¼švecç»“æ„ä½“ï¼›angleï¼šdoubleï¼›
+	é¦–å…ˆåˆ¤æ–­axisç»“æ„ä½“ä¸­(data[0]^2+data[1]^2+data[2]^2)^(1/2)ä¸1çš„å·®çš„ç»å¯¹å€¼æ˜¯å¦å°äº0.001ï¼Œæ˜¯çš„è¯ç»§ç»­ï¼Œå¦åˆ™ç»ˆæ­¢ï¼ˆæ˜¯å¦æ ‡å‡†åŒ–ï¼‰
+	normalize_angle(angle)ç”¨æ¥è§’åº¦å½’ä¸€åŒ–ï¼›
+	è¿”å›å››å…ƒæ•°ï¼ˆcosï¼ˆangle/2ï¼‰ï¼Œsinï¼ˆangle/2ï¼‰*data[0]ï¼Œsinï¼ˆangle/2ï¼‰*data[1]ï¼Œsinï¼ˆangle/2ï¼‰*data[2]ï¼‰
 */
 qt angle_to_quaternion(const vec& axis, fl angle) { // axis is assumed to be a unit vector
 													//assert(eq(tvmet::norm2(axis), 1));
-	assert(eq(axis.norm(), 1));                    //ÅĞ¶Ïaxis½á¹¹ÌåÖĞ(data[0]^2+data[1]^2+data[2]^2)^(1/2)Óë1µÄ²îµÄ¾ø¶ÔÖµÊÇ·ñĞ¡ÓÚ0.001£¬ÊÇµÄ»°¼ÌĞø£¬·ñÔòÖÕÖ¹
-	normalize_angle(angle); // this is probably only necessary if angles can be very big //½Ç¶È¹éÒ»»¯£¬Ö»ÔÚ½Ç¶ÈºÜ´óµÄÊ±ºò²Å¿ÉÄÜÓĞÓÃ
-	fl c = std::cos(angle / 2);                    //cos£¨x/2£©
-	fl s = std::sin(angle / 2);						//sin£¨x/2£©
-	return qt(c, s*axis[0], s*axis[1], s*axis[2]);  //·µ»ØËÄÔªÊı£¬axis[0]=data[0],axis[1]=data[1],axis[2]=data[2]
+	assert(eq(axis.norm(), 1));                    //åˆ¤æ–­axisç»“æ„ä½“ä¸­(data[0]^2+data[1]^2+data[2]^2)^(1/2)ä¸1çš„å·®çš„ç»å¯¹å€¼æ˜¯å¦å°äº0.001ï¼Œæ˜¯çš„è¯ç»§ç»­ï¼Œå¦åˆ™ç»ˆæ­¢
+	normalize_angle(angle); // this is probably only necessary if angles can be very big //è§’åº¦å½’ä¸€åŒ–ï¼Œåªåœ¨è§’åº¦å¾ˆå¤§çš„æ—¶å€™æ‰å¯èƒ½æœ‰ç”¨
+	fl c = std::cos(angle / 2);                    //cosï¼ˆx/2ï¼‰
+	fl s = std::sin(angle / 2);						//sinï¼ˆx/2ï¼‰
+	return qt(c, s*axis[0], s*axis[1], s*axis[2]);  //è¿”å›å››å…ƒæ•°ï¼Œaxis[0]=data[0],axis[1]=data[1],axis[2]=data[2]
 }
 
 
 
 /*   pre_angle_to_quaternion
-	input¡ª¡ªrotation£ºvec½á¹¹Ìå£»
-	inter¡ª¡ªangle£ºdouble£»axis¡ª¡ªvec½á¹¹Ìå£»
-	output¡ª¡ªËÄÔªÊı£»
-	angle=(data[0]^2+data[1]^2+data[2]^2)^(1/2)£»dataÊı×éÊÇvec½á¹¹Ìå³ÉÔ±±äÁ¿
-		if£¨angle>2.22045e-16£©
-		ÖØ¹¹µÄËÄÔªÊı³Ë·¨ÔËËãaxis = ((1/angle)*data[0](1/angle)*data[1],(1/angle)*data[2])£»
-		È»ºóÍ¨¹ıangle_to_quaternion(axis, angle)º¯Êı·µ»Ø½Ç¶ÈËÄÔªÊı
+	inputâ€”â€”rotationï¼švecç»“æ„ä½“ï¼›
+	interâ€”â€”angleï¼šdoubleï¼›axisâ€”â€”vecç»“æ„ä½“ï¼›
+	outputâ€”â€”å››å…ƒæ•°ï¼›
+	angle=(data[0]^2+data[1]^2+data[2]^2)^(1/2)ï¼›dataæ•°ç»„æ˜¯vecç»“æ„ä½“æˆå‘˜å˜é‡
+		ifï¼ˆangle>2.22045e-16ï¼‰
+		é‡æ„çš„å››å…ƒæ•°ä¹˜æ³•è¿ç®—axis = ((1/angle)*data[0](1/angle)*data[1],(1/angle)*data[2])ï¼›
+		ç„¶åé€šè¿‡angle_to_quaternion(axis, angle)å‡½æ•°è¿”å›è§’åº¦å››å…ƒæ•°
 		else
-		·µ»ØÊµÊı1
+		è¿”å›å®æ•°1
 */
 qt angle_to_quaternion(const vec& rotation) {
 	//fl angle = tvmet::norm2(rotation); 
@@ -90,7 +90,7 @@ qt angle_to_quaternion(const vec& rotation) {
 	if (angle > epsilon_fl) {
 		//vec axis; 
 		//axis = rotation / angle;	
-		vec axis = (1 / angle) * rotation;   //ÖØ¹¹µÄËÄÔªÊı³Ë·¨ÔËËã((1/angle)*data[0](1/angle)*data[1],(1/angle)*data[2])
+		vec axis = (1 / angle) * rotation;   //é‡æ„çš„å››å…ƒæ•°ä¹˜æ³•è¿ç®—((1/angle)*data[0](1/angle)*data[1],(1/angle)*data[2])
 		return angle_to_quaternion(axis, angle);
 	}
 	return qt_identity;
@@ -99,37 +99,37 @@ qt angle_to_quaternion(const vec& rotation) {
 
 
 /*
-	input¡ª¡ªq£ºËÄÔªÊı£»
-	inter¡ª¡ªc¡¢angle¡¢s£ºdouble£»axis¡ª¡ªvec½á¹¹Ìå£»
+	inputâ€”â€”qï¼šå››å…ƒæ•°ï¼›
+	interâ€”â€”cã€angleã€sï¼šdoubleï¼›axisâ€”â€”vecç»“æ„ä½“ï¼›
 
-	axis½á¹¹ÌåÖĞµÄdataÊı×é´¢´æqËÄÔªÊıÈı¸öĞéÊıÖµ
-	Ê×ÏÈÅĞ¶ÏqÊÇ·ñ±ê×¼»¯£¬È»ºó½«qÊµÊı¸³Öµ¸øc£»
-		if£¨cÔÚ(-1, 1)ÄÚ£©
-			angle=2*acos(c); //·´ÓàÏÒacos
-			if£¨angle>pi£©
-				angle=angle-2*pi£»
-			if£¨abs£¨sin(angle / 2)£©<2.22045e-16£©
-				·µ»Ø vec(0, 0, 0)£»
+	axisç»“æ„ä½“ä¸­çš„dataæ•°ç»„å‚¨å­˜qå››å…ƒæ•°ä¸‰ä¸ªè™šæ•°å€¼
+	é¦–å…ˆåˆ¤æ–­qæ˜¯å¦æ ‡å‡†åŒ–ï¼Œç„¶åå°†qå®æ•°èµ‹å€¼ç»™cï¼›
+		ifï¼ˆcåœ¨(-1, 1)å†…ï¼‰
+			angle=2*acos(c); //åä½™å¼¦acos
+			ifï¼ˆangle>piï¼‰
+				angle=angle-2*piï¼›
+			ifï¼ˆabsï¼ˆsin(angle / 2)ï¼‰<2.22045e-16ï¼‰
+				è¿”å› vec(0, 0, 0)ï¼›
 			data[0]=data[0]*(angle/sin(angle / 2));
 			data[1]=data[1]*(angle/sin(angle / 2));
 			data[2]=data[2]*(angle/sin(angle / 2));
-			·µ»Øaxis	
+			è¿”å›axis	
 	     else
-			 ·µ»Ø vec(0, 0, 0)£»
+			 è¿”å› vec(0, 0, 0)ï¼›
 */
 
 vec quaternion_to_angle(const qt& q) {
-	assert(quaternion_is_normalized(q));		//ÅĞ¶ÏÊÇ·ñËÄÔªÊı±ê×¼»¯
-	const fl c = q.R_component_1();			    //qÊµÊı²¿·Ö
+	assert(quaternion_is_normalized(q));		//åˆ¤æ–­æ˜¯å¦å››å…ƒæ•°æ ‡å‡†åŒ–
+	const fl c = q.R_component_1();			    //qå®æ•°éƒ¨åˆ†
 	if (c > -1 && c < 1) {						// c may in theory be outside [-1, 1] even with approximately normalized q, due to rounding errors
-		fl angle = 2 * std::acos(c);		    // acos is in [0, pi]  ·´ÓàÏÒ
+		fl angle = 2 * std::acos(c);		    // acos is in [0, pi]  åä½™å¼¦
 		if (angle > pi)
 			angle -= 2 * pi;					// now angle is in [-pi, pi]
-		vec axis(q.R_component_2(), q.R_component_3(), q.R_component_4());  //qµÄĞéÊı²¿·Ö
+		vec axis(q.R_component_2(), q.R_component_3(), q.R_component_4());  //qçš„è™šæ•°éƒ¨åˆ†
 		fl s = std::sin(angle / 2);				 // perhaps not very efficient to calculate sin of acos
 		if (std::abs(s) < epsilon_fl)
 			return zero_vec;
-		axis *= (angle / s);                     //ÖØ¹¹*
+		axis *= (angle / s);                     //é‡æ„*
 		return axis;
 	}
 	else // when c = -1 or 1, angle/2 = 0 or pi, therefore angle = 0
@@ -139,21 +139,21 @@ vec quaternion_to_angle(const qt& q) {
 
 
 /*
-	input¡ª¡ªq£ºËÄÔªÊı£»
-	inter¡ª¡ªa¡¢b¡¢c¡¢d¡¢aa¡¢ab¡¢ac¡¢ad¡¢bb¡¢bc¡¢bd¡¢cc¡¢cd¡¢dd£ºdouble£»
-	output¡ª¡ªtmp£ºmat½á¹¹Ìå£»
-	Ê×ÏÈÅĞ¶ÏqÊÇ·ñËÄÔªÊı±ê×¼»¯£¬È»ºóaµÈÓÚqµÄÊµÊı£¬bµÈÓÚµÚÒ»¸öĞéÊıÖµ£¬cµÈÓÚµÚ¶ş¸öĞéÊıÖµ£¬dµÈÓÚµÚÈı¸öĞéÊıÖµ£»
+	inputâ€”â€”qï¼šå››å…ƒæ•°ï¼›
+	interâ€”â€”aã€bã€cã€dã€aaã€abã€acã€adã€bbã€bcã€bdã€ccã€cdã€ddï¼šdoubleï¼›
+	outputâ€”â€”tmpï¼šmatç»“æ„ä½“ï¼›
+	é¦–å…ˆåˆ¤æ–­qæ˜¯å¦å››å…ƒæ•°æ ‡å‡†åŒ–ï¼Œç„¶åaç­‰äºqçš„å®æ•°ï¼Œbç­‰äºç¬¬ä¸€ä¸ªè™šæ•°å€¼ï¼Œcç­‰äºç¬¬äºŒä¸ªè™šæ•°å€¼ï¼Œdç­‰äºç¬¬ä¸‰ä¸ªè™šæ•°å€¼ï¼›
 	aa = a*a;ab = a*b;ac = a*c;ad = a*d;bb = b*b
 	bc = b*c;bd = b*d;cc = c*c;cd = c*d;dd = d*d
-	½Ó×ÅÅĞ¶Ïaa + bb + cc + ddÊÇ·ñ½üËÆµÈÓÚ1£¬ÊÇµÄ»°¼ÌĞø£¬·ñÔòÖÕÖ¹£»
-	mat½á¹¹ÌåÖĞ£º
-	data[0]=(aa + bb - cc - dd)£»data[3]=2 * (-ad + bc)     £»data[6]=2 * (ac + bd)      ;
-	data[1]=( 2 * (ad + bc)    £»data[4]=(aa - bb + cc - dd)£»data[7]= 2 * (-ab + cd)    ;
-	data[2]=2 * (-ac + bd)     £»data[5]=2 * (ab + cd)      £»data[8]=(aa - bb - cc + dd);
+	æ¥ç€åˆ¤æ–­aa + bb + cc + ddæ˜¯å¦è¿‘ä¼¼ç­‰äº1ï¼Œæ˜¯çš„è¯ç»§ç»­ï¼Œå¦åˆ™ç»ˆæ­¢ï¼›
+	matç»“æ„ä½“ä¸­ï¼š
+	data[0]=(aa + bb - cc - dd)ï¼›data[3]=2 * (-ad + bc)     ï¼›data[6]=2 * (ac + bd)      ;
+	data[1]=( 2 * (ad + bc)    ï¼›data[4]=(aa - bb + cc - dd)ï¼›data[7]= 2 * (-ab + cd)    ;
+	data[2]=2 * (-ac + bd)     ï¼›data[5]=2 * (ab + cd)      ï¼›data[8]=(aa - bb - cc + dd);
 */
 
 mat quaternion_to_r3(const qt& q) {
-	assert(quaternion_is_normalized(q));   //ÅĞ¶ÏqÊÇ·ñËÄÔªÊı±ê×¼»¯
+	assert(quaternion_is_normalized(q));   //åˆ¤æ–­qæ˜¯å¦å››å…ƒæ•°æ ‡å‡†åŒ–
 
 	const fl a = q.R_component_1();
 	const fl b = q.R_component_2();
@@ -192,48 +192,48 @@ mat quaternion_to_r3(const qt& q) {
 }
 
 
-/*Ëæ»ú·½Ïò
-	input¡ª¡ªgenerator£ºËæ»úÊıÉú³ÉÆ÷
-	inter¡ª¡ªq£ºËÄÔªÊı£»nrm£ºdouble£»
-	random_normal(0, 1, generator)£¬ÔÚdoubleÀàĞÍµÄÊäÈë0¡¢1Ö®¼äÉú³ÉÕıÌ¬·Ö²¼µÄËæ»úÊı£¬²¢·µ»Øº¯Êı
-	qµÄËÄ¸öÔªËØÎªËæ»úÊı£»
-	nrmÎªqµÄ¾ø¶ÔÖµ£¬¼ÙÉèq£¨a,b,c,d£©¼´qdµÄ¾ø¶ÔÖµÎª(a^2+b^2+c^2+d^2)^(1/2)
-	if£¨nrm>2.22045e-16)
-	q(a/nrm,b/nrm,c/nrm,d/nrm);Èô½üËÆ±ê×¼»¯·µ»Øq
+/*éšæœºæ–¹å‘
+	inputâ€”â€”generatorï¼šéšæœºæ•°ç”Ÿæˆå™¨
+	interâ€”â€”qï¼šå››å…ƒæ•°ï¼›nrmï¼šdoubleï¼›
+	random_normal(0, 1, generator)ï¼Œåœ¨doubleç±»å‹çš„è¾“å…¥0ã€1ä¹‹é—´ç”Ÿæˆæ­£æ€åˆ†å¸ƒçš„éšæœºæ•°ï¼Œå¹¶è¿”å›å‡½æ•°
+	qçš„å››ä¸ªå…ƒç´ ä¸ºéšæœºæ•°ï¼›
+	nrmä¸ºqçš„ç»å¯¹å€¼ï¼Œå‡è®¾qï¼ˆa,b,c,dï¼‰å³qdçš„ç»å¯¹å€¼ä¸º(a^2+b^2+c^2+d^2)^(1/2)
+	ifï¼ˆnrm>2.22045e-16)
+	q(a/nrm,b/nrm,c/nrm,d/nrm);è‹¥è¿‘ä¼¼æ ‡å‡†åŒ–è¿”å›q
 	else
-	¼ÌĞøÉú³ÉËæ»ú·½Ïò£¬ÕâÒ»²½Ó¦¸Ã²»»á·¢Éú
+	ç»§ç»­ç”Ÿæˆéšæœºæ–¹å‘ï¼Œè¿™ä¸€æ­¥åº”è¯¥ä¸ä¼šå‘ç”Ÿ
 */
 qt random_orientation(rng& generator) {
 	qt q(random_normal(0, 1, generator),
 		random_normal(0, 1, generator),
 		random_normal(0, 1, generator),
 		random_normal(0, 1, generator));
-	fl nrm = boost::math::abs(q);      //Ëã³öËÄÔªÊıµÄ¾ø¶ÔÖµ¼´ÏµÊıÆ½·½Ïà¼Ó¿ª¸ùºÅ
+	fl nrm = boost::math::abs(q);      //ç®—å‡ºå››å…ƒæ•°çš„ç»å¯¹å€¼å³ç³»æ•°å¹³æ–¹ç›¸åŠ å¼€æ ¹å·
 	if (nrm > epsilon_fl) {           //epsilon_fl=2.22045e-16
 		q /= nrm;
 		assert(quaternion_is_normalized(q));
 		return q;
 	}
 	else
-		return random_orientation(generator); // this call should almost never happenÕâ¸ö²»Ó¦¸Ã·¢Éú
+		return random_orientation(generator); // this call should almost never happenè¿™ä¸ªä¸åº”è¯¥å‘ç”Ÿ
 }
 
 
 /*
-	input¡ª¡ªq£ºËÄÔªÊı£»rotation¡ª¡ªvec½á¹¹Ìå
-	Ê×ÏÈÅĞ¶ÏqÊÇ·ñ±ê×¼»¯£¬
-	ÊÇµÄ»°qµÈÓÚangle_to_quaternion(rotation)·µ»ØµÄËÄÔªÊıºÍqµÄ³Ë»ı
-	ËÄÔªÊı³Ë·¨£ºq1£¨w1,x1,y1,z1£©;q2£¨w2,x2,y2,z2£©
+	inputâ€”â€”qï¼šå››å…ƒæ•°ï¼›rotationâ€”â€”vecç»“æ„ä½“
+	é¦–å…ˆåˆ¤æ–­qæ˜¯å¦æ ‡å‡†åŒ–ï¼Œ
+	æ˜¯çš„è¯qç­‰äºangle_to_quaternion(rotation)è¿”å›çš„å››å…ƒæ•°å’Œqçš„ä¹˜ç§¯
+	å››å…ƒæ•°ä¹˜æ³•ï¼šq1ï¼ˆw1,x1,y1,z1ï¼‰;q2ï¼ˆw2,x2,y2,z2ï¼‰
 	q1 * q2 =
 	(w1*w2 - x1*x2 - y1*y2 - z1*z2) +
 	(w1*x2 + x1*w2 + y1*z2 - z1*y2) i +
 	(w1*y2 - x1*z2 + y1*w2 + z1*x2) j +
 	(w1*z2 + x1*y2 - y1*x2 + z1*w2) k
 
-	×îºó½«q½üËÆ±ê×¼»¯
+	æœ€åå°†qè¿‘ä¼¼æ ‡å‡†åŒ–
 */
 void quaternion_increment(qt& q, const vec& rotation) {
-	assert(quaternion_is_normalized(q));              //ÊÇ·ñ±ê×¼»¯
+	assert(quaternion_is_normalized(q));              //æ˜¯å¦æ ‡å‡†åŒ–
 	q = angle_to_quaternion(rotation) * q;
 	quaternion_normalize_approx(q); // normalization added in 1.1.2
 									//quaternion_normalize(q); // normalization added in 1.1.2
@@ -241,14 +241,14 @@ void quaternion_increment(qt& q, const vec& rotation) {
 
 
 /*
-	input¡ª¡ªa¡¢b£ºËÄÔªÊı;
-	inter¡ª¡ªtmp£ºËÄÔªÊı£»
-	ÒÀ´ÎÅĞ¶Ïa¡¢bÊÇ·ñ±ê×¼»¯£¬È»ºó½«b¸´ÖÆ¸øtmp£»
+	inputâ€”â€”aã€bï¼šå››å…ƒæ•°;
+	interâ€”â€”tmpï¼šå››å…ƒæ•°ï¼›
+	ä¾æ¬¡åˆ¤æ–­aã€bæ˜¯å¦æ ‡å‡†åŒ–ï¼Œç„¶åå°†bå¤åˆ¶ç»™tmpï¼›
 	tmp=tmp/a;
-	ËÄÔªÊı³ı·¨£ºq1/q2¡ª¡ªq1£¨w1,x1,y1,z1£©;q2£¨w2,x2,y2,z2£©
-	 deno = w2*w2+x2*x2+y2*y2+z2*z2£»
+	å››å…ƒæ•°é™¤æ³•ï¼šq1/q2â€”â€”q1ï¼ˆw1,x1,y1,z1ï¼‰;q2ï¼ˆw2,x2,y2,z2ï¼‰
+	 deno = w2*w2+x2*x2+y2*y2+z2*z2ï¼›
  ((w1*w2+x1*x2+y1*y2+z1*z2)/deno,(-w1*x2+x1*w2-y1*z2+z1*y2)/deno,(-w1*y2+x1*z2+y1*w2-z1*x2)/deno,(-w1*z2-x1*y2+y1*x2+z1*w2)/deno)
-   ×îºó·µ»Øquaternion_to_angle(tmp)£»
+   æœ€åè¿”å›quaternion_to_angle(tmp)ï¼›
 */
 vec quaternion_difference(const qt& b, const qt& a) { // rotation that needs to be applied to convert a to b
 	quaternion_is_normalized(a);
@@ -260,7 +260,7 @@ vec quaternion_difference(const qt& b, const qt& a) { // rotation that needs to 
 
 
 /*
-	´òÓ¡³öËÄÔªÊı£¬ÀàËÆÓÚqt(a,b,c,d)
+	æ‰“å°å‡ºå››å…ƒæ•°ï¼Œç±»ä¼¼äºqt(a,b,c,d)
 
 */
 void print(const qt& q, std::ostream& out) { // print as an angle

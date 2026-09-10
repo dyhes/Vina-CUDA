@@ -1,0 +1,77 @@
+============================================================
+  Variant:  unidock-A
+  Dataset:  CASF-2016  (ligand_pdbqt)
+  Mode:     screening
+  Targets:  57 screening targets
+  Ligands:  coreset pool (all ligands)
+  Search:   fast  |  num_modes=9  |  scoring=vina
+  Box:      22.5³ Å
+  Output:   /home/ubuntu/grad/experiments/Jun06_1239_CASF-2016_unidock_A_fast_screening
+============================================================
+Screening targets: 57  |  Ligand pool: 285
+  [1/57] 1e66: 285/285 docked, 19.6s | ETA ~18min
+  [2/57] 1mq6: 285/285 docked, 17.4s | ETA ~17min
+  [3/57] 1nvq: 285/285 docked, 18.4s | ETA ~17min
+  [4/57] 1o3f: 285/285 docked, 17.7s | ETA ~16min
+  [5/57] 1sqa: 285/285 docked, 17.9s | ETA ~16min
+  [6/57] 1u1b: 285/285 docked, 17.3s | ETA ~15min
+  [7/57] 2al5: 285/285 docked, 20.0s | ETA ~15min
+  [8/57] 2cet: 285/285 docked, 20.1s | ETA ~15min
+  [9/57] 2fvd: 285/285 docked, 18.7s | ETA ~15min
+  [10/57] 2p15: 285/285 docked, 19.4s | ETA ~15min
+  [11/57] 2p4y: 285/285 docked, 19.1s | ETA ~14min
+  [12/57] 2qbp: 285/285 docked, 17.7s | ETA ~14min
+  [13/57] 2r9w: 285/285 docked, 18.1s | ETA ~14min
+  [14/57] 2vvn: 285/285 docked, 19.0s | ETA ~13min
+  [15/57] 2vw5: 285/285 docked, 18.0s | ETA ~13min
+  [16/57] 2x00: 285/285 docked, 18.9s | ETA ~13min
+  [17/57] 2xb8: 285/285 docked, 19.9s | ETA ~12min
+  [18/57] 2yki: 285/285 docked, 18.8s | ETA ~12min
+  [19/57] 2zcq: 285/285 docked, 19.3s | ETA ~12min
+  [20/57] 3ag9: 285/285 docked, 18.0s | ETA ~12min
+  [21/57] 3arp: 285/285 docked, 18.7s | ETA ~11min
+  [22/57] 3coy: 285/285 docked, 19.3s | ETA ~11min
+  [23/57] 3dd0: 285/285 docked, 18.8s | ETA ~11min
+  [24/57] 3e93: 285/285 docked, 18.9s | ETA ~10min
+  [25/57] 3ebp: 285/285 docked, 18.1s | ETA ~10min
+  [26/57] 3ejr: 285/285 docked, 19.1s | ETA ~10min
+  [27/57] 3f3e: 285/285 docked, 21.8s | ETA ~9min
+  [28/57] 3fv1: 285/285 docked, 19.3s | ETA ~9min
+  [29/57] 3g0w: 285/285 docked, 19.7s | ETA ~9min
+  [30/57] 3ge7: 285/285 docked, 18.8s | ETA ~9min
+  [31/57] 3gnw: 285/285 docked, 18.9s | ETA ~8min
+  [32/57] 3kr8: 285/285 docked, 18.8s | ETA ~8min
+  [33/57] 3myg: 285/285 docked, 18.3s | ETA ~8min
+  [34/57] 3nw9: 285/285 docked, 18.0s | ETA ~7min
+  [35/57] 3o9i: 285/285 docked, 18.7s | ETA ~7min
+  [36/57] 3p5o: 285/285 docked, 17.6s | ETA ~7min
+  [37/57] 3qqs: 285/285 docked, 18.8s | ETA ~6min
+  [38/57] 3u8n: 285/285 docked, 19.3s | ETA ~6min
+  [39/57] 3uex: 285/285 docked, 18.7s | ETA ~6min
+  [40/57] 3uri: 285/285 docked, 18.2s | ETA ~5min
+  [41/57] 3utu: 285/285 docked, 18.0s | ETA ~5min
+  [42/57] 3zso: 285/285 docked, 17.5s | ETA ~5min
+  [43/57] 4agq: 285/285 docked, 16.7s | ETA ~4min
+  [44/57] 4de1: 285/285 docked, 17.9s | ETA ~4min
+  [45/57] 4f3c: 285/285 docked, 19.0s | ETA ~4min
+  [46/57] 4gid: 285/285 docked, 18.9s | ETA ~3min
+  [47/57] 4gr0: 285/285 docked, 18.0s | ETA ~3min
+  [48/57] 4ivc: 285/285 docked, 18.6s | ETA ~3min
+  [49/57] 4jia: 285/285 docked, 18.7s | ETA ~2min
+  [50/57] 4pcs: 285/285 docked, 18.3s | ETA ~2min
+  [51/57] 4rfm: 285/285 docked, 18.2s | ETA ~2min
+  [52/57] 4tmn: 285/285 docked, 19.1s | ETA ~2min
+  [53/57] 4twp: 285/285 docked, 18.6s | ETA ~1min
+  [54/57] 4ty7: 285/285 docked, 18.0s | ETA ~1min
+  [55/57] 4w9h: 285/285 docked, 17.0s | ETA ~1min
+  [56/57] 5c2h: 285/285 docked, 18.7s | ETA ~0min
+  [57/57] 5dwr: 285/285 docked, 18.6s | ETA ~0min
+
+Done: 57/57 targets OK, 16245 total dockings, 17.7 min
+Combined 57 score files → /home/ubuntu/grad/experiments/Jun06_1239_CASF-2016_unidock_A_fast_screening/combined_scores.dat
+Run screening evaluation:
+  python3 /home/ubuntu/grad/tools/screening_power_py3.py -t /home/ubuntu/grad/dataset/CASF-2016/power_screening/TargetInfo.dat -s /home/ubuntu/grad/experiments/Jun06_1239_CASF-2016_unidock_A_fast_screening/combined_scores.dat -p negative
+
+Output: /home/ubuntu/grad/experiments/Jun06_1239_CASF-2016_unidock_A_fast_screening
+  scores/*_score.dat
+  summary.csv

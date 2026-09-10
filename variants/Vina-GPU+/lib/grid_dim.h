@@ -28,17 +28,17 @@
 #include "common.h"
 
 
-/*½á¹¹Ìå£º
-* double£º begin¡¢end    Uint£ºn
-* function1£º²ÎÊı double£ºbegin¡¢end    Uint£ºn  ¸³Öµ0
-* function2£º·µ»Ø end- beginµÄÖµ  double  Ö»¶Á
-* function3£º ÅĞ¶Ïn>0    bool  Ö»¶Á
-* function4: ÊäÈë£ºÁ½¸ö½á¹¹Ìå Êä³ö£ºbool  ÅĞ¶ÏÁ½¸ö½á¹¹ÌåµÄnÊÇ·ñÒ»Ñù ²ÎÊıbeginºÍendµÄ²îµÄ¾ø¶ÔÖµÊÇ·ñ<0.01
-* function5£ºÊäÈë£ºÁ½¸ö½á¹¹Ìå×é£¨Èı¸ö½á¹¹Ìå×é³É£© Êä³ö£ºbool  ÅĞ¶Ï½á¹¹Ìå×éÖĞµÄÈı¶ÔÊı×éÖĞµÄa[i]ºÍb[i]µÄ²îµÄ¾ø¶ÔÖµÊÇ·ñ<0.001
-* function6£ºÊäÈë£º½á¹¹Ìå×é£¨Èı¸ö½á¹¹Ìå×é³É£©  std::ostreamÀàĞÍÒıÓÃ£¬Ä¬ÈÏÖµÎªstd::cout   ¹¦ÄÜ£º´òÓ¡
-* function7£ºÊäÈë£º½á¹¹Ìå×é£¨Èı¸ö½á¹¹Ìå×é³É£©  Êä³ö £º³¤¶È3Êı×é double  ½«Èı¸ö²ÎÊıbegin´æÈëÊı×é
-* function8£ºÊäÈë£º½á¹¹Ìå×é£¨Èı¸ö½á¹¹Ìå×é³É£©   Êä³ö £º³¤¶È3Êı×é double   ½«Èı¸ö²ÎÊıend´æÈëÊı×é
-* ÇÖÈëÊ½ĞòÁĞ»¯     private²¿·Ö
+/*ç»“æ„ä½“ï¼š
+* doubleï¼š beginã€end    Uintï¼šn
+* function1ï¼šå‚æ•° doubleï¼šbeginã€end    Uintï¼šn  èµ‹å€¼0
+* function2ï¼šè¿”å› end- beginçš„å€¼  double  åªè¯»
+* function3ï¼š åˆ¤æ–­n>0    bool  åªè¯»
+* function4: è¾“å…¥ï¼šä¸¤ä¸ªç»“æ„ä½“ è¾“å‡ºï¼šbool  åˆ¤æ–­ä¸¤ä¸ªç»“æ„ä½“çš„næ˜¯å¦ä¸€æ · å‚æ•°beginå’Œendçš„å·®çš„ç»å¯¹å€¼æ˜¯å¦<0.01
+* function5ï¼šè¾“å…¥ï¼šä¸¤ä¸ªç»“æ„ä½“ç»„ï¼ˆä¸‰ä¸ªç»“æ„ä½“ç»„æˆï¼‰ è¾“å‡ºï¼šbool  åˆ¤æ–­ç»“æ„ä½“ç»„ä¸­çš„ä¸‰å¯¹æ•°ç»„ä¸­çš„a[i]å’Œb[i]çš„å·®çš„ç»å¯¹å€¼æ˜¯å¦<0.001
+* function6ï¼šè¾“å…¥ï¼šç»“æ„ä½“ç»„ï¼ˆä¸‰ä¸ªç»“æ„ä½“ç»„æˆï¼‰  std::ostreamç±»å‹å¼•ç”¨ï¼Œé»˜è®¤å€¼ä¸ºstd::cout   åŠŸèƒ½ï¼šæ‰“å°
+* function7ï¼šè¾“å…¥ï¼šç»“æ„ä½“ç»„ï¼ˆä¸‰ä¸ªç»“æ„ä½“ç»„æˆï¼‰  è¾“å‡º ï¼šé•¿åº¦3æ•°ç»„ double  å°†ä¸‰ä¸ªå‚æ•°beginå­˜å…¥æ•°ç»„
+* function8ï¼šè¾“å…¥ï¼šç»“æ„ä½“ç»„ï¼ˆä¸‰ä¸ªç»“æ„ä½“ç»„æˆï¼‰   è¾“å‡º ï¼šé•¿åº¦3æ•°ç»„ double   å°†ä¸‰ä¸ªå‚æ•°endå­˜å…¥æ•°ç»„
+* ä¾µå…¥å¼åºåˆ—åŒ–     privateéƒ¨åˆ†
 */
 struct grid_dim {
 	fl begin;
@@ -47,7 +47,7 @@ struct grid_dim {
 	grid_dim() : begin(0), end(0), n(0) {}
 	fl span() const { return end - begin; }
 	bool enabled() const { return (n > 0); }
-private:                                           //ÇÖÈëÊ½ĞòÁĞ»¯
+private:                                           //ä¾µå…¥å¼åºåˆ—åŒ–
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned version) {
@@ -58,32 +58,32 @@ private:                                           //ÇÖÈëÊ½ĞòÁĞ»¯
 };
 
 inline bool eq(const grid_dim& a, const grid_dim& b) {
-	return a.n == b.n && eq(a.begin, b.begin) && eq(a.end, b.end);//ÅĞ¶ÏÁ½¸ö½á¹¹ÌåµÄnÊÇ·ñÒ»Ñù ²ÎÊıbeginºÍendµÄ²îµÄ¾ø¶ÔÖµÊÇ·ñ<0.01
+	return a.n == b.n && eq(a.begin, b.begin) && eq(a.end, b.end);//åˆ¤æ–­ä¸¤ä¸ªç»“æ„ä½“çš„næ˜¯å¦ä¸€æ · å‚æ•°beginå’Œendçš„å·®çš„ç»å¯¹å€¼æ˜¯å¦<0.01
 }
 
 typedef boost::array<grid_dim, 3> grid_dims;
 
 inline bool eq(const grid_dims& a, const grid_dims& b) {
-	return eq(a[0], b[0]) && eq(a[1], b[1]) && eq(a[2], b[2]);//ÅĞ¶Ï½á¹¹Ìå×éÖĞµÄÈı¶ÔÊı×éÖĞµÄa[i]ºÍb[i]µÄ²îµÄ¾ø¶ÔÖµÊÇ·ñ<0.001
+	return eq(a[0], b[0]) && eq(a[1], b[1]) && eq(a[2], b[2]);//åˆ¤æ–­ç»“æ„ä½“ç»„ä¸­çš„ä¸‰å¯¹æ•°ç»„ä¸­çš„a[i]å’Œb[i]çš„å·®çš„ç»å¯¹å€¼æ˜¯å¦<0.001
 }       
 
 inline void print(const grid_dims& gd, std::ostream& out = std::cout) {
 	VINA_FOR_IN(i, gd)
 		std::cout << gd[i].n << " [" << gd[i].begin << " .. " << gd[i].end << "]\n";
-}//    ´òÓ¡n[b..e]   
+}//    æ‰“å°n[b..e]   
 
 inline vec grid_dims_begin(const grid_dims& gd) {
 	vec tmp;
 	VINA_FOR_IN(i, gd)
 		tmp[i] = gd[i].begin;
 	return tmp;
-}//½«Èı¸öbegin´æÈëÊı×é
+}//å°†ä¸‰ä¸ªbeginå­˜å…¥æ•°ç»„
 
 inline vec grid_dims_end(const grid_dims& gd) {
 	vec tmp;
 	VINA_FOR_IN(i, gd)
 		tmp[i] = gd[i].end;
 	return tmp;
-}//½«Èı¸öend´æÈëÊı×é
+}//å°†ä¸‰ä¸ªendå­˜å…¥æ•°ç»„
 
 #endif

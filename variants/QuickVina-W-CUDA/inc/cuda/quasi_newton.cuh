@@ -563,12 +563,12 @@ __device__ inline void local_to_lab_direction(			flo* out,
 				orientation_m[5] * local_direction[1] +
 				orientation_m[8] * local_direction[2];*/
 
-	// ʹ�üĴ����洢�ֲ�����������ȫ���ڴ����?
+	// 使锟矫寄达拷锟斤拷锟芥储锟街诧拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷全锟斤拷锟节达拷锟斤拷锟?
     flo ld0 = local_direction[0];
     flo ld1 = local_direction[1];
     flo ld2 = local_direction[2];
 
-    // Ԥ����һЩ�м����?
+    // 预锟斤拷锟斤拷一些锟叫硷拷锟斤拷锟?
     flo om0_ld0 = orientation_m[0] * ld0;
     flo om1_ld0 = orientation_m[1] * ld0;
     flo om2_ld0 = orientation_m[2] * ld0;
@@ -581,7 +581,7 @@ __device__ inline void local_to_lab_direction(			flo* out,
     flo om7_ld2 = orientation_m[7] * ld2;
     flo om8_ld2 = orientation_m[8] * ld2;
 
-    // �������?
+    // 锟斤拷锟斤拷锟斤拷锟?
     out[0] = om0_ld0 + om3_ld1 + om6_ld2;
     out[1] = om1_ld0 + om4_ld1 + om7_ld2;
     out[2] = om2_ld0 + om5_ld1 + om8_ld2;
@@ -1045,7 +1045,7 @@ __device__ inline void product(flo* res, const flo*a,const flo*b) {
 	//res[1] = a[2] * b[0] - a[0] * b[2];
 	//res[2] = a[0] * b[1] - a[1] * b[0];
 
-	// ʹ�üĴ����洢�м���
+	// 使锟矫寄达拷锟斤拷锟芥储锟叫硷拷锟斤拷
     flo a0 = a[0];
     flo a1 = a[1];
     flo a2 = a[2];

@@ -28,23 +28,23 @@
 
 /*
 intput:		uint i,j
-function:	½øĞĞi*j=tmpÔËËã,½áºÏÅĞ¶Ï·µ»ØÖµtmp¡£·µ»ØÀàĞÍÎªuint
-			a.ÊäÈëÖĞÓĞ0ÔòÊä³ö0;
-			b.½á¹ûÒç³öÅ×³öÒì³£;
-			c.Õı³£Êä³ö
+function:	è¿›è¡Œi*j=tmpè¿ç®—,ç»“åˆåˆ¤æ–­è¿”å›å€¼tmpã€‚è¿”å›ç±»å‹ä¸ºuint
+			a.è¾“å…¥ä¸­æœ‰0åˆ™è¾“å‡º0;
+			b.ç»“æœæº¢å‡ºæŠ›å‡ºå¼‚å¸¸;
+			c.æ­£å¸¸è¾“å‡º
 */
 inline sz checked_multiply(sz i, sz j) {
-	if(i == 0 || j == 0) return 0;				//ÅĞ¶ÏÔËËãÖĞÊÇ·ñÓĞ0ÒÔ¼õÉÙÔËËãÁ¿?
-	const sz tmp = i * j;						//¼ÆËãi*j
-	if(tmp < i || tmp < j || tmp / i != j)		//Òç³öÅĞ¶Ï
+	if(i == 0 || j == 0) return 0;				//åˆ¤æ–­è¿ç®—ä¸­æ˜¯å¦æœ‰0ä»¥å‡å°‘è¿ç®—é‡?
+	const sz tmp = i * j;						//è®¡ç®—i*j
+	if(tmp < i || tmp < j || tmp / i != j)		//æº¢å‡ºåˆ¤æ–­
 		throw std::bad_alloc(); // can't alloc if the size makes sz wrap around
 	return tmp;
 }
 
 /* 
 intput:		uint i,j,k
-function:   ¼ÆËã²»Òç³öÇÒÊäÈë·ÇÁãµÄi*j*k 
-½âÊÍ£ºÇ¶Ì× checked_multiply ²¢·µ»Ø uintĞÍ½á¹û
+function:   è®¡ç®—ä¸æº¢å‡ºä¸”è¾“å…¥éé›¶çš„i*j*k 
+è§£é‡Šï¼šåµŒå¥— checked_multiply å¹¶è¿”å› uintå‹ç»“æœ
 */
 inline sz checked_multiply(sz i, sz j, sz k) {
 	return checked_multiply(checked_multiply(i, j), k);
@@ -52,15 +52,15 @@ inline sz checked_multiply(sz i, sz j, sz k) {
 
 
 
-template<typename T>							//C++Ä£°å,ĞÎ²Î(²»ĞèÒªÃ÷È·¶¨Òå±äÁ¿ÀàĞÍ)
+template<typename T>							//C++æ¨¡æ¿,å½¢å‚(ä¸éœ€è¦æ˜ç¡®å®šä¹‰å˜é‡ç±»å‹)
 /*
-ÇÖÈëÊ½(intrusive)ĞòÁĞ»¯
-²Î¿¼:https://blog.csdn.net/zj510/article/details/8105408
+ä¾µå…¥å¼(intrusive)åºåˆ—åŒ–
+å‚è€ƒ:https://blog.csdn.net/zj510/article/details/8105408
 */
 class array3d {		
 public:
 	sz m_i, m_j, m_k;							//uint
-	std::vector<T> m_data;						//TÀàĞÍÃûÎªm_data¿Õ¶ÔÏó
+	std::vector<T> m_data;						//Tç±»å‹åä¸ºm_dataç©ºå¯¹è±¡
 	friend class boost::serialization::access;
 	template<typename Archive>
 	void serialize(Archive& ar, const unsigned version) {

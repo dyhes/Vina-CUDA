@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <iomanip>
 #include <stdio.h>
+#include <cmath>
 #include "omp.h"
 
 // quickvina-W
@@ -89,9 +90,9 @@ std::vector<output_type> cl_to_vina(output_type_cl result_ptr[],
 									int thread, int lig_torsion_size)
 {
 	std::vector<output_type> results_vina;
-	int num_atoms;
+	int num_atoms = -1;
+	sz skipped_candidates = 0;
 
-#pragma omp parallel for
 	for (int i = 0; i < thread; i++)
 	{
 		output_type_cl tmp = result_ptr[i];
@@ -115,13 +116,24 @@ std::vector<output_type> cl_to_vina(output_type_cl result_ptr[],
 			if ((v_tmp[0] != 0 || v_tmp[1] != 0) || (v_tmp[2] != 0))
 				tmp_vina.coords.push_back(v_tmp);
 		}
-		results_vina.push_back(tmp_vina);
-		if (i == 0)
-			num_atoms = tmp_vina.coords.size();
-		if (num_atoms != tmp_vina.coords.size())
+		if (tmp_vina.coords.empty())
 		{
-			throw std::runtime_error("atom coords not match!");
+			++skipped_candidates;
+			continue;
 		}
+		if (num_atoms < 0)
+			num_atoms = static_cast<int>(tmp_vina.coords.size());
+		if (num_atoms != static_cast<int>(tmp_vina.coords.size()))
+		{
+			++skipped_candidates;
+			continue;
+		}
+		results_vina.push_back(tmp_vina);
+	}
+	if (skipped_candidates > 0)
+	{
+		printf("Diagnostic: cl_to_vina skipped %zu inconsistent candidate(s)\n", skipped_candidates);
+		fflush(stdout);
 	}
 	return results_vina;
 }
@@ -146,7 +158,10 @@ void main_procedure_cl(cache &c, const std::vector<model> &ms, const precalculat
 	std::cout << "Compute capability: " << props.major << "." << props.minor << std::endl;
 	std::cout << "The maxThreadsPerBlock is : " << max_wg_size << std::endl;
 
-	printf("\nUsing random seed: %d , Search depth is set to:%f \n", seed, par.mc.search_depth);
+	if (!par.mc.search_depth.empty())
+		printf("\nUsing random seed: %d , Search depth is set to:%d \n", seed, par.mc.search_depth[0]);
+	else
+		printf("\nUsing random seed: %d , Search depth is set to:heuristic\n", seed);
 
 	sz nat = num_atom_types(c.atu); // atom types supported by vina
 
@@ -685,7 +700,7 @@ void main_procedure_cl(cache &c, const std::vector<model> &ms, const precalculat
 			// std::cout << "par.mc.search_depth[ligand_count] = " << par.mc.search_depth[ligand_count] << "  || par.mc.ssd_par.bfgs_steps[ligand_count] = " << par.mc.ssd_par.bfgs_steps[ligand_count] << std::endl;
 
 			// quickvina-W
-			int code_num = get_n(par.mc.thread, 5); // search_depth = 5
+			int code_num = get_n(par.mc.thread, par.mc.search_depth[ligand_count]); // [PATCH] use actual search_depth
 			int *count_gpu;
 			int init_i = 0;
 			size_t count_gpu_size = pow(2, code_num - 3) * sizeof(int);
@@ -710,8 +725,32 @@ void main_procedure_cl(cache &c, const std::vector<model> &ms, const precalculat
 			checkCUDA(cudaMemcpy(result_ptrs[ligand_count], result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
 			checkCUDA(cudaMemcpy(result_coords_ptrs[ligand_count], result_coords_gpus[ligand_count], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
 
-			std::vector<output_type> result_vina = cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
-															  par.mc.thread, torsion_sizes[ligand_count]);
+			sz finite_candidates = 0;
+			for (int i = 0; i < par.mc.thread; i++)
+			{
+				const fl e = result_ptrs[ligand_count][i].e;
+				if (std::isfinite(e) && e < max_fl)
+					finite_candidates++;
+			}
+			printf("Diagnostic: ligand %d finite candidates before insertion: %zu/%d\n",
+				   ligand_count, finite_candidates, par.mc.thread);
+
+			std::vector<output_type> result_vina;
+			try
+			{
+				result_vina = cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
+														   par.mc.thread, torsion_sizes[ligand_count]);
+			}
+			catch (const std::exception &e)
+			{
+				printf("Diagnostic: cl_to_vina threw std::exception for ligand %d: %s\n", ligand_count, e.what());
+				throw;
+			}
+			catch (...)
+			{
+				printf("Diagnostic: cl_to_vina threw unknown exception for ligand %d\n", ligand_count);
+				throw;
+			}
 			if (result_vina.size() == 0)
 			{
 				status = ABORT;
@@ -721,11 +760,12 @@ void main_procedure_cl(cache &c, const std::vector<model> &ms, const precalculat
 				exit(-1);
 			}
 
-#pragma omp parallel for
 			for (int i = 0; i < par.mc.thread; i++)
 			{
 				add_to_output_container(outs[ligand_count], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
 			}
+			printf("Diagnostic: ligand %d outs size after insertion: %zu\n",
+				   ligand_count, outs[ligand_count].size());
 
 			free(rand_maps_ptrs[ligand_count]);
 			free(ric_ptrs[ligand_count]);

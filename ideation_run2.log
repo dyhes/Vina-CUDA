@@ -1,0 +1,2 @@
+/home/ubuntu/grad/AI-Scientist-v2/ai_scientist/../ai_scientist/tools/semantic_scholar.py:40: UserWarning: No Semantic Scholar API key found. Requests will be subject to stricter rate limits. Set the S2_API_KEY environment variable for higher limits.
+  warnings.warn(

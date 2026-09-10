@@ -26,34 +26,34 @@
 #include <vector>
 #include "triangular_matrix_index.h"
 
-// these 4 lines are used 3 times verbatim - defining a temp macro to ease the pain  ÔËËã·ûÖØÔØ
+// these 4 lines are used 3 times verbatim - defining a temp macro to ease the pain  è¿ç®—ç¬¦é‡è½½
 #define VINA_MATRIX_DEFINE_OPERATORS \
 	const T& operator()(sz i) const { return m_data[i]; } \
 	      T& operator()(sz i)       { return m_data[i]; } \
 	const T& operator()(sz i, sz j) const { return m_data[index(i, j)]; } \
 	      T& operator()(sz i, sz j)       { return m_data[index(i, j)]; } 
 /*
-¶¨Òå½á¹¹Ìåmatrix 
-ÉùÃ÷ÏòÁ¿m_data  ÀàĞÍÎªÄ£°å²ÎÊıT
-¶¨ÒåuintĞÍº¯Êıindex   ÊäÈë  uint  i  j  Êä³ö  uint  i + m_i*j
-¶¨Òå¹¹Ôìº¯Êı²¢¸³Öµ
+å®šä¹‰ç»“æ„ä½“matrix 
+å£°æ˜å‘é‡m_data  ç±»å‹ä¸ºæ¨¡æ¿å‚æ•°T
+å®šä¹‰uintå‹å‡½æ•°index   è¾“å…¥  uint  i  j  è¾“å‡º  uint  i + m_i*j
+å®šä¹‰æ„é€ å‡½æ•°å¹¶èµ‹å€¼
 
 
-¶¨Òåº¯Êıresize   input  uint  m  n    Ä£°å²ÎÊıTÀàĞÍ  filler_val Ö»¶Á  
-function  £º¸Ä±äm_data  m_i m_jµÄÖµ
-ÅĞ¶Ï
-Ñ­»·Ö´ĞĞ  ij´Ó00 µ½ m_im_j   °Ñ²ÎÊıÎª£¨i  j£©µÄ¶ÔÏó¸³Öµ¸ø tmp[i+m*j]
-¶Ôm_data  m_i m_j  ¸³Öµ
+å®šä¹‰å‡½æ•°resize   input  uint  m  n    æ¨¡æ¿å‚æ•°Tç±»å‹  filler_val åªè¯»  
+function  ï¼šæ”¹å˜m_data  m_i m_jçš„å€¼
+åˆ¤æ–­
+å¾ªç¯æ‰§è¡Œ  ijä»00 åˆ° m_im_j   æŠŠå‚æ•°ä¸ºï¼ˆi  jï¼‰çš„å¯¹è±¡èµ‹å€¼ç»™ tmp[i+m*j]
+å¯¹m_data  m_i m_j  èµ‹å€¼
 
 
-¶¨Òåº¯Êıappend  input  ÀàmatrixÀàĞÍÄ£°å²ÎÊıÎªTµÄ²ÎÊıx   Ö»¶Á      Ä£°å²ÎÊıTÀàĞÍµÄ²ÎÊıfiller_val  Êä³öviod
-function  ¶Ô²ÎÊıÎª(i+m, j+n)µÄ¶ÔÏó¸³Öµ
+å®šä¹‰å‡½æ•°append  input  ç±»matrixç±»å‹æ¨¡æ¿å‚æ•°ä¸ºTçš„å‚æ•°x   åªè¯»      æ¨¡æ¿å‚æ•°Tç±»å‹çš„å‚æ•°filler_val  è¾“å‡ºviod
+function  å¯¹å‚æ•°ä¸º(i+m, j+n)çš„å¯¹è±¡èµ‹å€¼
 
-¶¨ÒåuintÀàĞÍµÄº¯Êıdim_1dim_2  function ·µ»Ø m_i  m_j
+å®šä¹‰uintç±»å‹çš„å‡½æ•°dim_1dim_2  function è¿”å› m_i  m_j
 */
 template<typename T>
 class matrix {
-	std::vector<T> m_data;//ÏòÁ¿ m_data
+	std::vector<T> m_data;//å‘é‡ m_data
 	sz m_i, m_j;
 public:
 	sz index(sz i, sz j) const {//input   uint  i j   output  uint  i + m_i*j
@@ -64,75 +64,75 @@ public:
 	matrix() : m_i(0), m_j(0) {}
 	matrix(sz i, sz j, const T& filler_val) : m_data(i*j, filler_val), m_i(i), m_j(j) {}
 	void resize(sz m, sz n, const T& filler_val) { // new sizes should be the same or greater than the old
-		if(m == dim_1() && n == dim_2()) return; // ÅĞ¶Ïm n   
+		if(m == dim_1() && n == dim_2()) return; // åˆ¤æ–­m n   
 		VINA_CHECK(m >= dim_1());
 		VINA_CHECK(n >= dim_2());
-		std::vector<T> tmp(m*n, filler_val);//M*N¸öÔªËØ  Ã¿¸ö¶¼ÊÇfiller_val
+		std::vector<T> tmp(m*n, filler_val);//M*Nä¸ªå…ƒç´   æ¯ä¸ªéƒ½æ˜¯filler_val
 		VINA_FOR(i, m_i)
 			VINA_FOR(j, m_j)
-				tmp[i+m*j] = (*this)(i, j);//  °Ñ²ÎÊıÎª£¨i  j£©µÄ¶ÔÏó¸³Öµ¸ø tmp[i+m*j]
-		m_data = tmp;			//¸³Öµm_data 
+				tmp[i+m*j] = (*this)(i, j);//  æŠŠå‚æ•°ä¸ºï¼ˆi  jï¼‰çš„å¯¹è±¡èµ‹å€¼ç»™ tmp[i+m*j]
+		m_data = tmp;			//èµ‹å€¼m_data 
 		m_i = m;
 		m_j = n;
 	}
 	void append(const matrix<T>& x, const T& filler_val) {
 		sz m = dim_1();
 		sz n = dim_2();
-		resize(m + x.dim_1(), n + x.dim_2(), filler_val);//¶Ôm_data  m_i m_j  ¸³Öµ
+		resize(m + x.dim_1(), n + x.dim_2(), filler_val);//å¯¹m_data  m_i m_j  èµ‹å€¼
 		VINA_FOR(i, x.dim_1())
 			VINA_FOR(j, x.dim_2())(i+m, j+n)
-				(*this)(i+m, j+n) = x(i, j);//¶Ô²ÎÊıÎª(i+m, j+n)µÄ¶ÔÏó¸³Öµ
+				(*this)(i+m, j+n) = x(i, j);//å¯¹å‚æ•°ä¸º(i+m, j+n)çš„å¯¹è±¡èµ‹å€¼
 	}
 	VINA_MATRIX_DEFINE_OPERATORS // temp macro defined above
 	sz dim_1() const { return m_i; }
 	sz dim_2() const { return m_j; }
 };
-/*¶¨ÒåÀàtriangular_matrix    Ä£°å²ÎÊıÎªT
+/*å®šä¹‰ç±»triangular_matrix    æ¨¡æ¿å‚æ•°ä¸ºT
 * 
-º¯Êıindex  uintÀàĞÍ  input  uint i  j  return  i + j*(j+1)/2;Ö»¶Á
-º¯Êıindex_permissive  uintÀàĞÍ   input  uint  i  j   Ö»¶Á  ·µ»Øi + j*(j+1)/2;or//j + i*(i+1)/2;
-º¯Êıdim   uintÀàĞÍ  ·µ»Ø  uintÀàĞÍ   m_dim
+å‡½æ•°index  uintç±»å‹  input  uint i  j  return  i + j*(j+1)/2;åªè¯»
+å‡½æ•°index_permissive  uintç±»å‹   input  uint  i  j   åªè¯»  è¿”å›i + j*(j+1)/2;or//j + i*(i+1)/2;
+å‡½æ•°dim   uintç±»å‹  è¿”å›  uintç±»å‹   m_dim
 */
 template<typename T>
 class triangular_matrix {
 public:
-	std::vector<T> m_data;//ÏòÁ¿  TÀàĞÍ
+	std::vector<T> m_data;//å‘é‡  Tç±»å‹
 	sz m_dim;
 public:
 	sz index(sz i, sz j) const { return triangular_matrix_index(m_dim, i, j); }//i + j*(j+1)/2; 
 	sz index_permissive(sz i, sz j) const { return (i < j) ? index(i, j) : index(j, i); }//i + j*(j+1)/2;or//j + i*(i+1)/2;
 	triangular_matrix() : m_dim(0) {}
 	triangular_matrix(sz n, const T& filler_val) : m_data(n*(n+1)/2, filler_val), m_dim(n) {} 
-	VINA_MATRIX_DEFINE_OPERATORS // temp macro defined above     ºê
+	VINA_MATRIX_DEFINE_OPERATORS // temp macro defined above     å®
 	sz dim() const { return m_dim; }
 };
-/*¶¨ÒåÀàstrictly_triangular_matrix  Ä£°å²ÎÊı T
+/*å®šä¹‰ç±»strictly_triangular_matrix  æ¨¡æ¿å‚æ•° T
 *
-º¯Êıindex    uintÀàĞÍ   input  i  j  uint      Ö»¶Á   ÅĞ¶Ïij¹ØÏµÈ»ºó return   i + j*(j-1)/2
+å‡½æ•°index    uintç±»å‹   input  i  j  uint      åªè¯»   åˆ¤æ–­ijå…³ç³»ç„¶å return   i + j*(j-1)/2
 
-º¯Êıindex_permissive   uintÀàĞÍ   input  i  j  uint   Ö»¶Á    return   i + j*(j-1)/2 orreturn   j + i*(i-1)/2
+å‡½æ•°index_permissive   uintç±»å‹   input  i  j  uint   åªè¯»    return   i + j*(j-1)/2 orreturn   j + i*(i-1)/2
 
-º¯Êıresize  inout   uint  n    Ö»¶ÁTÀàĞÍfiller_val  function  £º¸øm_dim¸³Öµ    ½«m_dataµÄÈİÁ¿¸Ä³É*(n-1)/2£¬À©ÈİµÄ²¿·ÖÉèÖÃÎªfiller_val
+å‡½æ•°resize  inout   uint  n    åªè¯»Tç±»å‹filler_val  function  ï¼šç»™m_dimèµ‹å€¼    å°†m_dataçš„å®¹é‡æ”¹æˆ*(n-1)/2ï¼Œæ‰©å®¹çš„éƒ¨åˆ†è®¾ç½®ä¸ºfiller_val
 
-º¯Êıappend 	
-input m  strictly_triangular_matrixÀà     filler_val  TÀàĞÍ
+å‡½æ•°append 	
+input m  strictly_triangular_matrixç±»     filler_val  Tç±»å‹
 out   void
-function £º  ¸øÀàÖĞµÄ²ÎÊı  m_dim¸³Öµ   ²¢ÇÒ    m_dataµÄÈİÁ¿¸Ä³É*(n-1)/2£¬À©ÈİµÄ²¿·ÖÉèÖÃÎªfiller_val
-	               È»ºó Í¨¹ıÊäÈë¸ü¸Äµ±Ç°¶ÔÏóµÄ²ÎÊı  
+function ï¼š  ç»™ç±»ä¸­çš„å‚æ•°  m_dimèµ‹å€¼   å¹¶ä¸”    m_dataçš„å®¹é‡æ”¹æˆ*(n-1)/2ï¼Œæ‰©å®¹çš„éƒ¨åˆ†è®¾ç½®ä¸ºfiller_val
+	               ç„¶å é€šè¿‡è¾“å…¥æ›´æ”¹å½“å‰å¯¹è±¡çš„å‚æ•°  
 
-º¯Êıappend  	
-input   rectangular  matrixÀàĞÍ  Ö»¶Á          triangular     strictly_triangular_matrixÀàĞÍ  Ö»¶Á
+å‡½æ•°append  	
+input   rectangular  matrixç±»å‹  åªè¯»          triangular     strictly_triangular_matrixç±»å‹  åªè¯»
 out    void
-function£º      1¡¢ÅĞ¶ÏrectangularµÄdim_1dim_2£¬   dim_2==0  Ö±½Ó½áÊø   dim_1=0   °Ñtriangular¸³Öµµ±Ç°¶ÔÏó  ½áÊø
-				2¡¢Ö´ĞĞº¯Êı		append(triangular, filler_val)   *¸øÀàÖĞµÄ²ÎÊı  m_dim¸³Öµ   ²¢ÇÒ    µ±Ç°m_dataµÄÈİÁ¿¸Ä³É*(n-1)/2£¬À©ÈİµÄ²¿·ÖÉèÖÃÎªfiller_val
-	                                             ²¢Í¨¹ıÊäÈëtriangular¸ü¸Äµ±Ç°¶ÔÏóµÄm_data     ÆäÖĞ		filler_val=m_data[0]
-	            3¡¢È»ºó  ÊäÈërectangularµÄm_data¸ü¸Äµ±Ç°¶ÔÏóµÄm_data
+functionï¼š      1ã€åˆ¤æ–­rectangularçš„dim_1dim_2ï¼Œ   dim_2==0  ç›´æ¥ç»“æŸ   dim_1=0   æŠŠtriangularèµ‹å€¼å½“å‰å¯¹è±¡  ç»“æŸ
+				2ã€æ‰§è¡Œå‡½æ•°		append(triangular, filler_val)   *ç»™ç±»ä¸­çš„å‚æ•°  m_dimèµ‹å€¼   å¹¶ä¸”    å½“å‰m_dataçš„å®¹é‡æ”¹æˆ*(n-1)/2ï¼Œæ‰©å®¹çš„éƒ¨åˆ†è®¾ç½®ä¸ºfiller_val
+	                                             å¹¶é€šè¿‡è¾“å…¥triangularæ›´æ”¹å½“å‰å¯¹è±¡çš„m_data     å…¶ä¸­		filler_val=m_data[0]
+	            3ã€ç„¶å  è¾“å…¥rectangularçš„m_dataæ›´æ”¹å½“å‰å¯¹è±¡çš„m_data
 
 
 */
 template<typename T>
 class strictly_triangular_matrix {
-	std::vector<T> m_data;  //ÏòÁ¿   ÀàĞÍÎªT
+	std::vector<T> m_data;  //å‘é‡   ç±»å‹ä¸ºT
 	sz m_dim;
 public:
 	sz index(sz i, sz j) const {
@@ -148,17 +148,17 @@ public:
 		if(n == m_dim) return; 
 		VINA_CHECK(n > m_dim);
 		m_dim = n;
-		m_data.resize(n*(n-1)/2, filler_val); // preserves original data//½«m_dataµÄÈİÁ¿¸Ä³É*(n-1)/2£¬À©ÈİµÄ²¿·ÖÉèÖÃÎªfiller_val
+		m_data.resize(n*(n-1)/2, filler_val); // preserves original data//å°†m_dataçš„å®¹é‡æ”¹æˆ*(n-1)/2ï¼Œæ‰©å®¹çš„éƒ¨åˆ†è®¾ç½®ä¸ºfiller_val
 	}
 
 
 	void append(const strictly_triangular_matrix<T>& m, const T& filler_val) { 
 		sz n = dim();//m_dim
-		resize(n + m.dim(), filler_val);//¸øm_dim¸³Öµ    ½«m_dataµÄÈİÁ¿¸Ä³É*(n-1)/2£¬À©ÈİµÄ²¿·ÖÉèÖÃÎªfiller_val
+		resize(n + m.dim(), filler_val);//ç»™m_dimèµ‹å€¼    å°†m_dataçš„å®¹é‡æ”¹æˆ*(n-1)/2ï¼Œæ‰©å®¹çš„éƒ¨åˆ†è®¾ç½®ä¸ºfiller_val
 		VINA_FOR(i, m.dim())
 			VINA_RANGE(j, i+1, m.dim())
-				(*this)(i+n, j+n) = m(i, j);//Í¨¹ıÊäÈë¸ü¸Äµ±Ç°¶ÔÏóµÄm_data  
-	}//        m_data[ i+n + m_i*£¨i+n£©]  = m_data[ i + m_i*j]
+				(*this)(i+n, j+n) = m(i, j);//é€šè¿‡è¾“å…¥æ›´æ”¹å½“å‰å¯¹è±¡çš„m_data  
+	}//        m_data[ i+n + m_i*ï¼ˆi+nï¼‰]  = m_data[ i + m_i*j]
 
 
 
@@ -174,14 +174,14 @@ public:
 
 		sz n = dim();//n=m_dim
 		append(triangular, filler_val);
-		/*¸øÀàÖĞµÄ²ÎÊı  m_dim¸³Öµ   ²¢ÇÒ    m_dataµÄÈİÁ¿¸Ä³É*(n-1)/2£¬À©ÈİµÄ²¿·ÖÉèÖÃÎªfiller_val
-	               È»ºó Í¨¹ıÊäÈë¸ü¸Äµ±Ç°¶ÔÏóµÄm_data*/
+		/*ç»™ç±»ä¸­çš„å‚æ•°  m_dimèµ‹å€¼   å¹¶ä¸”    m_dataçš„å®¹é‡æ”¹æˆ*(n-1)/2ï¼Œæ‰©å®¹çš„éƒ¨åˆ†è®¾ç½®ä¸ºfiller_val
+	               ç„¶å é€šè¿‡è¾“å…¥æ›´æ”¹å½“å‰å¯¹è±¡çš„m_data*/
 		VINA_FOR(i, rectangular.dim_1())   //i=0 ;i<m_i;i++
 			VINA_FOR(j, rectangular.dim_2())//j=0 ;j<m_j;j++
-				(*this)(i, n + j) = rectangular(i, j);//Í¨¹ıÊäÈërectangularµÄm_data¸ü¸Äµ±Ç°¶ÔÏóµÄm_data
-		//   m_data[ i + m_i*£¨J+n£©]  = m_data[ i + m_i*j]
+				(*this)(i, n + j) = rectangular(i, j);//é€šè¿‡è¾“å…¥rectangularçš„m_dataæ›´æ”¹å½“å‰å¯¹è±¡çš„m_data
+		//   m_data[ i + m_i*ï¼ˆJ+nï¼‰]  = m_data[ i + m_i*j]
 	}
-	VINA_MATRIX_DEFINE_OPERATORS // temp macro defined aboveÔËËã·ûÖØÔØ
+	VINA_MATRIX_DEFINE_OPERATORS // temp macro defined aboveè¿ç®—ç¬¦é‡è½½
 	sz dim() const { return m_dim; }
 };
 

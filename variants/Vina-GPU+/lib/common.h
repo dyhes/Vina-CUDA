@@ -44,18 +44,18 @@
 
 typedef double fl;
 
-template<typename T>					//C++Ä£°å,ĞÎ²Î(²»ĞèÒªÃ÷È·¶¨Òå±äÁ¿ÀàĞÍ)
+template<typename T>					//C++æ¨¡æ¿,å½¢å‚(ä¸éœ€è¦æ˜ç¡®å®šä¹‰å˜é‡ç±»å‹)
 T sqr(T x) {
 	return x*x;							//X^2
 }
 
-const fl not_a_num = std::sqrt(fl(-1)); // FIXME? check ????ËÆºõÊÇÇ¿ÖÆÌø³ö?±£»¤×÷ÓÃ£¿
+const fl not_a_num = std::sqrt(fl(-1)); // FIXME? check ????ä¼¼ä¹æ˜¯å¼ºåˆ¶è·³å‡º?ä¿æŠ¤ä½œç”¨ï¼Ÿ
 
 typedef std::size_t sz;
 typedef std::pair<fl, fl> pr;
 
 /*
-vec½á¹¹Ìå
+vecç»“æ„ä½“
 data[0]~[2]
 */
 struct vec {
@@ -71,22 +71,22 @@ struct vec {
 		data[2] = z;
 	}
 
-	//Í¨¹ıoperator[]ÖØ¹¹»ñÈ¡data[]µÄÖµ
+	//é€šè¿‡operator[]é‡æ„è·å–data[]çš„å€¼
 	const fl& operator[](sz i) const { assert(i < 3); return data[i]; }
 	      fl& operator[](sz i)       { assert(i < 3); return data[i]; }
 
-	//dataÊı×é¸÷ÔªËØÆ½·½ºÍ
+	//dataæ•°ç»„å„å…ƒç´ å¹³æ–¹å’Œ
     fl norm_sqr() const {
 		return sqr(data[0]) + sqr(data[1]) + sqr(data[2]);
 	}
 
-	//dataÊı×é¸÷ÔªËØÆ½·½ºÍ£¬¿ª¸ùºÅ(¿Õ¼äÏòÁ¿Ä£)
+	//dataæ•°ç»„å„å…ƒç´ å¹³æ–¹å’Œï¼Œå¼€æ ¹å·(ç©ºé—´å‘é‡æ¨¡)
 	fl norm() const {
 		return std::sqrt(norm_sqr());
 	}
 
 	/*
-	function:½á¹¹ÌåÖ±½Óµ÷ÓÃº¯Êı ÊµÏÖÁ½¸öÊı×éµÄ°´Î»³Ë·¨ºóÇóºÍ
+	function:ç»“æ„ä½“ç›´æ¥è°ƒç”¨å‡½æ•° å®ç°ä¸¤ä¸ªæ•°ç»„çš„æŒ‰ä½ä¹˜æ³•åæ±‚å’Œ
 	demo:vec a(1,2,3)
 		 vec b(1,2,3)
 		 c = a.operator*(b)		// c = 1*1+2*2+3*3=12
@@ -96,7 +96,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹+=ÔËËã²Ù×÷,vec1+=vec2
+	function:é‡æ„+=è¿ç®—æ“ä½œ,vec1+=vec2
 	demo:vec a, b, c;
 		 a = { 1,2,3 };
 		 b = { 2,2,2 };
@@ -110,7 +110,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹-=ÔËËã²Ù×÷,vec1-=vec2
+	function:é‡æ„-=è¿ç®—æ“ä½œ,vec1-=vec2
 	demo:vec a, b, c;
 		 a = { 1,2,3 };
 		 b = { 3,3,3 };
@@ -124,7 +124,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹+=ÔËËã²Ù×÷, vec+=s
+	function:é‡æ„+=è¿ç®—æ“ä½œ, vec+=s
 	demo:vec a,c;
 		 double b;
 		 a = { 1,2,3 };
@@ -139,7 +139,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹-=ÔËËã²Ù×÷, vec-=s
+	function:é‡æ„-=è¿ç®—æ“ä½œ, vec-=s
 	demo:vec a,c;
 		double b;
 		a = { 1,2,3 };
@@ -154,7 +154,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹+ÔËËã²Ù×÷,vec1+vec2
+	function:é‡æ„+è¿ç®—æ“ä½œ,vec1+vec2
 	demo:vec a, b, c;
 	a = { 1,2,3 };
 	b = { 2,2,2 };
@@ -167,7 +167,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹-ÔËËã²Ù×÷,vec1-vec2
+	function:é‡æ„-è¿ç®—æ“ä½œ,vec1-vec2
 	demo:vec a, b, c;
 	a = { 2,2,3 };
 	b = { 2,2,2 };
@@ -180,7 +180,7 @@ struct vec {
 	}
 
 	/*
-	function:ÖØ¹¹*=ÔËËã²Ù×÷, vec*=s
+	function:é‡æ„*=è¿ç®—æ“ä½œ, vec*=s
 	demo:vec a,c;
 		double b;
 		a = { 1,2,3 };
@@ -194,15 +194,15 @@ struct vec {
 		return *this;
 	}
 	/*
-	½«dataÊı×é¾ù¸³ÖµÎªs
+	å°†dataæ•°ç»„å‡èµ‹å€¼ä¸ºs
 	*/
 	void assign(fl s) {
 		data[0] = data[1] = data[2] = s;
 	}
-	//¹Ì¶¨·¶Î§sizeÎª3
+	//å›ºå®šèŒƒå›´sizeä¸º3
 	sz size() const { return 3; }
 
-	//Êı¾İĞòÁĞ»¯
+	//æ•°æ®åºåˆ—åŒ–
 private:
 	friend class boost::serialization::access;
 	template<class Archive> 
@@ -213,7 +213,7 @@ private:
 
 /*
 function:s * v[0], s * v[1], s * v[2]
-	     ÖµÒÀ´Î´æÈëvec½á¹¹ÌåµÄdata[0]~data[2]
+	     å€¼ä¾æ¬¡å­˜å…¥vecç»“æ„ä½“çš„data[0]~data[2]
 */
 inline vec operator*(fl s, const vec& v) {
 	return vec(s * v[0], s * v[1], s * v[2]);
@@ -223,7 +223,7 @@ inline vec operator*(fl s, const vec& v) {
 function:a[1]*b[2] - a[2]*b[1]
 		 a[2]*b[0] - a[0]*b[2]
 		 a[0]*b[1] - a[1]*b[0]
-ÖµÒÀ´Î´æÈëvec½á¹¹ÌåµÄdata[0]~data[2]
+å€¼ä¾æ¬¡å­˜å…¥vecç»“æ„ä½“çš„data[0]~data[2]
 */
 inline vec cross_product(const vec& a, const vec& b) {
 	return vec(a[1]*b[2] - a[2]*b[1],
@@ -235,7 +235,7 @@ inline vec cross_product(const vec& a, const vec& b) {
 function:a[0] * b[0]
 		 a[1] * b[1]
 		 a[2] * b[2]
-ÖµÒÀ´Î´æÈëvec½á¹¹ÌåµÄdata[0]~data[2]
+å€¼ä¾æ¬¡å­˜å…¥vecç»“æ„ä½“çš„data[0]~data[2]
 */
 inline vec elementwise_product(const vec& a, const vec& b) {
 	return vec(a[0] * b[0],
@@ -245,7 +245,7 @@ inline vec elementwise_product(const vec& a, const vec& b) {
 
 
 /*
-mat½á¹¹Ìå
+matç»“æ„ä½“
 data[0]~[8]
 */
 struct mat {
@@ -271,7 +271,7 @@ struct mat {
 	}
 
 	/*
-	function:½á¹¹ÌåÖ±½Óµ÷ÓÃº¯Êı ÊµÏÖÁ½¸öÊı×éµÄ°´Î»³Ë·¨ºóÇóºÍ
+	function:ç»“æ„ä½“ç›´æ¥è°ƒç”¨å‡½æ•° å®ç°ä¸¤ä¸ªæ•°ç»„çš„æŒ‰ä½ä¹˜æ³•åæ±‚å’Œ
 	demo:mat a(1,2...,9)
 	vec b(1,2,3)
 	vec c = a.operator*(b)		// c.data[0] = 1*1+4*2+7*3
@@ -285,7 +285,7 @@ struct mat {
 	}
 
 	/*
-	function:ÖØ¹¹*=ÔËËã²Ù×÷, mat*=s
+	function:é‡æ„*=è¿ç®—æ“ä½œ, mat*=s
 	demo:mat a,c;
 	double b;
 	a = { 1,2...,9 };
@@ -299,19 +299,19 @@ struct mat {
 	}
 };
 
-//vec½á¹¹ÌåĞÍ vector
+//vecç»“æ„ä½“å‹ vector
 typedef std::vector<vec> vecv;
 
 typedef std::pair<vec, vec> vecp;
-//doubleĞÍ vector
+//doubleå‹ vector
 typedef std::vector<fl> flv;
-//pair<int,int>ĞÍ//ÀàËÆmap
+//pair<int,int>å‹//ç±»ä¼¼map
 typedef std::vector<pr> prv;
-//unsigned int ĞÍ vector
+//unsigned int å‹ vector
 typedef std::vector<sz> szv;
 typedef boost::filesystem::path path;
 
-//???ÄÚ²¿´íÎó£¿ÖÜÆÚÎó²î£¿
+//???å†…éƒ¨é”™è¯¯ï¼Ÿå‘¨æœŸè¯¯å·®ï¼Ÿ
 struct internal_error {
 	std::string file;
 	unsigned line;
@@ -328,7 +328,7 @@ const fl pi = fl(3.1415926535897931);
 
 /*
 input: double x; uint max_sz
-function: Èô0<x<max_szÔò Ç¿ÖÆÕûĞÎ²¢Êä³ö
+function: è‹¥0<x<max_szåˆ™ å¼ºåˆ¶æ•´å½¢å¹¶è¾“å‡º
 */
 inline sz fl_to_sz(fl x, sz max_sz) { // return a value in [0, max_sz]
     if(x <= 0) return 0;
@@ -341,7 +341,7 @@ const fl fl_tolerance = fl(0.001);
 
 /*
 input: double a; double b
-function: ¼ÆËã|a-b|ÊÇ·ñĞ¡ÓÚ0.001·µ»Ø²¼¶ûÂß¼­
+function: è®¡ç®—|a-b|æ˜¯å¦å°äº0.001è¿”å›å¸ƒå°”é€»è¾‘
 */
 inline bool eq(fl a, fl b) {
 	return std::abs(a - b) < fl_tolerance; 
@@ -349,8 +349,8 @@ inline bool eq(fl a, fl b) {
 
 /*
 input: vec a; vec b
-function: ¼ÆËãa,b¶ÔÓ¦½á¹¹ÌåÖĞµÄdataÊı×éÖĞ
-          ¶ÔÓ¦Î»µÄ²îµÄ¾ø¶ÔÖµ·ñĞ¡ÓÚ0.001·µ»Ø²¼¶ûÂß¼­
+function: è®¡ç®—a,bå¯¹åº”ç»“æ„ä½“ä¸­çš„dataæ•°ç»„ä¸­
+          å¯¹åº”ä½çš„å·®çš„ç»å¯¹å€¼å¦å°äº0.001è¿”å›å¸ƒå°”é€»è¾‘
 */
 inline bool eq(const vec& a, const vec& b) {
 	return eq(a[0], b[0]) && eq(a[1], b[1]) && eq(a[2], b[2]);
@@ -358,9 +358,9 @@ inline bool eq(const vec& a, const vec& b) {
 
 template<typename T>
 /*
-input: ¿É±äÀàĞÍµÄvector aºÍvector b
-function:Èôa!=bµÄÉî¶È²»µÈ»òÆäÖĞÔªËØ´æÔÚ²»ÏàµÈµÄÇé¿ö
-		 Ôò·µ»Øfalse
+input: å¯å˜ç±»å‹çš„vector aå’Œvector b
+function:è‹¥a!=bçš„æ·±åº¦ä¸ç­‰æˆ–å…¶ä¸­å…ƒç´ å­˜åœ¨ä¸ç›¸ç­‰çš„æƒ…å†µ
+		 åˆ™è¿”å›false
 */
 bool eq(const std::vector<T>& a, const std::vector<T>& b) {
 	if(a.size() != b.size()) return false;
@@ -371,8 +371,8 @@ bool eq(const std::vector<T>& a, const std::vector<T>& b) {
 }
 
 
-const fl max_fl = (std::numeric_limits<fl>::max)();							//µ±Ç°´¦ÀíÆ÷ÏÂdoubleĞÍ±äÁ¿×î´óÖµ
-const sz max_sz = (std::numeric_limits<sz>::max)();							//µ±Ç°´¦ÀíÆ÷ÏÂuintĞÍ±äÁ¿×î´óÖµ
+const fl max_fl = (std::numeric_limits<fl>::max)();							//å½“å‰å¤„ç†å™¨ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼
+const sz max_sz = (std::numeric_limits<sz>::max)();							//å½“å‰å¤„ç†å™¨ä¸‹uintå‹å˜é‡æœ€å¤§å€¼
 const unsigned max_unsigned = (std::numeric_limits<unsigned>::max)();
 const fl epsilon_fl = std::numeric_limits<fl>::epsilon();
 
@@ -381,7 +381,7 @@ const vec max_vec(max_fl, max_fl, max_fl);
 
 /*
 input: double x;
-function: ÅĞ¶Ïx<0.1*max_fl(µ±Ç°´¦ÀíÆìÏÂdoubleĞÍ±äÁ¿×î´óÖµ)
+function: åˆ¤æ–­x<0.1*max_fl(å½“å‰å¤„ç†æ——ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼)
 */
 inline bool not_max(fl x) {
 	return (x < 0.1 * max_fl);
@@ -389,23 +389,23 @@ inline bool not_max(fl x) {
 
 
 /*
-input: ½á¹¹Ìåvec a; vec b
-function: ÔËËãvecÖĞÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½
+input: ç»“æ„ä½“vec a; vec b
+function: è¿ç®—vecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹
 demo:vec a(4,4,4)
 	 vec b(1,2,3)
 	 c = vec_distance_sqr(a,b)
    //c = (4-1)^2+(4-2)^2+(4-3)^2=14 
 */
 inline fl vec_distance_sqr(const vec& a, const vec& b) {
-	//"\"Îª»»ĞĞ·û
+	//"\"ä¸ºæ¢è¡Œç¬¦
 	return sqr(a[0] - b[0]) + \
 		   sqr(a[1] - b[1]) + \
 		   sqr(a[2] - b[2]);
 }
 
 /*
-input: ½á¹¹Ìåvec a
-function: ÔËËãvecÖĞÖğ¸ödataÊı×éÔªËØµÄÆ½·½ºÍ
+input: ç»“æ„ä½“vec a
+function: è¿ç®—vecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ çš„å¹³æ–¹å’Œ
 demo:vec a(1,2,3)
 	 b = sqr(a)
 //   b = 1^2+2^2+3^2=14
@@ -416,14 +416,14 @@ inline fl sqr(const vec& v) {
 
 /*
 input: vector x; vector y
-funtion:·µ»ØÔ­ÓĞxÏòÁ¿Éî¶ÈÖµ,²¢½«yÏòÁ¿ÄÚÈİÈ«²¿²åÈëxÏòÁ¿Ä©Î²
+funtion:è¿”å›åŸæœ‰xå‘é‡æ·±åº¦å€¼,å¹¶å°†yå‘é‡å†…å®¹å…¨éƒ¨æ’å…¥xå‘é‡æœ«å°¾
 demo: vector<int>x(2)=[1,2]   
 	  vector<int>y(3)=[1,2,3]
 	  unsigned a = vector_append(x,y)
 	  a = 2
-	  //Ö´ĞĞºóx = [1,2,1,2,3]
+	  //æ‰§è¡Œåx = [1,2,1,2,3]
 */
-template<typename T>							//C++Ä£°å,ĞÎ²Î(²»ĞèÒªÃ÷È·¶¨Òå±äÁ¿ÀàĞÍ)
+template<typename T>							//C++æ¨¡æ¿,å½¢å‚(ä¸éœ€è¦æ˜ç¡®å®šä¹‰å˜é‡ç±»å‹)
 sz vector_append(std::vector<T>& x, const std::vector<T>& y) { // return old size
 	sz old_size = x.size();
 	x.insert(x.end(), y.begin(), y.end());
@@ -432,10 +432,10 @@ sz vector_append(std::vector<T>& x, const std::vector<T>& y) { // return old siz
 
 /*
 input: vector v
-funtion:·µ»ØÏòÁ¿vÖĞ×îĞ¡Öµ×ø±ê
+funtion:è¿”å›å‘é‡vä¸­æœ€å°å€¼åæ ‡
 demo: vector<int>v(4)=[2,2,1,3]
 	  unsigned a = find_min(v)
-	  //Ö´ĞĞºóa = 2
+	  //æ‰§è¡Œåa = 2
 */
 template<typename T>
 sz find_min(const std::vector<T>& v) { // returns v.size() i.e. 0 for empty vectors; the index of the smallest elt otherwise
@@ -448,7 +448,7 @@ sz find_min(const std::vector<T>& v) { // returns v.size() i.e. 0 for empty vect
 
 /*
 input: double x
-funtion:½«x½øĞĞÌØÕ÷ÖØ·ÅËõ(±ê×¼»¯),·¶Î§Îª[-¦Ğ,+¦Ğ]
+funtion:å°†xè¿›è¡Œç‰¹å¾é‡æ”¾ç¼©(æ ‡å‡†åŒ–),èŒƒå›´ä¸º[-Ï€,+Ï€]
 */
 inline void normalize_angle(fl& x) { // subtract or add enough 2*pi's to make x be in [-pi, pi]
 	if     (x >  3*pi) { // very large
@@ -473,7 +473,7 @@ inline void normalize_angle(fl& x) { // subtract or add enough 2*pi's to make x 
 
 /* 
 input: double x 
-funtion:½«x½øĞĞÌØÕ÷ÖØ·ÅËõ(±ê×¼»¯),·¶Î§Îª[-¦Ğ,+¦Ğ]²¢·µ»Ø·ÅËõºóµÄÖµ
+funtion:å°†xè¿›è¡Œç‰¹å¾é‡æ”¾ç¼©(æ ‡å‡†åŒ–),èŒƒå›´ä¸º[-Ï€,+Ï€]å¹¶è¿”å›æ”¾ç¼©åçš„å€¼
 */
 inline fl normalized_angle(fl x) {
 	normalize_angle(x);
@@ -481,16 +481,16 @@ inline fl normalized_angle(fl x) {
 }
 
 /*
-input: ÈÎÒâÀàĞÍ x; long long width; char fill
-funtion:Êä³öwidth³¤¶ÈµÄ×Ö·û´®,
-		Èôwidth<0Ôò´òÓ¡xµÄÄÚÈİ,
-		·ñÔò´òÓ¡fill+xµÄÄÚÈİ(fillµÄ´òÓ¡³¤¶È=width-x.size())
+input: ä»»æ„ç±»å‹ x; long long width; char fill
+funtion:è¾“å‡ºwidthé•¿åº¦çš„å­—ç¬¦ä¸²,
+		è‹¥width<0åˆ™æ‰“å°xçš„å†…å®¹,
+		å¦åˆ™æ‰“å°fill+xçš„å†…å®¹(fillçš„æ‰“å°é•¿åº¦=width-x.size())
 demo0: x = 222; width = -1; fill = '*';
-	   to_string×îÖÕÊä³ö "222"
+	   to_stringæœ€ç»ˆè¾“å‡º "222"
 demo1: x = 222; width = 2; fill = '*';
-	   to_string×îÖÕÊä³ö "222"
+	   to_stringæœ€ç»ˆè¾“å‡º "222"
 demo2: x = 222; width = 4; fill = '*';
-	   to_string×îÖÕÊä³ö "*222"
+	   to_stringæœ€ç»ˆè¾“å‡º "*222"
 */
 template<typename T>
 std::string to_string(const T& x, std::streamsize width = 0, char fill = ' ') { // default 0 width means no restrictions on width
@@ -503,10 +503,10 @@ std::string to_string(const T& x, std::streamsize width = 0, char fill = ' ') { 
 }
 
 /*
-input: ÈÎÒâÀàĞÍvectorÏòÁ¿ v
-funtion:½«vÖĞËùÓĞÔªËØÀÛ¼ÓÇóºÍ²¢·µ»Ø½á¹û
+input: ä»»æ„ç±»å‹vectorå‘é‡ v
+funtion:å°†vä¸­æ‰€æœ‰å…ƒç´ ç´¯åŠ æ±‚å’Œå¹¶è¿”å›ç»“æœ
 demo: std::vector<unsigned int>a(3)=[1,2,3];
-	  sum(a)·µ»Ø½á¹ûÎª6
+	  sum(a)è¿”å›ç»“æœä¸º6
 */
 template<typename T>
 T sum(const std::vector<T>& v) {
@@ -528,18 +528,18 @@ funtion:-8.31*pK
 */
 inline fl pK_to_energy(fl pK) { return pK_to_energy_factor * pK; }
 
-//´òÓ¡doubleĞÍx
+//æ‰“å°doubleå‹x
 inline void print(fl x, std::ostream& out = std::cout) {
 	out << x;
 }
 
-//´òÓ¡unsignedĞÍx
+//æ‰“å°unsignedå‹x
 inline void print(sz x, std::ostream& out = std::cout) {
 	out << x;
 }
 
 /*
-ÖğÒ»´òÓ¡vec vÖĞÄÚÈİ,²¢ÒÔ,·Ö¸î
+é€ä¸€æ‰“å°vec vä¸­å†…å®¹,å¹¶ä»¥,åˆ†å‰²
 demo: vec a(1,2,3)
 	  print(a)
 	  // (1,2,3)
@@ -556,7 +556,7 @@ inline void print(const vec& v, std::ostream& out = std::cout) {
 
 
 /* 
-ÖğÒ»´òÓ¡vec vÖĞÄÚÈİ,²¢ÒÔ,·Ö¸î 
+é€ä¸€æ‰“å°vec vä¸­å†…å®¹,å¹¶ä»¥,åˆ†å‰² 
 demo: std::vector a(2,1)	  
 	  print(a) 	  
 	 // [1,1]
@@ -573,7 +573,7 @@ void print(const std::vector<T>& v, std::ostream& out = std::cout) {
 }
 
 /*
-´òÓ¡x±äÁ¿
+æ‰“å°xå˜é‡
 */
 template<typename T>
 void printnl(const T& x, std::ostream& out = std::cout) {
@@ -583,17 +583,17 @@ void printnl(const T& x, std::ostream& out = std::cout) {
 
 /*
 input: string str,start;
-function: str×Ö·û³¤¶È´óÓÚµÈÓÚstart×Ö·û³¤¶È
-		  ÇÒstr.substr(0, start.size()) == start			//??? str²»¾ÍµÈÓÚstr.substr(0, start.size())
-		  Ôò·µ»Ø²¼¶ûÖµ
+function: strå­—ç¬¦é•¿åº¦å¤§äºç­‰äºstartå­—ç¬¦é•¿åº¦
+		  ä¸”str.substr(0, start.size()) == start			//??? strä¸å°±ç­‰äºstr.substr(0, start.size())
+		  åˆ™è¿”å›å¸ƒå°”å€¼
 */
 inline bool starts_with(const std::string& str, const std::string& start) {
 	return str.size() >= start.size() && str.substr(0, start.size()) == start;
 }
 
 /*
-input: vector v; ÈÎÒâÀàĞÍelement
-function: elementÊÇ·ñ´æÔÚÓÚvÖĞ
+input: vector v; ä»»æ„ç±»å‹element
+function: elementæ˜¯å¦å­˜åœ¨äºvä¸­
 */
 template<typename T>
 bool has(const std::vector<T>& v, const T& element) {

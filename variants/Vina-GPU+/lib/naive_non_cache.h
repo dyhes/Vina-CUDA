@@ -26,8 +26,8 @@
 #include "igrid.h"
 #include "model.h"
 
-/*  ¼Ì³Ðigrid½á¹¹Ìå
-	p£ºconst precalculate½á¹¹ÌåÖ¸Õë
+/*  ç»§æ‰¿igridç»“æž„ä½“
+	pï¼šconst precalculateç»“æž„ä½“æŒ‡é’ˆ
 */
 struct naive_non_cache : public igrid {
 	naive_non_cache(const precalculate* p_);

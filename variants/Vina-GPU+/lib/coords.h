@@ -26,7 +26,7 @@
 #include "conf.h"
 #include "atom.h" // for atomv
 /*
-ÉùÃ÷º¯Êý
+å£°æ˜Žå‡½æ•°
 */
 fl rmsd_upper_bound(const vecv& a, const vecv& b);
 std::pair<sz, fl> find_closest(const vecv& a, const output_container& b);

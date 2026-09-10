@@ -1,0 +1,98 @@
+/home/ubuntu/grad/AI-Scientist-v2/ai_scientist/../ai_scientist/tools/semantic_scholar.py:40: UserWarning: No Semantic Scholar API key found. Requests will be subject to stricter rate limits. Set the S2_API_KEY environment variable for higher limits.
+  warnings.warn(
+Using Custom API (https://llmapi.blsc.cn/v1) with model DeepSeek-V4-Pro.
+Using workshop description from ideas/gpu_vina_benchmark.md for idea generation.
+Workshop description:
+# Research Area: GPU-Accelerated Molecular Docking — Benchmark, Analysis, and Optimization
+
+## Background
+
+Molecular docking is a core computational technique in drug discovery, used to predict the binding pose and affinity between a protein receptor and a small-molecule ligand. AutoDock Vina is the most widely used open-source docking engine, but its CPU-only implementation is slow (~11s per target on modern hardware), making large-scale virtual screening impractical.
+
+## Current Research Status
+
+We have conducted a comprehensive benchmark of **10 GPU-accelerated Vina variants** on the **CASF-2016 coreset** (285 targets for redocking, 57 targets × 285 ligands for screening):
+
+### Docking Power (Redocking, 285 targets)
+| Method | ≤1Å | ≤2Å | Median RMSD | s/target |
+|--------|-----|-----|-------------|----------|
+| Vina-CPU | 46.6% | 65.0% | 1.072Å | 11.06 |
+| Vina-GPU2 (OpenCL) | 46.7% | 63.2% | 1.075Å | 2.18 |
+| QVina-W-CUDA | 45.4% | 61.1% | 1.24Å | 1.65 |
+| QuickVina2-CUDA | 44.9% | 62.8% | 1.190Å | 1.61 |
+| Uni-Dock detail | 44.6% | 62.5% | 1.171Å | 2.37 |
+| Vina-CUDA | 44.6% | 58.9% | 1.223Å | 1.70 |
+| QuickVina2-GPU2 | 42.1% | 59.3% | 1.351Å | 2.22 |
+| Uni-Dock fast | 41.8% | 54.7% | 1.600Å | 2.29 |
+
+### Scoring Power (57 targets, Pearson R vs experimental logKa)
+- Vina-CPU: R=0.601 (best)
+- Vina-GPU2: R=0.594
+- All GPU variants: R=0.52-0.59
+
+### Screening Power (57 targets × 285 ligands, Enrichment Factor)
+| Method | EF@1% | EF@5% | Time |
+|--------|-------|-------|------|
+| QVina2-CUDA | 9.35 | 3.88 | 411 min |
+| Uni-Dock detail batch | 9.22 | 4.28 | 31 min |
+| Uni-Dock balance batch | 8.98 | 4.31 | 27 min |
+| Vina-CPU | 8.15 | 3.88 | 3614 min |
+| Uni-Dock fast batch | 7.90 | 4.30 | 18 min |
+
+### Key Findings
+1. **Pareto frontier**: Only 3 methods are non-dominated: QVina2-CUDA (fastest), Vina-GPU2 (balanced), Vina-CPU (most accurate)
+2. **RILC-BFGS vs traditional BFGS**: RILC-BFGS gives +3-4pp accuracy (QuickVina2-CUDA vs QuickVina2-GPU2)
+3. **Scoring function ceiling**: Vina scoring explains only ~32-36% of experimental variance (R²≈0.36)
+4. **Uni-Dock batch mode**: 285 ligands/call is 17-34× faster than sequential, with 90%+ accuracy retention
+5. **BFGS precision analysis**: Conjugate Factorisation is the only numerically stable approach; 5-digit Hessian threshold is the precision floor; fp32 BFGS is not the bottleneck (10-15% of time)
+
+## Open Research Questions
+
+1. **Mixed-precision optimization**: Can fp16/fp32 mixed precision be applied to the BFGS local search in Vina without losing docking accuracy? What is the precision floor for each component (rotation matrix, gradient, Hessian)?
+2. **Scoring function enhancement**: Can a lightweight CNN/MLP rescoring model break through the R²=0.36 ceiling while maintaining GPU speed?
+3. **Batch + RILC-BFGS integration**: Uni-Dock has batch mode but lacks RILC-BFGS; QuickVina2-CUDA has RILC-BFGS but no batch. Can these be combined?
+4. **Multi-GPU scaling**: How does docking performance scale across multiple GPUs? Is there an optimal workload distribution strategy?
+5. **Adaptive search depth**: Can the exhaustiveness parameter be dynamically adjusted based on ligand complexity (torsion count, atom count)?
+
+## Available Infrastructure
+- RTX 4090 24GB GPU, CUDA 12.4
+- CASF-2016 coreset (285 redocking + 57×285 screening)
+- Unified benchmarking pipeline (run_experiment.py)
+- spyrmsd for symmetry-corrected RMSD evaluation
+
+Starting idea generation for ideas/gpu_vina_benchmark.json
+Loaded 0 ideas from ideas/gpu_vina_benchmark.json
+
+Generating proposal 1/2
+Action: SearchSemanticScholar
+Arguments: {"query": "learned optimizer molecular docking vina"}
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 0.3 seconds after 1 tries calling function search_for_papers at 22:29:17
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 0.8 seconds after 2 tries calling function search_for_papers at 22:29:20
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 1.4 seconds after 3 tries calling function search_for_papers at 22:29:26
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 5.1 seconds after 4 tries calling function search_for_papers at 22:29:29
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 11.3 seconds after 5 tries calling function search_for_papers at 22:29:36
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 19.3 seconds after 6 tries calling function search_for_papers at 22:29:50
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 4.9 seconds after 7 tries calling function search_for_papers at 22:30:12
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 39.7 seconds after 8 tries calling function search_for_papers at 22:30:19
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 64.0 seconds after 9 tries calling function search_for_papers at 22:31:01
+Response Status Code: 429
+Response Content: {"message": "Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form", "code": "429"}
+Backing off 316.2 seconds after 10 tries calling function search_for_papers at 22:32:08

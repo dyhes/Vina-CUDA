@@ -24,8 +24,8 @@
 #define VINA_EVERYTHING_H
 
 #include "terms.h"
-//结构体everything  继承父类terms
-//声明函数everything
+//缁撴瀯浣揺verything  缁ф壙鐖剁被terms
+//澹版槑鍑芥暟everything
 struct everything : public terms {
 	everything();
 };

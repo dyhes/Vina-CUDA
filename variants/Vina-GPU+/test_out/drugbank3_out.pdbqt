@@ -11,36 +11,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      44.876 111.615  80.139  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      44.906 111.683  80.120  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      44.939 111.136  78.761  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      44.956 110.117  78.746  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      44.087 111.405  78.268  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      44.972 111.248  78.728  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      45.935 111.293  78.394  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      44.705 110.266  78.665  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      46.312 111.817  80.595  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      47.011 110.952  81.107  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      46.341 111.839  80.595  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      47.027 110.937  81.059  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      46.763 113.072  80.339  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      47.458 113.076  79.647  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      46.810 113.102  80.417  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      47.672 113.238  80.864  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      44.132 110.591  81.011  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.133 110.649  80.952  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      43.514 111.210  82.244  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      43.995 111.372  83.492  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      43.056 111.992  84.278  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      42.031 112.191  83.480  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      42.271 111.723  82.219  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      41.633 111.762  81.434  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.518 111.240  82.200  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      44.013 111.397  83.444  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      43.072 111.989  84.249  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      42.033 112.175  83.468  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      42.265 111.728  82.197  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      41.616 111.762  81.421  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 2
-REMARK VINA RESULT:      -5.2      1.966      2.331
+REMARK VINA RESULT:      -5.3      2.050      2.403
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -52,36 +52,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      45.542 111.067  80.543  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      45.425 111.089  80.478  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      46.902 111.043  81.075  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      46.940 111.551  81.958  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      47.163 110.082  81.299  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      46.807 111.053  80.949  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      47.166 110.100  80.903  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      47.396 111.601  80.321  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      45.562 111.997  79.342  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      44.895 111.843  78.327  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      45.388 112.070  79.317  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      46.375 112.497  78.731  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      46.388 113.060  79.526  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      46.182 113.794  78.909  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      44.120 112.405  78.965  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      43.586 111.617  78.728  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      44.567 111.547  81.629  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.495 111.516  81.623  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      43.288 110.744  81.668  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      43.064 109.444  81.946  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      41.723 109.171  81.852  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      41.170 110.316  81.520  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      42.099 111.311  81.396  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      41.915 112.275  81.148  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.232 110.690  81.693  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      43.016 109.434  82.132  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      41.689 109.113  81.994  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      41.136 110.187  81.477  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      42.052 111.182  81.276  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      41.866 112.098  80.888  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 3
-REMARK VINA RESULT:      -5.1      0.960      1.675
+REMARK VINA RESULT:      -5.2      1.547      1.949
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -93,36 +93,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      45.031 111.516  80.679  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      44.800 111.569  81.460  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      45.004 110.972  79.324  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      45.330 111.673  78.660  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      45.665 110.198  79.254  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      43.678 111.622  80.526  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      42.853 111.198  80.948  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      43.428 112.596  80.350  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      46.481 111.862  80.978  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      46.938 112.998  81.001  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      46.050 111.345  80.625  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      47.122 110.948  81.063  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      47.227 110.762  81.258  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      48.003 110.687  80.664  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      45.843 111.604  79.308  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      45.092 112.219  79.170  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      44.469 110.482  81.666  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.576 110.439  82.477  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      43.982 111.104  82.954  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      42.823 111.721  83.259  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      42.841 112.125  84.571  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      44.012 111.738  85.025  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      44.746 111.105  84.061  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      45.676 110.721  84.172  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.983 110.929  83.778  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      42.783 110.703  84.347  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      42.700 111.371  85.543  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      43.856 111.982  85.666  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      44.676 111.737  84.600  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      45.613 112.098  84.469  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 4
-REMARK VINA RESULT:      -5.1      2.056      2.395
+REMARK VINA RESULT:      -5.2      0.878      1.623
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -134,36 +134,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      46.265 111.198  82.104  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      45.026 111.536  80.406  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      46.483 112.139  83.200  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      47.095 111.721  83.901  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      46.982 112.957  82.851  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      45.039 111.028  79.036  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      45.728 111.537  78.483  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      45.349 110.056  79.037  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      46.380 111.997  80.816  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      45.948 111.637  79.729  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      46.469 111.843  80.769  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      47.003 112.938  80.645  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      46.995 113.194  81.005  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      47.798 113.283  80.450  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      47.112 110.765  81.288  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      47.615 110.276  80.603  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      44.885 110.539  82.252  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.406 110.488  81.343  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      44.208 110.882  83.559  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      43.114 111.623  83.824  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      42.884 111.648  85.177  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      43.846 110.917  85.694  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      44.683 110.426  84.732  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      45.494 109.840  84.885  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.995 111.064  82.679  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      42.851 111.654  83.077  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      42.949 112.019  84.396  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      44.152 111.636  84.761  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      44.830 111.044  83.733  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      45.770 110.671  83.772  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 5
-REMARK VINA RESULT:      -5.1      2.903      4.312
+REMARK VINA RESULT:      -5.0      2.280      2.726
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -175,36 +175,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      42.503 110.425  81.623  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      45.245 110.706  82.322  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      42.337 111.585  80.751  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      41.792 111.328  79.929  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      41.788 112.297  81.234  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      45.741 109.951  83.471  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      46.429 110.505  83.980  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      44.976 109.789  84.127  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      41.974 110.829  82.989  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      41.759 110.055  83.913  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      46.291 111.765  82.015  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      46.674 112.064  80.891  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      41.791 112.171  83.096  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      42.352 112.561  83.799  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      46.743 112.385  83.136  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      46.497 113.334  83.152  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      43.984 110.021  81.674  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      43.879 111.323  82.656  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      44.868 110.922  80.842  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      45.826 111.800  81.198  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      46.356 112.391  80.079  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      45.704 111.851  79.074  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      44.778 110.941  79.500  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      44.156 110.399  78.914  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.568 111.297  84.135  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      42.589 110.680  84.825  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      42.717 110.954  86.163  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      43.773 111.732  86.246  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      44.327 111.968  85.019  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      45.143 112.535  84.830  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 6
-REMARK VINA RESULT:      -5.0      1.193      1.368
+REMARK VINA RESULT:      -5.0      1.698      2.456
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -216,36 +216,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      45.267 111.874  80.163  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      44.656 111.162  81.751  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      45.864 111.677  78.845  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      46.334 112.530  78.544  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      46.593 110.966  78.904  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      44.192 109.781  81.648  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      43.810 109.610  80.718  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      44.987 109.148  81.740  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      46.391 112.311  81.088  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      46.608 111.839  82.196  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      45.655 111.370  80.625  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      45.387 111.857  79.534  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      47.169 113.276  80.534  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      46.663 113.843  79.913  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      46.911 110.985  80.972  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      47.575 111.676  80.764  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      44.605 110.570  80.635  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      45.286 111.397  83.133  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      43.327 110.805  81.405  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      43.072 111.560  82.492  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      41.746 111.455  82.833  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      41.235 110.639  81.939  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      42.174 110.215  81.041  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      42.020 109.584  80.265  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      44.264 111.731  84.195  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      42.930 111.908  84.119  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      42.427 112.201  85.362  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      43.472 112.190  86.158  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      44.624 111.905  85.479  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      45.553 111.843  85.876  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 7
-REMARK VINA RESULT:      -5.0      1.733      2.176
+REMARK VINA RESULT:      -4.9      2.092      2.649
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -257,36 +257,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      44.662 111.829  80.770  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      45.908 110.903  82.459  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      43.253 111.600  80.463  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      42.789 111.162  81.258  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      42.784 112.497  80.330  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      46.304 112.063  83.253  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      47.241 111.924  83.630  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      46.370 112.883  82.648  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      45.411 111.765  79.449  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      46.389 112.445  79.166  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      45.670 111.405  81.045  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      46.551 111.627  80.224  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      44.894 110.833  78.607  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      44.647 111.221  77.740  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      44.349 111.553  80.765  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      43.801 110.881  81.223  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      45.156 110.766  81.764  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.648 110.264  83.065  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      44.515 110.894  83.127  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      43.464 110.254  83.677  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      43.252 110.715  84.952  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      44.185 111.621  85.140  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      44.984 111.763  84.040  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      45.766 112.399  83.945  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.990 111.139  84.107  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      42.903 111.933  84.040  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      42.691 112.536  85.254  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      43.656 112.087  86.025  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      44.479 111.224  85.357  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      45.289 110.752  85.738  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 8
-REMARK VINA RESULT:      -4.9      1.862      2.193
+REMARK VINA RESULT:      -4.9      1.996      2.363
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -298,36 +298,36 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      45.710 111.358  80.795  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      45.561 110.911  81.906  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      46.321 112.467  81.524  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      47.155 112.788  81.034  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      45.683 113.262  81.532  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      46.652 110.614  82.831  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      47.531 110.534  82.320  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      46.777 111.397  83.473  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      45.643 111.782  79.337  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      46.291 112.696  78.844  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      46.128 111.849  80.854  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      46.027 111.687  79.644  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      44.797 111.005  78.612  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      43.956 111.469  78.412  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      46.743 112.929  81.402  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      47.057 112.747  82.314  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      44.318 111.060  81.374  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.388 111.542  82.671  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      44.307 111.020  82.885  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      44.831 110.134  83.753  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      44.559 110.524  85.041  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      43.878 111.640  84.915  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      43.700 111.982  83.604  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      43.207 112.795  83.257  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.091 110.791  82.482  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      42.206 110.309  83.377  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      41.170 109.692  82.723  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      41.456 109.819  81.446  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      42.631 110.490  81.254  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      43.058 110.708  80.363  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5
 ENDMDL
 MODEL 9
-REMARK VINA RESULT:      -4.9      2.914      4.437
+REMARK VINA RESULT:      -4.9      2.140      2.654
 REMARK  Name = 6274
 REMARK  5 active torsions:
 REMARK  status: ('A' for Active; 'I' for Inactive)
@@ -339,30 +339,30 @@ REMARK    5  A    between atoms: CA_7  and  C_9
 REMARK                            x       y       z     vdW  Elec       q    Type
 REMARK                         _______ _______ _______ _____ _____    ______ ____
 ROOT
-ATOM      1  CA  HIS A   1      42.384 110.557  82.507  0.00  0.00    +0.166 C 
+ATOM      1  CA  HIS A   1      45.538 110.927  80.544  0.00  0.00    +0.166 C 
 ENDROOT
 BRANCH   1   2
-ATOM      2  N   HIS A   1      42.433 111.959  82.101  0.00  0.00    -0.318 NA
-ATOM      3  H1  HIS A   1      42.862 112.039  81.179  0.00  0.00    +0.119 HD
-ATOM      4  H2  HIS A   1      41.484 112.316  81.995  0.00  0.00    +0.119 HD
+ATOM      2  N   HIS A   1      46.889 110.991  81.097  0.00  0.00    -0.318 NA
+ATOM      3  H1  HIS A   1      47.122 110.107  81.549  0.00  0.00    +0.119 HD
+ATOM      4  H2  HIS A   1      47.562 111.099  80.338  0.00  0.00    +0.119 HD
 ENDBRANCH   1   2
 BRANCH   1   5
-ATOM      5  C   HIS A   1      42.472 110.541  84.025  0.00  0.00    +0.322 C 
-ATOM      6  OXT HIS A   1      43.416 110.974  84.674  0.00  0.00    -0.249 OA
+ATOM      5  C   HIS A   1      45.564 111.714  79.244  0.00  0.00    +0.322 C 
+ATOM      6  OXT HIS A   1      46.209 112.738  79.059  0.00  0.00    -0.249 OA
 BRANCH   5   7
-ATOM      7  O   HIS A   1      41.359 110.018  84.601  0.00  0.00    -0.480 OA
-ATOM      8  H   HIS A   1      40.953 110.641  85.241  0.00  0.00    +0.295 HD
+ATOM      7  O   HIS A   1      44.809 111.134  78.274  0.00  0.00    -0.480 OA
+ATOM      8  H   HIS A   1      44.766 110.160  78.379  0.00  0.00    +0.295 HD
 ENDBRANCH   5   7
 ENDBRANCH   1   5
 BRANCH   1   9
-ATOM      9  CB  HIS A   1      43.540 109.785  81.854  0.00  0.00    +0.084 C 
+ATOM      9  CB  HIS A   1      44.536 111.510  81.551  0.00  0.00    +0.084 C 
 BRANCH   9  10
-ATOM     10  CG  HIS A   1      44.657 110.688  81.382  0.00  0.00    +0.037 A 
-ATOM     11  CD2 HIS A   1      45.087 110.993  80.142  0.00  0.00    +0.133 A 
-ATOM     12  NE2 HIS A   1      46.143 111.866  80.216  0.00  0.00    -0.244 NA
-ATOM     13  CE1 HIS A   1      46.321 112.068  81.503  0.00  0.00    +0.196 A 
-ATOM     14  ND1 HIS A   1      45.427 111.360  82.256  0.00  0.00    -0.348 N 
-ATOM     15  HD1 HIS A   1      45.368 111.352  83.266  0.00  0.00    +0.166 HD
+ATOM     10  CG  HIS A   1      43.213 110.778  81.555  0.00  0.00    +0.037 A 
+ATOM     11  CD2 HIS A   1      41.951 111.225  81.402  0.00  0.00    +0.133 A 
+ATOM     12  NE2 HIS A   1      41.071 110.175  81.482  0.00  0.00    -0.244 NA
+ATOM     13  CE1 HIS A   1      41.827 109.119  81.680  0.00  0.00    +0.196 A 
+ATOM     14  ND1 HIS A   1      43.153 109.446  81.731  0.00  0.00    -0.348 N 
+ATOM     15  HD1 HIS A   1      43.924 108.805  81.874  0.00  0.00    +0.166 HD
 ENDBRANCH   9  10
 ENDBRANCH   1   9
 TORSDOF 5

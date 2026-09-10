@@ -22,40 +22,40 @@
 
 #include "naive_non_cache.h"
 #include "curl.h"
-/*  ½«º¯ÊıÊäÈëµÄpÖ¸Õë¸³¸ønaive_non_cache½á¹¹ÌåÖĞµÄpÖ¸Õë
-	input¡ª¡ªp£ºprecalculate½á¹¹ÌåÖ¸Õë
+/*  å°†å‡½æ•°è¾“å…¥çš„pæŒ‡é’ˆèµ‹ç»™naive_non_cacheç»“æ„ä½“ä¸­çš„pæŒ‡é’ˆ
+	inputâ€”â€”pï¼šprecalculateç»“æ„ä½“æŒ‡é’ˆ
 */
 naive_non_cache::naive_non_cache(const precalculate* p_) : p(p_) {}
 
 /*
-	input¡ª¡ªm£ºmodel½á¹¹Ìå£¬v£ºdouble
-	inter¡ª¡ªcutoff_sqr¡¢this_e¡¢r2£ºdouble£¬n¡¢m_num_movable_atoms¡¢t1¡¢t2£ºunint
-			a_coords£ºvec½á¹¹Ìå£¬a¡¢b£ºatom½á¹¹Ìå
-	output¡ª¡ªe£ºdouble
+	inputâ€”â€”mï¼šmodelç»“æ„ä½“ï¼Œvï¼šdouble
+	interâ€”â€”cutoff_sqrã€this_eã€r2ï¼šdoubleï¼Œnã€m_num_movable_atomsã€t1ã€t2ï¼šunint
+			a_coordsï¼švecç»“æ„ä½“ï¼Œaã€bï¼šatomç»“æ„ä½“
+	outputâ€”â€”eï¼šdouble
 
 */
 fl naive_non_cache::eval(const model& m, fl v) const { // needs m.coords
 	fl e = 0;
-	const fl cutoff_sqr = p->cutoff_sqr();				//weighted_terms½á¹¹ÌåÖĞÖØ¹¹µÄcutoff£¨£©º¯ÊıµÄ·µ»ØÖµcutoff_µÄÆ½·½
+	const fl cutoff_sqr = p->cutoff_sqr();				//weighted_termsç»“æ„ä½“ä¸­é‡æ„çš„cutoffï¼ˆï¼‰å‡½æ•°çš„è¿”å›å€¼cutoff_çš„å¹³æ–¹
 
-	sz n = num_atom_types(p->atom_typing_used());		//precalculate½á¹¹ÌåÖĞÔ­×ÓÊıÀàĞÍ£¬
-														//ELĞÍ·µ»Ø11£¬ADĞÍ·µ»Ø20£¬XSĞÍ·µ»Ø17£¬SYĞÍ·µ»Ø18
+	sz n = num_atom_types(p->atom_typing_used());		//precalculateç»“æ„ä½“ä¸­åŸå­æ•°ç±»å‹ï¼Œ
+														//ELå‹è¿”å›11ï¼ŒADå‹è¿”å›20ï¼ŒXSå‹è¿”å›17ï¼ŒSYå‹è¿”å›18
 
 	VINA_FOR(i, m.num_movable_atoms()) {				//for(i=0;m.m_num_movable_atoms<n;i++)
 		fl this_e = 0;
-		const atom& a = m.atoms[i];						 //atoms£ºatom½á¹¹ÌåÏòÁ¿£¬¸³¸øa
-		sz t1 = a.get(p->atom_typing_used());			 // precalculate½á¹¹ÌåÖĞÔ­×ÓÊıÀàĞÍ£¬
+		const atom& a = m.atoms[i];						 //atomsï¼šatomç»“æ„ä½“å‘é‡ï¼Œèµ‹ç»™a
+		sz t1 = a.get(p->atom_typing_used());			 // precalculateç»“æ„ä½“ä¸­åŸå­æ•°ç±»å‹ï¼Œ
 														 //el=11; ad=20; xs=17; sy=18
-		if(t1 >= n) continue;                            //t1 >= n½øÈëÏÂÒ»´ÎforÑ­»·
+		if(t1 >= n) continue;                            //t1 >= nè¿›å…¥ä¸‹ä¸€æ¬¡forå¾ªç¯
 		
 		
-		const vec& a_coords = m.coords[i];               //coords£ºvec½á¹¹ÌåÏòÁ¿£¬¸³¸øa_coords
+		const vec& a_coords = m.coords[i];               //coordsï¼švecç»“æ„ä½“å‘é‡ï¼Œèµ‹ç»™a_coords
 
 		VINA_FOR_IN(j, m.grid_atoms) {                   //for(i=0;i<grid_atoms.size;i++)
-			const atom& b = m.grid_atoms[j];             //grid_atoms£ºatom½á¹¹ÌåÏòÁ¿£¬¸³¸øb
-			sz t2 = b.get(p->atom_typing_used());        // precalculate½á¹¹ÌåÖĞÔ­×ÓÊıÀàĞÍ£¬
+			const atom& b = m.grid_atoms[j];             //grid_atomsï¼šatomç»“æ„ä½“å‘é‡ï¼Œèµ‹ç»™b
+			sz t2 = b.get(p->atom_typing_used());        // precalculateç»“æ„ä½“ä¸­åŸå­æ•°ç±»å‹ï¼Œ
 														 //el=11; ad=20; xs=17; sy=18
-			if(t2 >= n) continue;                        //t2 >= n½øÈëÏÂÒ»´ÎforÑ­»·
+			if(t2 >= n) continue;                        //t2 >= nè¿›å…¥ä¸‹ä¸€æ¬¡forå¾ªç¯
 			
 			
 			vec r_ba; r_ba = a_coords - b.coords;        //a_coords = { 2,2,3 };
@@ -63,12 +63,12 @@ fl naive_non_cache::eval(const model& m, fl v) const { // needs m.coords
 														 //r_ba = a - b={0,0,1}
 			fl r2 = sqr(r_ba);							 //r2=sqr(r_ba)=0^2+0^2+1^2=1
 			if(r2 < cutoff_sqr) {
-				sz type_pair_index = get_type_pair_index(p->atom_typing_used(), a, b);//»ñÈ¡ÀàĞÍ¶ÔË÷Òı
+				sz type_pair_index = get_type_pair_index(p->atom_typing_used(), a, b);//è·å–ç±»å‹å¯¹ç´¢å¼•
 				this_e +=  p->eval_fast(type_pair_index, r2);  //this_e=this_e+data(type_pair_index).fast[sz(factor * r2)}
 			}
 		}
-			curl(this_e, v);           //ÏÈÅĞ¶Ïthis_e > 0²¢ÇÒv < 0.1*max_fl(µ±Ç°´¦ÀíÆ÷ÏÂdoubleĞÍ±äÁ¿×î´óÖµ)
-								       //Èç¹ûv<2.22045e-16 ,this_e=0£¬·ñÔòthis_e=this_e*v / (v + this_e)
+			curl(this_e, v);           //å…ˆåˆ¤æ–­this_e > 0å¹¶ä¸”v < 0.1*max_fl(å½“å‰å¤„ç†å™¨ä¸‹doubleå‹å˜é‡æœ€å¤§å€¼)
+								       //å¦‚æœv<2.22045e-16 ,this_e=0ï¼Œå¦åˆ™this_e=this_e*v / (v + this_e)
 		e += this_e;                   //e=e+this_e
 	}
 	return e;

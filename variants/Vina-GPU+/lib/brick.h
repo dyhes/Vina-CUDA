@@ -27,9 +27,9 @@
 
 
 /*
-	input¡ª¡ªbegin¡¢end¡¢x£ºdouble£»
-	x<=begin·µ»Øbegin£¬x >= end·µ»Øend£¬·ñÔò·µ»Øx¡£
-	ÆäÖĞÒªÇóbegin <= end
+	inputâ€”â€”beginã€endã€xï¼šdoubleï¼›
+	x<=beginè¿”å›beginï¼Œx >= endè¿”å›endï¼Œå¦åˆ™è¿”å›xã€‚
+	å…¶ä¸­è¦æ±‚begin <= end
 */
 inline fl closest_between(fl begin, fl end, fl x) {
 	assert(begin <= end);       
@@ -40,11 +40,11 @@ inline fl closest_between(fl begin, fl end, fl x) {
 
 
 /*
-	input¡ª¡ªbegin¡¢end¡¢v£ºvec½á¹¹Ìå£»
-	output¡ª¡ªtmp£ºvec½á¹¹Ìå£»
-	demo£º
-	begin£¨1£¬2£¬3£©£¬	end£¨7£¬8£¬9£©£¬v£¨0£¬9£¬7£©
-	tmp(1£¬8£¬7)
+	inputâ€”â€”beginã€endã€vï¼švecç»“æ„ä½“ï¼›
+	outputâ€”â€”tmpï¼švecç»“æ„ä½“ï¼›
+	demoï¼š
+	beginï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œ	endï¼ˆ7ï¼Œ8ï¼Œ9ï¼‰ï¼Œvï¼ˆ0ï¼Œ9ï¼Œ7ï¼‰
+	tmp(1ï¼Œ8ï¼Œ7)
 */
 inline vec brick_closest(const vec& begin, const vec& end, const vec& v) {
 	vec tmp;
@@ -55,12 +55,12 @@ inline vec brick_closest(const vec& begin, const vec& end, const vec& v) {
 
 
 /*
-	input¡ª¡ªbegin¡¢end¡¢v£ºvec½á¹¹Ìå£»
-	inter¡ª¡ªclosest£ºvec½á¹¹Ìå£»
-	demo£º
-	begin£¨1£¬2£¬3£©£¬	end£¨7£¬8£¬9£©£¬v£¨0£¬9£¬7£©
-	closest(1£¬8£¬7)
-	·µ»Ø
+	inputâ€”â€”beginã€endã€vï¼švecç»“æ„ä½“ï¼›
+	interâ€”â€”closestï¼švecç»“æ„ä½“ï¼›
+	demoï¼š
+	beginï¼ˆ1ï¼Œ2ï¼Œ3ï¼‰ï¼Œ	endï¼ˆ7ï¼Œ8ï¼Œ9ï¼‰ï¼Œvï¼ˆ0ï¼Œ9ï¼Œ7ï¼‰
+	closest(1ï¼Œ8ï¼Œ7)
+	è¿”å›
 	(1-0)^2+(8-9)^2+(7-7)^2=2
 */
 inline fl brick_distance_sqr(const vec& begin, const vec& end, const vec& v) {

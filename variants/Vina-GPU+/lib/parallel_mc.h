@@ -27,15 +27,15 @@
 
 
 /*
-* ½á¹¹Ìåparallel_mc
-* ³ÉÔ±£º1.monte_carloÀàmc
-*		2.unsigned intÀàĞÍnum_tasks
-*		3.unsigned intÀàĞÍnum_threads
-*		4.boolÀàĞÍdisplay_progress
-*		5.¹¹Ôìº¯Êı£º³õÊ¼»¯num_tasks=8, num_threads=1, display_progressÎªÕæ 	
-*		6.¶¨Òåµ÷ÓÃ²Ù×÷·û£¨£©£¬Îª³£Á¿º¯Êı
-* 					input:modelÀà³£Á¿ÒıÓÃ,output_containerÀàÒıÓÃ£¬precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,generatorÀàÒıÓÃ
-* 				    output:ÎŞ					
+* ç»“æ„ä½“parallel_mc
+* æˆå‘˜ï¼š1.monte_carloç±»mc
+*		2.unsigned intç±»å‹num_tasks
+*		3.unsigned intç±»å‹num_threads
+*		4.boolç±»å‹display_progress
+*		5.æ„é€ å‡½æ•°ï¼šåˆå§‹åŒ–num_tasks=8, num_threads=1, display_progressä¸ºçœŸ 	
+*		6.å®šä¹‰è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰ï¼Œä¸ºå¸¸é‡å‡½æ•°
+* 					input:modelç±»å¸¸é‡å¼•ç”¨,output_containerç±»å¼•ç”¨ï¼Œprecalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,precalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,generatorç±»å¼•ç”¨
+* 				    output:æ— 					
 */
 struct parallel_mc {
 	monte_carlo mc;

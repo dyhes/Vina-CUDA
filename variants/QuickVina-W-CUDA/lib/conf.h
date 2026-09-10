@@ -28,9 +28,9 @@
 #include "quaternion.h"
 #include "random.h"
 
-/* ¶¨ÒåÅäÌå±ä»¯ÖĞµÄÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø±ä»¯
-	position¡¢orientation¡¢torsion:double
-	position=position_£»orientation=orientation_£»torsion=torsion_
+/* å®šä¹‰é…ä½“å˜åŒ–ä¸­çš„ä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©å˜åŒ–
+	positionã€orientationã€torsion:double
+	position=position_ï¼›orientation=orientation_ï¼›torsion=torsion_
 */
 struct scale {
 	fl position;
@@ -42,17 +42,17 @@ struct scale {
 
 
 /*
-	ligands¡¢flex£ºunintÏòÁ¿£»
+	ligandsã€flexï¼šunintå‘é‡ï¼›
 
 */
 struct conf_size {
 	szv ligands;
 	szv flex;
 	/*
-		sum£¨£©º¯ÊıÊÇ½«ÏòÁ¿ÖĞµÄÔªËØ½øĞĞÀÛ¼Ó£»
-		demo£ºvertor<int> ligands=[1,1,1,1];
+		sumï¼ˆï¼‰å‡½æ•°æ˜¯å°†å‘é‡ä¸­çš„å…ƒç´ è¿›è¡Œç´¯åŠ ï¼›
+		demoï¼švertor<int> ligands=[1,1,1,1];
 			  vertor<int> flex=[2,2,2,2];
-			  ·µ»Ø4+8+4=16£»
+			  è¿”å›4+8+4=16ï¼›
 		
 	*/
 	sz num_degrees_of_freedom() const {
@@ -63,39 +63,39 @@ struct conf_size {
 
 
 /*	
-	input¡ª¡ªtorsions£ºdoubleÏòÁ¿£»
-	¸Ãº¯ÊıÊÇ½«torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0
+	inputâ€”â€”torsionsï¼šdoubleå‘é‡ï¼›
+	è¯¥å‡½æ•°æ˜¯å°†torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0
 */
 inline void torsions_set_to_null(flv& torsions) {
 	VINA_FOR_IN(i, torsions)               //for(i=0;i<torsions.size;i++)
 		torsions[i] = 0;
 }
 
-/*	¶ÔtorsionsÏòÁ¿½øĞĞ±ê×¼»¯
-	input¡ª¡ªtorsions£ºdoubleÏòÁ¿£»c£ºdoubleÏòÁ¿£»factor£ºdouble£»
+/*	å¯¹torsionså‘é‡è¿›è¡Œæ ‡å‡†åŒ–
+	inputâ€”â€”torsionsï¼šdoubleå‘é‡ï¼›cï¼šdoubleå‘é‡ï¼›factorï¼šdoubleï¼›
 
 */
 inline void torsions_increment(flv& torsions, const flv& c, fl factor) { // new torsions are normalized
 	VINA_FOR_IN(i, torsions) {                            //for(i=0;i<torsions.size;i++)
-		torsions[i] += normalized_angle(factor * c[i]);   //normalized_angle£¨£©¶Ô½Ç¶È½øĞĞ±ê×¼»¯£¬·¶Î§Îª[-pi,pi];
-		normalize_angle(torsions[i]);                     //normalized_angle£¨£©¶Ô½Ç¶È½øĞĞ±ê×¼»¯£¬·¶Î§Îª[-pi,pi];
+		torsions[i] += normalized_angle(factor * c[i]);   //normalized_angleï¼ˆï¼‰å¯¹è§’åº¦è¿›è¡Œæ ‡å‡†åŒ–ï¼ŒèŒƒå›´ä¸º[-pi,pi];
+		normalize_angle(torsions[i]);                     //normalized_angleï¼ˆï¼‰å¯¹è§’åº¦è¿›è¡Œæ ‡å‡†åŒ–ï¼ŒèŒƒå›´ä¸º[-pi,pi];
 	}
 }
 
 /*	
-    ¸Ãº¯ÊıÉú³É[-pi,pi]µÄËæ»úÏòÁ¿torsions£¨Å¤¾Ø£©
-	input¡ª¡ªtorsions£ºdoubleÏòÁ¿£¬generator£ºËæ»úÊıÉú³ÉÆ÷
+    è¯¥å‡½æ•°ç”Ÿæˆ[-pi,pi]çš„éšæœºå‘é‡torsionsï¼ˆæ‰­çŸ©ï¼‰
+	inputâ€”â€”torsionsï¼šdoubleå‘é‡ï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨
 */
 inline void torsions_randomize(flv& torsions, rng& generator) {
 	VINA_FOR_IN(i, torsions)                        //for(i=0;i<torsions.size;i++)
-		torsions[i] = random_fl(-pi, pi, generator);//Éú³ÉËæ»úÊı
+		torsions[i] = random_fl(-pi, pi, generator);//ç”Ÿæˆéšæœºæ•°
 }
 
-/*	ÅĞ¶Ïtorsions1ºÍtorsions2ÊÇ·ñÏàËÆ£¨Å¤¾ØÊ®·ÖÏàËÆ£©
-	input¡ª¡ªtorsions1¡¢torsions2£ºdoubleÏòÁ¿£¬cutoff£ºdouble£»
-	output¡ª¡ªboolÀàĞÍ
-	ÔÚtorsions1ºÍtorsions2ÏòÁ¿ÔªËØ¸öÊıÏàµÈµÄÇé¿öÏÂ£¬¸ù¾İ£¨torsions1[i] - torsions2[i]£©µÄ½Ç¶È±ê×¼»¯
-	µÄ¾ø¶ÔÖµÊÇ·ñ´óÓÚÊäÈëcutoff£¬ÊÇµÄ»°·µ»Øfalse£¬·ñÔòtrue
+/*	åˆ¤æ–­torsions1å’Œtorsions2æ˜¯å¦ç›¸ä¼¼ï¼ˆæ‰­çŸ©ååˆ†ç›¸ä¼¼ï¼‰
+	inputâ€”â€”torsions1ã€torsions2ï¼šdoubleå‘é‡ï¼Œcutoffï¼šdoubleï¼›
+	outputâ€”â€”boolç±»å‹
+	åœ¨torsions1å’Œtorsions2å‘é‡å…ƒç´ ä¸ªæ•°ç›¸ç­‰çš„æƒ…å†µä¸‹ï¼Œæ ¹æ®ï¼ˆtorsions1[i] - torsions2[i]ï¼‰çš„è§’åº¦æ ‡å‡†åŒ–
+	çš„ç»å¯¹å€¼æ˜¯å¦å¤§äºè¾“å…¥cutoffï¼Œæ˜¯çš„è¯è¿”å›falseï¼Œå¦åˆ™true
 */
 inline bool torsions_too_close(const flv& torsions1, const flv& torsions2, fl cutoff) {
 	assert(torsions1.size() == torsions2.size());
@@ -105,59 +105,59 @@ inline bool torsions_too_close(const flv& torsions1, const flv& torsions2, fl cu
 	return true;
 }
 
-/*	Éú³ÉÅäÌåÅ¤¾Ø
-	input¡ª¡ªtorsions£ºdoubleÏòÁ¿£¬spread¡¢rp£ºdouble£¬rs£ºdoubleÏòÁ¿Ö¸Õë£¬generator£ºËæ»úÊıÉú³ÉÆ÷
-	Ê×ÏÈÒªÅĞ¶ÏrsÊÇ·ñ¿ÕÖ¸Õë»òÕßrsÖ¸ÕëÏòÁ¿ÊÇ·ñÓëtorsionsÏòÁ¿ÔªËØ¸öÊıÏàµÈ£¬ÊÇµÄ»°¼ÌĞø·ñÔòÖÕÖ¹£»
-	if£¨rs²¿Îª¿ÕÖ¸Õë²¢ÇÒÉú³É[0,1]Ëæ»úÊıĞ¡ÓÚrp£©
-		½«rsÏòÁ¿¸³Öµ¸øtorsionsÏòÁ¿£»
+/*	ç”Ÿæˆé…ä½“æ‰­çŸ©
+	inputâ€”â€”torsionsï¼šdoubleå‘é‡ï¼Œspreadã€rpï¼šdoubleï¼Œrsï¼šdoubleå‘é‡æŒ‡é’ˆï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨
+	é¦–å…ˆè¦åˆ¤æ–­rsæ˜¯å¦ç©ºæŒ‡é’ˆæˆ–è€…rsæŒ‡é’ˆå‘é‡æ˜¯å¦ä¸torsionså‘é‡å…ƒç´ ä¸ªæ•°ç›¸ç­‰ï¼Œæ˜¯çš„è¯ç»§ç»­å¦åˆ™ç»ˆæ­¢ï¼›
+	ifï¼ˆrséƒ¨ä¸ºç©ºæŒ‡é’ˆå¹¶ä¸”ç”Ÿæˆ[0,1]éšæœºæ•°å°äºrpï¼‰
+		å°†rså‘é‡èµ‹å€¼ç»™torsionså‘é‡ï¼›
 	else
-		torsions[i]=torsions[i]+Éú³É[-spread, spread]Ëæ»úÊı	
+		torsions[i]=torsions[i]+ç”Ÿæˆ[-spread, spread]éšæœºæ•°	
 */
 inline void torsions_generate(flv& torsions, fl spread, fl rp, const flv* rs, rng& generator) {
 	assert(!rs || rs->size() == torsions.size());                  //if present, rs should be the same size as torsions
 	VINA_FOR_IN(i, torsions)                                       //for(i=0;i<torsions1.size;i++)
-		if(rs && random_fl(0, 1, generator) < rp)                  //random_flÉú³É[0,1]Ëæ»úÊı
+		if(rs && random_fl(0, 1, generator) < rp)                  //random_flç”Ÿæˆ[0,1]éšæœºæ•°
 			torsions[i] = (*rs)[i];
 		else
-			torsions[i] += random_fl(-spread, spread, generator); //random_flÉú³É[-spread, spread]Ëæ»úÊı
+			torsions[i] += random_fl(-spread, spread, generator); //random_flç”Ÿæˆ[-spread, spread]éšæœºæ•°
 }
 
 
 /*
-	¸ÕÌå±ä»¯
+	åˆšä½“å˜åŒ–
 */
 struct rigid_change {
-	vec position;                //vec½á¹¹Ìå£¬ÓÃÓÚ´æ·ÅËÄÔªÊıĞé²¿
-	vec orientation;		     //vec½á¹¹Ìå£¬ÓÃÓÚ´æ·ÅËÄÔªÊıĞé²¿
-	/*   ²ÎÊı³õÊ¼»¯
-	   position½á¹¹ÌåÖĞ£º data[0] = 0£»data[1] = 0;data[2] = 0;
-	   orientation½á¹¹ÌåÖĞ£º data[0] = 0£»data[1] = 0;data[2] = 0;
+	vec position;                //vecç»“æ„ä½“ï¼Œç”¨äºå­˜æ”¾å››å…ƒæ•°è™šéƒ¨
+	vec orientation;		     //vecç»“æ„ä½“ï¼Œç”¨äºå­˜æ”¾å››å…ƒæ•°è™šéƒ¨
+	/*   å‚æ•°åˆå§‹åŒ–
+	   positionç»“æ„ä½“ä¸­ï¼š data[0] = 0ï¼›data[1] = 0;data[2] = 0;
+	   orientationç»“æ„ä½“ä¸­ï¼š data[0] = 0ï¼›data[1] = 0;data[2] = 0;
 	*/
 	rigid_change() : position(0, 0, 0), orientation(0, 0, 0) {}
 	/*
-	   ÖğÒ»´òÓ¡position¡¢orientationÖĞÄÚÈİ,²¢ÒÔ¡°,¡±·Ö¸î
+	   é€ä¸€æ‰“å°positionã€orientationä¸­å†…å®¹,å¹¶ä»¥â€œ,â€åˆ†å‰²
 	*/
 	void print() const {
-		::print(position);   //ÖğÒ»´òÓ¡positionÖĞÄÚÈİ,²¢ÒÔ¡°,¡±·Ö¸î
+		::print(position);   //é€ä¸€æ‰“å°positionä¸­å†…å®¹,å¹¶ä»¥â€œ,â€åˆ†å‰²
 		::print(orientation);
 	}
 };
 
 /* 
-	¸ÕÌåÅäÖÃ
+	åˆšä½“é…ç½®
 */
 struct rigid_conf {
-	vec position;                    //vec½á¹¹Ìå£¬ÓÃÓÚ´æ·ÅËÄÔªÊıĞé²¿
-	qt orientation;					 //ËÄÔªÊı
-	/*   ²ÎÊı³õÊ¼»¯
-	   position½á¹¹ÌåÖĞ£º data[0] = 0£»data[1] = 0;data[2] = 0;
-	   orientation£ºÒ»¸öÊµ²¿Îª1£¬Ğé²¿¶¼Îª0µÄËÄÔªÊı
+	vec position;                    //vecç»“æ„ä½“ï¼Œç”¨äºå­˜æ”¾å››å…ƒæ•°è™šéƒ¨
+	qt orientation;					 //å››å…ƒæ•°
+	/*   å‚æ•°åˆå§‹åŒ–
+	   positionç»“æ„ä½“ä¸­ï¼š data[0] = 0ï¼›data[1] = 0;data[2] = 0;
+	   orientationï¼šä¸€ä¸ªå®éƒ¨ä¸º1ï¼Œè™šéƒ¨éƒ½ä¸º0çš„å››å…ƒæ•°
 	*/
 	rigid_conf() : position(0, 0, 0), orientation(qt_identity) {}
 
-	/*   ²ÎÊıÉèÎªnull
-		vec½á¹¹ÌåÖĞ£º data[0] = 0£»data[1] = 0;data[2] = 0;
-		orientation£ºÒ»¸öÊµ²¿Îª1£¬Ğé²¿¶¼Îª0µÄËÄÔªÊı
+	/*   å‚æ•°è®¾ä¸ºnull
+		vecç»“æ„ä½“ä¸­ï¼š data[0] = 0ï¼›data[1] = 0;data[2] = 0;
+		orientationï¼šä¸€ä¸ªå®éƒ¨ä¸º1ï¼Œè™šéƒ¨éƒ½ä¸º0çš„å››å…ƒæ•°
 	*/
 	void set_to_null() {
 		position = zero_vec;
@@ -165,13 +165,13 @@ struct rigid_conf {
 	}
 
 /*
-	input¡ª¡ªc£ºrigid_change½á¹¹Ìå£¬factor£ºdouble£»
-	inter¡ª¡ªrotation£ºvec ½á¹¹Ìå£¬orientation£ºËÄÔªÊı£»
-	c.position¡¢c.orientation:vec½á¹¹Ìå£»
+	inputâ€”â€”cï¼šrigid_changeç»“æ„ä½“ï¼Œfactorï¼šdoubleï¼›
+	interâ€”â€”rotationï¼švec ç»“æ„ä½“ï¼Œorientationï¼šå››å…ƒæ•°ï¼›
+	c.positionã€c.orientation:vecç»“æ„ä½“ï¼›
 	position=(position.data[0]+factor * c.position.data[0],position.data[1]+factor * c.position.data[1], position.data[2]+factor * c.position.data[2])
-	rotation=£¨factor * c.orientation.data[0]£¬factor * c.orientation.data[1]£¬factor * c.orientation.data[2]£©
-	quaternion_increment(orientation, rotation)ËÄÔªÊı³Ë·¨ÒÔ¼°½üËÆ±ê×¼»¯£º
-	orientation£¨w1,x1,y1,z1£©;rotation£¨w2,x2,y2,z2£©
+	rotation=ï¼ˆfactor * c.orientation.data[0]ï¼Œfactor * c.orientation.data[1]ï¼Œfactor * c.orientation.data[2]ï¼‰
+	quaternion_increment(orientation, rotation)å››å…ƒæ•°ä¹˜æ³•ä»¥åŠè¿‘ä¼¼æ ‡å‡†åŒ–ï¼š
+	orientationï¼ˆw1,x1,y1,z1ï¼‰;rotationï¼ˆw2,x2,y2,z2ï¼‰
 	orientation * rotation =
 	(w1*w2 - x1*x2 - y1*y2 - z1*z2) +
 	(w1*x2 + x1*w2 + y1*z2 - z1*y2) i +
@@ -180,29 +180,29 @@ struct rigid_conf {
 */
 	void increment(const rigid_change& c, fl factor) {
 		position += factor * c.position;       //factor * data[0], factor * data[1], factor * data[2]
-		                                       //ÖµÒÀ´Î´æÈëvec½á¹¹ÌåµÄdata[0]~data[2]
-		vec rotation;                          //vec½á¹¹Ìå£¬ÓÃÓÚ´æ·ÅËÄÔªÊıĞé²¿
+		                                       //å€¼ä¾æ¬¡å­˜å…¥vecç»“æ„ä½“çš„data[0]~data[2]
+		vec rotation;                          //vecç»“æ„ä½“ï¼Œç”¨äºå­˜æ”¾å››å…ƒæ•°è™šéƒ¨
 		rotation = factor * c.orientation;
 		quaternion_increment(orientation, rotation); // orientation does not get normalized; tests show rounding errors growing very slowly
 	}
 
-/*Éú³ÉËæ»úÅäÌåµÄ±ä»¯Î»ÖÃ¡¢·½Ïò
-	input¡ª¡ªcorner1¡¢corner2£ºvec½á¹¹Ìå£¬generator£ºËæ»úÊıÉú³ÉÆ÷
+/*ç”Ÿæˆéšæœºé…ä½“çš„å˜åŒ–ä½ç½®ã€æ–¹å‘
+	inputâ€”â€”corner1ã€corner2ï¼švecç»“æ„ä½“ï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨
 */
 	void randomize(const vec& corner1, const vec& corner2, rng& generator) {
-		position = random_in_box(corner1, corner2, generator);//ÊäÈëÁ½¸övec½á¹¹Ìå£¬²úÉúÒ»¸ö[corner1[i], corner2[i]]Ëæ»úvec½á¹¹Ìå
+		position = random_in_box(corner1, corner2, generator);//è¾“å…¥ä¸¤ä¸ªvecç»“æ„ä½“ï¼Œäº§ç”Ÿä¸€ä¸ª[corner1[i], corner2[i]]éšæœºvecç»“æ„ä½“
 		orientation = random_orientation(generator);
 	}
 
 	/*
-		input¡ª¡ªc£ºrigid_conf½á¹¹Ìå£¬position_cutoff¡¢orientation_cutoff£ºdouble£»
-		output¡ª¡ªbool£»
-		if  vec_distance_sqr(position, c.position)¼ÆËãÕâÁ½¸övecÖĞÖğ¸ödataÊı×éÔªËØ²îµÄÆ½·½´óÓÚ
-		sqr(position_cutoff)=position_cutoff*position_cutoff£¬·µ»Øfalse£»
-		if  ¼ÆËãquaternion_difference(orientation, c.orientation)·µ»ØµÄvecÖĞÖğ¸ödataÊı×éÔªËØµÄÆ½·½ºÍ ´óÓÚ
-		orientation_cutoff*orientation_cutoff£¬·µ»Øfalse£»
+		inputâ€”â€”cï¼šrigid_confç»“æ„ä½“ï¼Œposition_cutoffã€orientation_cutoffï¼šdoubleï¼›
+		outputâ€”â€”boolï¼›
+		if  vec_distance_sqr(position, c.position)è®¡ç®—è¿™ä¸¤ä¸ªvecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ å·®çš„å¹³æ–¹å¤§äº
+		sqr(position_cutoff)=position_cutoff*position_cutoffï¼Œè¿”å›falseï¼›
+		if  è®¡ç®—quaternion_difference(orientation, c.orientation)è¿”å›çš„vecä¸­é€ä¸ªdataæ•°ç»„å…ƒç´ çš„å¹³æ–¹å’Œ å¤§äº
+		orientation_cutoff*orientation_cutoffï¼Œè¿”å›falseï¼›
 		else
-		·µ»Øtrue£»
+		è¿”å›trueï¼›
 	*/
 	bool too_close(const rigid_conf& c, fl position_cutoff, fl orientation_cutoff) const {
 		if(vec_distance_sqr(position, c.position) > sqr(position_cutoff)) return false;
@@ -210,23 +210,23 @@ struct rigid_conf {
 		return true;
 	}
 
-	/*	ÅäÌåÎ»ÖÃ±ä»¯
-		input¡ª¡ªspread£ºdouble£¬generator£ºËæ»úÊıÉú³ÉÆ÷£»
-		position£ºvec½á¹¹Ìå£¬ÓÃÓÚ´æ·ÅËÄÔªÊıĞé²¿
-		random_inside_sphere(generator)£ºÔÚµ¥Î»ÇòÄÚÉú³ÉËæ»úvec½á¹¹Ìåtmp
+	/*	é…ä½“ä½ç½®å˜åŒ–
+		inputâ€”â€”spreadï¼šdoubleï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨ï¼›
+		positionï¼švecç»“æ„ä½“ï¼Œç”¨äºå­˜æ”¾å››å…ƒæ•°è™šéƒ¨
+		random_inside_sphere(generator)ï¼šåœ¨å•ä½çƒå†…ç”Ÿæˆéšæœºvecç»“æ„ä½“tmp
 	position=(position.data[0]+spread * tmp.data[0],position.data[1]+spread * tmp.data[1], position.data[2]+spread * tmp.data[2])
 	*/
 	void mutate_position(fl spread, rng& generator) {
-		position += spread * random_inside_sphere(generator);//ÔÚµ¥Î»ÇòÄÚÉú³ÉËæ»úvec½á¹¹Ìå
+		position += spread * random_inside_sphere(generator);//åœ¨å•ä½çƒå†…ç”Ÿæˆéšæœºvecç»“æ„ä½“
 	}
 
-/*    ÅäÌå·½Ïò±ä»¯
-	input¡ª¡ªspread£ºdouble£¬generator£ºËæ»úÊıÉú³ÉÆ÷£»
-	inter¡ª¡ªorientation£ºËÄÔªÊı
-	tmp£ºvec½á¹¹Ìå£¬ÓÃÓÚ´æ·ÅËÄÔªÊıĞé²¿
-	random_inside_sphere(generator)£ºÔÚµ¥Î»ÇòÄÚÉú³ÉËæ»úvec½á¹¹Ìåtmp£¬Õâ¸ötmp½á¹¹ÌåºÍÕâ¸öº¯ÊıÖĞµÄtmp²»ÊÇÒ»¸ö
-	tmp=(spread * tmp.data[0],spread * tmp.data[1],spread * tmp.data[2])£»
-	×îºó½øĞĞÁ½¸öËÄÔªÊı³Ë·¨ÒÔ¼°½üËÆ±ê×¼»¯£ºquaternion_increment(orientation, tmp)
+/*    é…ä½“æ–¹å‘å˜åŒ–
+	inputâ€”â€”spreadï¼šdoubleï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨ï¼›
+	interâ€”â€”orientationï¼šå››å…ƒæ•°
+	tmpï¼švecç»“æ„ä½“ï¼Œç”¨äºå­˜æ”¾å››å…ƒæ•°è™šéƒ¨
+	random_inside_sphere(generator)ï¼šåœ¨å•ä½çƒå†…ç”Ÿæˆéšæœºvecç»“æ„ä½“tmpï¼Œè¿™ä¸ªtmpç»“æ„ä½“å’Œè¿™ä¸ªå‡½æ•°ä¸­çš„tmpä¸æ˜¯ä¸€ä¸ª
+	tmp=(spread * tmp.data[0],spread * tmp.data[1],spread * tmp.data[2])ï¼›
+	æœ€åè¿›è¡Œä¸¤ä¸ªå››å…ƒæ•°ä¹˜æ³•ä»¥åŠè¿‘ä¼¼æ ‡å‡†åŒ–ï¼šquaternion_increment(orientation, tmp)
 */
 	void mutate_orientation(fl spread, rng& generator) {
 		vec tmp;
@@ -235,17 +235,17 @@ struct rigid_conf {
 	}
 
 
-/*  Éú³ÉÅäÌå±ä»¯£ºÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø
-	input¡ª¡ªposition_spread¡¢orientation_spread¡¢rp£ºdouble£¬rs£ºrigid_conf½á¹¹ÌåÖ¸Õë£¬generator£ºËæ»úÊıÉú³ÉÆ÷£»
-	inter¡ª¡ª position£ºvec½á¹¹Ìå,orientation:ËÄÔªÊı  
-	if rs²»Îª¿ÕÖ¸Õë²¢ÇÒÔÚ[0,1]Ö®¼äÉú³ÉµÄdoubleËæ»úÊıĞ¡ÓÚrp
-		position=rs½á¹¹ÌåÖĞµÄposition£»
-		orientation=rs½á¹¹ÌåÖĞµÄorientation£»
+/*  ç”Ÿæˆé…ä½“å˜åŒ–ï¼šä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©
+	inputâ€”â€”position_spreadã€orientation_spreadã€rpï¼šdoubleï¼Œrsï¼šrigid_confç»“æ„ä½“æŒ‡é’ˆï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨ï¼›
+	interâ€”â€” positionï¼švecç»“æ„ä½“,orientation:å››å…ƒæ•°  
+	if rsä¸ä¸ºç©ºæŒ‡é’ˆå¹¶ä¸”åœ¨[0,1]ä¹‹é—´ç”Ÿæˆçš„doubleéšæœºæ•°å°äºrp
+		position=rsç»“æ„ä½“ä¸­çš„positionï¼›
+		orientation=rsç»“æ„ä½“ä¸­çš„orientationï¼›
 	else
-		position=(position.data[0]+position_spread * tmp.data[0],position.data[1]+position_spread * tmp.data[1], position.data[2]+position_spread * tmp.data[2])£»
-		quaternion_increment(orientation, (orientation_spread * tmp.data[0],orientation_spread * tmp.data[1],orientation_spread * tmp.data[2]))£»
-		£¨¶ÔÁ½¸öËÄÔªÊı½øĞĞ³Ë·¨ÒÔ¼°½üËÆ±ê×¼»¯£©
-		tmp£ºÔÚµ¥Î»ÇòÄÚÉú³ÉËæ»úvec½á¹¹Ìå£»
+		position=(position.data[0]+position_spread * tmp.data[0],position.data[1]+position_spread * tmp.data[1], position.data[2]+position_spread * tmp.data[2])ï¼›
+		quaternion_increment(orientation, (orientation_spread * tmp.data[0],orientation_spread * tmp.data[1],orientation_spread * tmp.data[2]))ï¼›
+		ï¼ˆå¯¹ä¸¤ä¸ªå››å…ƒæ•°è¿›è¡Œä¹˜æ³•ä»¥åŠè¿‘ä¼¼æ ‡å‡†åŒ–ï¼‰
+		tmpï¼šåœ¨å•ä½çƒå†…ç”Ÿæˆéšæœºvecç»“æ„ä½“ï¼›
 */
 	void generate(fl position_spread, fl orientation_spread, fl rp, const rigid_conf* rs, rng& generator) {
 		if(rs && random_fl(0, 1, generator) < rp)
@@ -259,16 +259,16 @@ struct rigid_conf {
 	}
 	
 /*
-	input¡ª¡ªin¡¢out£ºvec½á¹¹ÌåÏòÁ¿£¬begin¡¢end£ºunint
-	inter¡ª¡ªm£ºmat½á¹¹Ìå,position:vec½á¹¹Ìå
-	orientation£¨a,b,c,d£©----------->
+	inputâ€”â€”inã€outï¼švecç»“æ„ä½“å‘é‡ï¼Œbeginã€endï¼šunint
+	interâ€”â€”mï¼šmatç»“æ„ä½“,position:vecç»“æ„ä½“
+	orientationï¼ˆa,b,c,dï¼‰----------->
 	aa = a*a;ab = a*b;ac = a*c;ad = a*d;bb = b*b
 	bc = b*c;bd = b*d;cc = c*c;cd = c*d;dd = d*d 
-	----------->m½á¹¹ÌåÖĞdata
-	data[0]=(aa + bb - cc - dd)£»data[3]=2 * (-ad + bc)     £»data[6]=2 * (ac + bd)      ;
-	data[1]=( 2 * (ad + bc)    £»data[4]=(aa - bb + cc - dd)£»data[7]= 2 * (-ab + cd)    ;
-	data[2]=2 * (-ac + bd)     £»data[5]=2 * (ab + cd)      £»data[8]=(aa - bb - cc + dd);
-	----------->out[i]½á¹¹ÌåÖĞdata
+	----------->mç»“æ„ä½“ä¸­data
+	data[0]=(aa + bb - cc - dd)ï¼›data[3]=2 * (-ad + bc)     ï¼›data[6]=2 * (ac + bd)      ;
+	data[1]=( 2 * (ad + bc)    ï¼›data[4]=(aa - bb + cc - dd)ï¼›data[7]= 2 * (-ab + cd)    ;
+	data[2]=2 * (-ac + bd)     ï¼›data[5]=2 * (ab + cd)      ï¼›data[8]=(aa - bb - cc + dd);
+	----------->out[i]ç»“æ„ä½“ä¸­data
 	(m.data[0]*in[i][0] + m.data[3]*in[i][1] + m.data[6]*in[i][2]+position.data[0],
 	 m.data[1]*in[i][0] + m.data[4]*in[i][1] + m.data[7]*in[i][2]+position.data[1],
 	 m.data[2]*in[i][0] + m.data[5]*in[i][1] + m.data[8]*in[i][2]+position.data[2])
@@ -280,9 +280,9 @@ struct rigid_conf {
 			out[i] = m * in[i] + position;
 	}
 
-/*  ´òÓ¡ÅäÌåµÄÎ»ÖÃ¡¢·½Ïò
-	ÖğÒ»´òÓ¡vec positionÖĞÄÚÈİ,²¢ÒÔ¡°,¡±·Ö¸î
-	´òÓ¡³öorientationËÄÔªÊı
+/*  æ‰“å°é…ä½“çš„ä½ç½®ã€æ–¹å‘
+	é€ä¸€æ‰“å°vec positionä¸­å†…å®¹,å¹¶ä»¥â€œ,â€åˆ†å‰²
+	æ‰“å°å‡ºorientationå››å…ƒæ•°
 */
 	void print() const {
 		::print(position);
@@ -290,7 +290,7 @@ struct rigid_conf {
 	}
 
 private:
-	friend class boost::serialization::access; //ÓÑÔªº¯Êı
+	friend class boost::serialization::access; //å‹å…ƒå‡½æ•°
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned version) {
 		ar & position;
@@ -299,14 +299,14 @@ private:
 };
 
 /* 
-	¸Ä±äÅäÌå
+	æ”¹å˜é…ä½“
 */
 struct ligand_change {
-	rigid_change rigid;      //rigid_change½á¹¹Ìå
-	flv torsions;            //doubleÏòÁ¿                
+	rigid_change rigid;      //rigid_changeç»“æ„ä½“
+	flv torsions;            //doubleå‘é‡                
 	/*
-	ÖğÒ»´òÓ¡vec½á¹¹Ìåposition¡¢orientationÖĞÄÚÈİ,²¢ÒÔ¡°,¡±·Ö¸î
-	ÒÔ¼°´òÓ¡torsions±äÁ¿
+	é€ä¸€æ‰“å°vecç»“æ„ä½“positionã€orientationä¸­å†…å®¹,å¹¶ä»¥â€œ,â€åˆ†å‰²
+	ä»¥åŠæ‰“å°torsionså˜é‡
 	*/
 	void print() const {
 		rigid.print();
@@ -315,16 +315,16 @@ struct ligand_change {
 };
 
 /*
-	ÅäÌåÅäÖÃ
+	é…ä½“é…ç½®
 */
 struct ligand_conf {
-	rigid_conf rigid;		//rigid_change½á¹¹Ìå
-	flv torsions;           //doubleÏòÁ¿  
-	/*   ²ÎÊıÉèÎªnull
-		rigid½á¹¹ÌåÖĞ£º
-		data[0] = 0£»data[1] = 0;data[2] = 0;
-		orientation£ºÒ»¸öÊµ²¿Îª1£¬Ğé²¿¶¼Îª0µÄËÄÔªÊı
-		torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0
+	rigid_conf rigid;		//rigid_changeç»“æ„ä½“
+	flv torsions;           //doubleå‘é‡  
+	/*   å‚æ•°è®¾ä¸ºnull
+		rigidç»“æ„ä½“ä¸­ï¼š
+		data[0] = 0ï¼›data[1] = 0;data[2] = 0;
+		orientationï¼šä¸€ä¸ªå®éƒ¨ä¸º1ï¼Œè™šéƒ¨éƒ½ä¸º0çš„å››å…ƒæ•°
+		torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0
 	*/
 	void set_to_null() {
 		rigid.set_to_null();
@@ -332,36 +332,36 @@ struct ligand_conf {
 	}
 
 	/*
-		input¡ª¡ªc¡¢rigid£ºligand_change½á¹¹Ìå£¬factor£ºdouble£¬c.rigid£ºrigid_change½á¹¹Ìå£»
-		c.rigid.position¡¢c.rigid.orientation:vec½á¹¹Ìå£»
-	  £¨rigid_conf½á¹¹ÌåÖĞ£©position=(position.data[0]+factor *c.rigid.position.data[0],position.data[1]+factor * c.rigid.position.data[1], position.data[2]+factor * c.rigid.position.data[2])
-		rotation=£¨factor * c.rigid.orientation.data[0]£¬factor * c.rigid.orientation.data[1]£¬factor * c.rigid.orientation.data[2]£©
-		quaternion_increment(orientation£¨rigid_conf½á¹¹ÌåÖĞ£©, rotation)ËÄÔªÊı³Ë·¨ÒÔ¼°½üËÆ±ê×¼»¯£º
-		orientation£¨w1,x1,y1,z1£©;rotation£¨w2,x2,y2,z2£©
+		inputâ€”â€”cã€rigidï¼šligand_changeç»“æ„ä½“ï¼Œfactorï¼šdoubleï¼Œc.rigidï¼šrigid_changeç»“æ„ä½“ï¼›
+		c.rigid.positionã€c.rigid.orientation:vecç»“æ„ä½“ï¼›
+	  ï¼ˆrigid_confç»“æ„ä½“ä¸­ï¼‰position=(position.data[0]+factor *c.rigid.position.data[0],position.data[1]+factor * c.rigid.position.data[1], position.data[2]+factor * c.rigid.position.data[2])
+		rotation=ï¼ˆfactor * c.rigid.orientation.data[0]ï¼Œfactor * c.rigid.orientation.data[1]ï¼Œfactor * c.rigid.orientation.data[2]ï¼‰
+		quaternion_increment(orientationï¼ˆrigid_confç»“æ„ä½“ä¸­ï¼‰, rotation)å››å…ƒæ•°ä¹˜æ³•ä»¥åŠè¿‘ä¼¼æ ‡å‡†åŒ–ï¼š
+		orientationï¼ˆw1,x1,y1,z1ï¼‰;rotationï¼ˆw2,x2,y2,z2ï¼‰
 		orientation * rotation =
 		(w1*w2 - x1*x2 - y1*y2 - z1*z2) +
 		(w1*x2 + x1*w2 + y1*z2 - z1*y2) i +
 		(w1*y2 - x1*z2 + y1*w2 + z1*x2) j +
 		(w1*z2 + x1*y2 - y1*x2 + z1*w2) k
-		×îºó¶ÔtorsionsÏòÁ¿½øĞĞ±ê×¼»¯
+		æœ€åå¯¹torsionså‘é‡è¿›è¡Œæ ‡å‡†åŒ–
 	*/
 	void increment(const ligand_change& c, fl factor) {
-		rigid.increment(c.rigid, factor);   //c.rigid£ºrigid_change½á¹¹Ìå
-		torsions_increment(torsions, c.torsions, factor);//¶ÔtorsionsÏòÁ¿½øĞĞ±ê×¼»¯
+		rigid.increment(c.rigid, factor);   //c.rigidï¼šrigid_changeç»“æ„ä½“
+		torsions_increment(torsions, c.torsions, factor);//å¯¹torsionså‘é‡è¿›è¡Œæ ‡å‡†åŒ–
 	}
 
-	/*	Éú³ÉËæ»úµÄposition½á¹¹ÌåºÍorientationËÄÔªÊıÒÔ¼°[-pi,pi]µÄËæ»úÏòÁ¿torsions
-		input¡ª¡ªrigid£ºligand_change½á¹¹Ìå£¬corner1¡¢corner2£ºvec½á¹¹Ìå£¬generator£ºËæ»úÊıÉú³ÉÆ÷
-		inter¡ª¡ªtorsions£ºdoubleÏòÁ¿£¬rigid£ºrigid_change½á¹¹Ìå£»
+	/*	ç”Ÿæˆéšæœºçš„positionç»“æ„ä½“å’Œorientationå››å…ƒæ•°ä»¥åŠ[-pi,pi]çš„éšæœºå‘é‡torsions
+		inputâ€”â€”rigidï¼šligand_changeç»“æ„ä½“ï¼Œcorner1ã€corner2ï¼švecç»“æ„ä½“ï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨
+		interâ€”â€”torsionsï¼šdoubleå‘é‡ï¼Œrigidï¼šrigid_changeç»“æ„ä½“ï¼›
 		
 	*/
 	void randomize(const vec& corner1, const vec& corner2, rng& generator) {
 		rigid.randomize(corner1, corner2, generator);
 		torsions_randomize(torsions, generator);
 	}
-	/* ´òÓ¡¸ÕĞÔ±ä»¯ÖĞµÄÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØĞÅÏ¢
-		inter¡ª¡ªrigid£ºrigid_change½á¹¹Ìå£»
-		ÖğÒ»´òÓ¡vec positionÖĞÄÚÈİ,²¢ÒÔ¡°,¡±·Ö¸îºÍ´òÓ¡³öorientationËÄÔªÊıÒÔ¼°´òÓ¡torsions±äÁ¿
+	/* æ‰“å°åˆšæ€§å˜åŒ–ä¸­çš„ä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ä¿¡æ¯
+		interâ€”â€”rigidï¼šrigid_changeç»“æ„ä½“ï¼›
+		é€ä¸€æ‰“å°vec positionä¸­å†…å®¹,å¹¶ä»¥â€œ,â€åˆ†å‰²å’Œæ‰“å°å‡ºorientationå››å…ƒæ•°ä»¥åŠæ‰“å°torsionså˜é‡
 	*/
 	void print() const {
 		rigid.print();
@@ -376,51 +376,51 @@ private:
 	}
 };
 
-/*   ²Ğ»ù±ä»¯
-	torsions£ºdouble ÏòÁ¿
+/*   æ®‹åŸºå˜åŒ–
+	torsionsï¼šdouble å‘é‡
 */
 struct residue_change {
 	flv torsions;
 	/*
-	´òÓ¡torsions±äÁ¿
+	æ‰“å°torsionså˜é‡
 	*/
 	void print() const {
 		printnl(torsions);
 	}
 };
 
-/*   ²Ğ»ùÅäÖÃ
-	torsions£ºdouble ÏòÁ¿
+/*   æ®‹åŸºé…ç½®
+	torsionsï¼šdouble å‘é‡
 
 */
 struct residue_conf {
 	flv torsions;
 
 	/*
-	input¡ª¡ªtorsions£ºdoubleÏòÁ¿£»
-	¸Ãº¯ÊıÊÇ½«torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0
+	inputâ€”â€”torsionsï¼šdoubleå‘é‡ï¼›
+	è¯¥å‡½æ•°æ˜¯å°†torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0
 	*/
 	void set_to_null() {
 		torsions_set_to_null(torsions);
 	}
 
 
-	/*	¶ÔtorsionsÏòÁ¿½øĞĞ±ê×¼»¯
-	input¡ª¡ªc£ºresidue_change½á¹¹Ìå£»factor£ºdouble£»
+	/*	å¯¹torsionså‘é‡è¿›è¡Œæ ‡å‡†åŒ–
+	inputâ€”â€”cï¼šresidue_changeç»“æ„ä½“ï¼›factorï¼šdoubleï¼›
 	*/
 	void increment(const residue_change& c, fl factor) {
 		torsions_increment(torsions, c.torsions, factor);
 	}
 
-	/*¸Ãº¯ÊıÉú³É[-pi,pi]µÄËæ»úÏòÁ¿torsions£¨Å¤¾Ø£©
-	 input¡ª¡ªgenerator£ºËæ»úÊıÉú³ÉÆ÷
+	/*è¯¥å‡½æ•°ç”Ÿæˆ[-pi,pi]çš„éšæœºå‘é‡torsionsï¼ˆæ‰­çŸ©ï¼‰
+	 inputâ€”â€”generatorï¼šéšæœºæ•°ç”Ÿæˆå™¨
 	*/
 	void randomize(rng& generator) {
 		torsions_randomize(torsions, generator);
 	}
 
 	/*
-		´òÓ¡Å¤¾ØĞÅÏ¢
+		æ‰“å°æ‰­çŸ©ä¿¡æ¯
 	*/
 	void print() const {
 		printnl(torsions);
@@ -434,18 +434,18 @@ private:
 };
 
 /*   
-	s:conf_size½á¹¹Ìå
-	ligands£ºligand_change½á¹¹ÌåÏòÁ¿£»
-	flex£ºresidue_change½á¹¹ÌåÏòÁ¿£»
-	ligandsÏòÁ¿µÄÔªËØ¸öÊıÎªconf_size½á¹¹ÌåÖĞµÄligands uintÏòÁ¿µÄÔªËØ¸öÊı;
-	flexÏòÁ¿µÄÔªËØ¸öÊıÎªconf_size½á¹¹ÌåÖĞµÄflex uintÏòÁ¿µÄÔªËØ¸öÊı;
+	s:conf_sizeç»“æ„ä½“
+	ligandsï¼šligand_changeç»“æ„ä½“å‘é‡ï¼›
+	flexï¼šresidue_changeç»“æ„ä½“å‘é‡ï¼›
+	ligandså‘é‡çš„å…ƒç´ ä¸ªæ•°ä¸ºconf_sizeç»“æ„ä½“ä¸­çš„ligands uintå‘é‡çš„å…ƒç´ ä¸ªæ•°;
+	flexå‘é‡çš„å…ƒç´ ä¸ªæ•°ä¸ºconf_sizeç»“æ„ä½“ä¸­çš„flex uintå‘é‡çš„å…ƒç´ ä¸ªæ•°;
 
-	ligands[i].torsions doubleÏòÁ¿ÖĞÔªËØ¸öÊıÎªs.ligands[ligands.size]¸ö£¬ÆäÖµ¶¼Îª0£»
-	flex[i].torsions doubleÏòÁ¿ÖĞÔªËØ¸öÊıÎªs.flex[flex.size]¸ö£¬ÆäÖµ¶¼Îª0£»
+	ligands[i].torsions doubleå‘é‡ä¸­å…ƒç´ ä¸ªæ•°ä¸ºs.ligands[ligands.size]ä¸ªï¼Œå…¶å€¼éƒ½ä¸º0ï¼›
+	flex[i].torsions doubleå‘é‡ä¸­å…ƒç´ ä¸ªæ•°ä¸ºs.flex[flex.size]ä¸ªï¼Œå…¶å€¼éƒ½ä¸º0ï¼›
 
 */
 struct change {
-	std::vector<ligand_change> ligands;    //ligand_change½á¹¹ÌåÏòÁ¿
+	std::vector<ligand_change> ligands;    //ligand_changeç»“æ„ä½“å‘é‡
 	std::vector<residue_change> flex;
 	change(const conf_size& s) : ligands(s.ligands.size()), flex(s.flex.size()) {
 
@@ -456,31 +456,31 @@ struct change {
 	}
 
 	/*
-		ÖØÔØchange£¨sz£©£¬·µ»Ø¶ÔÏó
-		input¡ª¡ªindex£ºunint £»
+		é‡è½½changeï¼ˆszï¼‰ï¼Œè¿”å›å¯¹è±¡
+		inputâ€”â€”indexï¼šunint ï¼›
 
-		ligands£ºligand_change½á¹¹ÌåÏòÁ¿£»
-		flex£ºresidue_change½á¹¹ÌåÏòÁ¿£»
-		ligÎªligands[i]½á¹¹ÌåµÄ±ğÃû£¬¸Ä±älig¾ÍÊÇ¸Ä±äligands[i]£»
-		resÎªflex[i]½á¹¹ÌåµÄ±ğÃû£¬¸Ä±äres¾ÍÊÇ¸Ä±äflex[i]
+		ligandsï¼šligand_changeç»“æ„ä½“å‘é‡ï¼›
+		flexï¼šresidue_changeç»“æ„ä½“å‘é‡ï¼›
+		ligä¸ºligands[i]ç»“æ„ä½“çš„åˆ«åï¼Œæ”¹å˜ligå°±æ˜¯æ”¹å˜ligands[i]ï¼›
+		resä¸ºflex[i]ç»“æ„ä½“çš„åˆ«åï¼Œæ”¹å˜reså°±æ˜¯æ”¹å˜flex[i]
 
 
 		for (i = 0; i<ligands.size; i++)
-		if£¨index<3£©
-			return      rigid_change½á¹¹ÌåÖĞposition½á¹¹ÌåµÄµÚindex¸öÔªËØ
-		index=index-3£»£¨ÉÏÃæifÃ»ÓĞÖ´ĞĞ¾ÍÒ»¶¨»áÖ´ĞĞ¸ÃÓï¾ä£¬×¢ÒâÕâÀïµÄindexÎªÎŞ·ûºÅÕûĞÍ£©
-		if£¨index<3£©
-		return      rigid_change½á¹¹ÌåÖĞorientation½á¹¹ÌåµÄµÚindex¸öÔªËØ
-		index=index-3£»£¨ÉÏÃæifÃ»ÓĞÖ´ĞĞ¾ÍÒ»¶¨»áÖ´ĞĞ¸ÃÓï¾ä£¬×¢ÒâÕâÀïµÄindexÎªÎŞ·ûºÅÕûĞÍ£©
-		if£¨ligands[i]½á¹¹ÌåÖĞtorsionsÏòÁ¿µÄÔªËØ¸öÊı<3£©
-		return      ligand_change½á¹¹ÌåÖĞtorsionsÏòÁ¿µÄµÚindex¸öÔªËØ
-		index=ligands[i]½á¹¹ÌåÖĞtorsionsÏòÁ¿µÄÔªËØ¸öÊı-3£»£¨ÉÏÃæifÃ»ÓĞÖ´ĞĞ¾ÍÒ»¶¨»áÖ´ĞĞ¸ÃÓï¾ä £¬×¢ÒâÕâÀïµÄindexÎªÎŞ·ûºÅÕûĞÍ£©
+		ifï¼ˆindex<3ï¼‰
+			return      rigid_changeç»“æ„ä½“ä¸­positionç»“æ„ä½“çš„ç¬¬indexä¸ªå…ƒç´ 
+		index=index-3ï¼›ï¼ˆä¸Šé¢ifæ²¡æœ‰æ‰§è¡Œå°±ä¸€å®šä¼šæ‰§è¡Œè¯¥è¯­å¥ï¼Œæ³¨æ„è¿™é‡Œçš„indexä¸ºæ— ç¬¦å·æ•´å‹ï¼‰
+		ifï¼ˆindex<3ï¼‰
+		return      rigid_changeç»“æ„ä½“ä¸­orientationç»“æ„ä½“çš„ç¬¬indexä¸ªå…ƒç´ 
+		index=index-3ï¼›ï¼ˆä¸Šé¢ifæ²¡æœ‰æ‰§è¡Œå°±ä¸€å®šä¼šæ‰§è¡Œè¯¥è¯­å¥ï¼Œæ³¨æ„è¿™é‡Œçš„indexä¸ºæ— ç¬¦å·æ•´å‹ï¼‰
+		ifï¼ˆligands[i]ç»“æ„ä½“ä¸­torsionså‘é‡çš„å…ƒç´ ä¸ªæ•°<3ï¼‰
+		return      ligand_changeç»“æ„ä½“ä¸­torsionså‘é‡çš„ç¬¬indexä¸ªå…ƒç´ 
+		index=ligands[i]ç»“æ„ä½“ä¸­torsionså‘é‡çš„å…ƒç´ ä¸ªæ•°-3ï¼›ï¼ˆä¸Šé¢ifæ²¡æœ‰æ‰§è¡Œå°±ä¸€å®šä¼šæ‰§è¡Œè¯¥è¯­å¥ ï¼Œæ³¨æ„è¿™é‡Œçš„indexä¸ºæ— ç¬¦å·æ•´å‹ï¼‰
 	
 	    for (i = 0; i<flex.size; i++)
-		if£¨flex[i]½á¹¹ÌåÖĞtorsionsÏòÁ¿µÄÔªËØ¸öÊı<3£©
-		return      residue_change½á¹¹ÌåÖĞtorsionsÏòÁ¿µÄµÚindex¸öÔªËØ
-		index=flex[i]½á¹¹ÌåÖĞtorsionsÏòÁ¿µÄÔªËØ¸öÊı-3£»£¨ÉÏÃæifÃ»ÓĞÖ´ĞĞ¾ÍÒ»¶¨»áÖ´ĞĞ¸ÃÓï¾ä £¬×¢ÒâÕâÀïµÄindexÎªÎŞ·ûºÅÕûĞÍ£©
-		ÉÏÃæµÄreturnÓĞÈ´Ö»»áÖ´ĞĞÒ»±é
+		ifï¼ˆflex[i]ç»“æ„ä½“ä¸­torsionså‘é‡çš„å…ƒç´ ä¸ªæ•°<3ï¼‰
+		return      residue_changeç»“æ„ä½“ä¸­torsionså‘é‡çš„ç¬¬indexä¸ªå…ƒç´ 
+		index=flex[i]ç»“æ„ä½“ä¸­torsionså‘é‡çš„å…ƒç´ ä¸ªæ•°-3ï¼›ï¼ˆä¸Šé¢ifæ²¡æœ‰æ‰§è¡Œå°±ä¸€å®šä¼šæ‰§è¡Œè¯¥è¯­å¥ ï¼Œæ³¨æ„è¿™é‡Œçš„indexä¸ºæ— ç¬¦å·æ•´å‹ï¼‰
+		ä¸Šé¢çš„returnæœ‰å´åªä¼šæ‰§è¡Œä¸€é
 	*/
 
 	fl operator()(sz index) const { // returns by value
@@ -502,8 +502,8 @@ struct change {
 		return 0; // shouldn't happen, placating the compiler
 	}
 
-/* ÖØÔØchange£¨sz£©£¬·µ»ØÒıÓÃ
-	ÓëÉÏÃæÖØÔØº¯ÊıÊµÏÖµÄÄÚÈİÒ»ÖÂ£¬Ö»ÊÇ·µ»Ø²»Í¬£»
+/* é‡è½½changeï¼ˆszï¼‰ï¼Œè¿”å›å¼•ç”¨
+	ä¸ä¸Šé¢é‡è½½å‡½æ•°å®ç°çš„å†…å®¹ä¸€è‡´ï¼Œåªæ˜¯è¿”å›ä¸åŒï¼›
 */
 	fl& operator()(sz index) {
 		VINA_FOR_IN(i, ligands) {
@@ -525,9 +525,9 @@ struct change {
 	}
 
 
-/*	¼ÆËãligand_change¡¢residue_change½á¹¹ÌåÏòÁ¿ÖĞtorsionsÔªËØ¸öÊı×ÜºÍ¼ÓÉÏ6*ligands.sizeµÄ×ÜºÍ
-	ligands£ºligand_change½á¹¹ÌåÏòÁ¿£»
-	flex£ºresidue_change½á¹¹ÌåÏòÁ¿£»
+/*	è®¡ç®—ligand_changeã€residue_changeç»“æ„ä½“å‘é‡ä¸­torsionså…ƒç´ ä¸ªæ•°æ€»å’ŒåŠ ä¸Š6*ligands.sizeçš„æ€»å’Œ
+	ligandsï¼šligand_changeç»“æ„ä½“å‘é‡ï¼›
+	flexï¼šresidue_changeç»“æ„ä½“å‘é‡ï¼›
 */
 	sz num_floats() const {
 		sz tmp = 0;
@@ -539,11 +539,11 @@ struct change {
 	}
 
 	/*
-	ÖğÒ»´òÓ¡ligands½á¹¹ÌåÏòÁ¿ÖĞËùÓĞvec½á¹¹Ìåposition¡¢orientationÖĞÄÚÈİ,²¢ÒÔ¡°,¡±·Ö¸î
-	ÒÔ¼°´òÓ¡ÆäÖĞµÄtorsions±äÁ¿¡£
-	´òÓ¡flex½á¹¹ÌåÏòÁ¿ÆäÖĞµÄtorsions±äÁ¿¡£
-	ligands£ºligand_change½á¹¹ÌåÏòÁ¿£»
-	flex£ºresidue_change½á¹¹ÌåÏòÁ¿£»
+	é€ä¸€æ‰“å°ligandsç»“æ„ä½“å‘é‡ä¸­æ‰€æœ‰vecç»“æ„ä½“positionã€orientationä¸­å†…å®¹,å¹¶ä»¥â€œ,â€åˆ†å‰²
+	ä»¥åŠæ‰“å°å…¶ä¸­çš„torsionså˜é‡ã€‚
+	æ‰“å°flexç»“æ„ä½“å‘é‡å…¶ä¸­çš„torsionså˜é‡ã€‚
+	ligandsï¼šligand_changeç»“æ„ä½“å‘é‡ï¼›
+	flexï¼šresidue_changeç»“æ„ä½“å‘é‡ï¼›
 	
 	*/
 
@@ -555,14 +555,14 @@ struct change {
 	}
 };
 
-/*  ÅäÖÃ
-		ligands£ºligand_conf½á¹¹ÌåÏòÁ¿£»¸ÕĞÔÅäÖÃ
-	    flex£ºresidue_conf½á¹¹ÌåÏòÁ¿£»  ÈáĞÔÅäÖÃ
-		ligandsÏòÁ¿µÄÔªËØ¸öÊıÎªconf_size½á¹¹ÌåÖĞµÄligands unintÏòÁ¿µÄÔªËØ¸öÊı;
-		flexÏòÁ¿µÄÔªËØ¸öÊıÎªconf_size½á¹¹ÌåÖĞµÄflex uintÏòÁ¿µÄÔªËØ¸öÊı;
+/*  é…ç½®
+		ligandsï¼šligand_confç»“æ„ä½“å‘é‡ï¼›åˆšæ€§é…ç½®
+	    flexï¼šresidue_confç»“æ„ä½“å‘é‡ï¼›  æŸ”æ€§é…ç½®
+		ligandså‘é‡çš„å…ƒç´ ä¸ªæ•°ä¸ºconf_sizeç»“æ„ä½“ä¸­çš„ligands unintå‘é‡çš„å…ƒç´ ä¸ªæ•°;
+		flexå‘é‡çš„å…ƒç´ ä¸ªæ•°ä¸ºconf_sizeç»“æ„ä½“ä¸­çš„flex uintå‘é‡çš„å…ƒç´ ä¸ªæ•°;
 
-		ligands[i].torsions doubleÏòÁ¿ÖĞÔªËØ¸öÊıÎªs.ligands[ligands.size]¸ö£¬ÆäÖµ¶¼Îª0£»
-		flex[i].torsions doubleÏòÁ¿ÖĞÔªËØ¸öÊıÎªs.flex[flex.size]¸ö£¬ÆäÖµ¶¼Îª0£»
+		ligands[i].torsions doubleå‘é‡ä¸­å…ƒç´ ä¸ªæ•°ä¸ºs.ligands[ligands.size]ä¸ªï¼Œå…¶å€¼éƒ½ä¸º0ï¼›
+		flex[i].torsions doubleå‘é‡ä¸­å…ƒç´ ä¸ªæ•°ä¸ºs.flex[flex.size]ä¸ªï¼Œå…¶å€¼éƒ½ä¸º0ï¼›
 */
 struct conf {
 	std::vector<ligand_conf> ligands;
@@ -575,13 +575,13 @@ struct conf {
 			flex[i].torsions.resize(s.flex[i], 0); // FIXME?
 	}
 
-	/*  ²ÎÊıÉèÎªnull
-		ligands½á¹¹ÌåÏòÁ¿ÖĞ£º
-		data[0] = 0£»data[1] = 0;data[2] = 0;
-		orientation£ºÒ»¸öÊµ²¿Îª1£¬Ğé²¿¶¼Îª0µÄËÄÔªÊı
-		torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0£»
-		flex½á¹¹ÌåÏòÁ¿ÖĞ£º
-		torsionsÏòÁ¿ÔªËØ¶¼¸³ÖµÎª0
+	/*  å‚æ•°è®¾ä¸ºnull
+		ligandsç»“æ„ä½“å‘é‡ä¸­ï¼š
+		data[0] = 0ï¼›data[1] = 0;data[2] = 0;
+		orientationï¼šä¸€ä¸ªå®éƒ¨ä¸º1ï¼Œè™šéƒ¨éƒ½ä¸º0çš„å››å…ƒæ•°
+		torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0ï¼›
+		flexç»“æ„ä½“å‘é‡ä¸­ï¼š
+		torsionså‘é‡å…ƒç´ éƒ½èµ‹å€¼ä¸º0
 	*/
 	void set_to_null() {
 		VINA_FOR_IN(i, ligands)
@@ -590,9 +590,9 @@ struct conf {
 			flex[i].set_to_null();
 	}
 
-	/*	ÅäÌå¸ÕĞÔ±ä»¯ÖĞÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØÒÔ¼°ÈáĞÔÖĞÅ¤¾Ø½øĞĞ±ê×¼»¯
-		Éú³Éc.ligands[i]½á¹¹ÌåÖĞµÄposition¡¢orientation ½á¹¹ÌåÒÔ¼°¶Ôligand_change½á¹¹ÌåÖĞtorsionsÏòÁ¿½øĞĞ±ê×¼»¯
-	ÒÔ¼°¶Ôflex½á¹¹ÌåÏòÁ¿ÖĞµÄtorsionsÏòÁ¿½øĞĞ±ê×¼»¯
+	/*	é…ä½“åˆšæ€§å˜åŒ–ä¸­ä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ä»¥åŠæŸ”æ€§ä¸­æ‰­çŸ©è¿›è¡Œæ ‡å‡†åŒ–
+		ç”Ÿæˆc.ligands[i]ç»“æ„ä½“ä¸­çš„positionã€orientation ç»“æ„ä½“ä»¥åŠå¯¹ligand_changeç»“æ„ä½“ä¸­torsionså‘é‡è¿›è¡Œæ ‡å‡†åŒ–
+	ä»¥åŠå¯¹flexç»“æ„ä½“å‘é‡ä¸­çš„torsionså‘é‡è¿›è¡Œæ ‡å‡†åŒ–
     */
 	void increment(const change& c, fl factor) { // torsions get normalized, orientations do not
 		VINA_FOR_IN(i, ligands)
@@ -600,25 +600,25 @@ struct conf {
 		VINA_FOR_IN(i, flex)
 			flex[i]   .increment(c.flex[i],    factor);
 	}
-  /* ÄÚ²¿ÅäÌå±ä»¯ÊÇ·ñÏàËÆ
-    ÅĞ¶Ïligands½á¹¹ÌåÏòÁ¿ÖĞµÄtorsionsÊÇ·ñºÍconf.½á¹¹ÌåÏòÁ¿ÖĞµÄtorsionsÏàËÆ
-	ÊÇµÄ»°·µ»Øtrue£¬·ñÔò·µ»Øfalse
-	input¡ª¡ªc£ºconf½á¹¹Ìå£¬torsions_cutoff£ºdouble
-	ligands£ºligand_conf½á¹¹ÌåÏòÁ¿£»
-	flex£ºresidue_conf½á¹¹ÌåÏòÁ¿£»
+  /* å†…éƒ¨é…ä½“å˜åŒ–æ˜¯å¦ç›¸ä¼¼
+    åˆ¤æ–­ligandsç»“æ„ä½“å‘é‡ä¸­çš„torsionsæ˜¯å¦å’Œconf.ç»“æ„ä½“å‘é‡ä¸­çš„torsionsç›¸ä¼¼
+	æ˜¯çš„è¯è¿”å›trueï¼Œå¦åˆ™è¿”å›false
+	inputâ€”â€”cï¼šconfç»“æ„ä½“ï¼Œtorsions_cutoffï¼šdouble
+	ligandsï¼šligand_confç»“æ„ä½“å‘é‡ï¼›
+	flexï¼šresidue_confç»“æ„ä½“å‘é‡ï¼›
    */
 	bool internal_too_close(const conf& c, fl torsions_cutoff) const {
-		assert(ligands.size() == c.ligands.size());               //ÅĞ¶Ïligands½á¹¹ÌåÏòÁ¿µÄÔªËØ¸öÊıÊÇ·ñºÍconf½á¹¹ÌåÖĞµÄligands½á¹¹ÌåÏòÁ¿µÄÔªËØ¸öÊıÏàµÈ
+		assert(ligands.size() == c.ligands.size());               //åˆ¤æ–­ligandsç»“æ„ä½“å‘é‡çš„å…ƒç´ ä¸ªæ•°æ˜¯å¦å’Œconfç»“æ„ä½“ä¸­çš„ligandsç»“æ„ä½“å‘é‡çš„å…ƒç´ ä¸ªæ•°ç›¸ç­‰
 		VINA_FOR_IN(i, ligands)                                   //for (i = 0; i<ligands.size; i++)
 			if(!torsions_too_close(ligands[i].torsions, c.ligands[i].torsions, torsions_cutoff))
-				return false;   //ÅĞ¶Ïtorsions1ºÍtorsions2ÊÇ·ñÏàËÆ
+				return false;   //åˆ¤æ–­torsions1å’Œtorsions2æ˜¯å¦ç›¸ä¼¼
 		return true;
 	}
-/*	Íâ²¿ÅäÌå±ä»¯ÊÇ·ñÏàËÆ
-	input¡ª¡ªc£ºconf½á¹¹Ìå£»cutoff£ºscale½á¹¹Ìå
-	ÏÈÅĞ¶Ïligands[i].rigidÖĞµÄposition¡¢orientationÊÇ·ñºÍc.ligands[i].rigidÖĞµÄposition¡¢orientationÏàËÆ£¬²»ÊÇµÄ»°·µ»Øfalse£»
-	·ñÔòÅĞ¶Ïflex[i]ÖĞµÄtorsionsÏòÁ¿ºÍc.flex[i]ÖĞµÄtorsionsÏòÁ¿ÊÇ·ñÏàËÆ£¬²»ÊÇµÄ»°·µ»Øfalse£»
-	Òª²»×îºó·µ»Øtrue
+/*	å¤–éƒ¨é…ä½“å˜åŒ–æ˜¯å¦ç›¸ä¼¼
+	inputâ€”â€”cï¼šconfç»“æ„ä½“ï¼›cutoffï¼šscaleç»“æ„ä½“
+	å…ˆåˆ¤æ–­ligands[i].rigidä¸­çš„positionã€orientationæ˜¯å¦å’Œc.ligands[i].rigidä¸­çš„positionã€orientationç›¸ä¼¼ï¼Œä¸æ˜¯çš„è¯è¿”å›falseï¼›
+	å¦åˆ™åˆ¤æ–­flex[i]ä¸­çš„torsionså‘é‡å’Œc.flex[i]ä¸­çš„torsionså‘é‡æ˜¯å¦ç›¸ä¼¼ï¼Œä¸æ˜¯çš„è¯è¿”å›falseï¼›
+	è¦ä¸æœ€åè¿”å›true
 */
 	bool external_too_close(const conf& c, const scale& cutoff) const {
 		assert(ligands.size() == c.ligands.size());
@@ -631,8 +631,8 @@ struct conf {
 				return false;
 		return true;
 	}
-/*	Íâ²¿ÅäÌåºÍÄÚ²¿ÅäÌå±ä»¯ÊÇ·ñ¶¼ÏàËÆ
-	input¡ª¡ªc£ºconf½á¹¹Ìå£»cutoff£ºscale½á¹¹Ìå;
+/*	å¤–éƒ¨é…ä½“å’Œå†…éƒ¨é…ä½“å˜åŒ–æ˜¯å¦éƒ½ç›¸ä¼¼
+	inputâ€”â€”cï¼šconfç»“æ„ä½“ï¼›cutoffï¼šscaleç»“æ„ä½“;
 	
 
 */
@@ -641,24 +641,24 @@ struct conf {
 			   external_too_close(c, cutoff); // a more efficient implementation is possible, probably
 	}
 
-/*  Éú³ÉÅäÌåÄÚ²¿±ä»¯£ºÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø¡£
-	input¡ª¡ªtorsion_spread¡¢rp£ºdouble£¬rs:conf½á¹¹ÌåÖ¸Õë£¬generator£ºËæ»úÊıÉú³ÉÆ÷
-    Î»ÖÃ£º position£¨0£¬0£¬0£©£»
-	·½Ïò£º orientation£¨1£¬0£¬0£¬0£©£»
-	Å¤¾Ø£ºligands[i].torsions=ligands[i].torsions+Éú³É[-torsion_spread, torsion_spread]Ëæ»úÊı
+/*  ç”Ÿæˆé…ä½“å†…éƒ¨å˜åŒ–ï¼šä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ã€‚
+	inputâ€”â€”torsion_spreadã€rpï¼šdoubleï¼Œrs:confç»“æ„ä½“æŒ‡é’ˆï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨
+    ä½ç½®ï¼š positionï¼ˆ0ï¼Œ0ï¼Œ0ï¼‰ï¼›
+	æ–¹å‘ï¼š orientationï¼ˆ1ï¼Œ0ï¼Œ0ï¼Œ0ï¼‰ï¼›
+	æ‰­çŸ©ï¼šligands[i].torsions=ligands[i].torsions+ç”Ÿæˆ[-torsion_spread, torsion_spread]éšæœºæ•°
 */
 	void generate_internal(fl torsion_spread, fl rp, const conf* rs, rng& generator) { // torsions are not normalized after this
 		VINA_FOR_IN(i, ligands) {
 			ligands[i].rigid.position.assign(0);
 			ligands[i].rigid.orientation = qt_identity;
-			const flv* torsions_rs = rs ? (&rs->ligands[i].torsions) : NULL;//rs½á¹¹ÌåÖ¸Õë²¿Îª¿ÕÊ±¸³ÖµtorsionsÏòÁ¿
+			const flv* torsions_rs = rs ? (&rs->ligands[i].torsions) : NULL;//rsç»“æ„ä½“æŒ‡é’ˆéƒ¨ä¸ºç©ºæ—¶èµ‹å€¼torsionså‘é‡
 			torsions_generate(ligands[i].torsions, torsion_spread, rp, torsions_rs, generator);
 		}
 	}
 
 
-   /*  Éú³ÉÍâ²¿±ä»¯£º¸ÕĞÔ£¨Î»ÖÃ¡¢·½Ïò¡¢Å¤¾Ø£©¡¢ÈáĞÔ£¨Å¤¾Ø£©¡£
-   input¡ª¡ªspread£ºscale½á¹¹Ìå£¬rp£ºdouble£¬rs:conf½á¹¹ÌåÖ¸Õë£¬generator£ºËæ»úÊıÉú³ÉÆ÷
+   /*  ç”Ÿæˆå¤–éƒ¨å˜åŒ–ï¼šåˆšæ€§ï¼ˆä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ï¼‰ã€æŸ”æ€§ï¼ˆæ‰­çŸ©ï¼‰ã€‚
+   inputâ€”â€”spreadï¼šscaleç»“æ„ä½“ï¼Œrpï¼šdoubleï¼Œrs:confç»“æ„ä½“æŒ‡é’ˆï¼Œgeneratorï¼šéšæœºæ•°ç”Ÿæˆå™¨
 	*/
 
 	void generate_external(const scale& spread, fl rp, const conf* rs, rng& generator) { // torsions are not normalized after this
@@ -672,9 +672,9 @@ struct conf {
 		}
 	}
 
-	/*Éú³É¸ÕĞÔµÄËæ»úÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØºÍÈáĞÔÖĞµÄËæ»úÅ¤¾Ø£»
-	ligands½á¹¹ÌåÏòÁ¿ÖĞÉú³ÉËæ»úµÄposition½á¹¹ÌåºÍorientationËÄÔªÊıÒÔ¼°[-pi,pi]µÄËæ»úÏòÁ¿torsions£¬
-	flex½á¹¹ÌåÏòÁ¿ÖĞÉú³É[-pi,pi]µÄËæ»úÏòÁ¿torsions
+	/*ç”Ÿæˆåˆšæ€§çš„éšæœºä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©å’ŒæŸ”æ€§ä¸­çš„éšæœºæ‰­çŸ©ï¼›
+	ligandsç»“æ„ä½“å‘é‡ä¸­ç”Ÿæˆéšæœºçš„positionç»“æ„ä½“å’Œorientationå››å…ƒæ•°ä»¥åŠ[-pi,pi]çš„éšæœºå‘é‡torsionsï¼Œ
+	flexç»“æ„ä½“å‘é‡ä¸­ç”Ÿæˆ[-pi,pi]çš„éšæœºå‘é‡torsions
 	*/
 	void randomize(const vec& corner1, const vec& corner2, rng& generator) {
 		VINA_FOR_IN(i, ligands)
@@ -684,7 +684,7 @@ struct conf {
 	}
 
 	/*
-	 ´òÓ¡¸ÕĞÔ±ä»¯ÖĞµÄÎ»ÖÃ¡¢·½Ïò¡¢Å¤¾ØĞÅÏ¢ÒÔ¼°ÈáĞÔÖĞµÄÅ¤¾ØĞÅÏ¢
+	 æ‰“å°åˆšæ€§å˜åŒ–ä¸­çš„ä½ç½®ã€æ–¹å‘ã€æ‰­çŸ©ä¿¡æ¯ä»¥åŠæŸ”æ€§ä¸­çš„æ‰­çŸ©ä¿¡æ¯
 	*/
 	void print() const {
 		VINA_FOR_IN(i, ligands)
@@ -702,9 +702,9 @@ private:
 };
 
 
-/* Êä³öÀàĞÍ
-     c¡ª¡ªconf ½á¹¹Ìå£¬±ğÃû£»      e¡ª¡ªdouble£»   coords¡ª¡ªvec½á¹¹ÌåÏòÁ¿   
-	 ³õÊ¼»¯
+/* è¾“å‡ºç±»å‹
+     câ€”â€”conf ç»“æ„ä½“ï¼Œåˆ«åï¼›      eâ€”â€”doubleï¼›   coordsâ€”â€”vecç»“æ„ä½“å‘é‡   
+	 åˆå§‹åŒ–
 
  */
 struct output_type {
@@ -714,11 +714,11 @@ struct output_type {
 	output_type(const conf& c_, fl e_) : c(c_), e(e_) {}
 };
 
-typedef boost::ptr_vector<output_type> output_container;   //output_type½á¹¹ÌåÏòÁ¿
+typedef boost::ptr_vector<output_type> output_container;   //output_typeç»“æ„ä½“å‘é‡
 
 
 /*
-	ÖØÔØ<
+	é‡è½½<
 */
 inline bool operator<(const output_type& a, const output_type& b) { // for sorting output_container
 	return a.e < b.e;

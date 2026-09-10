@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/grad/AI-Scientist-v2/ai_scientist/perform_ideation_temp_free.py", line 17, in <module>
+    from ai_scientist.tools.semantic_scholar import SemanticScholarSearchTool
+  File "/home/ubuntu/grad/AI-Scientist-v2/ai_scientist/../ai_scientist/tools/semantic_scholar.py", line 137
+    rsp.raise_for_status()
+                          ^
+IndentationError: unindent does not match any outer indentation level

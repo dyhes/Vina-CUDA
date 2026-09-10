@@ -1,0 +1,78 @@
+============================================================
+  Variant:  vina-gpu2
+  Dataset:  CASF-2016  (ligand_pdbqt)
+  Mode:     screening
+  Targets:  57 screening targets
+  Ligands:  coreset pool (all ligands)
+  Thread:   8192 (heuristic)  |  timeout=600s
+  Box:      22.5³ Å
+  Output:   /home/ubuntu/grad/experiments/Jun11_1804_CASF-2016_vina_gpu2_screening
+============================================================
+Screening targets: 57  |  Ligand pool: 285
+Total docking jobs: 16245
+  [1/57] 1e66: 285/285 docked, 609s | ETA ~568min
+  [2/57] 1mq6: 285/285 docked, 589s | ETA ~549min
+  [3/57] 1nvq: 285/285 docked, 584s | ETA ~535min
+  [4/57] 1o3f: 285/285 docked, 577s | ETA ~521min
+  [5/57] 1sqa: 285/285 docked, 591s | ETA ~511min
+  [6/57] 1u1b: 285/285 docked, 590s | ETA ~501min
+  [7/57] 2al5: 285/285 docked, 587s | ETA ~491min
+  [8/57] 2cet: 285/285 docked, 583s | ETA ~481min
+  [9/57] 2fvd: 285/285 docked, 580s | ETA ~470min
+  [10/57] 2p15: 285/285 docked, 605s | ETA ~462min
+  [11/57] 2p4y: 285/285 docked, 597s | ETA ~452min
+  [12/57] 2qbp: 285/285 docked, 576s | ETA ~442min
+  [13/57] 2r9w: 285/285 docked, 593s | ETA ~432min
+  [14/57] 2vvn: 285/285 docked, 580s | ETA ~422min
+  [15/57] 2vw5: 285/285 docked, 596s | ETA ~412min
+  [16/57] 2x00: 285/285 docked, 601s | ETA ~403min
+  [17/57] 2xb8: 285/285 docked, 600s | ETA ~394min
+  [18/57] 2yki: 285/285 docked, 591s | ETA ~384min
+  [19/57] 2zcq: 285/285 docked, 600s | ETA ~374min
+  [20/57] 3ag9: 285/285 docked, 603s | ETA ~365min
+  [21/57] 3arp: 285/285 docked, 602s | ETA ~355min
+  [22/57] 3coy: 285/285 docked, 605s | ETA ~346min
+  [23/57] 3dd0: 285/285 docked, 585s | ETA ~336min
+  [24/57] 3e93: 285/285 docked, 578s | ETA ~325min
+  [25/57] 3ebp: 285/285 docked, 604s | ETA ~316min
+  [26/57] 3ejr: 285/285 docked, 591s | ETA ~306min
+  [27/57] 3f3e: 285/285 docked, 593s | ETA ~296min
+  [28/57] 3fv1: 285/285 docked, 593s | ETA ~286min
+  [29/57] 3g0w: 285/285 docked, 597s | ETA ~276min
+  [30/57] 3ge7: 285/285 docked, 593s | ETA ~267min
+  [31/57] 3gnw: 285/285 docked, 605s | ETA ~257min
+  [32/57] 3kr8: 285/285 docked, 562s | ETA ~247min
+  [33/57] 3myg: 285/285 docked, 571s | ETA ~237min
+  [34/57] 3nw9: 285/285 docked, 582s | ETA ~227min
+  [35/57] 3o9i: 285/285 docked, 581s | ETA ~217min
+  [36/57] 3p5o: 285/285 docked, 581s | ETA ~207min
+  [37/57] 3qqs: 285/285 docked, 577s | ETA ~197min
+  [38/57] 3u8n: 285/285 docked, 580s | ETA ~187min
+  [39/57] 3uex: 285/285 docked, 580s | ETA ~177min
+  [40/57] 3uri: 285/285 docked, 593s | ETA ~167min
+  [41/57] 3utu: 285/285 docked, 591s | ETA ~157min
+  [42/57] 3zso: 285/285 docked, 588s | ETA ~147min
+  [43/57] 4agq: 285/285 docked, 572s | ETA ~137min
+  [44/57] 4de1: 285/285 docked, 581s | ETA ~128min
+  [45/57] 4f3c: 285/285 docked, 582s | ETA ~118min
+  [46/57] 4gid: 285/285 docked, 588s | ETA ~108min
+  [47/57] 4gr0: 285/285 docked, 568s | ETA ~98min
+  [48/57] 4ivc: 285/285 docked, 573s | ETA ~88min
+  [49/57] 4jia: 285/285 docked, 577s | ETA ~78min
+  [50/57] 4pcs: 285/285 docked, 576s | ETA ~69min
+  [51/57] 4rfm: 285/285 docked, 573s | ETA ~59min
+  [52/57] 4tmn: 285/285 docked, 602s | ETA ~49min
+  [53/57] 4twp: 285/285 docked, 572s | ETA ~39min
+  [54/57] 4ty7: 285/285 docked, 589s | ETA ~29min
+  [55/57] 4w9h: 285/285 docked, 576s | ETA ~20min
+  [56/57] 5c2h: 285/285 docked, 599s | ETA ~10min
+  [57/57] 5dwr: 285/285 docked, 580s | ETA ~0min
+
+Done: 57/57 targets OK, 16245 total dockings, 557.9 min
+Combined 57 score files → /home/ubuntu/grad/experiments/Jun11_1804_CASF-2016_vina_gpu2_screening/combined_scores.dat
+Run screening evaluation:
+  python3 /home/ubuntu/grad/tools/screening_power_py3.py -t /home/ubuntu/grad/dataset/CASF-2016/power_screening/TargetInfo.dat -s /home/ubuntu/grad/experiments/Jun11_1804_CASF-2016_vina_gpu2_screening/combined_scores.dat -p negative
+
+Output: /home/ubuntu/grad/experiments/Jun11_1804_CASF-2016_vina_gpu2_screening
+  scores/*_score.dat
+  summary.csv

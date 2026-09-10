@@ -34,7 +34,7 @@
 
 
 /*
-*ÉùÃ÷Ò»¸ö½á¹¹ÌåÀàĞÍinteracting_pair£¬Êı¾İ³ÉÔ±°üÀ¨unsigned intÀàĞÍµÄtype_pair_index£¬a£¬b
+*å£°æ˜ä¸€ä¸ªç»“æ„ä½“ç±»å‹interacting_pairï¼Œæ•°æ®æˆå‘˜åŒ…æ‹¬unsigned intç±»å‹çš„type_pair_indexï¼Œaï¼Œb
 */
 
 struct interacting_pair {
@@ -42,27 +42,27 @@ struct interacting_pair {
 	sz a;
 	sz b;
 	interacting_pair(sz type_pair_index_, sz a_, sz b_) : type_pair_index(type_pair_index_), a(a_), b(b_) {}
-	//¹¹Ôìº¯Êı£¬µ±´´½¨½á¹¹Ìå¶ÔÓ¦¶ÔÏóÊ±£¬²ÎÊıÁĞ±í´«ÈëÈı¸öunsigned intÀàĞÍÊıÊ±£¬°´Ë³Ğò·Ö±ğ³õÊ¼»¯type_pair_index£¬a£¬b
+	//æ„é€ å‡½æ•°ï¼Œå½“åˆ›å»ºç»“æ„ä½“å¯¹åº”å¯¹è±¡æ—¶ï¼Œå‚æ•°åˆ—è¡¨ä¼ å…¥ä¸‰ä¸ªunsigned intç±»å‹æ•°æ—¶ï¼ŒæŒ‰é¡ºåºåˆ†åˆ«åˆå§‹åŒ–type_pair_indexï¼Œaï¼Œb
 };
 
 typedef std::vector<interacting_pair> interacting_pairs;
-//¸øinteracting_pairÀàĞÍÈİÆ÷È¡±ğÃûinteracting_pairs
+//ç»™interacting_pairç±»å‹å®¹å™¨å–åˆ«åinteracting_pairs
 
 
-//¶¨ÒåÒ»¸ö½á¹¹ÌåÃüÃûÎªparsed_line£¬Æä¿ÉÓÚÒ»¸öµ¥ÔªÄÚ´æ´¢Á½¸öÏàÒì¶ÔÏó£¬·Ö±ğÊÇstringÀà
-//ºÍunsigned intÀàĞÍµÄoptionalÀà£¨ËüºÜÏñÒ»¸ö½öÄÜ´æ·ÅÒ»¸öÔªËØµÄÈİÆ÷£¬ËüÊµÏÖÁË"Î´³õÊ¼»¯"µÄ¸ÅÄî£º
-//Èç¹ûÔªËØÎ´³õÊ¼»¯£¬ÄÇÃ´ÈİÆ÷¾ÍÊÇ¿ÕµÄ£¬·ñÔò£¬ÈİÆ÷ÄÚ¾ÍÊÇÓĞĞ§µÄ£¬ÒÑ¾­³õÊ¼»¯µÄÖµ¡££©
+//å®šä¹‰ä¸€ä¸ªç»“æ„ä½“å‘½åä¸ºparsed_lineï¼Œå…¶å¯äºä¸€ä¸ªå•å…ƒå†…å­˜å‚¨ä¸¤ä¸ªç›¸å¼‚å¯¹è±¡ï¼Œåˆ†åˆ«æ˜¯stringç±»
+//å’Œunsigned intç±»å‹çš„optionalç±»ï¼ˆå®ƒå¾ˆåƒä¸€ä¸ªä»…èƒ½å­˜æ”¾ä¸€ä¸ªå…ƒç´ çš„å®¹å™¨ï¼Œå®ƒå®ç°äº†"æœªåˆå§‹åŒ–"çš„æ¦‚å¿µï¼š
+//å¦‚æœå…ƒç´ æœªåˆå§‹åŒ–ï¼Œé‚£ä¹ˆå®¹å™¨å°±æ˜¯ç©ºçš„ï¼Œå¦åˆ™ï¼Œå®¹å™¨å†…å°±æ˜¯æœ‰æ•ˆçš„ï¼Œå·²ç»åˆå§‹åŒ–çš„å€¼ã€‚ï¼‰
 
 typedef std::pair<std::string, boost::optional<sz> > parsed_line;
 
 
 typedef std::vector<parsed_line> context;
-//¸øparsed_lineÀàĞÍÈİÆ÷È¡±ğÃûcontext
+//ç»™parsed_lineç±»å‹å®¹å™¨å–åˆ«åcontext
 
-/*ligandÀà,¼Ì³Ğflexible_body, atom_range
-*³ÉÔ±°üÀ¨unsignedÀàĞÍdegrees_of_freedom£¬interacting_pairsÈİÆ÷pairs£¬contextÈİÆ÷cont
-*¹¹Ôìº¯Êıresidue´«ÈëÒ»¸öflexible_body¶ÔÏóÒıÓÃf³õÊ¼»¯flexible_body£¬ºÍÒ»¸öunsignedÊıdegrees_of_freedom£¬¸ø»ùÀàatom_range´«Èë²ÎÊı0£¬0
-*ÉùÃ÷Ò»¸öº¯Êıset_range()
+/*ligandç±»,ç»§æ‰¿flexible_body, atom_range
+*æˆå‘˜åŒ…æ‹¬unsignedç±»å‹degrees_of_freedomï¼Œinteracting_pairså®¹å™¨pairsï¼Œcontextå®¹å™¨cont
+*æ„é€ å‡½æ•°residueä¼ å…¥ä¸€ä¸ªflexible_bodyå¯¹è±¡å¼•ç”¨fåˆå§‹åŒ–flexible_bodyï¼Œå’Œä¸€ä¸ªunsignedæ•°degrees_of_freedomï¼Œç»™åŸºç±»atom_rangeä¼ å…¥å‚æ•°0ï¼Œ0
+*å£°æ˜ä¸€ä¸ªå‡½æ•°set_range()
 */
 struct ligand : public flexible_body, atom_range {
 	unsigned degrees_of_freedom; // can be different from the apparent number of rotatable bonds, because of the disabled torsions
@@ -74,93 +74,93 @@ struct ligand : public flexible_body, atom_range {
 
 
 
-/*residueÀà,¼Ì³Ğmain_branch
-*¹¹Ôìº¯Êıresidue´«ÈëÒ»¸ömain_branch¶ÔÏóÒıÓÃm³õÊ¼»¯main_branch
+/*residueç±»,ç»§æ‰¿main_branch
+*æ„é€ å‡½æ•°residueä¼ å…¥ä¸€ä¸ªmain_branchå¯¹è±¡å¼•ç”¨måˆå§‹åŒ–main_branch
 */
 struct residue : public main_branch {
 	residue(const main_branch& m) : main_branch(m) {}
 };
 
 enum distance_type {DISTANCE_FIXED, DISTANCE_ROTOR, DISTANCE_VARIABLE};
-//¶¨ÒåÃ¶¾ÙÀàĞÍdistance_type£¬Ã¶¾Ù³ÉÔ±°üÀ¨DISTANCE_FIXED, DISTANCE_ROTOR, DISTANCE_VARIABLEÈı¸ö×ÖÃæÖµ³£Á¿
+//å®šä¹‰æšä¸¾ç±»å‹distance_typeï¼Œæšä¸¾æˆå‘˜åŒ…æ‹¬DISTANCE_FIXED, DISTANCE_ROTOR, DISTANCE_VARIABLEä¸‰ä¸ªå­—é¢å€¼å¸¸é‡
 
-//ÓÃdistance_typeÊµÀı»¯strictly_triangular_matrixÀàÄ£°å£¬²¢È¡±ğÃûÎªdistance_type_matrix
+//ç”¨distance_typeå®ä¾‹åŒ–strictly_triangular_matrixç±»æ¨¡æ¿ï¼Œå¹¶å–åˆ«åä¸ºdistance_type_matrix
 typedef strictly_triangular_matrix<distance_type> distance_type_matrix;
 
-struct non_cache;                 // ÏòÇ°ÉùÃ÷½á¹¹Ìånon_cache
-struct naive_non_cache;           // ÏòÇ°ÉùÃ÷½á¹¹Ìånaive_non_cache
-struct cache;                     // ÏòÇ°ÉùÃ÷½á¹¹Ìåcache
-struct szv_grid;                  // ÏòÇ°ÉùÃ÷½á¹¹Ìåszv_grid
-struct terms;                     // ÏòÇ°ÉùÃ÷½á¹¹Ìåterms
-struct conf_independent_inputs;   // ÏòÇ°ÉùÃ÷½á¹¹Ìåconf_independent_inputs
-struct pdbqt_initializer;         // ÏòÇ°ÉùÃ÷½á¹¹Ìåpdbqt_initializer - only declared in parse_pdbqt.cpp
-struct model_test;                // ÏòÇ°ÉùÃ÷½á¹¹Ìåmodel_test
+struct non_cache;                 // å‘å‰å£°æ˜ç»“æ„ä½“non_cache
+struct naive_non_cache;           // å‘å‰å£°æ˜ç»“æ„ä½“naive_non_cache
+struct cache;                     // å‘å‰å£°æ˜ç»“æ„ä½“cache
+struct szv_grid;                  // å‘å‰å£°æ˜ç»“æ„ä½“szv_grid
+struct terms;                     // å‘å‰å£°æ˜ç»“æ„ä½“terms
+struct conf_independent_inputs;   // å‘å‰å£°æ˜ç»“æ„ä½“conf_independent_inputs
+struct pdbqt_initializer;         // å‘å‰å£°æ˜ç»“æ„ä½“pdbqt_initializer - only declared in parse_pdbqt.cpp
+struct model_test;                // å‘å‰å£°æ˜ç»“æ„ä½“model_test
 
 
 
-//¶¨Òå½á¹¹Ìåmodel
+//å®šä¹‰ç»“æ„ä½“model
 
 struct model {
-    //¹«ÓĞ³ÉÔ±
-	//ÉùÃ÷appendº¯Êı£¬´«Èëmodel¶ÔÏóµÄÒıÓÃ
+    //å…¬æœ‰æˆå‘˜
+	//å£°æ˜appendå‡½æ•°ï¼Œä¼ å…¥modelå¯¹è±¡çš„å¼•ç”¨
 	void append(const model& m);
 
-	//¶¨Òåº¯Êıatom_typing_used£¬·µ»ØÒ»¸ötÀàĞÍµÄÊı¾İm_atom_typing_used
+	//å®šä¹‰å‡½æ•°atom_typing_usedï¼Œè¿”å›ä¸€ä¸ªtç±»å‹çš„æ•°æ®m_atom_typing_used
 	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
 
 	sz num_movable_atoms() const { return m_num_movable_atoms; } 
-	//¶¨ÒåÒ»¸ö·µ»Øunsigned intÀàĞÍÊı¾İµÄº¯Êınum_movable_atoms£¬·µ»ØË½ÓĞ³ÉÔ±m_num_movable_atoms
+	//å®šä¹‰ä¸€ä¸ªè¿”å›unsigned intç±»å‹æ•°æ®çš„å‡½æ•°num_movable_atomsï¼Œè¿”å›ç§æœ‰æˆå‘˜m_num_movable_atoms
 	sz num_internal_pairs() const; 
-	//¶¨ÒåÒ»¸öº¯Êınum_other_pairs£¬·µ»Øother_pairsÈİÆ÷µÄ´óĞ¡£¨unsigned intÀàĞÍÊı¾İ£©
+	//å®šä¹‰ä¸€ä¸ªå‡½æ•°num_other_pairsï¼Œè¿”å›other_pairså®¹å™¨çš„å¤§å°ï¼ˆunsigned intç±»å‹æ•°æ®ï¼‰
 	sz num_other_pairs() const { return other_pairs.size(); }
-	//¶¨ÒåÒ»¸öº¯Êınum_other_pairs£¬·µ»ØligandsÈİÆ÷µÄ´óĞ¡£¨unsigned intÀàĞÍÊı¾İ£©
+	//å®šä¹‰ä¸€ä¸ªå‡½æ•°num_other_pairsï¼Œè¿”å›ligandså®¹å™¨çš„å¤§å°ï¼ˆunsigned intç±»å‹æ•°æ®ï¼‰
 	sz num_ligands() const { return ligands.size(); }
-	//¶¨ÒåÒ»¸öº¯Êınum_flex£¬·µ»ØflexÈİÆ÷µÄ´óĞ¡£¨unsigned intÀàĞÍÊı¾İ£©
+	//å®šä¹‰ä¸€ä¸ªå‡½æ•°num_flexï¼Œè¿”å›flexå®¹å™¨çš„å¤§å°ï¼ˆunsigned intç±»å‹æ•°æ®ï¼‰
 	sz num_flex() const { return flex.size(); }
 
-	//¶¨ÒåÒ»¸öº¯Êıligand_degrees_of_freedom£¬´«ÈëÒ»¸öunsigned intÀàĞÍÊı¾İligand_number£¬·µ»ØligandsÈİÆ÷µÚligand_number¸öÔªËØµÄ³ÉÔ±degrees_of_freedom£¨unsigned intÀàĞÍ£©
+	//å®šä¹‰ä¸€ä¸ªå‡½æ•°ligand_degrees_of_freedomï¼Œä¼ å…¥ä¸€ä¸ªunsigned intç±»å‹æ•°æ®ligand_numberï¼Œè¿”å›ligandså®¹å™¨ç¬¬ligand_numberä¸ªå…ƒç´ çš„æˆå‘˜degrees_of_freedomï¼ˆunsigned intç±»å‹ï¼‰
 	sz ligand_degrees_of_freedom(sz ligand_number) const { return ligands[ligand_number].degrees_of_freedom; }
-	//ÉùÃ÷Ò»¸öº¯Êıligand_longest_branch£¬´«ÈëÒ»¸öunsigned intÀàĞÍÊı¾İligand_number£¬Êä³öÒ»¸öunsigned intÀàĞÍ·µ»ØÖµ
+	//å£°æ˜ä¸€ä¸ªå‡½æ•°ligand_longest_branchï¼Œä¼ å…¥ä¸€ä¸ªunsigned intç±»å‹æ•°æ®ligand_numberï¼Œè¾“å‡ºä¸€ä¸ªunsigned intç±»å‹è¿”å›å€¼
 	sz ligand_longest_branch(sz ligand_number) const;
-	//ÉùÃ÷Ò»¸öº¯Êıligand_length£¬´«ÈëÒ»¸öunsigned intÀàĞÍÊı¾İligand_number£¬Êä³öÒ»¸öunsigned intÀàĞÍ·µ»ØÖµ
+	//å£°æ˜ä¸€ä¸ªå‡½æ•°ligand_lengthï¼Œä¼ å…¥ä¸€ä¸ªunsigned intç±»å‹æ•°æ®ligand_numberï¼Œè¾“å‡ºä¸€ä¸ªunsigned intç±»å‹è¿”å›å€¼
 	sz ligand_length(sz ligand_number) const;
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıget_movable_atom_types£¬´«ÈëÒ»¸ötÀàĞÍÊı¾İatom_typing_used_£¬·µ»ØÒ»¸öunsigned intÈİÆ÷
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°get_movable_atom_typesï¼Œä¼ å…¥ä¸€ä¸ªtç±»å‹æ•°æ®atom_typing_used_ï¼Œè¿”å›ä¸€ä¸ªunsigned intå®¹å™¨
 	szv get_movable_atom_types(atom_type::t atom_typing_used_) const;
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıget_size£¬·µ»ØÒ»¸öconf_sizeÀà
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°get_sizeï¼Œè¿”å›ä¸€ä¸ªconf_sizeç±»
 	conf_size get_size() const;
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıget_initial_conf£¬·µ»ØÒ»¸öconfÀà
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°get_initial_confï¼Œè¿”å›ä¸€ä¸ªconfç±»
 	conf get_initial_conf() const; // torsions = 0, orientations = identity, ligand positions = current
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êımovable_atoms_box£¬ÊäÈëdoubleÀàĞÍadd_to_each_dimension£¬granularity£¬ÆäÖĞgranularityÄ¬ÈÏÎª0.375£¬·µ»ØÒ»¸ögrid_dimsÀà
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°movable_atoms_boxï¼Œè¾“å…¥doubleç±»å‹add_to_each_dimensionï¼Œgranularityï¼Œå…¶ä¸­granularityé»˜è®¤ä¸º0.375ï¼Œè¿”å›ä¸€ä¸ªgrid_dimsç±»
 	grid_dims movable_atoms_box(fl add_to_each_dimension, fl granularity = 0.375) const;
 
 
 	/*
-	* º¯Êı£ºwrite_flex£¬³£Á¿º¯Êı
-	* input£ºpathÀà¶ÔÏó³£Á¿ÒıÓÃname£¬stringÀàĞÍ³£Á¿ÒıÓÃremark
-	* output: ÎŞ
-	* function£ºµ÷ÓÃwrite_contextº¯Êı£¬´«Èëmodel³ÉÔ±flex_context£¬nameºÍremark
+	* å‡½æ•°ï¼šwrite_flexï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼špathç±»å¯¹è±¡å¸¸é‡å¼•ç”¨nameï¼Œstringç±»å‹å¸¸é‡å¼•ç”¨remark
+	* output: æ— 
+	* functionï¼šè°ƒç”¨write_contextå‡½æ•°ï¼Œä¼ å…¥modelæˆå‘˜flex_contextï¼Œnameå’Œremark
 	*/
 	void write_flex  (                  const path& name, const std::string& remark) const { write_context(flex_context, name, remark); }
 	
 	/*
-	* º¯Êı£ºwrite_ligand£¬³£Á¿º¯Êı
-	* input£ºunsigned intÀàĞÍligand_number£¬pathÀà¶ÔÏó³£Á¿ÒıÓÃname£¬stringÀàĞÍ³£Á¿ÒıÓÃremark
-	* output: ÎŞ
-	* function£º¼ì²éligand_numberÊÇ·ñĞ¡ÓÚmodel³ÉÔ±ligandsµÄ´óĞ¡£¬ÊÇÔòµ÷ÓÃwrite_contextº¯Êı£¬´«Èëmodel³ÉÔ±ligandsµÄligand_number¸öÔªËØ³ÉÔ±cont£¬nameºÍremark£¬·ñÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
+	* å‡½æ•°ï¼šwrite_ligandï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šunsigned intç±»å‹ligand_numberï¼Œpathç±»å¯¹è±¡å¸¸é‡å¼•ç”¨nameï¼Œstringç±»å‹å¸¸é‡å¼•ç”¨remark
+	* output: æ— 
+	* functionï¼šæ£€æŸ¥ligand_numberæ˜¯å¦å°äºmodelæˆå‘˜ligandsçš„å¤§å°ï¼Œæ˜¯åˆ™è°ƒç”¨write_contextå‡½æ•°ï¼Œä¼ å…¥modelæˆå‘˜ligandsçš„ligand_numberä¸ªå…ƒç´ æˆå‘˜contï¼Œnameå’Œremarkï¼Œå¦åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
 	*/
 	void write_ligand(sz ligand_number, const path& name, const std::string& remark) const { VINA_CHECK(ligand_number < ligands.size()); write_context(ligands[ligand_number].cont, name, remark); }
 	
 	
 	
 	/*
-	* º¯Êı£ºwrite_structure£¬³£Á¿º¯Êı
-	* input£ºÎÄ¼şÊä³öÁ÷ofileÀàout
-	* output: ÎŞ
-	* function£º1.±éÀúligandsÈİÆ÷ÔªËØ£¬·Ö±ğµ÷ÓÃwrite_contextº¯Êı£¬´«ÈëligandsÈİÆ÷µÚi¸öÔªËØµÄ³ÉÔ±contÈİÆ÷ºÍout
-	* 2.ÅĞ¶ÏflexÈİÆ÷´óĞ¡ÊÇ·ñ´óÓÚ0£¬ÊÇÔòµ÷ÓÃwrite_contextº¯Êı£¬´«Èëflex_contextÈİÆ÷ºÍout
+	* å‡½æ•°ï¼šwrite_structureï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šæ–‡ä»¶è¾“å‡ºæµofileç±»out
+	* output: æ— 
+	* functionï¼š1.éå†ligandså®¹å™¨å…ƒç´ ï¼Œåˆ†åˆ«è°ƒç”¨write_contextå‡½æ•°ï¼Œä¼ å…¥ligandså®¹å™¨ç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜contå®¹å™¨å’Œout
+	* 2.åˆ¤æ–­flexå®¹å™¨å¤§å°æ˜¯å¦å¤§äº0ï¼Œæ˜¯åˆ™è°ƒç”¨write_contextå‡½æ•°ï¼Œä¼ å…¥flex_contextå®¹å™¨å’Œout
 	*/
 	void write_structure(ofile& out) const {
 		VINA_FOR_IN(i, ligands)
@@ -170,11 +170,11 @@ struct model {
 	}
 
 	/*
-	* º¯Êı£ºÖØÔØwrite_structure£¬³£Á¿º¯Êı
-	* input£ºÎÄ¼şÊä³öÁ÷ofileÀàout£¬stringÀàremark
-	* output: ÎŞ
-	* function£º1.ÏòÎÄ¼şÊä³öÁ÷Êä³öremark
-	* 2.µ÷ÓÃÔ­write_structureº¯Êı£¬´«ÈëÎÄ¼şÊä³öÁ÷out
+	* å‡½æ•°ï¼šé‡è½½write_structureï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šæ–‡ä»¶è¾“å‡ºæµofileç±»outï¼Œstringç±»remark
+	* output: æ— 
+	* functionï¼š1.å‘æ–‡ä»¶è¾“å‡ºæµè¾“å‡ºremark
+	* 2.è°ƒç”¨åŸwrite_structureå‡½æ•°ï¼Œä¼ å…¥æ–‡ä»¶è¾“å‡ºæµout
 	*/
 	void write_structure(ofile& out, const std::string& remark) const {
 		out << remark;
@@ -182,21 +182,21 @@ struct model {
 	}
 
 	/*
-	* º¯Êı£ºÖØÔØwrite_structure£¬³£Á¿º¯Êı
-	* input£ºpathÀà¶ÔÏóÒıÓÃname
-	* output: ÎŞ
-	* function£º1.Í¨¹ıpathÀà´´½¨ÎÄ¼şÊä³öÁ÷out
-	* 2.µ÷ÓÃÔ­write_structureº¯Êı£¬´«ÈëÎÄ¼şÊä³öÁ÷out
+	* å‡½æ•°ï¼šé‡è½½write_structureï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼špathç±»å¯¹è±¡å¼•ç”¨name
+	* output: æ— 
+	* functionï¼š1.é€šè¿‡pathç±»åˆ›å»ºæ–‡ä»¶è¾“å‡ºæµout
+	* 2.è°ƒç”¨åŸwrite_structureå‡½æ•°ï¼Œä¼ å…¥æ–‡ä»¶è¾“å‡ºæµout
 	*/
 	void write_structure(const path& name) const { ofile out(name); write_structure(out); }
 
 	/*
-	* º¯Êı£ºwrite_model£¬³£Á¿º¯Êı
-	* input£ºÎÄ¼şÊä³öÁ÷ofileÀàout£¬unsigned intÊımodel_number£¬stringÀàremark
-	* output: ÎŞ
-	* function£ºÏòÎÄ¼şÊä³öÁ÷Êä³ö×Ö·û´®£ºMODEL model_number£¨»»ĞĞ£©
-	* 2.µ÷ÓÃwrite_structureÖØÔØ°æ±¾º¯Êı£¬´«ÈëÎÄ¼şÊä³öÁ÷outºÍremark
-	* 3.ÏòÎÄ¼şÊä³öÁ÷Êä³ö×Ö·û´®£ºENDMDL£¨»»ĞĞ£©
+	* å‡½æ•°ï¼šwrite_modelï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šæ–‡ä»¶è¾“å‡ºæµofileç±»outï¼Œunsigned intæ•°model_numberï¼Œstringç±»remark
+	* output: æ— 
+	* functionï¼šå‘æ–‡ä»¶è¾“å‡ºæµè¾“å‡ºå­—ç¬¦ä¸²ï¼šMODEL model_numberï¼ˆæ¢è¡Œï¼‰
+	* 2.è°ƒç”¨write_structureé‡è½½ç‰ˆæœ¬å‡½æ•°ï¼Œä¼ å…¥æ–‡ä»¶è¾“å‡ºæµoutå’Œremark
+	* 3.å‘æ–‡ä»¶è¾“å‡ºæµè¾“å‡ºå­—ç¬¦ä¸²ï¼šENDMDLï¼ˆæ¢è¡Œï¼‰
 	*/
 	void write_model(ofile& out, sz model_number, const std::string& remark) const {
 		out << "MODEL " << model_number << '\n';
@@ -204,83 +204,83 @@ struct model {
 		out << "ENDMDL\n";
 	}
 
-	//ÉùÃ÷º¯Êıseti£¬ÊäÈëÒ»¸öconfÀàÒıÓÃ£¬ÎŞ·µ»ØÖµ
+	//å£°æ˜å‡½æ•°setiï¼Œè¾“å…¥ä¸€ä¸ªconfç±»å¼•ç”¨ï¼Œæ— è¿”å›å€¼
 	void seti(const conf& c);
-	//ÉùÃ÷º¯Êısete£¬ÊäÈëÒ»¸öconfÀàÒıÓÃ£¬ÎŞ·µ»ØÖµ
+	//å£°æ˜å‡½æ•°seteï¼Œè¾“å…¥ä¸€ä¸ªconfç±»å¼•ç”¨ï¼Œæ— è¿”å›å€¼
 	void sete(const conf& c);
-	//ÉùÃ÷º¯Êıset£¬ÊäÈëÒ»¸öconfÀàÒıÓÃ£¬ÎŞ·µ»ØÖµ
+	//å£°æ˜å‡½æ•°setï¼Œè¾“å…¥ä¸€ä¸ªconfç±»å¼•ç”¨ï¼Œæ— è¿”å›å€¼
 	void set (const conf& c);
 
-	//ÉùÃ÷³£Á¿º¯Êı gyration_radius£¬ÊäÈëÒ»¸öunsigned intÊıligand_number£¬·µ»ØdoubleÊı
+	//å£°æ˜å¸¸é‡å‡½æ•° gyration_radiusï¼Œè¾“å…¥ä¸€ä¸ªunsigned intæ•°ligand_numberï¼Œè¿”å›doubleæ•°
 	fl gyration_radius(sz ligand_number) const; // uses coords
 
 	/*
-	* º¯Êı£ºmovable_atom£¬³£Á¿º¯Êı
-	* input£ºunsigned intÊıi
-	* output: atom_baseÀàÒıÓÃ
-	* function£ºÅĞ¶ÏiµÄÊÇ·ñĞ¡ÓÚm_num_movable_atoms£¬ÊÇÔò·µ»ØatomsÈİÆ÷µÚi¸öÔªËØ£¬·ñÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
+	* å‡½æ•°ï¼šmovable_atomï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šunsigned intæ•°i
+	* output: atom_baseç±»å¼•ç”¨
+	* functionï¼šåˆ¤æ–­içš„æ˜¯å¦å°äºm_num_movable_atomsï¼Œæ˜¯åˆ™è¿”å›atomså®¹å™¨ç¬¬iä¸ªå…ƒç´ ï¼Œå¦åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
 	*/
 	const atom_base& movable_atom  (sz i) const { assert(i < m_num_movable_atoms); return  atoms[i]; }
 
 	/*
-	* º¯Êı£ºmovable_coords£¬³£Á¿º¯Êı
-	* input£ºunsigned intÊıi
-	* output: ³¤¶ÈÎª3µÄÊ¸Á¿vec
-	* function£ºÅĞ¶ÏiµÄÊÇ·ñĞ¡ÓÚm_num_movable_atoms£¬ÊÇÔò·µ»ØcoordsÈİÆ÷µÚi¸öÔªËØ£¬·ñÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
+	* å‡½æ•°ï¼šmovable_coordsï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šunsigned intæ•°i
+	* output: é•¿åº¦ä¸º3çš„çŸ¢é‡vec
+	* functionï¼šåˆ¤æ–­içš„æ˜¯å¦å°äºm_num_movable_atomsï¼Œæ˜¯åˆ™è¿”å›coordså®¹å™¨ç¬¬iä¸ªå…ƒç´ ï¼Œå¦åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
 	*/
 	const vec&       movable_coords(sz i) const { assert(i < m_num_movable_atoms); return coords[i]; }
 
 
-	//ÉùÃ÷³£Á¿º¯Êıatom_coords£¬ÊäÈëatom_indexÀà³£Á¿ÒıÓÃ£¬·µ»ØvecÊ¸Á¿³£Á¿ÒıÓÃ
+	//å£°æ˜å¸¸é‡å‡½æ•°atom_coordsï¼Œè¾“å…¥atom_indexç±»å¸¸é‡å¼•ç”¨ï¼Œè¿”å›vecçŸ¢é‡å¸¸é‡å¼•ç”¨
 	const vec& atom_coords(const atom_index& i) const;
 
-	//ÉùÃ÷³£Á¿º¯Êıdistance_sqr_between£¬ÊäÈëÁ½¸öatom_indexÀà³£Á¿ÒıÓÃ£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å¸¸é‡å‡½æ•°distance_sqr_betweenï¼Œè¾“å…¥ä¸¤ä¸ªatom_indexç±»å¸¸é‡å¼•ç”¨ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl distance_sqr_between(const atom_index& a, const atom_index& b) const;
 
-	//ÉùÃ÷³£Á¿º¯Êıatom_exists_between£¬ÊäÈëdistance_type_matrixÀà³£Á¿ÒıÓÃ£¬Á½¸öatom_indexÀà³£Á¿ÒıÓÃ£¬unsigned intÀàĞÍÈİÆ÷³£Á¿ÒıÓÃ£¬·µ»ØÒ»¸ö²¼¶ûÖµ
+	//å£°æ˜å¸¸é‡å‡½æ•°atom_exists_betweenï¼Œè¾“å…¥distance_type_matrixç±»å¸¸é‡å¼•ç”¨ï¼Œä¸¤ä¸ªatom_indexç±»å¸¸é‡å¼•ç”¨ï¼Œunsigned intç±»å‹å®¹å™¨å¸¸é‡å¼•ç”¨ï¼Œè¿”å›ä¸€ä¸ªå¸ƒå°”å€¼
 	bool atom_exists_between(const distance_type_matrix& mobility, const atom_index& a, const atom_index& b, const szv& relevant_atoms) const; // there is an atom closer to both a and b then they are to each other and immobile relative to them
 
-	//ÉùÃ÷³£Á¿º¯Êıdistance_type_between£¬ÊäÈëdistance_type_matrixÀà³£Á¿ÒıÓÃ£¬Á½¸öatom_indexÀà³£Á¿ÒıÓÃ£¬·µ»ØÒ»¸öÃ¶¾ÙÀàĞÍdistance_type
+	//å£°æ˜å¸¸é‡å‡½æ•°distance_type_betweenï¼Œè¾“å…¥distance_type_matrixç±»å¸¸é‡å¼•ç”¨ï¼Œä¸¤ä¸ªatom_indexç±»å¸¸é‡å¼•ç”¨ï¼Œè¿”å›ä¸€ä¸ªæšä¸¾ç±»å‹distance_type
 	distance_type distance_type_between(const distance_type_matrix& mobility, const atom_index& i, const atom_index& j) const;
 
 	// clean up
-	//ÉùÃ÷³£Á¿º¯Êıevali£¬ÊäÈëprecalculateÀà³£Á¿ÒıÓÃ£¬vecÊ¸Á¿³£Á¿ÒıÓÃ£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å¸¸é‡å‡½æ•°evaliï¼Œè¾“å…¥precalculateç±»å¸¸é‡å¼•ç”¨ï¼ŒvecçŸ¢é‡å¸¸é‡å¼•ç”¨ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl evali     (const precalculate& p,                  const vec& v                          ) const;
-	//ÉùÃ÷³£Á¿º¯Êıevale£¬ÊäÈëprecalculateÀà³£Á¿ÒıÓÃ£¬igridÀà³£Á¿ÒıÓÃ£¬vecÊ¸Á¿³£Á¿ÒıÓÃ£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å¸¸é‡å‡½æ•°evaleï¼Œè¾“å…¥precalculateç±»å¸¸é‡å¼•ç”¨ï¼Œigridç±»å¸¸é‡å¼•ç”¨ï¼ŒvecçŸ¢é‡å¸¸é‡å¼•ç”¨ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl evale     (const precalculate& p, const igrid& ig, const vec& v                          ) const;
-	//ÉùÃ÷º¯Êıeval£¬ÊäÈëprecalculateÀà³£Á¿ÒıÓÃ£¬igridÀà³£Á¿ÒıÓÃ£¬vecÊ¸Á¿³£Á¿ÒıÓÃ£¬confÀà³£Á¿ÒıÓÃ£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å‡½æ•°evalï¼Œè¾“å…¥precalculateç±»å¸¸é‡å¼•ç”¨ï¼Œigridç±»å¸¸é‡å¼•ç”¨ï¼ŒvecçŸ¢é‡å¸¸é‡å¼•ç”¨ï¼Œconfç±»å¸¸é‡å¼•ç”¨ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl eval      (const precalculate& p, const igrid& ig, const vec& v, const conf& c           );
-	//ÉùÃ÷º¯Êıeval_deriv£¬ÊäÈëprecalculateÀà³£Á¿ÒıÓÃ£¬igridÀà³£Á¿ÒıÓÃ£¬vecÊ¸Á¿³£Á¿ÒıÓÃ£¬confÀà³£Á¿ÒıÓÃ£¬changeÀàÒıÓÃ£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å‡½æ•°eval_derivï¼Œè¾“å…¥precalculateç±»å¸¸é‡å¼•ç”¨ï¼Œigridç±»å¸¸é‡å¼•ç”¨ï¼ŒvecçŸ¢é‡å¸¸é‡å¼•ç”¨ï¼Œconfç±»å¸¸é‡å¼•ç”¨ï¼Œchangeç±»å¼•ç”¨ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl eval_deriv(const precalculate& p, const igrid& ig, const vec& v, const conf& c, change& g);
 
 
-	//ÉùÃ÷º¯Êıeval_intramolecular£¬ÊäÈëprecalculateÀà³£Á¿ÒıÓÃ£¬vecÊ¸Á¿³£Á¿ÒıÓÃ£¬confÀà³£Á¿ÒıÓÃ£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å‡½æ•°eval_intramolecularï¼Œè¾“å…¥precalculateç±»å¸¸é‡å¼•ç”¨ï¼ŒvecçŸ¢é‡å¸¸é‡å¼•ç”¨ï¼Œconfç±»å¸¸é‡å¼•ç”¨ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl eval_intramolecular(                            const precalculate& p,                  const vec& v, const conf& c);
-	//ÉùÃ÷º¯Êıeval_adjusted£¬ÊäÈëscoring_functionÀà³£Á¿ÒıÓÃ£¬ÊäÈëprecalculateÀà³£Á¿ÒıÓÃ£¬igridÀà³£Á¿ÒıÓÃ£¬vecÊ¸Á¿³£Á¿ÒıÓÃ£¬confÀà³£Á¿ÒıÓÃ£¬doubleÀàĞÍÊı£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å‡½æ•°eval_adjustedï¼Œè¾“å…¥scoring_functionç±»å¸¸é‡å¼•ç”¨ï¼Œè¾“å…¥precalculateç±»å¸¸é‡å¼•ç”¨ï¼Œigridç±»å¸¸é‡å¼•ç”¨ï¼ŒvecçŸ¢é‡å¸¸é‡å¼•ç”¨ï¼Œconfç±»å¸¸é‡å¼•ç”¨ï¼Œdoubleç±»å‹æ•°ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, const conf& c, fl intramolecular_energy);
 
-	//ÉùÃ÷³£Á¿º¯Êırmsd_lower_bound£¬ÊäÈëmodelÀà¶ÔÏó£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å¸¸é‡å‡½æ•°rmsd_lower_boundï¼Œè¾“å…¥modelç±»å¯¹è±¡ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl rmsd_lower_bound(const model& m) const; // uses coords
-	//ÉùÃ÷³£Á¿º¯Êırmsd_upper_bound£¬ÊäÈëmodelÀà¶ÔÏó£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å¸¸é‡å‡½æ•°rmsd_upper_boundï¼Œè¾“å…¥modelç±»å¯¹è±¡ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl rmsd_upper_bound(const model& m) const; // uses coords
-	//ÉùÃ÷³£Á¿º¯Êırmsd_ligands_upper_bound£¬ÊäÈëmodelÀà¶ÔÏó£¬·µ»ØdoubleÀàĞÍÊı
+	//å£°æ˜å¸¸é‡å‡½æ•°rmsd_ligands_upper_boundï¼Œè¾“å…¥modelç±»å¯¹è±¡ï¼Œè¿”å›doubleç±»å‹æ•°
 	fl rmsd_ligands_upper_bound(const model& m) const; // uses coords
 
-	//ÉùÃ÷³£Á¿º¯Êıverify_bond_lengths£¬ÎŞ·µ»Ø
+	//å£°æ˜å¸¸é‡å‡½æ•°verify_bond_lengthsï¼Œæ— è¿”å›
 	void verify_bond_lengths() const;
-	//ÉùÃ÷³£Á¿º¯Êıabout£¬ÎŞ·µ»Ø
+	//å£°æ˜å¸¸é‡å‡½æ•°aboutï¼Œæ— è¿”å›
 	void about() const;
 
 
 	/*
-	* º¯Êı£ºget_ligand_internal_coords£¬³£Á¿º¯Êı
-	* input£ºÎŞ
-	* output: vecÀàĞÍÈİÆ÷
-	* function£º1.ÅĞ¶Ïmodel³ÉÔ±ligandsÈİÆ÷µÄ´óĞ¡ÊÇ·ñµÈÓÚ1£¬ÊÇÔòÍùÏÂÖ´ĞĞ£¬·ñÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
-	* 2.½¨Á¢Ò»¸öÁÙÊ±vecv¶ÔÏótmp
-	* 3.·µ»Ømodel³ÉÔ±ligandsÈİÆ÷ÖĞÆğÊ¼ÔªËØµÄÒıÓÃ,ÃüÃûlig
-	* 4.i´Ólig³ÉÔ±beginµÄ´óĞ¡±éÀúµ½lig³ÉÔ±beginµÄ´óĞ¡£¬ÒÀ´ÎÍùtmpÎ²²¿Ìí¼Ómodel³ÉÔ±internal_coordsÈİÆ÷µÚi¸öÔªËØ
-	* 5.·µ»Øtmp
+	* å‡½æ•°ï¼šget_ligand_internal_coordsï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šæ— 
+	* output: vecç±»å‹å®¹å™¨
+	* functionï¼š1.åˆ¤æ–­modelæˆå‘˜ligandså®¹å™¨çš„å¤§å°æ˜¯å¦ç­‰äº1ï¼Œæ˜¯åˆ™å¾€ä¸‹æ‰§è¡Œï¼Œå¦åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
+	* 2.å»ºç«‹ä¸€ä¸ªä¸´æ—¶vecvå¯¹è±¡tmp
+	* 3.è¿”å›modelæˆå‘˜ligandså®¹å™¨ä¸­èµ·å§‹å…ƒç´ çš„å¼•ç”¨,å‘½ålig
+	* 4.iä»ligæˆå‘˜beginçš„å¤§å°éå†åˆ°ligæˆå‘˜beginçš„å¤§å°ï¼Œä¾æ¬¡å¾€tmpå°¾éƒ¨æ·»åŠ modelæˆå‘˜internal_coordså®¹å™¨ç¬¬iä¸ªå…ƒç´ 
+	* 5.è¿”å›tmp
 	*/
 	vecv get_ligand_internal_coords() const { // FIXME rm
 		VINA_CHECK(ligands.size() == 1);
@@ -293,14 +293,14 @@ struct model {
 
 
 	/*
-	* º¯Êı£ºget_ligand_coords£¬³£Á¿º¯Êı
-	* input£ºÎŞ
-	* output: vecÀàĞÍÈİÆ÷
-	* function£º1.ÅĞ¶Ïmodel³ÉÔ±ligandsÈİÆ÷µÄ´óĞ¡ÊÇ·ñµÈÓÚ1£¬ÊÇÔòÍùÏÂÖ´ĞĞ£¬·ñÔò±¨´í£¬ÖÕÖ¹³ÌĞòµÄÖ´ĞĞ
-	* 2.½¨Á¢Ò»¸öÁÙÊ±vecv¶ÔÏótmp
-	* 3.·µ»Ømodel³ÉÔ±ligandsÈİÆ÷ÖĞÆğÊ¼ÔªËØµÄÒıÓÃ,ÃüÃûlig
-	* 4.i´Ólig³ÉÔ±beginµÄ´óĞ¡±éÀúµ½lig³ÉÔ±beginµÄ´óĞ¡£¬ÒÀ´ÎÍùtmpÎ²²¿Ìí¼Ómodel³ÉÔ±coordsÈİÆ÷µÚi¸öÔªËØ
-	* 5.·µ»Øtmp
+	* å‡½æ•°ï¼šget_ligand_coordsï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šæ— 
+	* output: vecç±»å‹å®¹å™¨
+	* functionï¼š1.åˆ¤æ–­modelæˆå‘˜ligandså®¹å™¨çš„å¤§å°æ˜¯å¦ç­‰äº1ï¼Œæ˜¯åˆ™å¾€ä¸‹æ‰§è¡Œï¼Œå¦åˆ™æŠ¥é”™ï¼Œç»ˆæ­¢ç¨‹åºçš„æ‰§è¡Œ
+	* 2.å»ºç«‹ä¸€ä¸ªä¸´æ—¶vecvå¯¹è±¡tmp
+	* 3.è¿”å›modelæˆå‘˜ligandså®¹å™¨ä¸­èµ·å§‹å…ƒç´ çš„å¼•ç”¨,å‘½ålig
+	* 4.iä»ligæˆå‘˜beginçš„å¤§å°éå†åˆ°ligæˆå‘˜beginçš„å¤§å°ï¼Œä¾æ¬¡å¾€tmpå°¾éƒ¨æ·»åŠ modelæˆå‘˜coordså®¹å™¨ç¬¬iä¸ªå…ƒç´ 
+	* 5.è¿”å›tmp
 	*/
 	vecv get_ligand_coords() const { // FIXME rm
 		VINA_CHECK(ligands.size() == 1);
@@ -312,12 +312,12 @@ struct model {
 	}
 
 	/*
-	* º¯Êı£ºget_heavy_atom_movable_coords£¬³£Á¿º¯Êı
-	* input£ºÎŞ
-	* output: vecÀàĞÍÈİÆ÷
-	* function£º1.½¨Á¢Ò»¸öÁÙÊ±vecv¶ÔÏótmp
-	* 2.i´Ó0±éÀúµ½m_num_movable_atoms£¬ÒÀ´ÎÅĞ¶ÏatomsµÚi¸öÔªËØµÄ³ÉÔ±elÊÇ·ñµÈÓÚ0£¬ÊÇÔòÍùtmpÎ²²¿Ìí¼Ómodel³ÉÔ±coordsÈİÆ÷µÚi¸öÔªËØ
-	* 3.·µ»Øtmp
+	* å‡½æ•°ï¼šget_heavy_atom_movable_coordsï¼Œå¸¸é‡å‡½æ•°
+	* inputï¼šæ— 
+	* output: vecç±»å‹å®¹å™¨
+	* functionï¼š1.å»ºç«‹ä¸€ä¸ªä¸´æ—¶vecvå¯¹è±¡tmp
+	* 2.iä»0éå†åˆ°m_num_movable_atomsï¼Œä¾æ¬¡åˆ¤æ–­atomsç¬¬iä¸ªå…ƒç´ çš„æˆå‘˜elæ˜¯å¦ç­‰äº0ï¼Œæ˜¯åˆ™å¾€tmpå°¾éƒ¨æ·»åŠ modelæˆå‘˜coordså®¹å™¨ç¬¬iä¸ªå…ƒç´ 
+	* 3.è¿”å›tmp
 	*/
 	vecv get_heavy_atom_movable_coords() const { // FIXME mv
 		vecv tmp;
@@ -327,101 +327,101 @@ struct model {
 		return tmp;
 	}
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıcheck_internal_pairs£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°check_internal_pairsï¼Œæ— è¿”å›
 	void check_internal_pairs() const;
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıprint_stuff£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°print_stuffï¼Œæ— è¿”å›
 	void print_stuff() const; // FIXME rm
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıclash_penalty£¬·µ»ØdoubleÀàĞÍÊı¾İ
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°clash_penaltyï¼Œè¿”å›doubleç±»å‹æ•°æ®
 	fl clash_penalty() const;
 
-	//Ë½ÓĞ³ÉÔ±
+	//ç§æœ‰æˆå‘˜
 private:
-	friend struct non_cache;              // ÉùÃ÷ÓÑÔª½á¹¹Ìånon_cache£¬                        ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ±                                           
-	friend struct naive_non_cache;		  // ÉùÃ÷ÓÑÔª½á¹¹Ìånaive_non_cache£¬                  ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 			
-	friend struct cache;				  // ÉùÃ÷ÓÑÔª½á¹¹Ìåcache£¬                            ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 					
-	friend struct szv_grid;				  // ÉùÃ÷ÓÑÔª½á¹¹Ìåszv_grid	£¬                        ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 			
-	friend struct terms;				  // ÉùÃ÷ÓÑÔª½á¹¹Ìåterms£¬                            ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 					
-	friend struct conf_independent_inputs;// ÉùÃ÷ÓÑÔª½á¹¹Ìåconf_independent_inputs£¬          ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 	
-	friend struct appender_info;		  // ÉùÃ÷ÓÑÔª½á¹¹Ìåappender_info£¬                    ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 			
-	friend struct pdbqt_initializer;	  // ÉùÃ÷ÓÑÔª½á¹¹Ìåpdbqt_initializer£¬                ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ±  - only declared in parse_pdbqt.cpp
-	friend struct model_test;			  // ÉùÃ÷ÓÑÔª½á¹¹Ìåmodel_test£¬                       ´Ë½á¹¹Ìå¿É·ÃÎÊ½á¹¹Ìåmodel()µÄË½ÓĞ³ÉÔ± 
+	friend struct non_cache;              // å£°æ˜å‹å…ƒç»“æ„ä½“non_cacheï¼Œ                        æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜                                           
+	friend struct naive_non_cache;		  // å£°æ˜å‹å…ƒç»“æ„ä½“naive_non_cacheï¼Œ                  æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 			
+	friend struct cache;				  // å£°æ˜å‹å…ƒç»“æ„ä½“cacheï¼Œ                            æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 					
+	friend struct szv_grid;				  // å£°æ˜å‹å…ƒç»“æ„ä½“szv_grid	ï¼Œ                        æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 			
+	friend struct terms;				  // å£°æ˜å‹å…ƒç»“æ„ä½“termsï¼Œ                            æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 					
+	friend struct conf_independent_inputs;// å£°æ˜å‹å…ƒç»“æ„ä½“conf_independent_inputsï¼Œ          æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 	
+	friend struct appender_info;		  // å£°æ˜å‹å…ƒç»“æ„ä½“appender_infoï¼Œ                    æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 			
+	friend struct pdbqt_initializer;	  // å£°æ˜å‹å…ƒç»“æ„ä½“pdbqt_initializerï¼Œ                æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜  - only declared in parse_pdbqt.cpp
+	friend struct model_test;			  // å£°æ˜å‹å…ƒç»“æ„ä½“model_testï¼Œ                       æ­¤ç»“æ„ä½“å¯è®¿é—®ç»“æ„ä½“model()çš„ç§æœ‰æˆå‘˜ 
 
-	//¹¹Ôìº¯Êımodel()£¬³õÊ¼»¯m_num_movable_atomsÎª0£¬m_atom_typing_usedÎªXS
+	//æ„é€ å‡½æ•°model()ï¼Œåˆå§‹åŒ–m_num_movable_atomsä¸º0ï¼Œm_atom_typing_usedä¸ºXS
 	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {};
 
 
 	/*
-	* º¯Êı£ºget_atom£¬ÊÇ³£Á¿º¯Êı
-	* input£ºatom_indexÀàÒıÓÃi
-	* function£ºÅĞ¶ÏiµÄ³ÉÔ±in_gridÊÇ·ñÎªÕæ£¬ÊÇÔò·µ»Øgrid_atomsÈİÆ÷µÄµÚ£¨¶ÔÏóiµÄ³ÉÔ±iµÄÊıÖµ£©ÔªËØ³£Á¿ÒıÓÃ£¬·ñÔò·µ»ØatomsÈİÆ÷µÄµÚ£¨¶ÔÏóiµÄ³ÉÔ±iµÄÊıÖµ£©ÔªËØ³£Á¿ÒıÓÃ
+	* å‡½æ•°ï¼šget_atomï¼Œæ˜¯å¸¸é‡å‡½æ•°
+	* inputï¼šatom_indexç±»å¼•ç”¨i
+	* functionï¼šåˆ¤æ–­içš„æˆå‘˜in_gridæ˜¯å¦ä¸ºçœŸï¼Œæ˜¯åˆ™è¿”å›grid_atomså®¹å™¨çš„ç¬¬ï¼ˆå¯¹è±¡içš„æˆå‘˜içš„æ•°å€¼ï¼‰å…ƒç´ å¸¸é‡å¼•ç”¨ï¼Œå¦åˆ™è¿”å›atomså®¹å™¨çš„ç¬¬ï¼ˆå¯¹è±¡içš„æˆå‘˜içš„æ•°å€¼ï¼‰å…ƒç´ å¸¸é‡å¼•ç”¨
 	*/
 	const atom& get_atom(const atom_index& i) const { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
 	/*
-	* º¯Êı£ºget_atom
-	* input£ºatom_indexÀàÒıÓÃi
-	* function£ºÅĞ¶ÏiµÄ³ÉÔ±in_gridÊÇ·ñÎªÕæ£¬ÊÇÔò·µ»Øgrid_atomsÈİÆ÷µÄµÚ£¨¶ÔÏóiµÄ³ÉÔ±iµÄÊıÖµ£©ÔªËØÒıÓÃ£¬·ñÔò·µ»ØatomsÈİÆ÷µÄµÚ£¨¶ÔÏóiµÄ³ÉÔ±iµÄÊıÖµ£©ÔªËØÒıÓÃ
+	* å‡½æ•°ï¼šget_atom
+	* inputï¼šatom_indexç±»å¼•ç”¨i
+	* functionï¼šåˆ¤æ–­içš„æˆå‘˜in_gridæ˜¯å¦ä¸ºçœŸï¼Œæ˜¯åˆ™è¿”å›grid_atomså®¹å™¨çš„ç¬¬ï¼ˆå¯¹è±¡içš„æˆå‘˜içš„æ•°å€¼ï¼‰å…ƒç´ å¼•ç”¨ï¼Œå¦åˆ™è¿”å›atomså®¹å™¨çš„ç¬¬ï¼ˆå¯¹è±¡içš„æˆå‘˜içš„æ•°å€¼ï¼‰å…ƒç´ å¼•ç”¨
 	*/
 	      atom& get_atom(const atom_index& i)       { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
 
 
-	//1.ÉùÃ÷Ò»¸ö³£Á¿º¯Êıwrite_context£¬ÊäÈëcontextÈİÆ÷¶ÔÏóºÍÒ»¸öÎÄ¼şÊä³öÁ÷£¬ÎŞ·µ»Ø
+	//1.å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°write_contextï¼Œè¾“å…¥contextå®¹å™¨å¯¹è±¡å’Œä¸€ä¸ªæ–‡ä»¶è¾“å‡ºæµï¼Œæ— è¿”å›
 	void write_context(const context& c, ofile& out) const;
 	
 
 
-	/*2.ÖØÔØ³£Á¿º¯Êıwrite_context£¬ÊäÈëcontextÈİÆ÷¶ÔÏó¡¢Ò»¸öÎÄ¼şÊä³öÁ÷ºÍstringÀàremark£¬ÎŞ·µ»Ø
-	* function:ÏòÎÄ¼şÊä³öÁ÷Êä³öremark
+	/*2.é‡è½½å¸¸é‡å‡½æ•°write_contextï¼Œè¾“å…¥contextå®¹å™¨å¯¹è±¡ã€ä¸€ä¸ªæ–‡ä»¶è¾“å‡ºæµå’Œstringç±»remarkï¼Œæ— è¿”å›
+	* function:å‘æ–‡ä»¶è¾“å‡ºæµè¾“å‡ºremark
 	*/
 	void write_context(const context& c, ofile& out, const std::string& remark) const {
 		out << remark;
 	}
 
-	/*3.ÖØÔØ³£Á¿º¯Êıwrite_context£¬ÊäÈëcontextÈİÆ÷¶ÔÏóºÍÒ»¸öÎÄ¼şpathÀà¶ÔÏó£¬ÎŞ·µ»Ø
-	* function:Í¨¹ıpathÀà´´½¨Ò»¸öÎÄ¼şÊä³öÁ÷out,ÔÙµ÷ÓÃwrite_contextº¯ÊıµÚ1¸ö°æ±¾
+	/*3.é‡è½½å¸¸é‡å‡½æ•°write_contextï¼Œè¾“å…¥contextå®¹å™¨å¯¹è±¡å’Œä¸€ä¸ªæ–‡ä»¶pathç±»å¯¹è±¡ï¼Œæ— è¿”å›
+	* function:é€šè¿‡pathç±»åˆ›å»ºä¸€ä¸ªæ–‡ä»¶è¾“å‡ºæµout,å†è°ƒç”¨write_contextå‡½æ•°ç¬¬1ä¸ªç‰ˆæœ¬
 	*/
 	void write_context(const context& c, const path& name) const {
 		ofile out(name);
 		write_context(c, out);
 	}
 
-	/*4.ÖØÔØ³£Á¿º¯Êıwrite_context£¬ÊäÈëcontextÈİÆ÷¶ÔÏó¡¢Ò»¸öÎÄ¼şpathÀà¶ÔÏóºÍstringÀàremark£¬ÎŞ·µ»Ø
-	* function:Í¨¹ıpathÀà´´½¨Ò»¸öÎÄ¼şÊä³öÁ÷out,ÔÙµ÷ÓÃwrite_contextº¯ÊıµÚ2¸ö°æ±¾
+	/*4.é‡è½½å¸¸é‡å‡½æ•°write_contextï¼Œè¾“å…¥contextå®¹å™¨å¯¹è±¡ã€ä¸€ä¸ªæ–‡ä»¶pathç±»å¯¹è±¡å’Œstringç±»remarkï¼Œæ— è¿”å›
+	* function:é€šè¿‡pathç±»åˆ›å»ºä¸€ä¸ªæ–‡ä»¶è¾“å‡ºæµout,å†è°ƒç”¨write_contextå‡½æ•°ç¬¬2ä¸ªç‰ˆæœ¬
 	*/
 	void write_context(const context& c, const path& name, const std::string& remark) const {
 		ofile out(name);
 		write_context(c, out, remark);
 	}
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êırmsd_lower_bound_asymmetric£¬ÊäÈëmodelÀàx,yÒıÓÃ£¬·µ»ØÒ»¸ödoubleÀàĞÍÊı
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°rmsd_lower_bound_asymmetricï¼Œè¾“å…¥modelç±»x,yå¼•ç”¨ï¼Œè¿”å›ä¸€ä¸ªdoubleç±»å‹æ•°
 	fl rmsd_lower_bound_asymmetric(const model& x, const model& y) const; // actually static
 	
 
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êısz_to_atom_index£¬ÊäÈëunsigned intÀàĞÍÊı¾İi£¬·µ»ØÒ»¸öatom_indexÀà
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°sz_to_atom_indexï¼Œè¾“å…¥unsigned intç±»å‹æ•°æ®iï¼Œè¿”å›ä¸€ä¸ªatom_indexç±»
 	atom_index sz_to_atom_index(sz i) const; // grid_atoms, atoms
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıbonded_to_HD£¬ÊäÈëatomÀàÒıÓÃa£¬·µ»Ø²¼¶ûÖµ
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°bonded_to_HDï¼Œè¾“å…¥atomç±»å¼•ç”¨aï¼Œè¿”å›å¸ƒå°”å€¼
 	bool bonded_to_HD(const atom& a) const;
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıbonded_to_heteroatom£¬ÊäÈëatomÀàÒıÓÃa£¬·µ»Ø²¼¶ûÖµ
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°bonded_to_heteroatomï¼Œè¾“å…¥atomç±»å¼•ç”¨aï¼Œè¿”å›å¸ƒå°”å€¼
 	bool bonded_to_heteroatom(const atom& a) const;
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıfind_ligand£¬ÊäÈëunsigned intÀàĞÍÊı¾İa£¬·µ»ØÒ»¸öunsigned intÀàĞÍÊı¾İ
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°find_ligandï¼Œè¾“å…¥unsigned intç±»å‹æ•°æ®aï¼Œè¿”å›ä¸€ä¸ªunsigned intç±»å‹æ•°æ®
 	sz find_ligand(sz a) const;
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıbonded_to£¬ÊäÈëunsigned intÀàĞÍÊı¾İa£¬n£¬ºÍunsigned intÀàĞÍÈİÆ÷ÒıÓÃszv£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°bonded_toï¼Œè¾“å…¥unsigned intç±»å‹æ•°æ®aï¼Œnï¼Œå’Œunsigned intç±»å‹å®¹å™¨å¼•ç”¨szvï¼Œæ— è¿”å›
 	void bonded_to(sz a, sz n, szv& out) const;
-	//ÖØÔØ³£Á¿º¯Êıbonded_to£¬ÊäÈëunsigned intÀàĞÍÊı¾İa£¬n£¬·µ»Øunsigned intÀàĞÍÈİÆ÷
+	//é‡è½½å¸¸é‡å‡½æ•°bonded_toï¼Œè¾“å…¥unsigned intç±»å‹æ•°æ®aï¼Œnï¼Œè¿”å›unsigned intç±»å‹å®¹å™¨
 	szv bonded_to(sz a, sz n) const;
 
-	//ÉùÃ÷Ò»¸öº¯Êıassign_bonds£¬ÊäÈëdistance_type_matrixÀàÒıÓÃ£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå‡½æ•°assign_bondsï¼Œè¾“å…¥distance_type_matrixç±»å¼•ç”¨ï¼Œæ— è¿”å›
 	void assign_bonds(const distance_type_matrix& mobility); // assign bonds based on relative mobility, distance and covalent length
-	//ÉùÃ÷Ò»¸öº¯Êıassign_types£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå‡½æ•°assign_typesï¼Œæ— è¿”å›
 	void assign_types();
-	//ÉùÃ÷Ò»¸öº¯Êıinitialize_pairs£¬ÊäÈëdistance_type_matrixÀàÒıÓÃ£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå‡½æ•°initialize_pairsï¼Œè¾“å…¥distance_type_matrixç±»å¼•ç”¨ï¼Œæ— è¿”å›
 	void initialize_pairs(const distance_type_matrix& mobility);
-	//ÉùÃ÷Ò»¸öº¯Êıinitialize£¬ÊäÈëdistance_type_matrixÀàÒıÓÃ£¬ÎŞ·µ»Ø
+	//å£°æ˜ä¸€ä¸ªå‡½æ•°initializeï¼Œè¾“å…¥distance_type_matrixç±»å¼•ç”¨ï¼Œæ— è¿”å›
 	void initialize(const distance_type_matrix& mobility);
-	//ÉùÃ÷Ò»¸ö³£Á¿º¯Êıclash_penalty_aux£¬ÊäÈëinteracting_pairÀàÈİÆ÷ÒıÓÃ£¬·µ»ØdoubleÊı¾İ
+	//å£°æ˜ä¸€ä¸ªå¸¸é‡å‡½æ•°clash_penalty_auxï¼Œè¾“å…¥interacting_pairç±»å®¹å™¨å¼•ç”¨ï¼Œè¿”å›doubleæ•°æ®
 	fl clash_penalty_aux(const interacting_pairs& pairs) const;
 
-	vecv internal_coords; //ÉùÃ÷Ò»¸öÈİÆ÷internal_coords£¬ÈİÆ÷ÀïÃæ°üº¬Èô¸É½á¹¹Ìåvec£¨³¤¶ÈÎª3µÄÊ¸Á¿£©
+	vecv internal_coords; //å£°æ˜ä¸€ä¸ªå®¹å™¨internal_coordsï¼Œå®¹å™¨é‡Œé¢åŒ…å«è‹¥å¹²ç»“æ„ä½“vecï¼ˆé•¿åº¦ä¸º3çš„çŸ¢é‡ï¼‰
 	
 
 
@@ -430,20 +430,20 @@ private:
 	
 
 
-	vector_mutable<residue> flex; //ÉùÃ÷Ò»¸övector_mutableÈİÆ÷flex£¬ÆäÔªËØÎªresidueÀà
-	context flex_context;//ÉùÃ÷Ò»¸öparsed_lineÀàĞÍÈİÆ÷Êı¾İ
+	vector_mutable<residue> flex; //å£°æ˜ä¸€ä¸ªvector_mutableå®¹å™¨flexï¼Œå…¶å…ƒç´ ä¸ºresidueç±»
+	context flex_context;//å£°æ˜ä¸€ä¸ªparsed_lineç±»å‹å®¹å™¨æ•°æ®
 
-	//ÉùÃ÷Ò»¸öinteracting_pairsÈİÆ÷other_pairs
+	//å£°æ˜ä¸€ä¸ªinteracting_pairså®¹å™¨other_pairs
 	interacting_pairs other_pairs; // all except internal to one ligand: ligand-other ligands; ligand-flex/inflex; flex-flex/inflex
 
-	sz m_num_movable_atoms; //ÉùÃ÷Ò»¸öunsigned intÀàĞÍÊı¾İ
-	atom_type::t m_atom_typing_used;//ÉùÃ÷Ò»¸ötÀàĞÍÊı¾İ£¬tÊÇÃ¶¾ÙÀàĞÍ
+	sz m_num_movable_atoms; //å£°æ˜ä¸€ä¸ªunsigned intç±»å‹æ•°æ®
+	atom_type::t m_atom_typing_used;//å£°æ˜ä¸€ä¸ªtç±»å‹æ•°æ®ï¼Œtæ˜¯æšä¸¾ç±»å‹
 public:
-		vector_mutable<ligand> ligands; //ÉùÃ÷Ò»¸övector_mutableÈİÆ÷ligands£¬ÆäÔªËØÎªligandÀà
+		vector_mutable<ligand> ligands; //å£°æ˜ä¸€ä¸ªvector_mutableå®¹å™¨ligandsï¼Œå…¶å…ƒç´ ä¸ºligandç±»
 		atomv atoms; // movable, inflex
-		vecv coords;          //ÉùÃ÷Ò»¸öÈİÆ÷coords£¬         ÈİÆ÷ÀïÃæ°üº¬Èô¸É½á¹¹Ìåvec£¨³¤¶ÈÎª3µÄÊ¸Á¿£©
-		vecv minus_forces;    //ÉùÃ÷Ò»¸öÈİÆ÷minus_forces£¬   ÈİÆ÷ÀïÃæ°üº¬Èô¸É½á¹¹Ìåvec£¨³¤¶ÈÎª3µÄÊ¸Á¿£©	
-		atomv grid_atoms;//ÉùÃ÷ÈİÆ÷grid_atoms£¬atoms£¬ÔªËØ¾ùÎªatomÀà
+		vecv coords;          //å£°æ˜ä¸€ä¸ªå®¹å™¨coordsï¼Œ         å®¹å™¨é‡Œé¢åŒ…å«è‹¥å¹²ç»“æ„ä½“vecï¼ˆé•¿åº¦ä¸º3çš„çŸ¢é‡ï¼‰
+		vecv minus_forces;    //å£°æ˜ä¸€ä¸ªå®¹å™¨minus_forcesï¼Œ   å®¹å™¨é‡Œé¢åŒ…å«è‹¥å¹²ç»“æ„ä½“vecï¼ˆé•¿åº¦ä¸º3çš„çŸ¢é‡ï¼‰	
+		atomv grid_atoms;//å£°æ˜å®¹å™¨grid_atomsï¼Œatomsï¼Œå…ƒç´ å‡ä¸ºatomç±»
 };
 
 

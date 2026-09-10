@@ -27,32 +27,32 @@
 #include "incrementable.h"
 #include "commonMacros.h"
 /*
-* ½á¹¹Ìåmonte_carlo
-* ³ÉÔ±£º1.unsignedÀàĞÍnum_steps
-*		2.doubleÀàĞÍtemperature
-*		3.vecÊ¸Á¿hunt_cap
-*		4.doubleÀàĞÍmin_rmsd
-*		5.unsignedÀàĞÍnum_saved_mins
-*		6.doubleÀàĞÍmutation_amplitude
-*		7.ssdÀà¶ÔÏóssd_par
-*		8.¹¹Ôìº¯Êı£º³õÊ¼»¯num_steps=2500£¬temperature=1.2£¬hunt_cap=[10, 1.5, 10], min_rmsd=0.5, num_saved_mins=50, mutation_amplitude=2
-*       9.ÉùÃ÷¶¨Òåµ÷ÓÃ²Ù×÷·û£¨£©£¬Îª³£Á¿º¯Êı
-*					input:modelÀàÒıÓÃ,precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,incrementableÀàÖ¸Õë,generatorÀàÒıÓÃ
-*					output:output_typeÀà
-*		9.ÉùÃ÷many_runsº¯Êı£¬Îª³£Á¿º¯Êı
-* 					input:modelÀàÒıÓÃ,precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,unsigned intÀàĞÍÊı,generatorÀàÒıÓÃ
-* 					output:output_typeÀà
-*		10.ÉùÃ÷single_runº¯Êı£¬Îª³£Á¿º¯Êı
-* 					input:modelÀàÒıÓÃ,output_typeÀà£¬precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,generatorÀàÒıÓÃ
-* 					output:ÎŞ
-*		11.ÖØÔØÉùÃ÷¶¨Òåµ÷ÓÃ²Ù×÷·û£¨£©£¬Îª³£Á¿º¯Êı
-* 					input:modelÀàÒıÓÃ,output_containerÀàÒıÓÃ£¬precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,incrementableÀàÖ¸Õë,generatorÀàÒıÓÃ
-* 					output:ÎŞ
-*					Ïà±ÈÔ­°æ±¾ÊäÈë¶àÁËoutput_containerÀàÒıÓÃ£¬ÎŞ·µ»ØÖµ
-* 		9.ÉùÃ÷many_runsº¯Êı£¬Îª³£Á¿º¯Êı
-* 					input:modelÀàÒıÓÃ,output_containerÀàÒıÓÃ£¬precalculateÀà³£Á¿ÒıÓÃ,igridÀà³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,vecÊ¸Á¿³£Á¿ÒıÓÃ,unsigned intÀàĞÍÊı,generatorÀàÒıÓÃ
-* 					output:ÎŞ
-*					Ïà±ÈÔ­°æ±¾ÊäÈë¶àÁËoutput_containerÀàÒıÓÃ£¬ÎŞ·µ»ØÖµ
+* ç»“æ„ä½“monte_carlo
+* æˆå‘˜ï¼š1.unsignedç±»å‹num_steps
+*		2.doubleç±»å‹temperature
+*		3.vecçŸ¢é‡hunt_cap
+*		4.doubleç±»å‹min_rmsd
+*		5.unsignedç±»å‹num_saved_mins
+*		6.doubleç±»å‹mutation_amplitude
+*		7.ssdç±»å¯¹è±¡ssd_par
+*		8.æ„é€ å‡½æ•°ï¼šåˆå§‹åŒ–num_steps=2500ï¼Œtemperature=1.2ï¼Œhunt_cap=[10, 1.5, 10], min_rmsd=0.5, num_saved_mins=50, mutation_amplitude=2
+*       9.å£°æ˜å®šä¹‰è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰ï¼Œä¸ºå¸¸é‡å‡½æ•°
+*					input:modelç±»å¼•ç”¨,precalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,precalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,incrementableç±»æŒ‡é’ˆ,generatorç±»å¼•ç”¨
+*					output:output_typeç±»
+*		9.å£°æ˜many_runså‡½æ•°ï¼Œä¸ºå¸¸é‡å‡½æ•°
+* 					input:modelç±»å¼•ç”¨,precalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,unsigned intç±»å‹æ•°,generatorç±»å¼•ç”¨
+* 					output:output_typeç±»
+*		10.å£°æ˜single_runå‡½æ•°ï¼Œä¸ºå¸¸é‡å‡½æ•°
+* 					input:modelç±»å¼•ç”¨,output_typeç±»ï¼Œprecalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,generatorç±»å¼•ç”¨
+* 					output:æ— 
+*		11.é‡è½½å£°æ˜å®šä¹‰è°ƒç”¨æ“ä½œç¬¦ï¼ˆï¼‰ï¼Œä¸ºå¸¸é‡å‡½æ•°
+* 					input:modelç±»å¼•ç”¨,output_containerç±»å¼•ç”¨ï¼Œprecalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,precalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,incrementableç±»æŒ‡é’ˆ,generatorç±»å¼•ç”¨
+* 					output:æ— 
+*					ç›¸æ¯”åŸç‰ˆæœ¬è¾“å…¥å¤šäº†output_containerç±»å¼•ç”¨ï¼Œæ— è¿”å›å€¼
+* 		9.å£°æ˜many_runså‡½æ•°ï¼Œä¸ºå¸¸é‡å‡½æ•°
+* 					input:modelç±»å¼•ç”¨,output_containerç±»å¼•ç”¨ï¼Œprecalculateç±»å¸¸é‡å¼•ç”¨,igridç±»å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,vecçŸ¢é‡å¸¸é‡å¼•ç”¨,unsigned intç±»å‹æ•°,generatorç±»å¼•ç”¨
+* 					output:æ— 
+*					ç›¸æ¯”åŸç‰ˆæœ¬è¾“å…¥å¤šäº†output_containerç±»å¼•ç”¨ï¼Œæ— è¿”å›å€¼
 */
 struct monte_carlo {
 	unsigned num_steps;

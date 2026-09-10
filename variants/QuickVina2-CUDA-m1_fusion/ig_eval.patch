@@ -1,0 +1,67 @@
+*** Begin Patch
+*** Update File: inc/cuda/quasi_newton.cuh
+@@
+-	 __shared__ float e[MAX_NUM_OF_ATOMS];
+-	float deriv[3] = {0};
+-
+-	for (int i = threadNumInBlock;i < MAX_NUM_OF_ATOMS;i = i + threadsPerBlock) e[i] = 0;
+-	
++	// [FUSION v2] warp-shuffle reduction: register accumulation + single-warp tree, remove 512B shared e[]
++	float my_e = 0.0f;
++	float deriv[3] = {0};
++
+ 	for (int i = threadNumInBlock;
+ 		i < m->m_num_movable_atoms;
+ 		i = i + threadsPerBlock
+ 	){
+ 		if (i < m->m_num_movable_atoms) {
+ 			int t = m->atoms[i].types[grids->atu];
+ 			if (t >= nat) {
+ 				//for (int j = 0; j < 3; j++)
+ 				minus_forces->coords[i][0] = 0;
+ 				minus_forces->coords[i][1] = 0;
+ 				minus_forces->coords[i][2] = 0;
+ 			} else {
+ 				
+-				e[i] = g_evaluate_update(&grids->grids[t], m_coords->coords[i], grids->slope, v, deriv, epsilon_fl,&grids_cuda->grid_other[t]);
++				my_e += g_evaluate_update(&grids->grids[t], m_coords->coords[i], grids->slope, v, deriv, epsilon_fl,&grids_cuda->grid_other[t]);
+ 
+ 				//for (int j = 0; j < 3; j++)
+ 				minus_forces->coords[i][0] = deriv[0];
+ 				minus_forces->coords[i][1] = deriv[1];
+ 				minus_forces->coords[i][2] = deriv[2];
+ 			}
+ 		}
+ 	}__syncthreads();
+ 	//Sum intermolecular energy
+-	if ( MAX_NUM_OF_ATOMS > threadsPerBlock) {
+-		int tmp =  MAX_NUM_OF_ATOMS / threadsPerBlock;
+-		for (int i = 1; i < tmp; i++) {
+-			e[threadNumInBlock] += e[threadNumInBlock + threadsPerBlock * i];
+-		}
+-		if (threadNumInBlock < (MAX_NUM_OF_ATOMS % threadsPerBlock)) {
+-			e[threadNumInBlock] += e[threadNumInBlock + tmp * threadsPerBlock];
+-		}
+-		__syncthreads();
+-
+-		warpRecude(e, threadNumInBlock);
+-		
+-		if(threadNumInBlock == 0){
+-				return e[0];
+-		}
+-		
+-	}
+-	else {
+-		warpRecude(e, threadNumInBlock);
+-		if(threadNumInBlock == 0){
+-			return e[0];
+-		}
+-	}
+-	
++	// single-warp (block=32 threads) tree reduction: all threads accumulate then broadcast
++	for (int offset = threadsPerBlock >> 1; offset > 0; offset >>= 1)
++		my_e += __shfl_down_sync(0xFFFFFFFF, my_e, offset);
++	my_e = __shfl_sync(0xFFFFFFFF, my_e, 0);  // broadcast lane0's sum to all threads
++	return my_e;
+ }
+*** End Patch

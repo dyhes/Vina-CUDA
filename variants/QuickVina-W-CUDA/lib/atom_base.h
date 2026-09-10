@@ -33,7 +33,7 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive> 
 
-	//½«atom_type¼°atom_baseĞòÁĞ»¯
+	//å°†atom_typeåŠatom_baseåºåˆ—åŒ–
 	void serialize(Archive& ar, const unsigned version) {
 		ar & boost::serialization::base_object<atom_type>(*this);
 		ar & charge;

@@ -1,0 +1,672 @@
+#!/usr/bin/env python3
+"""
+Unified docking experiment runner — one script for all variants.
+
+Usage:
+  python3 run_experiment.py --variant unidock-A    --dataset CASF-2016 --search-mode fast
+  python3 run_experiment.py --variant unidock-B    --dataset CASF-2016 --search-mode fast --chunk 64
+  python3 run_experiment.py --variant vina-cpu     --dataset CASF-2016
+  python3 run_experiment.py --variant qvina-w-cuda --dataset CASF-2016
+
+Variants:
+  unidock-A      Uni-Dock per-target GPU batch (aligns with Vina-CPU/QVina-W-CUDA)
+  unidock-B      Uni-Dock paired_batch (bulk 1:1 redocking, with chunk support)
+  vina-cpu       AutoDock Vina CPU
+  qvina-w-cuda   QuickVina-W-CUDA GPU
+
+Output (all variants):
+  experiments/<TIMESTAMP>_<DATASET>_<VARIANT>[_<MODE>]/
+  ├── configs/          per-target config files
+  ├── outputs/          docked PDBQT files
+  ├── summary.csv       target,status,affinity_kcal_mol,runtime_s
+  ├── rmsd_results.csv  target,status,rmsd_all_atom,n_atoms
+  └── unidock.log       (Uni-Dock variants only)
+"""
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+# ── AICloud defaults (overridable via CLI) ──────────────────────────────
+ROOT = Path(os.environ.get("GRAD_ROOT", "/home/ubuntu/grad"))
+VARIANTS_DIR = ROOT / "variants"
+DATASET_DIR = ROOT / "dataset"
+EXPERIMENTS_DIR = ROOT / "experiments"
+TOOLS_DIR = ROOT / "tools"
+
+BINARIES = {
+    "unidock":       Path("/usr/local/bin/unidock"),
+    "vina-cpu":      VARIANTS_DIR / "AutoDock-Vina/build/linux/release/vina",
+    "qvina-w-cuda":  VARIANTS_DIR / "QuickVina-W-CUDA/Vina-GPU-2-1-W-CUDA",
+}
+
+CENTER_SCRIPT = TOOLS_DIR / "pdbqt_center.py"
+
+# ── Dataset registry ────────────────────────────────────────────────────
+# Format: {name: {"dir": ..., "ref_type": ..., "ligand_suffix": ...,
+#                 "protein_suffix": ..., "ligand_field": ...}}
+DATASETS = {
+    "CASF-2016": {
+        "dir":             DATASET_DIR / "CASF-2016-PDBQT/coreset",
+        "ref_type":        "ligand_pdbqt",
+        "ligand_suffix":   "_ligand.pdbqt",
+        "protein_suffix":  "_protein.pdbqt",
+    },
+    "AutoDockGPU": {
+        "dir":             DATASET_DIR / "AutoDockGPU",
+        "ref_type":        "flex-xray",
+        "ligand_suffix":   "/flex-xray.pdbqt",
+        "protein_suffix":  "/protein.pdbqt",
+    },
+}
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Core helpers
+# ══════════════════════════════════════════════════════════════════════════
+
+def get_center_from_pdbqt(pdbqt_path):
+    """Extract geometric center from a PDBQT file using fixed-width columns."""
+    cmd = ["python3", str(CENTER_SCRIPT), str(pdbqt_path)]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+    if r.returncode != 0:
+        return None
+    parts = r.stdout.strip().split()
+    if len(parts) >= 3:
+        return tuple(float(x) for x in parts[:3])
+    return None
+
+
+def parse_affinity_from_pdbqt(pdbqt_path):
+    """Parse Vina score from REMARK VINA RESULT line."""
+    if not os.path.exists(pdbqt_path):
+        return None
+    with open(pdbqt_path) as f:
+        for line in f:
+            m = re.match(r"REMARK VINA RESULT:\s+([-\d.]+)", line)
+            if m:
+                return float(m.group(1))
+    return None
+
+
+def write_summary(summary_path, results):
+    """Write summary.csv: target,status,affinity_kcal_mol,runtime_s"""
+    with open(summary_path, "w") as f:
+        f.write("target,status,affinity_kcal_mol,runtime_s\n")
+        for tid, info in sorted(results.items()):
+            f.write(f"{tid},{info['status']},{info['affinity']},{info['runtime']}\n")
+
+
+def run_rmsd_analysis(exp_dir, dataset_info):
+    """Compute Top-1 RMSD via spyrmsd (symmetry-corrected Kabsch).
+    
+    Reference: Meli & Biggin, J. Cheminf. 12, 49 (2020).
+    Requires: spyrmsd, python3-openbabel (apt install python3-openbabel).
+    """
+    data_dir = dataset_info["dir"]
+    ref_type = dataset_info["ref_type"]
+    outputs_dir = os.path.join(exp_dir, "outputs")
+
+    try:
+        from spyrmsd import rmsd as srmsd, io as sio
+    except ImportError:
+        print("ERROR: spyrmsd not installed. pip install spyrmsd && apt install python3-openbabel",
+              file=sys.stderr)
+        return
+
+    results = {}
+    for outfile in sorted(Path(outputs_dir).glob("*_out.pdbqt")):
+        basename = outfile.name
+        if basename.endswith("_ligand_out.pdbqt"):
+            tid = basename.replace("_ligand_out.pdbqt", "")
+        elif basename.endswith("_out.pdbqt"):
+            tid = basename.replace("_out.pdbqt", "")
+        else:
+            continue
+
+        if ref_type == "ligand_pdbqt":
+            ref = data_dir / tid / f"{tid}_ligand.pdbqt"
+        else:
+            ref = data_dir / tid / "flex-xray.pdbqt"
+
+        score = parse_affinity_from_pdbqt(str(outfile))
+
+        if not os.path.exists(str(ref)):
+            results[tid] = {"score": score, "rmsd": None, "rmsd_heavy": None,
+                            "n_atoms": 0, "status": "NO_REF"}
+            continue
+
+        try:
+            ref_mols = sio.loadallmols(str(ref))
+            out_mols = sio.loadallmols(str(outfile))
+        except Exception:
+            results[tid] = {"score": score, "rmsd": None, "rmsd_heavy": None,
+                            "n_atoms": 0, "status": "LOAD_ERR"}
+            continue
+
+        if not ref_mols or not out_mols:
+            results[tid] = {"score": score, "rmsd": None, "rmsd_heavy": None,
+                            "n_atoms": 0, "status": "EMPTY"}
+            continue
+
+        top1_mol = out_mols[0]  # Top-1: first MODEL (scoring best)
+        n_atoms = top1_mol.natoms
+
+        try:
+            r_all = srmsd.rmsdwrapper(ref_mols[0], top1_mol, symmetry=True, strip=False)[0]
+            r_heavy = srmsd.rmsdwrapper(ref_mols[0], top1_mol, symmetry=True, strip=True)[0]
+            results[tid] = {"score": score, "rmsd": r_all, "rmsd_heavy": r_heavy,
+                            "n_atoms": n_atoms, "status": "OK"}
+        except Exception:
+            results[tid] = {"score": score, "rmsd": None, "rmsd_heavy": None,
+                            "n_atoms": n_atoms, "status": "RMSD_ERR"}
+
+    valid = {k: v for k, v in results.items() if v["rmsd"] is not None}
+    rmsds = sorted([v["rmsd"] for v in valid.values()])
+    n, n_total = len(rmsds), len(results)
+
+    if n == 0:
+        print("RMSD: no valid results")
+        return
+
+    leq_2 = sum(1 for r in rmsds if r <= 2.0)
+    leq_1 = sum(1 for r in rmsds if r <= 1.0)
+    mean_val = sum(rmsds) / n
+    median_val = rmsds[n // 2]
+
+    print("=" * 50)
+    print(f"RMSD Results (spyrmsd, symmetry-corrected Top-1)")
+    print("=" * 50)
+    print(f"  Success:     {n}/{n_total} ({100*n/max(n_total,1):.1f}%)")
+    print(f"  Top-1 ≤2.0Å: {leq_2}/{n} ({100*leq_2/n:.1f}%)")
+    print(f"  Top-1 ≤1.0Å: {leq_1}/{n} ({100*leq_1/n:.1f}%)")
+    print(f"  Median RMSD: {median_val:.3f}Å")
+    print(f"  Mean RMSD:   {mean_val:.3f}Å")
+
+    rmsd_csv = os.path.join(exp_dir, "rmsd_results.csv")
+    with open(rmsd_csv, "w") as f:
+        f.write("target,status,rmsd_all_atom,rmsd_heavy_atom,n_atoms\n")
+        for tid in sorted(results):
+            v = results[tid]
+            r_all_str = str(round(v["rmsd"], 4)) if v["rmsd"] is not None else ""
+            r_hvy_str = str(round(v["rmsd_heavy"], 4)) if v.get("rmsd_heavy") is not None else ""
+            n_str = str(v["n_atoms"]) if v.get("n_atoms", 0) > 0 else ""
+            f.write(f"{tid},{v['status']},{r_all_str},{r_hvy_str},{n_str}\n")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Variant runners
+# ══════════════════════════════════════════════════════════════════════════
+
+def run_unidock_a(dataset_info, exp_dir, search_mode, box_size, num_modes, scoring):
+    """Uni-Dock A: per-target GPU batch. One unidock call per target."""
+    data_dir = dataset_info["dir"]
+    lig_sfx = dataset_info["ligand_suffix"]
+    prot_sfx = dataset_info["protein_suffix"]
+    outputs_dir = exp_dir / "outputs"
+    summary_path = exp_dir / "summary.csv"
+    log_path = exp_dir / "unidock.log"
+
+    targets = sorted(os.listdir(str(data_dir)))
+    results = {}
+    ok = fail = 0
+
+    t_start = time.time()
+    with open(log_path, "w") as log:
+        for i, tid in enumerate(targets):
+            protein = data_dir / tid / f"{tid}{prot_sfx.split('/')[-1]}" if "/" in prot_sfx else data_dir / tid / f"{tid}{prot_sfx}"
+            ligand = data_dir / tid / f"{tid}{lig_sfx.split('/')[-1]}" if "/" in lig_sfx else data_dir / tid / f"{tid}{lig_sfx}"
+
+            if not protein.exists() or not ligand.exists():
+                results[tid] = {"status": "SKIP", "affinity": "", "runtime": ""}
+                continue
+
+            center = get_center_from_pdbqt(str(ligand))
+            if center is None:
+                results[tid] = {"status": "FAIL", "affinity": "", "runtime": ""}
+                fail += 1
+                continue
+
+            cx, cy, cz = center
+            output_file = outputs_dir / f"{tid}_ligand_out.pdbqt"
+
+            t0 = time.time()
+            cmd = [
+                str(BINARIES["unidock"]),
+                "--receptor", str(protein),
+                "--gpu_batch", str(ligand),
+                "--scoring", scoring,
+                "--search_mode", search_mode,
+                "--num_modes", str(num_modes),
+                "--center_x", str(cx), "--center_y", str(cy), "--center_z", str(cz),
+                "--size_x", str(box_size), "--size_y", str(box_size), "--size_z", str(box_size),
+                "--dir", str(outputs_dir),
+                "--verbosity", "0",
+            ]
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            rt = time.time() - t0
+
+            if r.returncode != 0:
+                log.write(f"[STDERR {tid}] {r.stderr[:500]}\n")
+            log.write(f"[{tid}] exit={r.returncode} rt={rt:.2f}s\n")
+            log.flush()
+
+            if r.returncode == 0 and output_file.exists():
+                aff = parse_affinity_from_pdbqt(str(output_file))
+                results[tid] = {"status": "OK", "affinity": str(aff) if aff else "", "runtime": f"{rt:.2f}"}
+                ok += 1
+            else:
+                results[tid] = {"status": "FAIL", "affinity": "", "runtime": f"{rt:.2f}"}
+                fail += 1
+
+            elapsed = time.time() - t_start
+            if (i + 1) % 50 == 0:
+                remaining = len(targets) - (i + 1)
+                avg = elapsed / (i + 1)
+                eta = avg * remaining / 60
+                print(f"  [{i+1}/{len(targets)}] {elapsed:.0f}s | OK={ok} FAIL={fail} | ETA ~{eta:.0f}min")
+
+    write_summary(summary_path, results)
+    wall = time.time() - t_start
+    print(f"\nDone: {ok}/{len(targets)} OK, {fail} FAIL, {wall/60:.1f} min")
+    return results
+
+
+def run_unidock_b(dataset_info, exp_dir, search_mode, box_size, num_modes, scoring, chunk_size):
+    """Uni-Dock B: paired_batch with chunked execution."""
+    data_dir = dataset_info["dir"]
+    lig_sfx = dataset_info["ligand_suffix"]
+    prot_sfx = dataset_info["protein_suffix"]
+    outputs_dir = exp_dir / "outputs"
+    configs_dir = exp_dir / "configs"
+    configs_dir.mkdir(exist_ok=True)
+    summary_path = exp_dir / "summary.csv"
+    log_path = exp_dir / "unidock.log"
+
+    # ── Phase 1: Generate per-target configs + master pairs.json ──
+    targets = []
+    pairs = {}
+    for tid in sorted(os.listdir(str(data_dir))):
+        if "/" in lig_sfx:
+            ligand = data_dir / tid / lig_sfx.split("/")[-1]
+            protein = data_dir / tid / prot_sfx.split("/")[-1]
+        else:
+            ligand = data_dir / tid / f"{tid}{lig_sfx}"
+            protein = data_dir / tid / f"{tid}{prot_sfx}"
+
+        if not ligand.exists() or not protein.exists():
+            continue
+
+        center = get_center_from_pdbqt(str(ligand))
+        if center is None:
+            continue
+
+        cx, cy, cz = center
+        config = {
+            "center_x": round(cx, 3),
+            "center_y": round(cy, 3),
+            "center_z": round(cz, 3),
+            "size_x": box_size,
+            "size_y": box_size,
+            "size_z": box_size,
+        }
+        config_path = configs_dir / f"{tid}.json"
+        with open(config_path, "w") as f:
+            json.dump(config, f)
+
+        pairs[tid] = {
+            "protein": str(protein),
+            "ligand": str(ligand),
+            "ligand_config": str(config_path),
+        }
+        targets.append(tid)
+
+    print(f"Generated {len(targets)} pairs")
+
+    # ── Phase 2: Split into chunks and run ──
+    target_list = sorted(targets)
+    chunks = [target_list[i:i + chunk_size] for i in range(0, len(target_list), chunk_size)]
+    print(f"Splitting into {len(chunks)} chunks (chunk_size={chunk_size})")
+
+    all_results = {}
+    t_start = time.time()
+
+    with open(log_path, "w") as log:
+        for ci, chunk in enumerate(chunks):
+            chunk_json = {tid: pairs[tid] for tid in chunk}
+            chunk_path = configs_dir / f"chunk_{ci:02d}.json"
+            with open(chunk_path, "w") as f:
+                json.dump(chunk_json, f, indent=2)
+
+            batch_size = min(len(chunk), chunk_size)
+            print(f"  Chunk {ci+1}/{len(chunks)}: {len(chunk)} pairs, batch_size={batch_size}")
+
+            cmd = [
+                str(BINARIES["unidock"]),
+                "--ligand_index", str(chunk_path),
+                "--paired_batch_size", str(batch_size),
+                "--scoring", scoring,
+                "--search_mode", search_mode,
+                "--num_modes", str(num_modes),
+                "--size_x", str(box_size), "--size_y", str(box_size), "--size_z", str(box_size),
+                "--dir", str(outputs_dir),
+                "--verbosity", "1",
+            ]
+
+            t0 = time.time()
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
+            rt = time.time() - t0
+
+            log.write(f"[CHUNK {ci}] exit={r.returncode} rt={rt:.1f}s\n")
+            log.write(r.stdout[-3000:] if len(r.stdout) > 3000 else r.stdout)
+            if r.stderr.strip():
+                log.write(f"\n[STDERR]\n{r.stderr[-2000:]}\n")
+            log.flush()
+
+            avg_rt = rt / len(chunk)
+            if r.returncode != 0:
+                print(f"    FAILED (exit={r.returncode}) — check {log_path}")
+                for tid in chunk:
+                    all_results[tid] = {"status": "FAIL", "affinity": "", "runtime": f"{avg_rt:.2f}"}
+                continue
+
+            for tid in chunk:
+                # Uni-Dock outputs: <ligand_name>_out.pdbqt
+                # For CASF-2016: {tid}_ligand_out.pdbqt
+                if dataset_info["ref_type"] == "ligand_pdbqt":
+                    outfile = outputs_dir / f"{tid}_ligand_out.pdbqt"
+                else:
+                    outfile = outputs_dir / f"flex-xray_out.pdbqt"
+
+                if outfile.exists():
+                    aff = parse_affinity_from_pdbqt(str(outfile))
+                    all_results[tid] = {"status": "OK", "affinity": str(aff) if aff else "", "runtime": f"{avg_rt:.2f}"}
+                else:
+                    all_results[tid] = {"status": "NO_OUTPUT", "affinity": "", "runtime": f"{avg_rt:.2f}"}
+
+            # Keep chunk JSON in configs/ for reference
+
+    write_summary(summary_path, all_results)
+    wall = time.time() - t_start
+    ok = sum(1 for v in all_results.values() if v["status"] == "OK")
+    print(f"\nDone: {ok}/{len(all_results)} OK, {wall/60:.1f} min")
+    return all_results
+
+
+def run_vina_cpu(dataset_info, exp_dir, exhaustiveness, box_size, timeout, max_evals=0, global_steps=0):
+    """AutoDock Vina CPU — per-target."""
+    data_dir = dataset_info["dir"]
+    lig_sfx = dataset_info["ligand_suffix"]
+    prot_sfx = dataset_info["protein_suffix"]
+    outputs_dir = exp_dir / "outputs"
+    configs_dir = exp_dir / "configs"
+    configs_dir.mkdir(exist_ok=True)
+    summary_path = exp_dir / "summary.csv"
+
+    binary = BINARIES["vina-cpu"]
+    targets = sorted(os.listdir(str(data_dir)))
+    results = {}
+    ok = fail = 0
+
+    t_start = time.time()
+    for i, tid in enumerate(targets):
+        if "/" in lig_sfx:
+            protein = data_dir / tid / lig_sfx.split("/")[-1].replace("flex-xray", "protein")
+            ligand = data_dir / tid / lig_sfx.split("/")[-1]
+        else:
+            protein = data_dir / tid / f"{tid}{prot_sfx}"
+            ligand = data_dir / tid / f"{tid}{lig_sfx}"
+
+        if not protein.exists() or not ligand.exists():
+            results[tid] = {"status": "SKIP", "affinity": "", "runtime": ""}
+            continue
+
+        center = get_center_from_pdbqt(str(ligand))
+        if center is None:
+            results[tid] = {"status": "FAIL", "affinity": "", "runtime": ""}
+            fail += 1
+            continue
+
+        cx, cy, cz = center
+        output_file = outputs_dir / f"{tid}_out.pdbqt"
+        config_file = configs_dir / f"{tid}_config.txt"
+
+        # Write config
+        with open(config_file, "w") as f:
+            f.write(f"receptor = {protein}\n")
+            f.write(f"ligand = {ligand}\n")
+            f.write(f"center_x = {cx}\ncenter_y = {cy}\ncenter_z = {cz}\n")
+            f.write(f"size_x = {box_size}\nsize_y = {box_size}\nsize_z = {box_size}\n")
+            f.write(f"out = {output_file}\n")
+            f.write(f"exhaustiveness = {exhaustiveness}\n")
+            if max_evals > 0:
+                f.write(f"max_evals = {max_evals}\n")
+            if global_steps > 0:
+                f.write(f"global_steps = {global_steps}\n")
+
+        t0 = time.time()
+        try:
+            r = subprocess.run(
+                [str(binary), "--config", str(config_file), "--cpu", "0"],
+                capture_output=True, text=True, timeout=timeout,
+            )
+            rt = time.time() - t0
+
+            if r.returncode == 0 and output_file.exists():
+                aff = parse_affinity_from_pdbqt(str(output_file))
+                results[tid] = {"status": "OK", "affinity": str(aff) if aff else "", "runtime": f"{rt:.2f}"}
+                ok += 1
+            else:
+                results[tid] = {"status": "FAIL", "affinity": "", "runtime": f"{rt:.2f}"}
+                fail += 1
+        except subprocess.TimeoutExpired:
+            results[tid] = {"status": "TIMEOUT", "affinity": "", "runtime": str(timeout)}
+            fail += 1
+
+        elapsed = time.time() - t_start
+        eta_str = ""
+        if ok + fail > 0:
+            eta = (elapsed / (ok + fail)) * (len(targets) - (ok + fail))
+            if ok + fail < len(targets):
+                remaining = len(targets) - (ok + fail)
+                avg = elapsed / (ok + fail)
+                eta = avg * remaining / 60
+                eta_str = f"ETA ~{eta:.0f}min"
+        if (i + 1) % 50 == 0 or (i + 1) == len(targets):
+            print(f"  [{i+1}/{len(targets)}] {elapsed:.0f}s | OK={ok} FAIL={fail} | {eta_str}")
+
+    write_summary(summary_path, results)
+    wall = time.time() - t_start
+    print(f"\nDone: {ok}/{len(targets)} OK, {fail} FAIL, {wall/60:.1f} min")
+    return results
+
+
+def run_qvina_w_cuda(dataset_info, exp_dir, thread, box_size, timeout, search_depth=0):
+    """QuickVina-W-CUDA — per-target GPU."""
+    data_dir = dataset_info["dir"]
+    lig_sfx = dataset_info["ligand_suffix"]
+    prot_sfx = dataset_info["protein_suffix"]
+    outputs_dir = exp_dir / "outputs"
+    configs_dir = exp_dir / "configs"
+    configs_dir.mkdir(exist_ok=True)
+    summary_path = exp_dir / "summary.csv"
+
+    binary = BINARIES["qvina-w-cuda"]
+    targets = sorted(os.listdir(str(data_dir)))
+    results = {}
+    ok = fail = 0
+
+    t_start = time.time()
+    for i, tid in enumerate(targets):
+        if "/" in lig_sfx:
+            protein = data_dir / tid / lig_sfx.split("/")[-1].replace("flex-xray", "protein")
+            ligand = data_dir / tid / lig_sfx.split("/")[-1]
+        else:
+            protein = data_dir / tid / f"{tid}{prot_sfx}"
+            ligand = data_dir / tid / f"{tid}{lig_sfx}"
+
+        if not protein.exists() or not ligand.exists():
+            results[tid] = {"status": "SKIP", "affinity": "", "runtime": ""}
+            continue
+
+        center = get_center_from_pdbqt(str(ligand))
+        if center is None:
+            results[tid] = {"status": "FAIL", "affinity": "", "runtime": ""}
+            fail += 1
+            continue
+
+        cx, cy, cz = center
+        output_file = outputs_dir / f"{tid}_out.pdbqt"
+
+        t0 = time.time()
+        try:
+            search_depth_part = f' --search_depth {search_depth}' if search_depth > 0 else ''
+            cmd = [
+                "sudo", "bash", "-c",
+                f'ulimit -s 8192 && exec "{binary}" '
+                f'--receptor "{protein}" --ligand "{ligand}" '
+                f'--thread {thread}{search_depth_part} '
+                f'--center_x {cx} --center_y {cy} --center_z {cz} '
+                f'--size_x {box_size} --size_y {box_size} --size_z {box_size} '
+                f'--out "{output_file}"',
+            ]
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+            rt = time.time() - t0
+
+            if r.returncode == 0 and output_file.exists():
+                aff = parse_affinity_from_pdbqt(str(output_file))
+                results[tid] = {"status": "OK", "affinity": str(aff) if aff else "", "runtime": f"{rt:.2f}"}
+                ok += 1
+            else:
+                results[tid] = {"status": "FAIL", "affinity": "", "runtime": f"{rt:.2f}"}
+                fail += 1
+        except subprocess.TimeoutExpired:
+            results[tid] = {"status": "TIMEOUT", "affinity": "", "runtime": str(timeout)}
+            fail += 1
+
+        if (i + 1) % 50 == 0:
+            elapsed = time.time() - t_start
+            eta = elapsed / (i + 1) * (len(targets) - (i + 1)) / 60
+            print(f"  [{i+1}/{len(targets)}] {elapsed:.0f}s | OK={ok} FAIL={fail} | ETA ~{eta:.0f}min")
+
+    write_summary(summary_path, results)
+    wall = time.time() - t_start
+    print(f"\nDone: {ok}/{len(targets)} OK, {fail} FAIL, {wall/60:.1f} min")
+    return results
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Main
+# ══════════════════════════════════════════════════════════════════════════
+
+def main():
+    p = argparse.ArgumentParser(description="Unified docking experiment runner")
+    p.add_argument("--variant", required=True,
+                   choices=["unidock-A", "unidock-B", "vina-cpu", "qvina-w-cuda"])
+    p.add_argument("--dataset", required=True,
+                   choices=list(DATASETS.keys()))
+    p.add_argument("--search-mode", default="fast",
+                   choices=["fast", "balance", "detail"],
+                   help="Uni-Dock search mode (default: fast)")
+    p.add_argument("--scoring", default="vina",
+                   choices=["vina", "vinardo", "ad4"],
+                   help="Uni-Dock scoring function (default: vina)")
+    p.add_argument("--chunk", type=int, default=64,
+                   help="Uni-Dock B chunk size (default: 64)")
+    p.add_argument("--num-modes", type=int, default=9,
+                   help="Number of output poses (default: 9)")
+    p.add_argument("--box-size", type=float, default=22.5,
+                   help="Docking box edge length in Å (default: 22.5)")
+    p.add_argument("--exhaustiveness", type=int, default=8,
+                   help="Vina-CPU exhaustiveness (default: 8)")
+    p.add_argument("--thread", type=int, default=8192,
+                   help="QVina-W-CUDA thread count (default: 8192)")
+    p.add_argument("--search-depth", type=int, default=0,
+                   help="QVina-W-CUDA search depth (0=heuristic, default: 0)")
+    p.add_argument("--max-evals", type=int, default=0,
+                   help="Vina-CPU max_evals per MC run (0=auto heuristic, default: 0)")
+    p.add_argument("--global-steps", type=int, default=0,
+                   help="Vina-CPU MC steps per run (overrides heuristic when > 0)")
+    p.add_argument("--timeout", type=int, default=600,
+                   help="Per-target timeout in seconds (default: 600)")
+    p.add_argument("--tag", type=str, default="",
+                   help="Append tag to experiment directory name")
+    p.add_argument("--out-dir", type=str, default=None,
+                   help="Override output directory")
+    p.add_argument("--dry-run", action="store_true",
+                   help="Preview without executing")
+    args = p.parse_args()
+
+    dataset_info = DATASETS[args.dataset]
+
+    # Build experiment name and directory
+    timestamp = time.strftime("%b%d_%H%M")
+    variant_label = args.variant.replace("-", "_")
+    mode_suffix = f"_{args.search_mode}" if args.variant.startswith("unidock") else ""
+    exp_name = f"{timestamp}_{args.dataset}_{variant_label}{mode_suffix}"
+
+    if args.tag:
+        exp_name += f"_{args.tag}"
+    if args.out_dir:
+        exp_dir = Path(args.out_dir)
+    else:
+        exp_dir = EXPERIMENTS_DIR / exp_name
+
+    exp_dir.mkdir(parents=True, exist_ok=True)
+    (exp_dir / "outputs").mkdir(exist_ok=True)
+
+    # Header
+    print("=" * 60)
+    print(f"  Variant:  {args.variant}")
+    print(f"  Dataset:  {args.dataset}  ({dataset_info['ref_type']})")
+    if args.variant.startswith("unidock"):
+        print(f"  Mode:     {args.search_mode}  |  num_modes={args.num_modes}  |  scoring={args.scoring}")
+    if args.variant == "unidock-B":
+        print(f"  Chunk:    {args.chunk}")
+    if args.variant == "vina-cpu":
+        gs_str = f"  |  global_steps={args.global_steps}" if args.global_steps > 0 else ""
+        print(f"  Exhaust:  {args.exhaustiveness}  |  max_evals={args.max_evals}{gs_str}  |  timeout={args.timeout}s")
+    if args.variant == "qvina-w-cuda":
+        sd_str = f"  |  search_depth={args.search_depth}" if args.search_depth > 0 else " (heuristic)"
+        print(f"  Thread:   {args.thread}{sd_str}  |  timeout={args.timeout}s")
+    print(f"  Box:      {args.box_size}³ Å")
+    print(f"  Output:   {exp_dir}")
+    print("=" * 60)
+
+    if args.dry_run:
+        print("[DRY RUN] No docking executed.")
+        return
+
+    # Execute
+    if args.variant == "unidock-A":
+        run_unidock_a(dataset_info, exp_dir, args.search_mode,
+                      args.box_size, args.num_modes, args.scoring)
+    elif args.variant == "unidock-B":
+        run_unidock_b(dataset_info, exp_dir, args.search_mode,
+                      args.box_size, args.num_modes, args.scoring, args.chunk)
+    elif args.variant == "vina-cpu":
+        run_vina_cpu(dataset_info, exp_dir, args.exhaustiveness,
+                     args.box_size, args.timeout, args.max_evals, args.global_steps)
+    elif args.variant == "qvina-w-cuda":
+        run_qvina_w_cuda(dataset_info, exp_dir, args.thread,
+                         args.box_size, args.timeout, args.search_depth)
+
+    # RMSD analysis
+    print("\n--- RMSD Analysis ---")
+    run_rmsd_analysis(str(exp_dir), dataset_info)
+
+    print(f"\nOutput: {exp_dir}")
+    print(f"  summary.csv")
+    print(f"  rmsd_results.csv")
+    print(f"  outputs/*_out.pdbqt")
+
+    return exp_dir
+
+
+if __name__ == "__main__":
+    main()

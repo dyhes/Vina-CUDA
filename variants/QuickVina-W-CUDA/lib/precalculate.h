@@ -26,52 +26,52 @@
 #include "scoring_function.h"
 #include "matrix.h"
 /*
-  ½á¹¹Ìåprecalculate_element´«ÈëµÄÊı¾İÎªunint nºÍdouble factor
-		fast¡ª¡ªdoubleÏòÁ¿£¬n¸öÏòÁ¿ÔªËØ£¬³õÊ¼»¯È«Îª0£»
-		smooth¡ª¡ª½á¹¹ÌåÏòÁ¿£¬ÓĞÁ½¸ö³ÉÔ±±äÁ¿first¡¢second£¬Á½¸ö±äÁ¿¶¼ÊÇdoubleÀàĞÍ£¬n¸öÏòÁ¿ÔªËØ£¬³õÊ¼»¯È«Îª0£»
-		factor¡ª¡ªdoubleÀàĞÍ£¬µÈÓÚÊäÈëµÄfactor¡£
+  ç»“æ„ä½“precalculate_elementä¼ å…¥çš„æ•°æ®ä¸ºunint nå’Œdouble factor
+		fastâ€”â€”doubleå‘é‡ï¼Œnä¸ªå‘é‡å…ƒç´ ï¼Œåˆå§‹åŒ–å…¨ä¸º0ï¼›
+		smoothâ€”â€”ç»“æ„ä½“å‘é‡ï¼Œæœ‰ä¸¤ä¸ªæˆå‘˜å˜é‡firstã€secondï¼Œä¸¤ä¸ªå˜é‡éƒ½æ˜¯doubleç±»å‹ï¼Œnä¸ªå‘é‡å…ƒç´ ï¼Œåˆå§‹åŒ–å…¨ä¸º0ï¼›
+		factorâ€”â€”doubleç±»å‹ï¼Œç­‰äºè¾“å…¥çš„factorã€‚
 */
-//Àí½âpair
-// pair<int, double> p1;  Ê¹ÓÃÄ¬ÈÏ¹¹Ôìº¯Êı£¬µ±Ò»¸öº¯ÊıĞèÒª·µ»Ø2¸öÊı¾İµÄÊ±ºò£¬Ñ¡ÓÃpairÊµÏÖÊÇÒ»¸ö½á¹¹Ìå£¬
-//Ö÷ÒªµÄÁ½¸ö³ÉÔ±±äÁ¿ÊÇÎªfirst¡¢second ÒòÎªÊÇÊ¹ÓÃstruct²»ÊÇclass£¬ËùÒÔ¿ÉÒÔÖ±½ÓÊ¹ÓÃpairµÄ³ÉÔ±±äÁ¿
+//ç†è§£pair
+// pair<int, double> p1;  ä½¿ç”¨é»˜è®¤æ„é€ å‡½æ•°ï¼Œå½“ä¸€ä¸ªå‡½æ•°éœ€è¦è¿”å›2ä¸ªæ•°æ®çš„æ—¶å€™ï¼Œé€‰ç”¨pairå®ç°æ˜¯ä¸€ä¸ªç»“æ„ä½“ï¼Œ
+//ä¸»è¦çš„ä¸¤ä¸ªæˆå‘˜å˜é‡æ˜¯ä¸ºfirstã€second å› ä¸ºæ˜¯ä½¿ç”¨structä¸æ˜¯classï¼Œæ‰€ä»¥å¯ä»¥ç›´æ¥ä½¿ç”¨pairçš„æˆå‘˜å˜é‡
 //p1.first = 1;
 //p1.second = 2.5;
 //cout << p1.first << p1.second << endl;
-//Êä³ö1  2.5
+//è¾“å‡º1  2.5
 
 struct precalculate_element {
 	precalculate_element(sz n, fl factor_) : fast(n, 0), smooth(n, pr(0, 0)), factor(factor_) {}
 
 	/*
-	input¡ª¡ªr2£ºdouble
-	inter¡ª¡ªi£ºunint
-	output¡ª¡ªfast[i]£ºdoubleÏòÁ¿ÖĞµÚiÎ»µÄÊıÖµ£»
-	fast¡ª¡ªdoubleÏòÁ¿£¬ÏòÁ¿ÔªËØ³õÊ¼»¯È«Îª0£»
-	fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
-	Ê×ÏÈÏÈÅĞ¶Ïr2 * factorÊÇ·ñĞ¡ÓÚfastÏòÁ¿µÄÔªËØ¸öÊı£¬ÊÇµÄ»°¾Í½øĞĞÖ´ĞĞÏÂÃæµÄ³ÌĞò£¬·ñÔòÖÕÖ¹³ÌĞò£»
-	È»ºó¶Ôfactor * r2Ç¿ÖÆÈ¡ÕûµÃµ½i£»
-	×îºóÅĞ¶Ïi ÊÇ·ñĞ¡ÓÚfast.size()£¬ÊÇµÄ»°¾Í½øĞĞÖ´ĞĞÏÂÃæµÄ³ÌĞò¼´·µ»Øfast[i]µÄÖµ£¬·ñÔòÖÕÖ¹³ÌĞò¡£
+	inputâ€”â€”r2ï¼šdouble
+	interâ€”â€”iï¼šunint
+	outputâ€”â€”fast[i]ï¼šdoubleå‘é‡ä¸­ç¬¬iä½çš„æ•°å€¼ï¼›
+	fastâ€”â€”doubleå‘é‡ï¼Œå‘é‡å…ƒç´ åˆå§‹åŒ–å…¨ä¸º0ï¼›
+	fast.size()è®¡ç®—fastå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+	é¦–å…ˆå…ˆåˆ¤æ–­r2 * factoræ˜¯å¦å°äºfastå‘é‡çš„å…ƒç´ ä¸ªæ•°ï¼Œæ˜¯çš„è¯å°±è¿›è¡Œæ‰§è¡Œä¸‹é¢çš„ç¨‹åºï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼›
+	ç„¶åå¯¹factor * r2å¼ºåˆ¶å–æ•´å¾—åˆ°iï¼›
+	æœ€ååˆ¤æ–­i æ˜¯å¦å°äºfast.size()ï¼Œæ˜¯çš„è¯å°±è¿›è¡Œæ‰§è¡Œä¸‹é¢çš„ç¨‹åºå³è¿”å›fast[i]çš„å€¼ï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºã€‚
 	*/
 	fl eval_fast(fl r2) const {
-		assert(r2 * factor < fast.size());//ËüµÄÌõ¼ş·µ»Ø´íÎó£¬ÔòÖÕÖ¹³ÌĞòÖ´ĞĞ
+		assert(r2 * factor < fast.size());//å®ƒçš„æ¡ä»¶è¿”å›é”™è¯¯ï¼Œåˆ™ç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 		sz i = sz(factor * r2);           //r2 is expected < cutoff_sqr, and cutoff_sqr * factor + 1 < n, so no overflow
-		assert(i < fast.size());          //ËüµÄÌõ¼ş·µ»Ø´íÎó£¬ÔòÖÕÖ¹³ÌĞòÖ´ĞĞ
+		assert(i < fast.size());          //å®ƒçš„æ¡ä»¶è¿”å›é”™è¯¯ï¼Œåˆ™ç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 		return fast[i];
 	}
 
 
 	/*
-	input¡ª¡ªr2£ºdouble£»
-	inter¡ª¡ªr2_factored¡¢rem£ºdouble£¬ i1¡¢i2£ºunint, p1¡¢p2£º¹¹Ôìº¯Êı£»
-	output¡ª¡ªpr(e, dor)£º·µ»ØÁ½¸öÊıÖµ£¬¶¼ÎªdoubleÀàĞÍ£»
-	smooth.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
-	smooth¡ª¡ª½á¹¹ÌåÏòÁ¿£¬ÓĞÁ½¸ö³ÉÔ±±äÁ¿first¡¢second£¬Á½¸ö±äÁ¿¶¼ÊÇdoubleÀàĞÍ£¬n¸öÏòÁ¿ÔªËØ£¬³õÊ¼»¯È«Îª0£»
-	epsilon_fl¡ª¡ª¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬ÎÒµÄ¼ÆËã»úÄÜÊ¶±ğµÄ×îĞ¡¸¡µãÊıÊÇ2.22045e-16
+	inputâ€”â€”r2ï¼šdoubleï¼›
+	interâ€”â€”r2_factoredã€remï¼šdoubleï¼Œ i1ã€i2ï¼šunint, p1ã€p2ï¼šæ„é€ å‡½æ•°ï¼›
+	outputâ€”â€”pr(e, dor)ï¼šè¿”å›ä¸¤ä¸ªæ•°å€¼ï¼Œéƒ½ä¸ºdoubleç±»å‹ï¼›
+	smooth.size()è®¡ç®—fastå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+	smoothâ€”â€”ç»“æ„ä½“å‘é‡ï¼Œæœ‰ä¸¤ä¸ªæˆå‘˜å˜é‡firstã€secondï¼Œä¸¤ä¸ªå˜é‡éƒ½æ˜¯doubleç±»å‹ï¼Œnä¸ªå‘é‡å…ƒç´ ï¼Œåˆå§‹åŒ–å…¨ä¸º0ï¼›
+	epsilon_flâ€”â€”è®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼Œæˆ‘çš„è®¡ç®—æœºèƒ½è¯†åˆ«çš„æœ€å°æµ®ç‚¹æ•°æ˜¯2.22045e-16
 
-	Ê×ÏÈÏÈÅĞ¶Ïr2_factored=r2 * factorÊÇ·ñĞ¡ÓÚsmoothÏòÁ¿µÄÔªËØ¸öÊı£¬ÊÇµÄ»°¾Í½øĞĞÖ´ĞĞÏÂÃæµÄ³ÌĞò£¬·ñÔòÖÕÖ¹³ÌĞò£»
-	È»ºó¶Ôr2_factoredÈ¡ÕûµÃµ½i1£¬¶øi2=i1+1£»
-	È»ºóÅĞ¶Ïi1¡¢i2 ÊÇ·ñĞ¡ÓÚsmooth.size()£¬ÊÇµÄ»°¾Í½øĞĞÖ´ĞĞÏÂÃæµÄ³ÌĞò¼´¼ÆËãremÎªfactor * r2µÄĞ¡ÊıÊı¾İ£¬·ñÔòÖÕÖ¹³ÌĞò¡£
-	×îºóÅĞ¶ÏremÊÇ·ñ´óÓÚ-epsilon_flÇÒĞ¡ÓÚ1 + epsilon_fl£¬ÊÇµÄ»°½«½á¹¹ÌåÏòÁ¿smooth[i1]¡¢smooth[i2]ÒÀ´ÎÒıÓÃÎªp1¡¢p2£¬ËùÒÔÓĞp1.first¡¢p1.second¡¢p2.first¡¢p2.second£¬·ñÔòÖÕÖ¹³ÌĞò¡£
+	é¦–å…ˆå…ˆåˆ¤æ–­r2_factored=r2 * factoræ˜¯å¦å°äºsmoothå‘é‡çš„å…ƒç´ ä¸ªæ•°ï¼Œæ˜¯çš„è¯å°±è¿›è¡Œæ‰§è¡Œä¸‹é¢çš„ç¨‹åºï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼›
+	ç„¶åå¯¹r2_factoredå–æ•´å¾—åˆ°i1ï¼Œè€Œi2=i1+1ï¼›
+	ç„¶ååˆ¤æ–­i1ã€i2 æ˜¯å¦å°äºsmooth.size()ï¼Œæ˜¯çš„è¯å°±è¿›è¡Œæ‰§è¡Œä¸‹é¢çš„ç¨‹åºå³è®¡ç®—remä¸ºfactor * r2çš„å°æ•°æ•°æ®ï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºã€‚
+	æœ€ååˆ¤æ–­remæ˜¯å¦å¤§äº-epsilon_flä¸”å°äº1 + epsilon_flï¼Œæ˜¯çš„è¯å°†ç»“æ„ä½“å‘é‡smooth[i1]ã€smooth[i2]ä¾æ¬¡å¼•ç”¨ä¸ºp1ã€p2ï¼Œæ‰€ä»¥æœ‰p1.firstã€p1.secondã€p2.firstã€p2.secondï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºã€‚
 				e   = smooth[sz(factor * r2)].first  + (factor * r2 - sz(factor * r2)) * (smooth[sz(factor * r2)+1].first  - smooth[sz(factor * r2)].first );
 				dor = smooth[sz(factor * r2)].second  + (factor * r2 - sz(factor * r2)) * (smooth[sz(factor * r2)+1].second   - smooth[sz(factor * r2)].second  );
 
@@ -79,15 +79,15 @@ struct precalculate_element {
 
 	pr eval_deriv(fl r2) const {
 		fl r2_factored = factor * r2;         
-		assert(r2_factored + 1 < smooth.size());              //ËüµÄÌõ¼ş·µ»Ø´íÎó£¬ÔòÖÕÖ¹³ÌĞòÖ´ĞĞ
+		assert(r2_factored + 1 < smooth.size());              //å®ƒçš„æ¡ä»¶è¿”å›é”™è¯¯ï¼Œåˆ™ç»ˆæ­¢ç¨‹åºæ‰§è¡Œ
 		sz i1 = sz(r2_factored);
 		sz i2 = i1 + 1;                                      // r2 is expected < cutoff_sqr, and cutoff_sqr * factor + 1 < n, so no overflow
 		assert(i1 < smooth.size());
 		assert(i2 < smooth.size());
 		fl rem = r2_factored - i1;
-		assert(rem >= -epsilon_fl);                          //epsilon_fl¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬ÎÒµÄ¼ÆËã»úÄÜÊ¶±ğµÄ×îĞ¡¸¡µãÊıÊÇ2.22045e-16
+		assert(rem >= -epsilon_fl);                          //epsilon_flè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼Œæˆ‘çš„è®¡ç®—æœºèƒ½è¯†åˆ«çš„æœ€å°æµ®ç‚¹æ•°æ˜¯2.22045e-16
 		assert(rem < 1 + epsilon_fl);
-		const pr& p1 = smooth[i1];	                         //	ÕâÀïµÄ&²»ÊÇ¸³ÖµµØÖ·£¬¶øÊÇÒ»ÖÖÒıÓÃ£¬Ò²¿ÉÒÔËµÊÇ±ğÃû			
+		const pr& p1 = smooth[i1];	                         //	è¿™é‡Œçš„&ä¸æ˜¯èµ‹å€¼åœ°å€ï¼Œè€Œæ˜¯ä¸€ç§å¼•ç”¨ï¼Œä¹Ÿå¯ä»¥è¯´æ˜¯åˆ«å			
 		const pr& p2 = smooth[i2];                           //
 		fl e   = p1.first  + rem * (p2.first  - p1.first);      
 		fl dor = p1.second + rem * (p2.second - p1.second); 
@@ -98,37 +98,37 @@ struct precalculate_element {
 
 
 /*
-input¡ª¡ªrs£ºdoubleÏòÁ¿£»
-inter¡ª¡ªn£ºunint£¬dor¡¢delta¡¢r¡¢f1¡¢f2£ºdouble
-smooth.size()¼ÆËãsmoothÏòÁ¿ÔªËØ¸öÊı£»
-smooth¡ª¡ª½á¹¹ÌåÏòÁ¿£¬ÓĞÁ½¸ö³ÉÔ±±äÁ¿first¡¢second£¬Á½¸ö±äÁ¿¶¼ÊÇdoubleÀàĞÍ£¬ÏòÁ¿ÔªËØ³õÊ¼»¯È«Îª0£»
-fast¡ª¡ªdoubleÏòÁ¿£¬ÏòÁ¿ÔªËØ³õÊ¼»¯È«Îª0£»
-fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
-Ê×ÏÈ¼ÆËãsmoothÏòÁ¿ÔªËØ¸öÊı²¢¸³Öµ¸øn£»
-È»ºóÅĞ¶ÏÊäÈërsÏòÁ¿ÔªËØ¸öÊıºÍfastÏòÁ¿ÔªËØ¸öÊıÊÇ·ñ¶¼Îªn£¬·ñµÄ»°¾ÍÖÕÖ¹³ÌĞò£¬ÊÇµÄ»°¼ÌĞøÏÂÃæ³ÌĞò£»
-×îºóÍ¨¹ıÒ»¸ö0<=i<nÑ­»·£¬Çódor¡¢fastÏòÁ¿ÔªËØ£¬ÆäÖĞdorÎªsmooth[i].second£¬ĞŞ¸Ädor¾ÍµÈĞŞ¸Äsmooth[i].second£º
+inputâ€”â€”rsï¼šdoubleå‘é‡ï¼›
+interâ€”â€”nï¼šunintï¼Œdorã€deltaã€rã€f1ã€f2ï¼šdouble
+smooth.size()è®¡ç®—smoothå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+smoothâ€”â€”ç»“æ„ä½“å‘é‡ï¼Œæœ‰ä¸¤ä¸ªæˆå‘˜å˜é‡firstã€secondï¼Œä¸¤ä¸ªå˜é‡éƒ½æ˜¯doubleç±»å‹ï¼Œå‘é‡å…ƒç´ åˆå§‹åŒ–å…¨ä¸º0ï¼›
+fastâ€”â€”doubleå‘é‡ï¼Œå‘é‡å…ƒç´ åˆå§‹åŒ–å…¨ä¸º0ï¼›
+fast.size()è®¡ç®—fastå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+é¦–å…ˆè®¡ç®—smoothå‘é‡å…ƒç´ ä¸ªæ•°å¹¶èµ‹å€¼ç»™nï¼›
+ç„¶ååˆ¤æ–­è¾“å…¥rså‘é‡å…ƒç´ ä¸ªæ•°å’Œfastå‘é‡å…ƒç´ ä¸ªæ•°æ˜¯å¦éƒ½ä¸ºnï¼Œå¦çš„è¯å°±ç»ˆæ­¢ç¨‹åºï¼Œæ˜¯çš„è¯ç»§ç»­ä¸‹é¢ç¨‹åºï¼›
+æœ€åé€šè¿‡ä¸€ä¸ª0<=i<nå¾ªç¯ï¼Œæ±‚dorã€fastå‘é‡å…ƒç´ ï¼Œå…¶ä¸­dorä¸ºsmooth[i].secondï¼Œä¿®æ”¹dorå°±ç­‰ä¿®æ”¹smooth[i].secondï¼š
 
 
-		¼ÆËãdor£ºÊ×ÏÈ½«ÏòÁ¿µÄµÚÒ»¸öÔªËØºÍ×îºóÒ»¸öÔªËØ¶¼¸øÖµÎª0£¬·ñÔò£º
+		è®¡ç®—dorï¼šé¦–å…ˆå°†å‘é‡çš„ç¬¬ä¸€ä¸ªå…ƒç´ å’Œæœ€åä¸€ä¸ªå…ƒç´ éƒ½ç»™å€¼ä¸º0ï¼Œå¦åˆ™ï¼š
 
-						dor=£¨smooth[i+1].first - smooth[i-1].first£©/£¨rs[i+1] - rs[i-1]£©*rs[i]£©£»
+						dor=ï¼ˆsmooth[i+1].first - smooth[i-1].firstï¼‰/ï¼ˆrs[i+1] - rs[i-1]ï¼‰*rs[i]ï¼‰ï¼›
 
-	    ¼ÆËãfastÏòÁ¿£ºÊ×ÏÈµ±i == n-1Ê±f2=0£»·ñÔòf2=smooth[i+1].first£¬ËùÒÔ£º
+	    è®¡ç®—fastå‘é‡ï¼šé¦–å…ˆå½“i == n-1æ—¶f2=0ï¼›å¦åˆ™f2=smooth[i+1].firstï¼Œæ‰€ä»¥ï¼š
 
-				     	fast[i]=(smooth[i].first+f2)/2¡£
+				     	fast[i]=(smooth[i].first+f2)/2ã€‚
 */
 
 	void init_from_smooth_fst(const flv& rs) {
 		sz n = smooth.size();
-		VINA_CHECK(rs.size() == n);														//assert£¨£©
-		VINA_CHECK(fast.size() == n);												    //assert£¨£©
-		VINA_FOR(i, n) {																//for(uint VINA_MACROS_TMP=n,i=0; i<VINA_MACROS_TMP;i++)Ñ­»·
+		VINA_CHECK(rs.size() == n);														//assertï¼ˆï¼‰
+		VINA_CHECK(fast.size() == n);												    //assertï¼ˆï¼‰
+		VINA_FOR(i, n) {																//for(uint VINA_MACROS_TMP=n,i=0; i<VINA_MACROS_TMP;i++)å¾ªç¯
 			// calculate dor's
-			fl& dor = smooth[i].second;                                                 //ÕâÀïµÄ&²»ÊÇ¸³ÖµµØÖ·£¬¶øÊÇÒ»ÖÖÒıÓÃ£¬Ò²¿ÉÒÔËµÊÇ±ğÃû£¬ĞŞ¸Ädor¾ÍµÈĞŞ¸Äsmooth[i].second	
-			if(i == 0 || i == n-1)                                                      //ÏòÁ¿µÄµÚÒ»¸öÔªËØºÍ×îºóÒ»¸öÔªËØ¶¼Îª0
+			fl& dor = smooth[i].second;                                                 //è¿™é‡Œçš„&ä¸æ˜¯èµ‹å€¼åœ°å€ï¼Œè€Œæ˜¯ä¸€ç§å¼•ç”¨ï¼Œä¹Ÿå¯ä»¥è¯´æ˜¯åˆ«åï¼Œä¿®æ”¹dorå°±ç­‰ä¿®æ”¹smooth[i].second	
+			if(i == 0 || i == n-1)                                                      //å‘é‡çš„ç¬¬ä¸€ä¸ªå…ƒç´ å’Œæœ€åä¸€ä¸ªå…ƒç´ éƒ½ä¸º0
 				dor = 0;
 			else {
-				fl delta = rs[i+1] - rs[i-1];                                           //ÇóÁ½¸ö¼ä¸ôÒ»¸öÔªËØµÄÏòÁ¿ÊıÖµµÄ²îÖµ£¬²¢°ÑÕâ¸ö¼ä¸ôµÄÔªËØ¸³Öµ¸ø r
+				fl delta = rs[i+1] - rs[i-1];                                           //æ±‚ä¸¤ä¸ªé—´éš”ä¸€ä¸ªå…ƒç´ çš„å‘é‡æ•°å€¼çš„å·®å€¼ï¼Œå¹¶æŠŠè¿™ä¸ªé—´éš”çš„å…ƒç´ èµ‹å€¼ç»™ r
 				fl r = rs[i];
 				dor = (smooth[i+1].first - smooth[i-1].first) / (delta * r);		   
 			}
@@ -140,19 +140,19 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 	}
 
 
-/*			²éÕÒsmooth.firstÖĞ×îĞ¡ÖµµÄË÷Òı
-	input¡ª¡ªÎŞ£»
-	inter¡ª¡ªi£ºunint£»
-	output¡ª¡ªtmp£ºunint£»
-	smooth.size()¼ÆËãsmoothÏòÁ¿ÔªËØ¸öÊı£»
-	smooth¡ª¡ª½á¹¹ÌåÏòÁ¿£¬ÓĞÁ½¸ö³ÉÔ±±äÁ¿first¡¢second£¬Á½¸ö±äÁ¿¶¼ÊÇdoubleÀàĞÍ£¬ÏòÁ¿ÔªËØ³õÊ¼»¯È«Îª0£»
+/*			æŸ¥æ‰¾smooth.firstä¸­æœ€å°å€¼çš„ç´¢å¼•
+	inputâ€”â€”æ— ï¼›
+	interâ€”â€”iï¼šunintï¼›
+	outputâ€”â€”tmpï¼šunintï¼›
+	smooth.size()è®¡ç®—smoothå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+	smoothâ€”â€”ç»“æ„ä½“å‘é‡ï¼Œæœ‰ä¸¤ä¸ªæˆå‘˜å˜é‡firstã€secondï¼Œä¸¤ä¸ªå˜é‡éƒ½æ˜¯doubleç±»å‹ï¼Œå‘é‡å…ƒç´ åˆå§‹åŒ–å…¨ä¸º0ï¼›
 	
-	ÏÈ¶Ôtmp¸³³õÖµ0£»
-	×îºóÍ¨¹ıÒ»¸ö0<=i_inv<smooth.sizeÑ­»·¶Ôtmp½øĞĞ¸³Öµ£¬¾ßÌå¹ı³ÌÈçÏÂ£º
+	å…ˆå¯¹tmpèµ‹åˆå€¼0ï¼›
+	æœ€åé€šè¿‡ä¸€ä¸ª0<=i_inv<smooth.sizeå¾ªç¯å¯¹tmpè¿›è¡Œèµ‹å€¼ï¼Œå…·ä½“è¿‡ç¨‹å¦‚ä¸‹ï¼š
 
 								    i = smooth.size() - i_inv - 1; 
 
-					µ±i_inv == 0 »òÊÇ smooth[i].first < smooth[tmp].firstÊ±£º
+					å½“i_inv == 0 æˆ–æ˜¯ smooth[i].first < smooth[tmp].firstæ—¶ï¼š
 
 									tmp = i;
 */
@@ -169,16 +169,16 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 
 
 	/*
-	input¡ª¡ªrs£ºdoubleÏòÁ¿£»left¡¢right£ºdouble£»
-	inter¡ª¡ªtmp£ºÓësmoothÍ¬Ò»ÔªËØÊıÁ¿µÄdoubleÏòÁ¿£¬ min_index£ºunint£¬ optimal_r¡¢r£ºdouble£»
+	inputâ€”â€”rsï¼šdoubleå‘é‡ï¼›leftã€rightï¼šdoubleï¼›
+	interâ€”â€”tmpï¼šä¸smoothåŒä¸€å…ƒç´ æ•°é‡çš„doubleå‘é‡ï¼Œ min_indexï¼šunintï¼Œ optimal_rã€rï¼šdoubleï¼›
 
-	smooth.size()¼ÆËãsmoothÏòÁ¿ÔªËØ¸öÊı£»
-	smooth¡ª¡ª½á¹¹ÌåÏòÁ¿£¬ÓĞÁ½¸ö³ÉÔ±±äÁ¿first¡¢second£¬Á½¸ö±äÁ¿¶¼ÊÇdoubleÀàĞÍ£¬ÏòÁ¿ÔªËØ³õÊ¼»¯È«Îª0£»
+	smooth.size()è®¡ç®—smoothå‘é‡å…ƒç´ ä¸ªæ•°ï¼›
+	smoothâ€”â€”ç»“æ„ä½“å‘é‡ï¼Œæœ‰ä¸¤ä¸ªæˆå‘˜å˜é‡firstã€secondï¼Œä¸¤ä¸ªå˜é‡éƒ½æ˜¯doubleç±»å‹ï¼Œå‘é‡å…ƒç´ åˆå§‹åŒ–å…¨ä¸º0ï¼›
 
-	Ê×ÏÈÊÇµ÷ÓÃÉÏÃæmin_smooth_fst()²éÕÒsmooth.firstÖĞ×îĞ¡ÖµµÄË÷Òı¸³Öµ¸ømin_index£¬
-	²¢ÅĞ¶ÏÊäÈëµÄdoubleÏòÁ¿rsµÄÔªËØ¸öÊıÊÇ·ñ´óÓÚÕâ¸öË÷ÒıÖµ£¬ÒÔ¼°ÊÇ·ñsmoothµÄÔªËØ¸öÊıÏàµÈ£¬ÊÇµÄ»°½ÌÑµÏÂÃæ³ÌĞò£¬·ñÔòÖÕÖ¹³ÌĞò£»
-	È»ºóÍ¨¹ı0<=i<smooth.sizeÑ­»·¶Ôtmp[i]¸³Öµ£º
-					    //ÕâÀïrs[i]ĞŞ¸Ä²»»áĞŞ¸ÄÊäÈëµÄrs[i]£¬ÒòÎªÊÇÍ¨¹ır²Ù×÷£»
+	é¦–å…ˆæ˜¯è°ƒç”¨ä¸Šé¢min_smooth_fst()æŸ¥æ‰¾smooth.firstä¸­æœ€å°å€¼çš„ç´¢å¼•èµ‹å€¼ç»™min_indexï¼Œ
+	å¹¶åˆ¤æ–­è¾“å…¥çš„doubleå‘é‡rsçš„å…ƒç´ ä¸ªæ•°æ˜¯å¦å¤§äºè¿™ä¸ªç´¢å¼•å€¼ï¼Œä»¥åŠæ˜¯å¦smoothçš„å…ƒç´ ä¸ªæ•°ç›¸ç­‰ï¼Œæ˜¯çš„è¯æ•™è®­ä¸‹é¢ç¨‹åºï¼Œå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼›
+	ç„¶åé€šè¿‡0<=i<smooth.sizeå¾ªç¯å¯¹tmp[i]èµ‹å€¼ï¼š
+					    //è¿™é‡Œrs[i]ä¿®æ”¹ä¸ä¼šä¿®æ”¹è¾“å…¥çš„rs[i]ï¼Œå› ä¸ºæ˜¯é€šè¿‡ræ“ä½œï¼›
 						if (rs[i] < rs[min_index] - left ) 
 								rs[i] = r+left;
 						else if(rs[i] > rs[min_index]+ right)
@@ -189,11 +189,11 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 						if(rs[i] < 0) 
 							rs[i] = 0;
 						if(rs[i] > rs.back())
-						    rs[i] = rs.back();                   //rs.back() ·µ»Ørs×îÄ©Ò»¸öÔªËØ
+						    rs[i] = rs.back();                   //rs.back() è¿”å›rsæœ€æœ«ä¸€ä¸ªå…ƒç´ 
 
-						tmp[i] = eval_deriv(rs[i]^2).first;      //eval_deriv()º¯Êı·µ»Øpr(e, dor)£¬ËùÒÔ.firstÓ¦¸ÃÈ¡ÖµeµÄÖµ
+						tmp[i] = eval_deriv(rs[i]^2).first;      //eval_deriv()å‡½æ•°è¿”å›pr(e, dor)ï¼Œæ‰€ä»¥.firståº”è¯¥å–å€¼eçš„å€¼
 
-	×îºóÍ¨¹ı0<=i<smooth.sizeÑ­»·¶Ôsmooth[i].first]¸³Öµ£º
+	æœ€åé€šè¿‡0<=i<smooth.sizeå¾ªç¯å¯¹smooth[i].first]èµ‹å€¼ï¼š
 
 						smooth[i].first = tmp[i];
 
@@ -201,7 +201,7 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 
 	void widen_smooth_fst(const flv& rs, fl left, fl right) {
 		flv tmp(smooth.size(), 0);								// the new smooth[].first
-		sz min_index = min_smooth_fst();						// smooth.firstÖĞ×îĞ¡ÖµµÄË÷Òı
+		sz min_index = min_smooth_fst();						// smooth.firstä¸­æœ€å°å€¼çš„ç´¢å¼•
 		VINA_CHECK(min_index < rs.size());					    //assert // won't hold for n == 0
 		VINA_CHECK(rs.size() == smooth.size());					//assert
 		fl optimal_r   = rs[min_index];							//
@@ -212,9 +212,9 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 			else                           r = optimal_r;
 
 			if(r < 0) r = 0;
-			if(r > rs.back()) r = rs.back();                   //back() ·µ»Ø×îÄ©Ò»¸öÔªËØ
+			if(r > rs.back()) r = rs.back();                   //back() è¿”å›æœ€æœ«ä¸€ä¸ªå…ƒç´ 
 
-			tmp[i] = eval_deriv(sqr(r)).first;                 //eval_deriv()º¯Êı·µ»Øpr(e, dor)
+			tmp[i] = eval_deriv(sqr(r)).first;                 //eval_deriv()å‡½æ•°è¿”å›pr(e, dor)
 		}
 		VINA_FOR_IN(i, smooth)									//for(uint VINA_MACROS_TMP=smooth.size,i=0; i<VINA_MACROS_TMP;i++)                         
 			smooth[i].first = tmp[i];
@@ -222,8 +222,8 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 
 
 
-    /*Õâ¸öº¯ÊıÖ÷Òªµ÷ÓÃÁËÉÏÃæwiden_smooth_fstº¯ÊıºÍinit_from_smooth_fstº¯Êı£»
-	input¡ª¡ªrs£ºdoubleÏòÁ¿£¬left¡¢right£ºdouble£»
+    /*è¿™ä¸ªå‡½æ•°ä¸»è¦è°ƒç”¨äº†ä¸Šé¢widen_smooth_fstå‡½æ•°å’Œinit_from_smooth_fstå‡½æ•°ï¼›
+	inputâ€”â€”rsï¼šdoubleå‘é‡ï¼Œleftã€rightï¼šdoubleï¼›
 	*/
 
 	void widen(const flv& rs, fl left, fl right) {
@@ -232,61 +232,61 @@ fast.size()¼ÆËãfastÏòÁ¿ÔªËØ¸öÊı£»
 	}
 
 
-	flv fast;                           //doubleÏòÁ¿
-	prv smooth;                         //½á¹¹ÌåÏòÁ¿
+	flv fast;                           //doubleå‘é‡
+	prv smooth;                         //ç»“æ„ä½“å‘é‡
 	fl factor;                          //double
 };
 
 
 
 /*
-      input¡ª¡ªsf£ºscoring_function½á¹¹Ìå;   v:¼ÆËã»úÄÜÊ¶±ğµÄdoubleÊı¿É±íÊ¾µÄ×î´óÖµ£¬ÎÒµÄ¼ÆËã»úÄÜÊ¶±ğµÄ×î´ódoubleÊıÊÇ00DB17EE,
-	  factor_:doubleÀàĞÍ³õÊ¼Öµ32£¬ 
-	  data¡ª¡ªÄ£°å²ÎÊıÎªprecalculate_element½á¹¹ÌåµÄtriangular_matrix½á¹¹Ìå£»
-	  m_cutoff_sqr=weighted_terms½á¹¹ÌåÖĞÖØ¹¹µÄcutoff£¨£©º¯ÊıµÄ·µ»ØÖµcutoff_µÄÆ½·½£»
-	  n=unint£¨m_cutoff_sqr*factor_£©+3£»factor=factor_(³õÊ¼Öµ)£»
-	  data½á¹¹ÌåÖĞÏòÁ¿m_data={Ô­×ÓÊıÀàĞÍunint*£¨Ô­×ÓÊıÀàĞÍunint-1£©/2£¬ÊäÈë£¨n,factor_£©Îªprecalculate_element½á¹¹Ìå}£»
-	  m_dim=Ô­×ÓÊıÀàĞÍunint£»
-	  m_atom_typing_usedÊÇÔ­×ÓÊıÀàĞÍÃ¶¾ÙÀàĞÍ£»
-		×î¿ªÊ¼Òª±£Ö¤factor´óÓÚ¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¨2.22045e-16£©£¬²¢ÇÒnÒª´óÓÚsz(m_cutoff_sqr*factor) + 1ºÍm_cutoff_sqr*factor + 1 
+      inputâ€”â€”sfï¼šscoring_functionç»“æ„ä½“;   v:è®¡ç®—æœºèƒ½è¯†åˆ«çš„doubleæ•°å¯è¡¨ç¤ºçš„æœ€å¤§å€¼ï¼Œæˆ‘çš„è®¡ç®—æœºèƒ½è¯†åˆ«çš„æœ€å¤§doubleæ•°æ˜¯00DB17EE,
+	  factor_:doubleç±»å‹åˆå§‹å€¼32ï¼Œ 
+	  dataâ€”â€”æ¨¡æ¿å‚æ•°ä¸ºprecalculate_elementç»“æ„ä½“çš„triangular_matrixç»“æ„ä½“ï¼›
+	  m_cutoff_sqr=weighted_termsç»“æ„ä½“ä¸­é‡æ„çš„cutoffï¼ˆï¼‰å‡½æ•°çš„è¿”å›å€¼cutoff_çš„å¹³æ–¹ï¼›
+	  n=unintï¼ˆm_cutoff_sqr*factor_ï¼‰+3ï¼›factor=factor_(åˆå§‹å€¼)ï¼›
+	  dataç»“æ„ä½“ä¸­å‘é‡m_data={åŸå­æ•°ç±»å‹unint*ï¼ˆåŸå­æ•°ç±»å‹unint-1ï¼‰/2ï¼Œè¾“å…¥ï¼ˆn,factor_ï¼‰ä¸ºprecalculate_elementç»“æ„ä½“}ï¼›
+	  m_dim=åŸå­æ•°ç±»å‹unintï¼›
+	  m_atom_typing_usedæ˜¯åŸå­æ•°ç±»å‹æšä¸¾ç±»å‹ï¼›
+		æœ€å¼€å§‹è¦ä¿è¯factorå¤§äºè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼ˆ2.22045e-16ï¼‰ï¼Œå¹¶ä¸”nè¦å¤§äºsz(m_cutoff_sqr*factor) + 1å’Œm_cutoff_sqr*factor + 1 
 	  
 
 */
 struct precalculate {
 	    precalculate(const scoring_function& sf, fl v = max_fl, fl factor_ = 32) : // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
-		m_cutoff_sqr(sqr(sf.cutoff())),     //·µ»Øweighted_terms½á¹¹ÌåÖĞÖØ¹¹µÄcutoff£¨£©º¯ÊıµÄ·µ»ØÖµcutoff_µÄÆ½·½
+		m_cutoff_sqr(sqr(sf.cutoff())),     //è¿”å›weighted_termsç»“æ„ä½“ä¸­é‡æ„çš„cutoffï¼ˆï¼‰å‡½æ•°çš„è¿”å›å€¼cutoff_çš„å¹³æ–¹
 		n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
 		factor(factor_),
 
-		data(num_atom_types(sf.atom_typing_used()), precalculate_element(n, factor_)),//num_atom_types£¨£©º¯Êı·µ»Øweighted_terms½á¹¹ÌåÖĞatom_typing_used_Ëù±íÊ¾Ô­×ÓÊıÀàĞÍunint
+		data(num_atom_types(sf.atom_typing_used()), precalculate_element(n, factor_)),//num_atom_typesï¼ˆï¼‰å‡½æ•°è¿”å›weighted_termsç»“æ„ä½“ä¸­atom_typing_used_æ‰€è¡¨ç¤ºåŸå­æ•°ç±»å‹unint
 			//strictly_triangular_matrix(sz n, const T& filler_val) : m_data(n*(n - 1) / 2, filler_val), m_dim(n) {}
 			
 			m_atom_typing_used(sf.atom_typing_used()) {                                   //
 
-		VINA_CHECK(factor > epsilon_fl);              //factor´óÓÚ¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬ÎÒµÄ¼ÆËã»úÄÜÊ¶±ğµÄ×îĞ¡¸¡µãÊıÊÇ2.22045e-16
+		VINA_CHECK(factor > epsilon_fl);              //factorå¤§äºè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼Œæˆ‘çš„è®¡ç®—æœºèƒ½è¯†åˆ«çš„æœ€å°æµ®ç‚¹æ•°æ˜¯2.22045e-16
 		VINA_CHECK(sz(m_cutoff_sqr*factor) + 1 < n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
 		VINA_CHECK(m_cutoff_sqr*factor + 1 < n);
 
-		flv rs = calculate_rs();                                                   //rs[i]=£¨i/factor£©^(1/2);(0-n)
+		flv rs = calculate_rs();                                                   //rs[i]=ï¼ˆi/factorï¼‰^(1/2);(0-n)
 														                          
-		VINA_FOR(t1, data.dim())                                                  //for(t1=0;t1<m_dim;t1++)  m_dim=Ô­×ÓÊıÀàĞÍunint
-			VINA_RANGE(t2, t1, data.dim()) {                                      //for(t2=t1;i<m_dim;t2++) Ç¶Ì×Ñ­»· m_dim£¡´Î
-				precalculate_element& p = data(t1, t2);	                         //ÒıÓÃ data£¨t1, t2£©½á¹¹Ìå                        
+		VINA_FOR(t1, data.dim())                                                  //for(t1=0;t1<m_dim;t1++)  m_dim=åŸå­æ•°ç±»å‹unint
+			VINA_RANGE(t2, t1, data.dim()) {                                      //for(t2=t1;i<m_dim;t2++) åµŒå¥—å¾ªç¯ m_dimï¼æ¬¡
+				precalculate_element& p = data(t1, t2);	                         //å¼•ç”¨ dataï¼ˆt1, t2ï¼‰ç»“æ„ä½“                        
 				// init smooth[].first					                          
 				VINA_FOR_IN(i, p.smooth)                                          //for(i=0;i<smooth.size;i++)
-					p.smooth[i].first = (std::min)(v, sf.eval(t1, t2, rs[i]));   // sf.eval(t1, t2, rs[i]·µ»Ø³ËÀÛ¼Ó½á¹û£¬
-																				  //²¢È¡¼ÆËã»úÄÜÈ¡µ½×î´ódoubleÖµºÍ³ËÀÛ¼Ó½á¹ûµÄ×îĞ¡Öµ
+					p.smooth[i].first = (std::min)(v, sf.eval(t1, t2, rs[i]));   // sf.eval(t1, t2, rs[i]è¿”å›ä¹˜ç´¯åŠ ç»“æœï¼Œ
+																				  //å¹¶å–è®¡ç®—æœºèƒ½å–åˆ°æœ€å¤§doubleå€¼å’Œä¹˜ç´¯åŠ ç»“æœçš„æœ€å°å€¼
 
 				// init the rest
-				p.init_from_smooth_fst(rs);                                       //³õÊ¼»¯
+				p.init_from_smooth_fst(rs);                                       //åˆå§‹åŒ–
 			}
 	}
 
 /*	
-	input¡ª¡ªtype_pair_index£ºunint£¬r2£ºdouble£»
-    m_cutoff_sqr=weighted_terms½á¹¹ÌåÖĞÖØ¹¹µÄcutoff£¨£©º¯ÊıµÄ·µ»ØÖµcutoff_µÄÆ½·½£»
-	±£Ö¤ÊäÈëµÄr2<= m_cutoff_sqr£»
-	×îºó·µ»Øfast[sz(factor * r2)},	precalculate_element½á¹¹ÌåÖĞfast¡ª¡ªdoubleÏòÁ¿£¬ÏòÁ¿ÔªËØ³õÊ¼»¯È«Îª0£»
+	inputâ€”â€”type_pair_indexï¼šunintï¼Œr2ï¼šdoubleï¼›
+    m_cutoff_sqr=weighted_termsç»“æ„ä½“ä¸­é‡æ„çš„cutoffï¼ˆï¼‰å‡½æ•°çš„è¿”å›å€¼cutoff_çš„å¹³æ–¹ï¼›
+	ä¿è¯è¾“å…¥çš„r2<= m_cutoff_sqrï¼›
+	æœ€åè¿”å›fast[sz(factor * r2)},	precalculate_elementç»“æ„ä½“ä¸­fastâ€”â€”doubleå‘é‡ï¼Œå‘é‡å…ƒç´ åˆå§‹åŒ–å…¨ä¸º0ï¼›
 */
 	fl eval_fast(sz type_pair_index, fl r2) const {
 		assert(r2 <= m_cutoff_sqr);
@@ -294,10 +294,10 @@ struct precalculate {
 	}
 
 	/*
-		input¡ª¡ªtype_pair_index£ºunint£¬r2£ºdouble£»
-		m_cutoff_sqr=weighted_terms½á¹¹ÌåÖĞÖØ¹¹µÄcutoff£¨£©º¯ÊıµÄ·µ»ØÖµcutoff_µÄÆ½·½£»
-		±£Ö¤ÊäÈëµÄr2<= m_cutoff_sqr£»
-		×îºó·µ»Ø(e, dor)£»
+		inputâ€”â€”type_pair_indexï¼šunintï¼Œr2ï¼šdoubleï¼›
+		m_cutoff_sqr=weighted_termsç»“æ„ä½“ä¸­é‡æ„çš„cutoffï¼ˆï¼‰å‡½æ•°çš„è¿”å›å€¼cutoff_çš„å¹³æ–¹ï¼›
+		ä¿è¯è¾“å…¥çš„r2<= m_cutoff_sqrï¼›
+		æœ€åè¿”å›(e, dor)ï¼›
 		e   = smooth[sz(factor * r2)].first  + (factor * r2 - sz(factor * r2)) * (smooth[sz(factor * r2)+1].first  - smooth[sz(factor * r2)].first );
 		dor = smooth[sz(factor * r2)].second  + (factor * r2 - sz(factor * r2)) * (smooth[sz(factor * r2)+1].second   - smooth[sz(factor * r2)].second  );
 
@@ -309,27 +309,27 @@ struct precalculate {
 	}
 
 
-	sz index_permissive(sz t1, sz t2) const { return data.index_permissive(t1, t2); }//·µ»Ø (t1 < t2) ? index(t1, t2) : index(t2, t1)
-	atom_type::t atom_typing_used() const { return m_atom_typing_used; }             //·µ»Ø Ô­×ÓÊıÀàĞÍÃ¶¾ÙÀàĞÍ
-	fl cutoff_sqr() const { return m_cutoff_sqr; }                                   //·µ»Øm_cutoff_sqr=weighted_terms½á¹¹ÌåÖĞÖØ¹¹µÄcutoff£¨£©º¯ÊıµÄ·µ»ØÖµ
-																				    //cutoff_µÄÆ½·½£»
+	sz index_permissive(sz t1, sz t2) const { return data.index_permissive(t1, t2); }//è¿”å› (t1 < t2) ? index(t1, t2) : index(t2, t1)
+	atom_type::t atom_typing_used() const { return m_atom_typing_used; }             //è¿”å› åŸå­æ•°ç±»å‹æšä¸¾ç±»å‹
+	fl cutoff_sqr() const { return m_cutoff_sqr; }                                   //è¿”å›m_cutoff_sqr=weighted_termsç»“æ„ä½“ä¸­é‡æ„çš„cutoffï¼ˆï¼‰å‡½æ•°çš„è¿”å›å€¼
+																				    //cutoff_çš„å¹³æ–¹ï¼›
 
 	/*
 	
 	
 	*/
 	void widen(fl left, fl right) {
-		flv rs = calculate_rs();                           //rs[i]=£¨i/factor£©^(1/2);(0-n)   
-		VINA_FOR(t1, data.dim())                          //for(t1=0;t1<m_dim;t1++)£»m_dim=Ô­×ÓÊıÀàĞÍunint
-			VINA_RANGE(t2, t1, data.dim())                //for(t2=t1;i<m_dim;t2++) Ç¶Ì×Ñ­»· m_dim£¡´Î
-				data(t1, t2).widen(rs, left, right);     //µ÷ÓÃÁËÉÏÃæwiden_smooth_fstº¯ÊıºÍinit_from_smooth_fstº¯Êı
+		flv rs = calculate_rs();                           //rs[i]=ï¼ˆi/factorï¼‰^(1/2);(0-n)   
+		VINA_FOR(t1, data.dim())                          //for(t1=0;t1<m_dim;t1++)ï¼›m_dim=åŸå­æ•°ç±»å‹unint
+			VINA_RANGE(t2, t1, data.dim())                //for(t2=t1;i<m_dim;t2++) åµŒå¥—å¾ªç¯ m_dimï¼æ¬¡
+				data(t1, t2).widen(rs, left, right);     //è°ƒç”¨äº†ä¸Šé¢widen_smooth_fstå‡½æ•°å’Œinit_from_smooth_fstå‡½æ•°
 	}
 
 
 public:
 
 	/* 
-	º¯Êı·µ»ØdoubleÏòÁ¿tmp£¬tmpÖĞµÄÖµÎª£¨i/factor£©^(1/2)
+	å‡½æ•°è¿”å›doubleå‘é‡tmpï¼Œtmpä¸­çš„å€¼ä¸ºï¼ˆi/factorï¼‰^(1/2)
 	*/
 	flv calculate_rs() const {
 		flv tmp(n, 0);
@@ -343,9 +343,9 @@ public:
 	fl m_cutoff_sqr;                                          //double
 	sz n;													  //unint 
 	fl factor;												  //double
-	atom_type::t m_atom_typing_used;                          //atom_type::tÃ¶¾ÙĞÍ
+	atom_type::t m_atom_typing_used;                          //atom_type::tæšä¸¾å‹
 
-	triangular_matrix<precalculate_element> data;             //Ä£°å²ÎÊıÎªprecalculate_element½á¹¹ÌåµÄtriangular_matrix½á¹¹Ìå
+	triangular_matrix<precalculate_element> data;             //æ¨¡æ¿å‚æ•°ä¸ºprecalculate_elementç»“æ„ä½“çš„triangular_matrixç»“æ„ä½“
 
 };
 

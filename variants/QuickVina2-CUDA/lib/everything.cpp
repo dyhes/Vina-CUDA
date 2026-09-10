@@ -25,17 +25,17 @@
 
 
 
-// distance_additive terms   ÊäÈëdoubleÀàĞÍµÄx   width  Êä³öeµÄ£¨-£¨x/width£©µÄÆ½·½£© double
+// distance_additive terms   è¾“å…¥doubleç±»å‹çš„x   width  è¾“å‡ºeçš„ï¼ˆ-ï¼ˆx/widthï¼‰çš„å¹³æ–¹ï¼‰ double
 inline fl gaussian(fl x, fl width) {
 	return std::exp(-sqr(x/width));
 }
 
 
-/*½á¹¹Ìåelectrostatic¼Ì³Ğdistance_additive    ¶¨ÒåÄ£°å²ÎÊıUINTÀàĞÍi
-* ¶¨Òådouble   cap
-* º¯Êıelectrostatic¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìåa¡¢b  double r  Êä³ödouble      
-	·µ»Øcharge1*charge2 * cap»òÕßrµÄi´Î·½·ÖÖ®Ò»ºÍcapµÄ½ÏĞ¡Öµ
+/*ç»“æ„ä½“electrostaticç»§æ‰¿distance_additive    å®šä¹‰æ¨¡æ¿å‚æ•°UINTç±»å‹i
+* å®šä¹‰double   cap
+* å‡½æ•°electrostaticç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“aã€b  double r  è¾“å‡ºdouble      
+	è¿”å›charge1*charge2 * capæˆ–è€…rçš„iæ¬¡æ–¹åˆ†ä¹‹ä¸€å’Œcapçš„è¾ƒå°å€¼
 */
 template<unsigned i>
 struct electrostatic : public distance_additive {
@@ -44,30 +44,30 @@ struct electrostatic : public distance_additive {
 		name = std::string("electrostatic(i=") + to_string(i) + ", ^=" + to_string(cap) + ", c=" + to_string(cutoff) + ")";
 	}
 	fl eval(const atom_base& a, const atom_base& b, fl r) const {
-		fl tmp = int_pow<i>(r);   //rµÄi´Î·½
+		fl tmp = int_pow<i>(r);   //rçš„iæ¬¡æ–¹
 		fl q1q2 = a.charge * b.charge;//charge1*charge2
 		if(tmp < epsilon_fl) return q1q2 * cap;//epsilon_fl   2.2204460492503131e-016   
-		else                 return q1q2 * (std::min)(cap, 1/int_pow<i>(r));//·µ»Ø  rµÄi´Î·½·ÖÖ®Ò»ºÍcapµÄ½ÏĞ¡Öµ
+		else                 return q1q2 * (std::min)(cap, 1/int_pow<i>(r));//è¿”å›  rçš„iæ¬¡æ–¹åˆ†ä¹‹ä¸€å’Œcapçš„è¾ƒå°å€¼
 	}
 };        
 /*
-function£º
-ÊäÈë£º½á¹¹Ìå  Ô­×ÓÀàĞÍ  Êä³ö  doubleÀàĞÍÊı¾İ
-* ÅĞ¶Ï  Èç¹û½á¹¹ÌåµÄ²ÎÊıad<16 Ôò·µ»ØÊı×éatom_kind_data[ad]ÖĞµÄsolvation  Êı×éÊÇ½á¹¹ÌåÀàĞÍµÄ
- Èç¹û½á¹¹ÌåµÄ²ÎÊıxs<16Ôò·µ»Ø-0.00110
+functionï¼š
+è¾“å…¥ï¼šç»“æ„ä½“  åŸå­ç±»å‹  è¾“å‡º  doubleç±»å‹æ•°æ®
+* åˆ¤æ–­  å¦‚æœç»“æ„ä½“çš„å‚æ•°ad<16 åˆ™è¿”å›æ•°ç»„atom_kind_data[ad]ä¸­çš„solvation  æ•°ç»„æ˜¯ç»“æ„ä½“ç±»å‹çš„
+ å¦‚æœç»“æ„ä½“çš„å‚æ•°xs<16åˆ™è¿”å›-0.00110
 
 */
 fl solvation_parameter(const atom_type& a) {
-	if(a.ad < AD_TYPE_SIZE) return ad_type_property(a.ad).solvation;//ad<20    ·µ»ØÊı×éatom_kind_data[ad]ÖĞµÄsolvation  Êı×éÊÇ½á¹¹ÌåÀàĞÍµÄ
+	if(a.ad < AD_TYPE_SIZE) return ad_type_property(a.ad).solvation;//ad<20    è¿”å›æ•°ç»„atom_kind_data[ad]ä¸­çš„solvation  æ•°ç»„æ˜¯ç»“æ„ä½“ç±»å‹çš„
 	else if(a.xs == XS_TYPE_Met_D) return metal_solvation_parameter;//metal_solvation_parameter = -0.00110
 	VINA_CHECK(false); 
 	return 0; // placating the compiler
 }                
 /*
-function£º
-ÊäÈë£º½á¹¹Ìå  Ô­×ÓÀàĞÍ  Êä³ö  doubleÀàĞÍÊı¾İ
-* ÅĞ¶Ï  Èç¹û½á¹¹ÌåµÄ²ÎÊıad<16 Ôò·µ»ØÊı×éatom_kind_data[ad]ÖĞµÄvolume  Êı×éÊÇ½á¹¹ÌåÀàĞÍµÄ
- Èç¹û½á¹¹ÌåµÄ²ÎÊıxs<17Ôò·µ»Ø £¨xs_vdw_radii[xs]£©µÄÈı´Î·½*4*pi / 3  
+functionï¼š
+è¾“å…¥ï¼šç»“æ„ä½“  åŸå­ç±»å‹  è¾“å‡º  doubleç±»å‹æ•°æ®
+* åˆ¤æ–­  å¦‚æœç»“æ„ä½“çš„å‚æ•°ad<16 åˆ™è¿”å›æ•°ç»„atom_kind_data[ad]ä¸­çš„volume  æ•°ç»„æ˜¯ç»“æ„ä½“ç±»å‹çš„
+ å¦‚æœç»“æ„ä½“çš„å‚æ•°xs<17åˆ™è¿”å› ï¼ˆxs_vdw_radii[xs]ï¼‰çš„ä¸‰æ¬¡æ–¹*4*pi / 3  
 
 */
 fl volume(const atom_type& a) {
@@ -77,11 +77,11 @@ fl volume(const atom_type& a) {
 	return 0; // placating the compiler
 }                
 
-/*½á¹¹Ìåad4_solvation ¼Ì³Ğdistance_additive    
-* ¶¨Òådouble    desolvation_sigma;solvation_q  boolÀàĞÍ  charge_dependent
-* º¯Êıad4_solvation¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìåa¡¢b  double r  
-	·µ»ØdoubleÀàĞÍµÄÊıtmp
+/*ç»“æ„ä½“ad4_solvation ç»§æ‰¿distance_additive    
+* å®šä¹‰double    desolvation_sigma;solvation_q  boolç±»å‹  charge_dependent
+* å‡½æ•°ad4_solvationç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“aã€b  double r  
+	è¿”å›doubleç±»å‹çš„æ•°tmp
 */
 struct ad4_solvation : public distance_additive {
 	fl desolvation_sigma;
@@ -89,7 +89,7 @@ struct ad4_solvation : public distance_additive {
 	bool charge_dependent;
 	ad4_solvation(fl desolvation_sigma_, fl solvation_q_, bool charge_dependent_, fl cutoff_) : distance_additive(cutoff_), solvation_q(solvation_q_), charge_dependent(charge_dependent_), desolvation_sigma(desolvation_sigma_) {
 		name = std::string("ad4_solvation(d-sigma=") + to_string(desolvation_sigma) + ", s/q=" + to_string(solvation_q) + ", q=" + to_string(charge_dependent) + ", c=" + to_string(cutoff) + ")";
-	}//   name±»¸³Öµ ad4_solvation(d-sigma=    ,s/q=   ,q=     ,c=    )¡±
+	}//   nameè¢«èµ‹å€¼ ad4_solvation(d-sigma=    ,s/q=   ,q=     ,c=    )â€
 	fl eval(const atom_base& a, const atom_base& b, fl r) const {
 		fl q1 = a.charge;
 		fl q2 = b.charge;
@@ -116,33 +116,33 @@ struct ad4_solvation : public distance_additive {
 	}
 };
 /*
-¶¨ÒådoubleÀàĞÍµÄº¯Êı    ÊäÈë  uint xs_t1¡¢xs_t2   ÊäÈëdouble £ºÊı×éÖĞµÄÊı¾İ xs_vdw_radii[xs_t1]+xs_vdw_radii[xs_t2]
+å®šä¹‰doubleç±»å‹çš„å‡½æ•°    è¾“å…¥  uint xs_t1ã€xs_t2   è¾“å…¥double ï¼šæ•°ç»„ä¸­çš„æ•°æ® xs_vdw_radii[xs_t1]+xs_vdw_radii[xs_t2]
 */
 inline fl optimal_distance(sz xs_t1, sz xs_t2) {
 	return xs_radius(xs_t1) + xs_radius(xs_t2);    
 }
-/*½á¹¹Ìågauss¼Ì³Ğusable    
-* ¶¨Òådouble   offset   width
-* º¯Êıgauss¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ gauss(o=     ,w=    ,c=     )
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈëdoubleÀàĞÍt1   t2  r     Êä³ödouble
-	·µ»ØeµÄ-{(r-xs_vdw_radii[xs_t1]-xs_vdw_radii[xs_t2]-offset)/width}µÄÆ½·½
+/*ç»“æ„ä½“gaussç»§æ‰¿usable    
+* å®šä¹‰double   offset   width
+* å‡½æ•°gaussç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ gauss(o=     ,w=    ,c=     )
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥doubleç±»å‹t1   t2  r     è¾“å‡ºdouble
+	è¿”å›eçš„-{(r-xs_vdw_radii[xs_t1]-xs_vdw_radii[xs_t2]-offset)/width}çš„å¹³æ–¹
 */
 struct gauss : public usable {
 	fl offset; // added to optimal distance
 	fl width;
 	gauss(fl offset_, fl width_, fl cutoff_) : usable(cutoff_), offset(offset_), width(width_) {
 		name = std::string("gauss(o=") + to_string(offset) + ", w=" + to_string(width) + ", c=" + to_string(cutoff) + ")";
-	}//name±»¸³Öµ gauss(o=, w=, c = )
+	}//nameè¢«èµ‹å€¼ gauss(o=, w=, c = )
 	fl eval(sz t1, sz t2, fl r) const {
 		return gaussian(r - (optimal_distance(t1, t2) + offset), width);
-	}// eµÄ-{(r-xs_vdw_radii[xs_t1]-xs_vdw_radii[xs_t2]-offset)/width}µÄÆ½·½
+	}// eçš„-{(r-xs_vdw_radii[xs_t1]-xs_vdw_radii[xs_t2]-offset)/width}çš„å¹³æ–¹
 };
 
-/*½á¹¹Ìårepulsion¼Ì³Ğusable
-* ¶¨Òådouble   offset   
-* º¯Êıgauss¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ repulsion(o=     )
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈëdoubleÀàĞÍt1   t2  r     Êä³ödouble
-	·µ»Ø£¨r-xs_vdw_radii[t1]-xs_vdw_radii[t2]-offset£©µÄÆ½·½
+/*ç»“æ„ä½“repulsionç»§æ‰¿usable
+* å®šä¹‰double   offset   
+* å‡½æ•°gaussç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ repulsion(o=     )
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥doubleç±»å‹t1   t2  r     è¾“å‡ºdouble
+	è¿”å›ï¼ˆr-xs_vdw_radii[t1]-xs_vdw_radii[t2]-offsetï¼‰çš„å¹³æ–¹
 */
 
 
@@ -153,12 +153,12 @@ struct repulsion : public usable {
 	}
 	fl eval(sz t1, sz t2, fl r) const {
 		fl d = r - (optimal_distance(t1, t2) + offset);//d=r-xs_vdw_radii[t1]-xs_vdw_radii[t2]-offset
-		if(d > 0) //ÅĞ¶Ïd>0
+		if(d > 0) //åˆ¤æ–­d>0
 			return 0;
-		return d*d;//·µ»ØdµÄÆ½·½
+		return d*d;//è¿”å›dçš„å¹³æ–¹
 	}
 };
-//ÊäÈëdouble   a¡¢b¡¢c    ÅĞ¶Ï£ºc<a<b»òÕßc<=b<=a·µ»Ø0      a<b<c»òÕßb<=a<=c·µ»Ø1   ÆäËûµÄ ·µ»Ødouble£¨c-a£©/(b-a)
+//è¾“å…¥double   aã€bã€c    åˆ¤æ–­ï¼šc<a<bæˆ–è€…c<=b<=aè¿”å›0      a<b<cæˆ–è€…b<=a<=cè¿”å›1   å…¶ä»–çš„ è¿”å›doubleï¼ˆc-aï¼‰/(b-a)
 inline fl slope_step(fl x_bad, fl x_good, fl x) {   
 	if(x_bad < x_good) {
 		if(x <= x_bad) return 0;
@@ -172,31 +172,31 @@ inline fl slope_step(fl x_bad, fl x_good, fl x) {
 }
 
 
-/*½á¹¹Ìåhydrophobic¼Ì³Ğusable
-* ¶¨Òådouble   good  bad
-* º¯Êıhydrophobic¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ hydrophobic(g=     ,b=     ,c=     )
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈëdoubleÀàĞÍt1   t2  r     Êä³ödouble  ÅĞ¶Ï t1=0»ò12»ò13»ò14»ò15  ²¢ÇÒ  t2=0»ò12»ò13»ò14»ò15 ÅĞ¶Ïslope_stepº¯ÊıµÄÌõ¼ş
-	·µ»Ø  (£¨r-xs_vdw_radii[t1]-xs_vdw_radii[t2])-bad£©/(good-bad)
+/*ç»“æ„ä½“hydrophobicç»§æ‰¿usable
+* å®šä¹‰double   good  bad
+* å‡½æ•°hydrophobicç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ hydrophobic(g=     ,b=     ,c=     )
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥doubleç±»å‹t1   t2  r     è¾“å‡ºdouble  åˆ¤æ–­ t1=0æˆ–12æˆ–13æˆ–14æˆ–15  å¹¶ä¸”  t2=0æˆ–12æˆ–13æˆ–14æˆ–15 åˆ¤æ–­slope_stepå‡½æ•°çš„æ¡ä»¶
+	è¿”å›  (ï¼ˆr-xs_vdw_radii[t1]-xs_vdw_radii[t2])-badï¼‰/(good-bad)
 */
 struct hydrophobic : public usable {
 	fl good;
 	fl bad;
 	hydrophobic(fl good_, fl bad_, fl cutoff_) : usable(cutoff_), good(good_), bad(bad_) {
 		name = "hydrophobic(g=" + to_string(good) + ", b=" + to_string(bad) + ", c=" + to_string(cutoff) + ")";
-	}//name±»¸³Öµ hydrophobic(g=     ,b=     ,c=     )
+	}//nameè¢«èµ‹å€¼ hydrophobic(g=     ,b=     ,c=     )
 	fl eval(sz t1, sz t2, fl r) const {
-		if(xs_is_hydrophobic(t1) && xs_is_hydrophobic(t2))//ÅĞ¶Ï t1=0»ò12»ò13»ò14»ò15  ²¢ÇÒ  t2=0»ò12»ò13»ò14»ò15
-			return slope_step(bad, good, r - optimal_distance(t1, t2));//   (£¨r-xs_vdw_radii[t1]-xs_vdw_radii[t2])-bad£©/(good-bad)
+		if(xs_is_hydrophobic(t1) && xs_is_hydrophobic(t2))//åˆ¤æ–­ t1=0æˆ–12æˆ–13æˆ–14æˆ–15  å¹¶ä¸”  t2=0æˆ–12æˆ–13æˆ–14æˆ–15
+			return slope_step(bad, good, r - optimal_distance(t1, t2));//   (ï¼ˆr-xs_vdw_radii[t1]-xs_vdw_radii[t2])-badï¼‰/(good-bad)
 		else return 0;
 	}
 };
 
 
-/*½á¹¹Ìånon_hydrophobic¼Ì³Ğusable
-* ¶¨Òådouble   good  bad
-* º¯Êıhydrophobic¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ non_hydrophobic(g=     ,b=     ,c=     )
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈëdoubleÀàĞÍt1   t2  r     Êä³ödouble  ÅĞ¶Ï t1!=0»ò12»ò13»ò14»ò15  ²¢ÇÒ  t2!=0»ò12»ò13»ò14»ò15 ÅĞ¶Ïslope_stepº¯ÊıµÄÌõ¼ş 
-	·µ»Ø  (£¨r-xs_vdw_radii[t1]-xs_vdw_radii[t2])-bad£©/(good-bad)
+/*ç»“æ„ä½“non_hydrophobicç»§æ‰¿usable
+* å®šä¹‰double   good  bad
+* å‡½æ•°hydrophobicç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ non_hydrophobic(g=     ,b=     ,c=     )
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥doubleç±»å‹t1   t2  r     è¾“å‡ºdouble  åˆ¤æ–­ t1!=0æˆ–12æˆ–13æˆ–14æˆ–15  å¹¶ä¸”  t2!=0æˆ–12æˆ–13æˆ–14æˆ–15 åˆ¤æ–­slope_stepå‡½æ•°çš„æ¡ä»¶ 
+	è¿”å›  (ï¼ˆr-xs_vdw_radii[t1]-xs_vdw_radii[t2])-badï¼‰/(good-bad)
 */
 struct non_hydrophobic : public usable {
 	fl good;
@@ -210,23 +210,23 @@ struct non_hydrophobic : public usable {
 		else return 0;
 	}
 };
-/*¶¨ÒåÄ£°å²ÎÊı m n uint   ÊäÈë  double    position  depth c_n   c_m  Êä³ö  ¸Ä±ä²ÎÊıc_n   c_m
-//c_n = positionµÄn´Î·½  * depth * m / (fl(n)-fl(m));
-//c_m = positionµÄm´Î·½  * depth * n/ (fl(m)-fl(n));
+/*å®šä¹‰æ¨¡æ¿å‚æ•° m n uint   è¾“å…¥  double    position  depth c_n   c_m  è¾“å‡º  æ”¹å˜å‚æ•°c_n   c_m
+//c_n = positionçš„næ¬¡æ–¹  * depth * m / (fl(n)-fl(m));
+//c_m = positionçš„mæ¬¡æ–¹  * depth * n/ (fl(m)-fl(n));
 */
 template<unsigned n, unsigned m>
 void find_vdw_coefficients(fl position, fl depth, fl& c_n, fl& c_m) {
-	BOOST_STATIC_ASSERT(n != m); //È·±£n²»µÈÓÚm
+	BOOST_STATIC_ASSERT(n != m); //ç¡®ä¿nä¸ç­‰äºm
 	c_n = int_pow<n>(position) * depth * m / (fl(n)-fl(m));
 	c_m = int_pow<m>(position) * depth * n / (fl(m)-fl(n));
 }
 
-/*¶¨ÒåÄ£°å²ÎÊı i  j uint 
-½á¹¹Ìåvdw¼Ì³Ğusable
-* ¶¨Òådouble   smoothing  cap
-* º¯Êıvdw¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ vdw(i=     ,j=     ,s=     ,^=     ,c=      )
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈëdoubleÀàĞÍt1   t2  r    ¶¨Òåinter  double d0  depth  c_i  c_j  
-Êä³ödouble  min(cap, c_i / rµÄi´Î·½ + c_j / rµÄj´Î·½)»òÕßcap
+/*å®šä¹‰æ¨¡æ¿å‚æ•° i  j uint 
+ç»“æ„ä½“vdwç»§æ‰¿usable
+* å®šä¹‰double   smoothing  cap
+* å‡½æ•°vdwç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ vdw(i=     ,j=     ,s=     ,^=     ,c=      )
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥doubleç±»å‹t1   t2  r    å®šä¹‰inter  double d0  depth  c_i  c_j  
+è¾“å‡ºdouble  min(cap, c_i / rçš„iæ¬¡æ–¹ + c_j / rçš„jæ¬¡æ–¹)æˆ–è€…cap
 */
 template<unsigned i, unsigned j>
 struct vdw : public usable {
@@ -241,15 +241,15 @@ struct vdw : public usable {
 		fl depth = 1; 
 		fl c_i = 0;
 		fl c_j = 0;
-		find_vdw_coefficients<i, j>(d0, depth, c_i, c_j);//¸Ä±äc_i  c_j
-		if     (r > d0 + smoothing) r -= smoothing;//¸Ä±är
+		find_vdw_coefficients<i, j>(d0, depth, c_i, c_j);//æ”¹å˜c_i  c_j
+		if     (r > d0 + smoothing) r -= smoothing;//æ”¹å˜r
 		else if(r < d0 - smoothing) r += smoothing;
 		else r = d0;
 
-		fl r_i = int_pow<i>(r);//rµÄi´Î·½
-		fl r_j = int_pow<j>(r);//rµÄj´Î·½
-		if(r_i > epsilon_fl && r_j > epsilon_fl)//rµÄi´Î·½ºÍj´Î·½Í¬Ê±´óÓÚ2.2204460492503131e-016
-			return (std::min)(cap, c_i / r_i + c_j / r_j);//·µ»Ø½ÏĞ¡Öµ
+		fl r_i = int_pow<i>(r);//rçš„iæ¬¡æ–¹
+		fl r_j = int_pow<j>(r);//rçš„jæ¬¡æ–¹
+		if(r_i > epsilon_fl && r_j > epsilon_fl)//rçš„iæ¬¡æ–¹å’Œjæ¬¡æ–¹åŒæ—¶å¤§äº2.2204460492503131e-016
+			return (std::min)(cap, c_i / r_i + c_j / r_j);//è¿”å›è¾ƒå°å€¼
 		else 
 			return cap;
 	}
@@ -257,11 +257,11 @@ struct vdw : public usable {
 
 
 
-/*½á¹¹Ìånon_dir_h_bond¼Ì³Ğusable
-* ¶¨Òådouble   good  bad
-* º¯Êınon_dir_h_bond¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ non_dir_h_bond(g=     ,b=    )
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈëdoubleÀàĞÍt1   t2  r     Êä³ödouble  ÅĞ(t1=3»ò5»ò7»ò9»ò16  ²¢ÇÒt2=4»ò5»ò8»ò9)  »òÕß  (t2=3»ò5»ò7»ò9»ò16  ²¢ÇÒt1=4»ò5»ò8»ò9) 
-ÅĞ¶Ïslope_stepº¯ÊıµÄÌõ¼ş   ·µ»Ø  (£¨r-xs_vdw_radii[t1]-xs_vdw_radii[t2])-bad£©/(good-bad)
+/*ç»“æ„ä½“non_dir_h_bondç»§æ‰¿usable
+* å®šä¹‰double   good  bad
+* å‡½æ•°non_dir_h_bondç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ non_dir_h_bond(g=     ,b=    )
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥doubleç±»å‹t1   t2  r     è¾“å‡ºdouble  åˆ¤(t1=3æˆ–5æˆ–7æˆ–9æˆ–16  å¹¶ä¸”t2=4æˆ–5æˆ–8æˆ–9)  æˆ–è€…  (t2=3æˆ–5æˆ–7æˆ–9æˆ–16  å¹¶ä¸”t1=4æˆ–5æˆ–8æˆ–9) 
+åˆ¤æ–­slope_stepå‡½æ•°çš„æ¡ä»¶   è¿”å›  (ï¼ˆr-xs_vdw_radii[t1]-xs_vdw_radii[t2])-badï¼‰/(good-bad)
 */
 struct non_dir_h_bond : public usable {
 	fl good;
@@ -270,36 +270,36 @@ struct non_dir_h_bond : public usable {
 		name = std::string("non_dir_h_bond(g=") + to_string(good) + ", b=" + to_string(bad) + ")";
 	}
 	fl eval(sz t1, sz t2, fl r) const {
-		if(xs_h_bond_possible(t1, t2))//t1=3»ò5»ò7»ò9»ò16  ²¢ÇÒt2=4»ò5»ò8»ò9  »òÕß  t2=3»ò5»ò7»ò9»ò16  ²¢ÇÒt1=4»ò5»ò8»ò9
-			return slope_step(bad, good, r - optimal_distance(t1, t2));  //(£¨r-xs_vdw_radii[t1]-xs_vdw_radii[t2])-bad£©/(good-bad)
+		if(xs_h_bond_possible(t1, t2))//t1=3æˆ–5æˆ–7æˆ–9æˆ–16  å¹¶ä¸”t2=4æˆ–5æˆ–8æˆ–9  æˆ–è€…  t2=3æˆ–5æˆ–7æˆ–9æˆ–16  å¹¶ä¸”t1=4æˆ–5æˆ–8æˆ–9
+			return slope_step(bad, good, r - optimal_distance(t1, t2));  //(ï¼ˆr-xs_vdw_radii[t1]-xs_vdw_radii[t2])-badï¼‰/(good-bad)
 		return 0;
 	}
 };
-/*¶¨Òå º¯Êıread_iterator   ÊäÈë   i  µü´úÆ÷     Êä³ödouble
-* function   ·µ»Øµü´úÆ÷Ö¸ÏòµÄÈİÆ÷µÄÔªËØ  µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
+/*å®šä¹‰ å‡½æ•°read_iterator   è¾“å…¥   i  è¿­ä»£å™¨     è¾“å‡ºdouble
+* function   è¿”å›è¿­ä»£å™¨æŒ‡å‘çš„å®¹å™¨çš„å…ƒç´   è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
 */
 inline fl read_iterator(flv::const_iterator& i) {
 	fl x = *i; 
 	++i;
 	return x;
 }
-/*¶¨Òå º¯Êısmooth_div   ÊäÈë   x   y   double      Êä³ödouble
-* function   xµÄ¾ø¶ÔÖµ<2.2204460492503131e-016  ·µ»Ø0   yµÄ¾ø¶ÔÖµ<2.2204460492503131e-016   ²¢ÇÒxyÍ¬ºÅ·µ»Ø 1.7976931348623158e+308         ÒìºÅ·µ»Ø- 1.7976931348623158e+308
-·ñÔò·µ»Ø  x/y
+/*å®šä¹‰ å‡½æ•°smooth_div   è¾“å…¥   x   y   double      è¾“å‡ºdouble
+* function   xçš„ç»å¯¹å€¼<2.2204460492503131e-016  è¿”å›0   yçš„ç»å¯¹å€¼<2.2204460492503131e-016   å¹¶ä¸”xyåŒå·è¿”å› 1.7976931348623158e+308         å¼‚å·è¿”å›- 1.7976931348623158e+308
+å¦åˆ™è¿”å›  x/y
 */
 fl smooth_div(fl x, fl y) {
 	if(std::abs(x) < epsilon_fl) return 0;
 	if(std::abs(y) < epsilon_fl) return ((x*y > 0) ? max_fl : -max_fl); // FIXME I hope -max_fl does not become NaN
 	return x / y;
-}//xµÄ¾ø¶ÔÖµ<2.2204460492503131e-016  ·µ»Ø0   yµÄ¾ø¶ÔÖµ<2.2204460492503131e-016   ²¢ÇÒxyÍ¬ºÅ·µ»Ø 1.7976931348623158e+308         ÒìºÅ·µ»Ø- 1.7976931348623158e+308
+}//xçš„ç»å¯¹å€¼<2.2204460492503131e-016  è¿”å›0   yçš„ç»å¯¹å€¼<2.2204460492503131e-016   å¹¶ä¸”xyåŒå·è¿”å› 1.7976931348623158e+308         å¼‚å·è¿”å›- 1.7976931348623158e+308
 
 
-/*½á¹¹Ìånum_tors_add¼Ì³Ğconf_independent
-* º¯Êınon_dir_h_bond¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_tors_add
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i 
-* w=£¨µü´úÆ÷Ö¸ÏòµÄÖµ£©µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-Êä³ödouble  x + w * num_tors(½á¹¹ÌåµÄ²ÎÊı);
+/*ç»“æ„ä½“num_tors_addç»§æ‰¿conf_independent
+* å‡½æ•°non_dir_h_bondç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_tors_add
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i 
+* w=ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è¾“å‡ºdouble  x + w * num_tors(ç»“æ„ä½“çš„å‚æ•°);
 */
 
 struct num_tors_add : public conf_independent {
@@ -313,12 +313,12 @@ struct num_tors_add : public conf_independent {
 };
 
 
-/*½á¹¹Ìånum_tors_sqr¼Ì³Ğconf_independent
-* º¯Êınum_tors_sqr¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_tors_sqr
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-* * w=0.1*£¨µü´úÆ÷Ö¸ÏòµÄÖµ£©µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-Êä³ödouble  x + w * £¨num_torsµÄÆ½·½) / 5;
+/*ç»“æ„ä½“num_tors_sqrç»§æ‰¿conf_independent
+* å‡½æ•°num_tors_sqrç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_tors_sqr
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+* * w=0.1*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è¾“å‡ºdouble  x + w * ï¼ˆnum_torsçš„å¹³æ–¹) / 5;
 */
 struct num_tors_sqr : public conf_independent {
 	num_tors_sqr() { name = "num_tors_sqr"; }
@@ -329,12 +329,12 @@ struct num_tors_sqr : public conf_independent {
 	}
 };
 
-/*½á¹¹Ìånum_tors_sqrt¼Ì³Ğconf_independent
-* º¯Êınum_tors_sqrt¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_tors_sqrt
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-* w=0.1*£¨µü´úÆ÷Ö¸ÏòµÄÖµ£©µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-Êä³ödouble  x + w * £¨num_torsµÄÆ½·½¸ù) /£¨5.0µÄÆ½·½¸ù) ;
+/*ç»“æ„ä½“num_tors_sqrtç»§æ‰¿conf_independent
+* å‡½æ•°num_tors_sqrtç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_tors_sqrt
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+* w=0.1*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è¾“å‡ºdouble  x + w * ï¼ˆnum_torsçš„å¹³æ–¹æ ¹) /ï¼ˆ5.0çš„å¹³æ–¹æ ¹) ;
 */
 struct num_tors_sqrt : public conf_independent {
 	num_tors_sqrt() { name = "num_tors_sqrt"; }
@@ -344,13 +344,13 @@ struct num_tors_sqrt : public conf_independent {
 		return x + w * std::sqrt(fl(in.num_tors)) / sqrt(5.0);
 	}
 };
-/*½á¹¹Ìånum_tors_div¼Ì³Ğconf_independent
-* º¯Êınum_tors_div¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_tors_div
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-w=0.1*£¨µü´úÆ÷Ö¸ÏòµÄÖµ+1£© µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-ÈôxµÄ¾ø¶ÔÖµ<2.2204460492503131e-016  ·µ»Ø0   Èô(1+w*num_tors/5.0)µÄ¾ø¶ÔÖµ<2.2204460492503131e-016   ²¢ÇÒxyÍ¬ºÅ·µ»Ø 1.7976931348623158e+308         ÒìºÅ·µ»Ø- 1.7976931348623158e+308
-·ñÔò·µ»Ø  x/ (1+w*num_tors/5.0)
+/*ç»“æ„ä½“num_tors_divç»§æ‰¿conf_independent
+* å‡½æ•°num_tors_divç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_tors_div
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+w=0.1*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼+1ï¼‰ è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è‹¥xçš„ç»å¯¹å€¼<2.2204460492503131e-016  è¿”å›0   è‹¥(1+w*num_tors/5.0)çš„ç»å¯¹å€¼<2.2204460492503131e-016   å¹¶ä¸”xyåŒå·è¿”å› 1.7976931348623158e+308         å¼‚å·è¿”å›- 1.7976931348623158e+308
+å¦åˆ™è¿”å›  x/ (1+w*num_tors/5.0)
 */
 struct num_tors_div : public conf_independent {
 	num_tors_div() { name = "num_tors_div"; }
@@ -360,12 +360,12 @@ struct num_tors_div : public conf_independent {
 		return smooth_div(x, 1 + w * in.num_tors/5.0);
 	}
 };
-/*½á¹¹Ìåligand_length¼Ì³Ğconf_independent
-* º¯Êıligand_length¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ ligand_length
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-* w=(µü´úÆ÷Ö¸ÏòµÄÖµ£© µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-·µ»Ødouble    x + w * in.ligand_lengths_sum
+/*ç»“æ„ä½“ligand_lengthç»§æ‰¿conf_independent
+* å‡½æ•°ligand_lengthç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ ligand_length
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+* w=(è¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰ è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è¿”å›double    x + w * in.ligand_lengths_sum
 */
 struct ligand_length : public conf_independent {
 	ligand_length() { name = "ligand_length"; }
@@ -375,12 +375,12 @@ struct ligand_length : public conf_independent {
 		return x + w * in.ligand_lengths_sum;
 	}
 };
-/*½á¹¹Ìånum_ligands¼Ì³Ğconf_independent
-* º¯Êınum_ligands¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_ligands
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-*  w=1*£¨µü´úÆ÷Ö¸ÏòµÄÖµ£© µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-* ·µ»Øx + w * in.num_ligands
+/*ç»“æ„ä½“num_ligandsç»§æ‰¿conf_independent
+* å‡½æ•°num_ligandsç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_ligands
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+*  w=1*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰ è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+* è¿”å›x + w * in.num_ligands
 */
 struct num_ligands : public conf_independent {
 	num_ligands() { name = "num_ligands"; }
@@ -390,13 +390,13 @@ struct num_ligands : public conf_independent {
 		return x + w * in.num_ligands;
 	}
 };
-/*½á¹¹Ìånum_heavy_atoms_div¼Ì³Ğconf_independent
-* º¯Êınum_heavy_atoms_div¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_heavy_atoms_div
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-*   w=0.05*£¨µü´úÆ÷Ö¸ÏòµÄÖµ£© µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-ÈôxµÄ¾ø¶ÔÖµ<2.2204460492503131e-016  ·µ»Ø0   Èô(1+w*num_heavy_atoms)µÄ¾ø¶ÔÖµ<2.2204460492503131e-016   ²¢ÇÒxyÍ¬ºÅ·µ»Ø 1.7976931348623158e+308         ÒìºÅ·µ»Ø- 1.7976931348623158e+308
-·ñÔò·µ»Ø  x/ (1+w*num_heavy_atoms)
+/*ç»“æ„ä½“num_heavy_atoms_divç»§æ‰¿conf_independent
+* å‡½æ•°num_heavy_atoms_divç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_heavy_atoms_div
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+*   w=0.05*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰ è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è‹¥xçš„ç»å¯¹å€¼<2.2204460492503131e-016  è¿”å›0   è‹¥(1+w*num_heavy_atoms)çš„ç»å¯¹å€¼<2.2204460492503131e-016   å¹¶ä¸”xyåŒå·è¿”å› 1.7976931348623158e+308         å¼‚å·è¿”å›- 1.7976931348623158e+308
+å¦åˆ™è¿”å›  x/ (1+w*num_heavy_atoms)
 */
 struct num_heavy_atoms_div : public conf_independent {
 	num_heavy_atoms_div() { name = "num_heavy_atoms_div"; }
@@ -406,12 +406,12 @@ struct num_heavy_atoms_div : public conf_independent {
 		return smooth_div(x, 1 + w * in.num_heavy_atoms); 
 	}
 };
-/*½á¹¹Ìånum_heavy_atoms¼Ì³Ğconf_independent
-* º¯Êınum_heavy_atoms¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_heavy_atoms
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-* *   w=0.05*£¨µü´úÆ÷Ö¸ÏòµÄÖµ£© µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-·µ»Ødouble   x + w * num_heavy_atoms;
+/*ç»“æ„ä½“num_heavy_atomsç»§æ‰¿conf_independent
+* å‡½æ•°num_heavy_atomsç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_heavy_atoms
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+* *   w=0.05*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰ è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+è¿”å›double   x + w * num_heavy_atoms;
 */
 struct num_heavy_atoms : public conf_independent {
 	num_heavy_atoms() { name = "num_heavy_atoms"; }
@@ -421,12 +421,12 @@ struct num_heavy_atoms : public conf_independent {
 		return x + w * in.num_heavy_atoms;
 	}
 };
-/*½á¹¹Ìånum_hydrophobic_atoms¼Ì³Ğconf_independent
-* º¯Êınum_hydrophobic_atoms¸ø¸¸ÀàÖĞµÄstring²ÎÊıname¸³Öµ   name±»¸³Öµ num_hydrophobic_atoms
-* ¶¨Òåuintº¯Êı     ·µ»Ø1  Ö»¶Á
-* ¶¨ÒådoubleÀàĞÍº¯Êıeval  ÊäÈë½á¹¹Ìå  in   doubleÀàĞÍ  x    µü´úÆ÷  i
-* w=0.05*£¨µü´úÆ÷Ö¸ÏòµÄÖµ£© µü´úÆ÷Ö¸ÏòÏÂÒ»¸öÔªËØ
-* ·µ»Ødouble  x + w * in.num_hydrophobic_atoms
+/*ç»“æ„ä½“num_hydrophobic_atomsç»§æ‰¿conf_independent
+* å‡½æ•°num_hydrophobic_atomsç»™çˆ¶ç±»ä¸­çš„stringå‚æ•°nameèµ‹å€¼   nameè¢«èµ‹å€¼ num_hydrophobic_atoms
+* å®šä¹‰uintå‡½æ•°     è¿”å›1  åªè¯»
+* å®šä¹‰doubleç±»å‹å‡½æ•°eval  è¾“å…¥ç»“æ„ä½“  in   doubleç±»å‹  x    è¿­ä»£å™¨  i
+* w=0.05*ï¼ˆè¿­ä»£å™¨æŒ‡å‘çš„å€¼ï¼‰ è¿­ä»£å™¨æŒ‡å‘ä¸‹ä¸€ä¸ªå…ƒç´ 
+* è¿”å›double  x + w * in.num_hydrophobic_atoms
 */
 struct num_hydrophobic_atoms : public conf_independent {
 	num_hydrophobic_atoms() { name = "num_hydrophobic_atoms"; }
@@ -436,8 +436,8 @@ struct num_hydrophobic_atoms : public conf_independent {
 		return x + w * in.num_hydrophobic_atoms;
 	}
 };
-/*¶¨Òå ½á¹¹ÌåeverythingµÄ ¹¹Ôìº¯Êıeverything  
-* ¶¨Òå uint  d    double   cutoff
+/*å®šä¹‰ ç»“æ„ä½“everythingçš„ æ„é€ å‡½æ•°everything  
+* å®šä¹‰ uint  d    double   cutoff
 */
 everything::everything() { // enabled according to design.out227
 	const unsigned d = 0; // default
@@ -458,7 +458,7 @@ everything::everything() { // enabled according to design.out227
 	//add(d, new gauss(2,   0.3, cutoff)); // offset, width, cutoff
 	//add(d, new gauss(2.5, 0.3, cutoff)); // offset, width, cutoff
 
-	add(1, new gauss(0, 0.5, cutoff));//ÔÚfun×îÄ©Î²Ìí¼Ógauss£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	add(1, new gauss(0, 0.5, cutoff));//åœ¨funæœ€æœ«å°¾æ·»åŠ gaussï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 	// offset, width, cutoff // WEIGHT: -0.035579
 	//add(d, new gauss(1, 0.5, cutoff)); // offset, width, cutoff
 	//add(d, new gauss(2, 0.5, cutoff)); // offset, width, cutoff
@@ -481,7 +481,7 @@ everything::everything() { // enabled according to design.out227
 	//add(d, new gauss(0, 2.0, cutoff)); // offset, width, cutoff
 	//add(d, new gauss(1, 2.0, cutoff)); // offset, width, cutoff
 	//add(d, new gauss(2, 2.0, cutoff)); // offset, width, cutoff
-	add(1, new gauss(3, 2.0, cutoff)); //ÔÚfun×îÄ©Î²Ìí¼Ógauss£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	add(1, new gauss(3, 2.0, cutoff)); //åœ¨funæœ€æœ«å°¾æ·»åŠ gaussï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 	// offset, width, cutoff // WEIGHT: -0.005156
 	//add(d, new gauss(4, 2.0, cutoff)); // offset, width, cutoff
 
@@ -493,7 +493,7 @@ everything::everything() { // enabled according to design.out227
 
 	//add(d, new repulsion( 0.4, cutoff)); // offset, cutoff
 	//add(d, new repulsion( 0.2, cutoff)); // offset, cutoff
-	add(1, new repulsion( 0.0, cutoff));//ÔÚfun×îÄ©Î²Ìí¼Órepulsion£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	add(1, new repulsion( 0.0, cutoff));//åœ¨funæœ€æœ«å°¾æ·»åŠ repulsionï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 	// offset, cutoff // WEIGHT:  0.840245
 	//add(d, new repulsion(-0.2, cutoff)); // offset, cutoff
 	//add(d, new repulsion(-0.4, cutoff)); // offset, cutoff
@@ -502,7 +502,7 @@ everything::everything() { // enabled according to design.out227
 	//add(d, new repulsion(-1.0, cutoff)); // offset, cutoff
 
 	//add(d, new hydrophobic(0.5, 1, cutoff)); // good, bad, cutoff
-	add(1, new hydrophobic(0.5, 1.5, cutoff)); //ÔÚfun×îÄ©Î²Ìí¼Óhydrophobic£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	add(1, new hydrophobic(0.5, 1.5, cutoff)); //åœ¨funæœ€æœ«å°¾æ·»åŠ hydrophobicï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 	// good, bad, cutoff // WEIGHT:  -0.035069
 	//add(d, new hydrophobic(0.5, 2, cutoff)); // good, bad, cutoff
 	//add(d, new hydrophobic(0.5, 3, cutoff)); // good, bad, cutoff
@@ -511,7 +511,7 @@ everything::everything() { // enabled according to design.out227
 
 	//add(d, new vdw<4,  8>(   0, 100, cutoff)); // smoothing, cap, cutoff
 
-	add(1, new non_dir_h_bond(-0.7, 0, cutoff)); //ÔÚfun×îÄ©Î²Ìí¼Ónon_dir_h_bond£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	add(1, new non_dir_h_bond(-0.7, 0, cutoff)); //åœ¨funæœ€æœ«å°¾æ·»åŠ non_dir_h_bondï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 	// good, bad, cutoff // WEIGHT:  -0.587439
 	//add(d, new non_dir_h_bond(-0.7, 0, cutoff)); // good, bad, cutoff
 	//add(d, new non_dir_h_bond(-0.7, 0.2, cutoff)); // good, bad, cutoff
@@ -521,7 +521,7 @@ everything::everything() { // enabled according to design.out227
 	// conf-independent
 	//add(d, new num_ligands());
 
-	add(1, new num_tors_div()); //ÔÚfun×îÄ©Î²Ìí¼Ónum_tors_div£¬ÔÚenable×îÄ©Î²Ìí¼Ó0£¬1
+	add(1, new num_tors_div()); //åœ¨funæœ€æœ«å°¾æ·»åŠ num_tors_divï¼Œåœ¨enableæœ€æœ«å°¾æ·»åŠ 0ï¼Œ1
 	// WEIGHT: 1.923 -- FIXME too close to limit?
 	//add(d, new num_heavy_atoms_div());
 	//add(d, new num_heavy_atoms());

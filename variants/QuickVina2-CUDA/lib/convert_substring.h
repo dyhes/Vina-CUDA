@@ -30,25 +30,25 @@
 
 struct bad_conversion {};
 
-/*  ×ª»»×Ó×Ö·û´®
-	input¡ª¡ªstr£ºstring£¬i¡¢j£ºunint
-	output¡ª¡ªtmp£ºÈÎÒâÀàĞÍ
+/*  è½¬æ¢å­å­—ç¬¦ä¸²
+	inputâ€”â€”strï¼šstringï¼Œiã€jï¼šunint
+	outputâ€”â€”tmpï¼šä»»æ„ç±»å‹
 */
 template<typename T>
 T convert_substring(const std::string& str, sz i, sz j) { // indexes are 1-based, the substring should be non-null
-	if(i < 1 || i > j+1 || j > str.size()) throw bad_conversion();    //Å×³öÒì³£
+	if(i < 1 || i > j+1 || j > str.size()) throw bad_conversion();    //æŠ›å‡ºå¼‚å¸¸
 
 	// omit leading whitespace
-	while(i <= j && std::isspace(str[i-1]))      //  isspaceÅĞ¶Ï×Ö·û´®ÊÇ²»ÊÇ¿Õ¸ñ×Ö·û£¬ÊÇµÄ»°Îªtrue·ñÔòÎªfalse
+	while(i <= j && std::isspace(str[i-1]))      //  isspaceåˆ¤æ–­å­—ç¬¦ä¸²æ˜¯ä¸æ˜¯ç©ºæ ¼å­—ç¬¦ï¼Œæ˜¯çš„è¯ä¸ºtrueå¦åˆ™ä¸ºfalse
 		++i;                                     
 	/*
-	 catch ¿éÄÜ¹»´¦Àí try ¿éÅ×³öµÄÈÎºÎÀàĞÍµÄÒì³££¬Ôò±ØĞëÔÚÒì³£ÉùÃ÷µÄÀ¨ºÅÄÚÊ¹ÓÃÊ¡ÂÔºÅ ...¡£
-	 ÏÂÃæÁ´½ÓÖ÷Òª½²µÄÊÇlexical_castÊı¾İÀàĞÍ×ª»»Æ÷Ïà¹ØµÄÄÚÈİ
+	 catch å—èƒ½å¤Ÿå¤„ç† try å—æŠ›å‡ºçš„ä»»ä½•ç±»å‹çš„å¼‚å¸¸ï¼Œåˆ™å¿…é¡»åœ¨å¼‚å¸¸å£°æ˜çš„æ‹¬å·å†…ä½¿ç”¨çœç•¥å· ...ã€‚
+	 ä¸‹é¢é“¾æ¥ä¸»è¦è®²çš„æ˜¯lexical_castæ•°æ®ç±»å‹è½¬æ¢å™¨ç›¸å…³çš„å†…å®¹
 	 https://www.cnblogs.com/lidabo/archive/2012/12/06/2804252.html
 	*/
 	T tmp;
 	try {
-		tmp = boost::lexical_cast<T>(str.substr(i-1, j-i+1));   //lexical_castÊı¾İÀàĞÍ×ª»»Æ÷
+		tmp = boost::lexical_cast<T>(str.substr(i-1, j-i+1));   //lexical_castæ•°æ®ç±»å‹è½¬æ¢å™¨
 	}
 	catch(...) {
 		throw bad_conversion();
@@ -56,29 +56,29 @@ T convert_substring(const std::string& str, sz i, sz j) { // indexes are 1-based
 	return tmp;
 }
 
-/*ÅĞ¶Ï×Ó×Ö·û´®ÊÇ·ñÎª¿Õ£¬ÊÇµÄ»°Îªtrue£¬·ñÔòÎªfalse
-		input¡ª¡ªstr£ºstring£¬i¡¢j£ºunint
-		input¡ª¡ªbool
+/*åˆ¤æ–­å­å­—ç¬¦ä¸²æ˜¯å¦ä¸ºç©ºï¼Œæ˜¯çš„è¯ä¸ºtrueï¼Œå¦åˆ™ä¸ºfalse
+		inputâ€”â€”strï¼šstringï¼Œiã€jï¼šunint
+		inputâ€”â€”bool
 */
 inline bool substring_is_blank(const std::string& str, sz i, sz j) { // indexes are 1-based, the substring should be non-null
-	if(i < 1 || i > j+1 || j > str.size()) throw bad_conversion();  //Å×³öÒì³£
+	if(i < 1 || i > j+1 || j > str.size()) throw bad_conversion();  //æŠ›å‡ºå¼‚å¸¸
 	VINA_RANGE(k, i-1, j)											//for(k=i-1;k<j;k++)
-		if(!std::isspace(str[k]))                                  // isspaceÅĞ¶Ï×Ö·û´®ÊÇ²»ÊÇ¿Õ¸ñ×Ö·û£¬ÊÇµÄ»°Îªtrue·ñÔòÎªfalse
+		if(!std::isspace(str[k]))                                  // isspaceåˆ¤æ–­å­—ç¬¦ä¸²æ˜¯ä¸æ˜¯ç©ºæ ¼å­—ç¬¦ï¼Œæ˜¯çš„è¯ä¸ºtrueå¦åˆ™ä¸ºfalse
 			return false;
 	return true;
 }
 
 
-/*  ×ª»»×Ó×Ö·û´®£¬½«×Ö·û´®×ª³Éunint
-	input¡ª¡ªstr£ºstring£¬i¡¢j£ºunint
-	output¡ª¡ªtmp£ºÈÎÒâÀàĞÍ
+/*  è½¬æ¢å­å­—ç¬¦ä¸²ï¼Œå°†å­—ç¬¦ä¸²è½¬æˆunint
+	inputâ€”â€”strï¼šstringï¼Œiã€jï¼šunint
+	outputâ€”â€”tmpï¼šä»»æ„ç±»å‹
 */
 // when this was written, lexical cast to unsigned didn't work very well with "-123", etc.
 template<>
 inline unsigned convert_substring<unsigned>(const std::string& str, sz i, sz j) { // indexes are 1-based, the substring should be non-null
-	int tmp = convert_substring<int>(str, i, j); //Ä£°åĞÎ²ÎÎªintĞÍ£¬½«str×ª»»³ÉintĞÍ
-	if(tmp < 0) throw bad_conversion();          //Å×³öÒì³£
-	return static_cast<unsigned>(tmp);           //static_cast<newType>(data)£¬½«tmp´Óint×ª³Éunsigend int
+	int tmp = convert_substring<int>(str, i, j); //æ¨¡æ¿å½¢å‚ä¸ºintå‹ï¼Œå°†strè½¬æ¢æˆintå‹
+	if(tmp < 0) throw bad_conversion();          //æŠ›å‡ºå¼‚å¸¸
+	return static_cast<unsigned>(tmp);           //static_cast<newType>(data)ï¼Œå°†tmpä»intè½¬æˆunsigend int
 }
 
 #endif

@@ -1,7 +1,7 @@
 # Need to be modified according to different users
 WORK_DIR=/home/ubuntu/grad/variants/QuickVina-W-CUDA
 BOOST_LIB_PATH=/usr
-NVCC_COMPILER=/usr/local/cuda-12.8/bin/nvcc
+NVCC_COMPILER=/usr/local/cuda/bin/nvcc
 DOCKING_BOX_SIZE=-DSMALL_BOX
 
 

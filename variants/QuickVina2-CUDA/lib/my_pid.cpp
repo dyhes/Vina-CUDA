@@ -22,7 +22,7 @@
 
 
 /*
-*如果定义了WIN32，将包含头文件Windows.h，否则包含头文件unistd.h
+*濡傛灉瀹氫箟浜哤IN32锛屽皢鍖呭惈澶存枃浠禬indows.h锛屽惁鍒欏寘鍚ご鏂囦欢unistd.h
 */
 
 #ifdef WINDOWS
@@ -32,12 +32,12 @@
 #endif
 
 /*
-*包含头文件my_pid.h
+*鍖呭惈澶存枃浠秏y_pid.h
 */
 
 #include "my_pid.h"
 
-//如果定义了WIN32，利用GetCurrentProcessId()返回当前进程的进程ID，否则利用getpid()返回当前进程的进程ID
+//濡傛灉瀹氫箟浜哤IN32锛屽埄鐢℅etCurrentProcessId()杩斿洖褰撳墠杩涚▼鐨勮繘绋婭D锛屽惁鍒欏埄鐢╣etpid()杩斿洖褰撳墠杩涚▼鐨勮繘绋婭D
 int my_pid() {
 #ifdef WINDOWS
 	return GetCurrentProcessId();

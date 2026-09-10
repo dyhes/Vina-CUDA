@@ -29,34 +29,34 @@
 #include "common.h"
 #include "random.h"
 
-typedef boost::math::quaternion<fl> qt;              //ËÄÔªÊı
-bool quaternion_is_normalized(const qt & q);         //·µ»ØboolÀàĞÍµÄquaternion_is_normalizedº¯Êı£¬ÊäÈëº¯ÊıÎªËÄÔªÊı
+typedef boost::math::quaternion<fl> qt;              //å››å…ƒæ•°
+bool quaternion_is_normalized(const qt & q);         //è¿”å›boolç±»å‹çš„quaternion_is_normalizedå‡½æ•°ï¼Œè¾“å…¥å‡½æ•°ä¸ºå››å…ƒæ•°
 
 // non-intrusive free function split serialization
 
 
 /*
-		saveº¯Êı£ºinput¡ª¡ªqt:ËÄÔªÊı
-		½«ËÄÔªÊıµÄÒ»¸öÊµÊıÈı¸öĞéÊı´æ´¢ÔÚÎÄ¼şÖĞ»òÕßÍ¨¹ıÍøÂç·¢³öÈ¥¡£
+		saveå‡½æ•°ï¼šinputâ€”â€”qt:å››å…ƒæ•°
+		å°†å››å…ƒæ•°çš„ä¸€ä¸ªå®æ•°ä¸‰ä¸ªè™šæ•°å­˜å‚¨åœ¨æ–‡ä»¶ä¸­æˆ–è€…é€šè¿‡ç½‘ç»œå‘å‡ºå»ã€‚
 
-		loadº¯Êı£º½«ÎÄ¼şÖĞµÄËÄÔªÊıµÄÒ»¸öÊµÊıÈı¸öĞéÊıĞ´½øqtËÄÔªÊı¡£
-		ĞòÁĞ»¯µ÷ÓÃsaveº¯Êı£¬·´ĞòÁĞ»¯µ÷ÓÃloadº¯Êı¡£
-		¼ÙÉèconst qt qt_identity(1, 2, 3, 4);
-		R_component_1()//ËÄÔªÊıµÚÒ»¸öÔªËØ1;
-		R_component_2()//ËÄÔªÊıµÚÒ»¸öÔªËØ2;
-		R_component_3()//ËÄÔªÊıµÚÒ»¸öÔªËØ3;
-		R_component_4()//ËÄÔªÊıµÚÒ»¸öÔªËØ4;
+		loadå‡½æ•°ï¼šå°†æ–‡ä»¶ä¸­çš„å››å…ƒæ•°çš„ä¸€ä¸ªå®æ•°ä¸‰ä¸ªè™šæ•°å†™è¿›qtå››å…ƒæ•°ã€‚
+		åºåˆ—åŒ–è°ƒç”¨saveå‡½æ•°ï¼Œååºåˆ—åŒ–è°ƒç”¨loadå‡½æ•°ã€‚
+		å‡è®¾const qt qt_identity(1, 2, 3, 4);
+		R_component_1()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 1;
+		R_component_2()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 2;
+		R_component_3()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 3;
+		R_component_4()//å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 4;
 
 
 */
 namespace boost {
 	namespace serialization {
 		template<class Archive>
-		void save(Archive& ar, const qt& q, const unsigned version) {//¼ÙÉèconst qt qt_identity(1, 2, 3, 4);
-			fl q1 = q.R_component_1();						//q1:ËÄÔªÊıµÚÒ»¸öÔªËØ1;
-			fl q2 = q.R_component_2();						//q2:ËÄÔªÊıµÚÒ»¸öÔªËØ2;
-			fl q3 = q.R_component_3();						//q3:ËÄÔªÊıµÚÒ»¸öÔªËØ3;
-			fl q4 = q.R_component_4();						//q4:ËÄÔªÊıµÚÒ»¸öÔªËØ4;
+		void save(Archive& ar, const qt& q, const unsigned version) {//å‡è®¾const qt qt_identity(1, 2, 3, 4);
+			fl q1 = q.R_component_1();						//q1:å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 1;
+			fl q2 = q.R_component_2();						//q2:å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 2;
+			fl q3 = q.R_component_3();						//q3:å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 3;
+			fl q4 = q.R_component_4();						//q4:å››å…ƒæ•°ç¬¬ä¸€ä¸ªå…ƒç´ 4;
 
 			ar & q1;
 			ar & q2;
@@ -78,27 +78,27 @@ namespace boost {
 }
 
 
-BOOST_SERIALIZATION_SPLIT_FREE(qt)//BOOST_SERIALIZATION_SPLIT_FREE()À´¸æËßBoostĞòÁĞ»¯¿âÊ¹ÓÃsaveºÍload´úÌæserializeº¯Êı
+BOOST_SERIALIZATION_SPLIT_FREE(qt)//BOOST_SERIALIZATION_SPLIT_FREE()æ¥å‘Šè¯‰Booståºåˆ—åŒ–åº“ä½¿ç”¨saveå’Œloadä»£æ›¿serializeå‡½æ•°
 
 
 
 
 /*
-	¸÷ÖÖÉùÃ÷
+	å„ç§å£°æ˜
 */
   
 bool eq(const qt& a, const qt& b); // elementwise approximate equality - may return false for equivalent rotations
-const qt qt_identity(1, 0, 0, 0);   //¶¨ÒåÁËÒ»¸öÊµ²¿Îª1£¬Ğé²¿¶¼Îª0µÄËÄÔªÊı
+const qt qt_identity(1, 0, 0, 0);   //å®šä¹‰äº†ä¸€ä¸ªå®éƒ¨ä¸º1ï¼Œè™šéƒ¨éƒ½ä¸º0çš„å››å…ƒæ•°
 qt angle_to_quaternion(const vec& axis, fl angle); // axis is assumed to be a unit vector
 qt angle_to_quaternion(const vec& rotation); // rotation == angle * axis
 vec quaternion_to_angle(const qt& q);
 mat quaternion_to_r3(const qt& q);
 
-/*    ËÄÔªÊı¾ø¶ÔÖµµÄÆ½·½
+/*    å››å…ƒæ•°ç»å¯¹å€¼çš„å¹³æ–¹
 
-		input¡ª¡ªqt:ËÄÔªÊı
-		Èôqt=a+bi+cj+dk;
-		º¯Êı·µ»Ø£ºa^2+b^2+c^2+d^2
+		inputâ€”â€”qt:å››å…ƒæ•°
+		è‹¥qt=a+bi+cj+dk;
+		å‡½æ•°è¿”å›ï¼ša^2+b^2+c^2+d^2
 
 */
 inline fl quaternion_norm_sqr(const qt& q) { // equivalent to sqr(boost::math::abs(const qt&))
@@ -107,40 +107,40 @@ inline fl quaternion_norm_sqr(const qt& q) { // equivalent to sqr(boost::math::a
 
 
 
-/*	ËÄÔªÊı±ê×¼»¯
+/*	å››å…ƒæ•°æ ‡å‡†åŒ–
 
-	input¡ª¡ªq£ºËÄÔªÊı
-	Õâ¸öº¯ÊıÖ÷ÒªÍ¨¹ıquaternion_norm_sqr£¨£©º¯ÊıÇóµÃµÄËÄÔªÊıÏµÊıµÄÆ½·½Ïà¼ÓºóÔÚ½«Æä¿ª¸ùºÅÇóËÄÔªÊı¾ø¶ÔÖµ
-	ÈôÇóµÃµÄÖµ´óÓÚ¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ2.22045e-16£¬Ôò£º
-		q=q*£¨1/a£©
-	×îºóÅĞ¶Ïbool(abs(boost::math::abs(q) - 1)<0.001)ÓëÉÏbool(abs(quaternion_norm_sqr(q) - 1)<0.001)£¬ÎªÕæ¼ÌĞø³ÌĞò·ñÔòÖÕÖ¹³ÌĞò£¬
+	inputâ€”â€”qï¼šå››å…ƒæ•°
+	è¿™ä¸ªå‡½æ•°ä¸»è¦é€šè¿‡quaternion_norm_sqrï¼ˆï¼‰å‡½æ•°æ±‚å¾—çš„å››å…ƒæ•°ç³»æ•°çš„å¹³æ–¹ç›¸åŠ ååœ¨å°†å…¶å¼€æ ¹å·æ±‚å››å…ƒæ•°ç»å¯¹å€¼
+	è‹¥æ±‚å¾—çš„å€¼å¤§äºè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼2.22045e-16ï¼Œåˆ™ï¼š
+		q=q*ï¼ˆ1/aï¼‰
+	æœ€ååˆ¤æ–­bool(abs(boost::math::abs(q) - 1)<0.001)ä¸ä¸Šbool(abs(quaternion_norm_sqr(q) - 1)<0.001)ï¼Œä¸ºçœŸç»§ç»­ç¨‹åºå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼Œ
 */
 
 inline void quaternion_normalize(qt& q) {
 	const fl s = quaternion_norm_sqr(q);
-	assert(eq(s, sqr(boost::math::abs(q))));  //Èç¹û×Ô¼ºĞ´µÄÏµÊıÆ½·½ºÍÓëÏµÍ³µÄº¯Êı¼ÆËãµÄËÄÔªÊı¾ø¶ÔÖµÆ½·½µÄ²îµÄ¾ø¶ÔÖµĞ¡ÓÚ0.001Ôò·µ»Øtrue£¬·ñÔòfalse   
-    const fl a = std::sqrt(s);                //		ÇóËÄÔªÊı¾ø¶ÔÖµ
-	assert(a > epsilon_fl);                   //epsilon_fl¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ£¬ÎÒµÄ¼ÆËã»úÄÜÊ¶±ğµÄ×îĞ¡¸¡µãÊıÊÇ2.22045e-16
+	assert(eq(s, sqr(boost::math::abs(q))));  //å¦‚æœè‡ªå·±å†™çš„ç³»æ•°å¹³æ–¹å’Œä¸ç³»ç»Ÿçš„å‡½æ•°è®¡ç®—çš„å››å…ƒæ•°ç»å¯¹å€¼å¹³æ–¹çš„å·®çš„ç»å¯¹å€¼å°äº0.001åˆ™è¿”å›trueï¼Œå¦åˆ™false   
+    const fl a = std::sqrt(s);                //		æ±‚å››å…ƒæ•°ç»å¯¹å€¼
+	assert(a > epsilon_fl);                   //epsilon_flè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼ï¼Œæˆ‘çš„è®¡ç®—æœºèƒ½è¯†åˆ«çš„æœ€å°æµ®ç‚¹æ•°æ˜¯2.22045e-16
 	q *= 1/a;                                 //
 	assert(quaternion_is_normalized(q));
 }
 
 
-/*ËÄÔªÊı½üËÆ±ê×¼»¯
-		input¡ª¡ªq£ºËÄÔªÊı£¬tolerance£ºdouble£¬1e-6£»
-		ÈôÏµÊıµÄÆ½·½ºÍ¼õ1µÄ¾ø¶ÔÖµĞ¡ÓÚ1e-6£¬ÔòÎŞ²Ù×÷£¬±£³Ö³õÊ¼Öµ£¬·ñÔòÅĞ¶ÏÏµÊıµÄÆ½·½ºÍµÄ¿ª¸úºÅÊÇ·ñ´óÓÚ¼ÆËã»úÄÜÊ¶±ğµÄ¸¡µãÊı¿É±íÊ¾µÄ×îĞ¡Öµ2.22045e-16£¬ÊÇµÄ»°£º
-			q=q*£¨1/a£©
-	×îºóÅĞ¶Ïbool(abs(boost::math::abs(q) - 1)<0.001)ÓëÉÏbool(abs(quaternion_norm_sqr(q) - 1)<0.001)£¬ÎªÕæ¼ÌĞø³ÌĞò·ñÔòÖÕÖ¹³ÌĞò£¬
+/*å››å…ƒæ•°è¿‘ä¼¼æ ‡å‡†åŒ–
+		inputâ€”â€”qï¼šå››å…ƒæ•°ï¼Œtoleranceï¼šdoubleï¼Œ1e-6ï¼›
+		è‹¥ç³»æ•°çš„å¹³æ–¹å’Œå‡1çš„ç»å¯¹å€¼å°äº1e-6ï¼Œåˆ™æ— æ“ä½œï¼Œä¿æŒåˆå§‹å€¼ï¼Œå¦åˆ™åˆ¤æ–­ç³»æ•°çš„å¹³æ–¹å’Œçš„å¼€è·Ÿå·æ˜¯å¦å¤§äºè®¡ç®—æœºèƒ½è¯†åˆ«çš„æµ®ç‚¹æ•°å¯è¡¨ç¤ºçš„æœ€å°å€¼2.22045e-16ï¼Œæ˜¯çš„è¯ï¼š
+			q=q*ï¼ˆ1/aï¼‰
+	æœ€ååˆ¤æ–­bool(abs(boost::math::abs(q) - 1)<0.001)ä¸ä¸Šbool(abs(quaternion_norm_sqr(q) - 1)<0.001)ï¼Œä¸ºçœŸç»§ç»­ç¨‹åºå¦åˆ™ç»ˆæ­¢ç¨‹åºï¼Œ
 
 
 */
 inline void quaternion_normalize_approx(qt& q, const fl tolerance = 1e-6) {
-	const fl s = quaternion_norm_sqr(q);      //ÏµÊıµÄÆ½·½ºÍ
-	assert(eq(s, sqr(boost::math::abs(q))));  //Èç¹û×Ô¼ºĞ´µÄÏµÊıÆ½·½ºÍÓëÏµÍ³µÄº¯Êı¼ÆËãµÄËÄÔªÊı¾ø¶ÔÖµÆ½·½µÄ²îµÄ¾ø¶ÔÖµĞ¡ÓÚ0.001Ôò·µ»Øtrue£¬·ñÔòfalse   
-    if(std::abs(s - 1) < tolerance)            //ÏµÊıµÄÆ½·½ºÍ¼õÒ»µÄ¾ø¶ÔÖµĞ¡ÓÚ1e-6
+	const fl s = quaternion_norm_sqr(q);      //ç³»æ•°çš„å¹³æ–¹å’Œ
+	assert(eq(s, sqr(boost::math::abs(q))));  //å¦‚æœè‡ªå·±å†™çš„ç³»æ•°å¹³æ–¹å’Œä¸ç³»ç»Ÿçš„å‡½æ•°è®¡ç®—çš„å››å…ƒæ•°ç»å¯¹å€¼å¹³æ–¹çš„å·®çš„ç»å¯¹å€¼å°äº0.001åˆ™è¿”å›trueï¼Œå¦åˆ™false   
+    if(std::abs(s - 1) < tolerance)            //ç³»æ•°çš„å¹³æ–¹å’Œå‡ä¸€çš„ç»å¯¹å€¼å°äº1e-6
         ; // most likely scenario
     else {
-        const fl a = std::sqrt(s);             //ÇóËÄÔªÊı¾ø¶ÔÖµ
+        const fl a = std::sqrt(s);             //æ±‚å››å…ƒæ•°ç»å¯¹å€¼
         assert(a > epsilon_fl);
         q *= 1/a;
         assert(quaternion_is_normalized(q));
@@ -148,7 +148,7 @@ inline void quaternion_normalize_approx(qt& q, const fl tolerance = 1e-6) {
 }
 
 /*
-¸÷ÖÖÉùÃ÷
+å„ç§å£°æ˜
 */
 
 qt random_orientation(rng& generator);

@@ -27,15 +27,15 @@
 
 /*
 input: uint i; bool in_grid;
-function:ÊäÈëÒ»¸ö²ÎÊıºÍ¶ÔÓ¦²¼¶ûÂß¼­£¬
-		 Êä³öÔ­×ÓË÷ÒıÅÅĞò
+function:è¾“å…¥ä¸€ä¸ªå‚æ•°å’Œå¯¹åº”å¸ƒå°”é€»è¾‘ï¼Œ
+		 è¾“å‡ºåŸå­ç´¢å¼•æ’åº
 demo: atom_index(1,ture);
 */
 struct atom_index {
 	sz i;
 	bool in_grid;
-	atom_index() : i(max_sz), in_grid(false) {}							//atom_index³õÊ¼»¯
-	atom_index(sz i_, bool in_grid_) : i(i_), in_grid(in_grid_) {}		//½á¹¹ÌåÖØ¹¹
+	atom_index() : i(max_sz), in_grid(false) {}							//atom_indexåˆå§‹åŒ–
+	atom_index(sz i_, bool in_grid_) : i(i_), in_grid(in_grid_) {}		//ç»“æ„ä½“é‡æ„
 private:
 	friend class boost::serialization::access;
 	template<class Archive> 
@@ -47,16 +47,16 @@ private:
 
 /*
 input:atom_index_i; atom_index_j
-function:ÅĞ¶ÏÁ½¸öatom_indexÊÇ·ñÍêÈ«ÏàµÈ£¬²¢Êä³ö²¼¶ûÂß¼­µÄ½á¹û
+function:åˆ¤æ–­ä¸¤ä¸ªatom_indexæ˜¯å¦å®Œå…¨ç›¸ç­‰ï¼Œå¹¶è¾“å‡ºå¸ƒå°”é€»è¾‘çš„ç»“æœ
 */
 inline bool operator==(const atom_index& i, const atom_index& j) {
 	return i.i == j.i && i.in_grid == j.in_grid;
 }
 
 /*
-¼ü
+é”®
 input: struct connected_atom_index; double length; bool rotatable
-function: ÊäÈëÔ­×ÓË÷Òı£¬³¤¶È£¬ÊÇ·ñ¿ÉĞı×ª£¬½«ÆäĞòÁĞ»¯
+function: è¾“å…¥åŸå­ç´¢å¼•ï¼Œé•¿åº¦ï¼Œæ˜¯å¦å¯æ—‹è½¬ï¼Œå°†å…¶åºåˆ—åŒ–
 */
 struct bond {
 	atom_index connected_atom_index;
@@ -75,12 +75,12 @@ private:
 };
 
 /*
-function:½«atom_base, coords(vec)£¬ bonds(bond)ĞòÁĞ»¯
+function:å°†atom_base, coords(vec)ï¼Œ bonds(bond)åºåˆ—åŒ–
 */
-struct atom : public atom_base {	//atomÊµÖÊ¼Ì³ĞÁËatom_type
-    vec coords;						//coordsÖØĞ´ vec½á¹¹Ìå			
+struct atom : public atom_base {	//atomå®è´¨ç»§æ‰¿äº†atom_type
+    vec coords;						//coordsé‡å†™ vecç»“æ„ä½“			
 	std::vector<bond> bonds;
-	atom() : coords(max_vec) {}		//Í¨¹ımax_vec¶Ôcoords(vec)³õÊ¼»¯
+	atom() : coords(max_vec) {}		//é€šè¿‡max_vecå¯¹coords(vec)åˆå§‹åŒ–
 private:
 	friend class boost::serialization::access;
 	template<class Archive> 

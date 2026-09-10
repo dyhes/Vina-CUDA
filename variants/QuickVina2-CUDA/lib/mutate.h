@@ -27,7 +27,7 @@
 
 // does not set model
 
-//ÉùÃ÷mutate_confº¯Êý
+//å£°æ˜Žmutate_confå‡½æ•°
 
 void mutate_conf(conf& c, const model& m, fl amplitude, rng& generator);
 
