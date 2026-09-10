@@ -449,8 +449,13 @@ __device__ inline void quaternion_to_r3(const flo* q, flo* orientation_m) {
 
 __device__ inline void local_to_lab_direction(			flo* out,
 									const	flo* local_direction,
-									const	flo* orientation_m
+									const	flo* orientation_q
 ) {
+	// [Q4-5] convert quaternion to rotation matrix on the fly (was: shared
+	// orientation_m[][] precomputed in set_update; derived quantity removed
+	// from shared memory to cut 1728B/block -> 8 blocks/SM).
+	flo orientation_m[9];
+	quaternion_to_r3(orientation_q, orientation_m);
 	/*
 	out[0] =	orientation_m[0] * local_direction[0] +
 				orientation_m[3] * local_direction[1] +
@@ -490,8 +495,11 @@ __device__ inline void local_to_lab_direction(			flo* out,
 __device__ inline void local_to_lab(						flo*		out,
 							const				flo*		origin,
 							const				flo*		local_coords,
-							const				flo*		orientation_m
+							const				flo*		orientation_q
 ) {
+	// [Q4-5] on-the-fly q->matrix (see local_to_lab_direction note)
+	flo orientation_m[9];
+	quaternion_to_r3(orientation_q, orientation_m);
 	
 	flo lc0 = local_coords[0];
     flo lc1 = local_coords[1];
@@ -537,12 +545,11 @@ __device__ void set(	const				output_type_cl* x,
 	//************** (root --> origin[0]) node.set_conf **************// 
 	for (int i = 0; i < 3; i++) lig_rigid_gpu->origin[0][i] = x->position[i]; // set origin
 	for (int i = 0; i < 4; i++) lig_rigid_gpu->orientation_q[0][i] = x->orientation[i]; // set orientation_q
-	quaternion_to_r3(lig_rigid_gpu->orientation_q[0], lig_rigid_gpu->orientation_m[0]);// set orientation_m
 	// set coords
 	int begin = lig_rigid_gpu->atom_range[0][0];
 	int end =	lig_rigid_gpu->atom_range[0][1];
 	for (int i = begin; i < end; i++) {
-		local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[0], &atoms[i].coords[0], lig_rigid_gpu->orientation_m[0]);
+		local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[0], &atoms[i].coords[0], lig_rigid_gpu->orientation_q[0]);
 	}
 	//************** end node.set_conf **************//
 
@@ -554,11 +561,11 @@ __device__ void set(	const				output_type_cl* x,
 		local_to_lab(	lig_rigid_gpu->origin[current], 
 						lig_rigid_gpu->origin[parent],
 						lig_rigid_gpu->relative_origin[current],
-						lig_rigid_gpu->orientation_m[parent]
+						lig_rigid_gpu->orientation_q[parent]
 						); // set origin
 		local_to_lab_direction(	lig_rigid_gpu->axis[current], 
 								lig_rigid_gpu->relative_axis[current],
-								lig_rigid_gpu->orientation_m[parent]
+								lig_rigid_gpu->orientation_q[parent]
 								); // set axis
 		flo tmp[4];
 		flo parent_q[4] = {	lig_rigid_gpu->orientation_q[parent][0],
@@ -574,13 +581,12 @@ __device__ void set(	const				output_type_cl* x,
 		quaternion_normalize_approx(tmp, epsilon_fl);
 
 		for (int i = 0; i < 4; i++) lig_rigid_gpu->orientation_q[current][i] = tmp[i]; // set orientation_q
-		quaternion_to_r3(lig_rigid_gpu->orientation_q[current], lig_rigid_gpu->orientation_m[current]); // set orientation_m
 
 		// set coords
 		begin = lig_rigid_gpu->atom_range[current][0];
 		end =	lig_rigid_gpu->atom_range[current][1];
 		for (int i = begin; i < end; i++) {
-			local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[current], &atoms[i].coords[0], lig_rigid_gpu->orientation_m[current]);
+			local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[current], &atoms[i].coords[0], lig_rigid_gpu->orientation_q[current]);
 		}
 	}
 	//************** end branches_set_conf **************//
@@ -605,12 +611,11 @@ __device__ void set_update(	const				output_type_cl* x,
 		lig_rigid_gpu->orientation_q[0][i] = x->orientation[i];
 		lig_rigid_gpu->orientation_q[0][i+1] = x->orientation[i+1]; // set orientation_q
 	}
-	quaternion_to_r3(lig_rigid_gpu->orientation_q[0], lig_rigid_gpu->orientation_m[0]);// set orientation_m
 	// set coords
 	int begin = lig_rigid_gpu->atom_range[0][0];
 	int end =	lig_rigid_gpu->atom_range[0][1];
 	for (int i = begin; i < end; i++) {
-		local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[0], &atoms[i].coords[0], lig_rigid_gpu->orientation_m[0]); 
+		local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[0], &atoms[i].coords[0], lig_rigid_gpu->orientation_q[0]); 
 	}
 	//************** end node.set_conf **************//
 
@@ -622,11 +627,11 @@ __device__ void set_update(	const				output_type_cl* x,
 		local_to_lab(	lig_rigid_gpu->origin[current], 
 						lig_rigid_gpu->origin[parent],
 						lig_rigid_gpu->relative_origin[current],
-						lig_rigid_gpu->orientation_m[parent]
+						lig_rigid_gpu->orientation_q[parent]
 						); // set origin
 		local_to_lab_direction(	lig_rigid_gpu->axis[current], 
 								lig_rigid_gpu->relative_axis[current],
-								lig_rigid_gpu->orientation_m[parent]
+								lig_rigid_gpu->orientation_q[parent]
 								); // set axis
 		flo tmp[4];
 		flo parent_q[4] = {	lig_rigid_gpu->orientation_q[parent][0],
@@ -643,13 +648,12 @@ __device__ void set_update(	const				output_type_cl* x,
 
 		for (int i = 0; i < 4; i++) lig_rigid_gpu->orientation_q[current][i] = tmp[i]; // set orientation_q
 
-		quaternion_to_r3(lig_rigid_gpu->orientation_q[current], lig_rigid_gpu->orientation_m[current]); // set orientation_m
 
 		// set coords
 		begin = lig_rigid_gpu->atom_range[current][0];
 		end =	lig_rigid_gpu->atom_range[current][1];
 		for (int i = begin; i < end; i++) {
-			local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[current], &atoms[i].coords[0], lig_rigid_gpu->orientation_m[current]);
+			local_to_lab(m_coords_gpu->coords[i], lig_rigid_gpu->origin[current], &atoms[i].coords[0], lig_rigid_gpu->orientation_q[current]);
 		}
 	}
 	//************** end branches_set_conf **************//
@@ -1216,28 +1220,8 @@ __device__ inline flo to_norm(const change_cl* in, const int n, const int torsio
 	return d_test;
 }
 
-__device__ inline float to_norm_update(const change_cl* in, const int n, const int torsion_size, const int threadNumInBlock, const int threadsPerBlock)
-{
-	__shared__ float d_test[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
+// [Q4-5] to_norm_update removed (dead: only call site commented out; shared 152B)
 
-	for (int i = threadNumInBlock; i < MAX_NUM_OF_DIMENSIONS_OF_MATIRX; i = i + threadsPerBlock)
-	{ 
-		d_test[i] = 0.0;
-	}
-
-	for (int i = threadNumInBlock; i < n; i = i + threadsPerBlock) 
-	{
-			d_test[i]= find_change_index_read(in, i, torsion_size) * find_change_index_read(in, i, torsion_size);
-	}
-	__syncthreads();
-
-	flo temp = 0;
-	for(int i = 0; i<n; i++)
-	
-		temp += d_test[i];
-
-	return sqrt(temp);
-}
 
 
 __device__ int line_search_lewisoverton(					m_cl* 			m_cl_gpu,

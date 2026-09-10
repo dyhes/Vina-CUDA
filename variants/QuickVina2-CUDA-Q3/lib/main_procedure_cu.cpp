@@ -634,8 +634,7 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 #pragma omp parallel for
 			for (int i = 0; i < 9; i++)
 			{
-				m_ptr->ligand.rigid.orientation_m[0][i] = m_ligand.node.get_orientation_m().data[i];
-			}
+				}
 
 			m_ptr->ligand.rigid.orientation_q[0][0] = m_ligand.node.orientation().R_component_1();
 			m_ptr->ligand.rigid.orientation_q[0][1] = m_ligand.node.orientation().R_component_2();
@@ -662,8 +661,7 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 					rigid.atom_range[start_index][1] = child_ptr.node.end;
 					for (int i = 0; i < 9; i++)
 					{
-						rigid.orientation_m[start_index][i] = child_ptr.node.get_orientation_m().data[i];
-					}
+						}
 					rigid.orientation_q[start_index][0] = child_ptr.node.orientation().R_component_1();
 					rigid.orientation_q[start_index][1] = child_ptr.node.orientation().R_component_2();
 					rigid.orientation_q[start_index][2] = child_ptr.node.orientation().R_component_3();

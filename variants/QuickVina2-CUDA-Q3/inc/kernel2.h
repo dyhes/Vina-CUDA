@@ -146,7 +146,8 @@ typedef struct
 
 	int atom_range[MAX_NUM_OF_RIGID][2];
 	flo origin[MAX_NUM_OF_RIGID][3];
-	flo orientation_m[MAX_NUM_OF_RIGID][9]; // This matrix is fixed to 3*3
+	// [Q4-5] orientation_m removed from shared: derived per-step from
+	// orientation_q via quaternion_to_r3 inside local_to_lab* (saves 1728B/block)
 	flo orientation_q[MAX_NUM_OF_RIGID][4];
 
 	flo axis[MAX_NUM_OF_RIGID][3];			  // 1st column is root node, all 0s
