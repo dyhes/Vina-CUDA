@@ -62,9 +62,9 @@ typedef float flo;
 
 #ifdef SMALL_BOX
 // docking box size <= 30x30x30
-#define MAX_NUM_OF_GRID_MI 128
-#define MAX_NUM_OF_GRID_MJ 128
-#define MAX_NUM_OF_GRID_MK 128
+#define MAX_NUM_OF_GRID_MI 64   // [Q4-1] CASF 22.5A box => real dims 61^3; 64 covers + margin
+#define MAX_NUM_OF_GRID_MJ 64
+#define MAX_NUM_OF_GRID_MK 64
 #define MAX_NUM_OF_ATOM_RELATION_COUNT 1024
 #endif
 

@@ -214,7 +214,7 @@ extern "C" void kernel_grid(
 	const int nat)
 {
 
-	dim3 grid_sz(128, 128, 128);
+	dim3 grid_sz(MAX_NUM_OF_GRID_MI, MAX_NUM_OF_GRID_MJ, MAX_NUM_OF_GRID_MK); // [Q4-1] real-dims launch
 	dim3 block_sz(4, 4, 4);
 	cudaEvent_t time1, time2;
 	cudaEventCreate(&time1);
