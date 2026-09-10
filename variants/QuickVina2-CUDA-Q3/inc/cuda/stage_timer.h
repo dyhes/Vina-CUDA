@@ -1,9 +1,9 @@
-// stage_timer.h — fine-grained in-kernel stage timing for kernel2/BFGS.
-// Uses %globaltimer (nanosecond, global across SMs) read by thread0 of each block.
-// Accumulates per-stage nanoseconds into global counters (one set, atomicAdd from block0 only
-// would bias; instead EVERY block adds, then host divides by num trajectories).
-// Stages: MUTATE, EVAL_INIT(1st E), LS_TOTAL(line search incl inner E), TWOP(two-loop/updates),
-//         and inside E: GRID (intermol grid gather), INTRA(pair terms), POT(force->change)
+// stage_timer.h — v2 (Q4-2): robust in-kernel stage timing.
+// v1 defects (validated 2026-09-10): per-TU symbol copies (d_stage defined in
+// .cu + non-extern in .h), stage_timer.cu missing from Makefile, thread0-only
+// spans, no cross-check. v2: definition lives HERE (single inclusion domain:
+// only kernel2.cu includes this header — enforced below); per-block shared-mem
+// accumulation flushed once at kernel end; built-in cross-check print.
 #ifndef STAGE_TIMER_H
 #define STAGE_TIMER_H
 #include <cstdio>
@@ -11,13 +11,13 @@
 struct StageStats {
     unsigned long long mutate, eval_init, ls_total, ls_evals, twop, evals_n;
     unsigned long long grid, intra, pot;
-    unsigned long long n_ep;   // bfgs episodes
-    unsigned long long n_iter; // bfgs iterations (accepted steps)
-    unsigned long long n_ls;   // line searches
+    unsigned long long n_ep, n_iter, n_ls;
+    unsigned long long ls_total_chk;  // v2 cross-check: sum of per-block flushes
 };
-__device__ StageStats d_stage;   // one global set, atomicAdd per block (nvcc single-definition merge)
 
-// read globaltimer (ns)
+__device__ StageStats d_stage;
+__device__ unsigned long long d_k2_wall;   // kernel2 wall (block0 measures)
+
 __device__ __forceinline__ unsigned long long st_clock_ns() {
     unsigned long long t;
     asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(t));

@@ -268,6 +268,9 @@ __global__ void kernel2_update(
 	const int max_bfgs_steps,
 	const int rilc_bfgs_enable)
 {
+	{ if (threadIdx.x==0 && threadIdx.y==0 && blockIdx.x==0 && blockIdx.y==0)
+	    d_k2_wall = st_clock_ns(); }
+
 
 	int threadsPerBlock = blockDim.x * blockDim.y;
 	int threadNumInBlock = threadIdx.x + blockDim.x * threadIdx.y;
@@ -452,6 +455,11 @@ __global__ void kernel2_update(
 	// write the best conformation back to CPU
 	results[id] = best_out;
 	coords[id] = best_coords;
+	{ if (threadIdx.x==0 && threadIdx.y==0 && blockIdx.x==0 && blockIdx.y==0) {
+	    unsigned long long w = st_clock_ns() - d_k2_wall;
+	    atomicAdd(&d_k2_wall, 0); // no-op keeps symbol referenced
+	    printf("K2WALL block0 = %.3f ms\n", w/1e6);
+	  } }
 }
 
 extern "C" 
@@ -479,7 +487,6 @@ void kernel_monte(
 	StageStats* d_stage_ptr;
 	cudaGetSymbolAddress((void**)&d_stage_ptr, d_stage);
 	cudaMemset(d_stage_ptr, 0, sizeof(StageStats));
-
 	cudaEventRecord(time1, 0);
 
 	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);
