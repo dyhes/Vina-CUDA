@@ -218,13 +218,16 @@ void main_procedure_cl(cache &c, const std::vector<model> &ms, const precalculat
 	boost_t.restart();
 
 	hp_mark("pre_gpu_setup");
+hp_mark("C_setdev_start");
 checkCUDA(cudaSetDevice(0));
+hp_mark("C_setdev_done");
 	hp_mark("cudaSetDevice");
 	cudaStream_t stream1, stream2, stream3, stream4, stream5, stream6, stream7, stream8;
 	// [GT] init gpu_timer events
 	cudaEventCreate(&g_timer.start_ev);
 	cudaEventCreate(&g_timer.stop_ev);
 
+hp_mark("C_stream1_start");
 checkCUDA(cudaStreamCreate(&stream1));
 	hp_mark("stream1");
 	checkCUDA(cudaStreamCreate(&stream2));
@@ -234,7 +237,8 @@ checkCUDA(cudaStreamCreate(&stream1));
 	checkCUDA(cudaStreamCreate(&stream6));
 	checkCUDA(cudaStreamCreate(&stream7));
 	checkCUDA(cudaStreamCreate(&stream8));
-	hp_mark("streams_all");
+	hp_mark("C_streams_done");
+hp_mark("streams_all");
 
 	hp_mark("rng_ctor");
 	rng generator(static_cast<rng::result_type>(seed));

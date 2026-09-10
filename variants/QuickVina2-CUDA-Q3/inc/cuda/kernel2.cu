@@ -16,7 +16,7 @@ HostProbe g_host_probe;
 void HostProbe::mark(const char* name) {
     struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);
     double t = ts.tv_sec*1000.0 + ts.tv_nsec/1e6;
-    if (last && last[0]) fprintf(stderr, "PROBE %s : %.1f ms\n", last, t - t0);
+    if (last && last[0]) fprintf(stderr, "PROBE %s : %.1f ms | T=%.1f\n", last, t - t0, t);
     t0 = t; last = name;
 }
 #endif
@@ -482,9 +482,13 @@ void kernel_monte(
 
 	cudaEventRecord(time1, 0);
 
+	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);
+	  fprintf(stderr, "K2T pre-launch  : %.1f\n", _t.tv_sec*1000.0+_t.tv_nsec/1e6); }
 	kernel2_update<<<grid_size, block_size>>>(ric, mg, pre, grids, random_maps, coords, results, mis, torsion_size,
 											  search_depth, max_bfgs_steps, rilc_bfgs_enable);
 	checkCUDA(cudaDeviceSynchronize());
+	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);
+	  fprintf(stderr, "K2T post-sync   : %.1f\n", _t.tv_sec*1000.0+_t.tv_nsec/1e6); }
 
 	flo kernalExecutionTime;
 	cudaError_t error;

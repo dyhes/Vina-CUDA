@@ -89,6 +89,7 @@ __device__ inline const int *possibilities(flo *coords,
 }
 
 //atu :atom_typing_used   nat : num_atom_types
+__device__ int grids_dims_printed = 0;
 __global__ void kernel1(
 	const pre_cl *pre, // delete the __global
 	const pa_cl *pa,   // delete the __global
@@ -105,6 +106,13 @@ __global__ void kernel1(
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
 	int z = blockIdx.z * blockDim.z + threadIdx.z;
 	int grids_front = mis->grids_front;
+	if (x==0 && y==0 && z==0 && !grids_dims_printed) {
+		grids_dims_printed = 1;
+		printf("GRIDDIM");
+		for (int gi = 0; gi < GRIDS_SIZE; gi++)
+			printf(" %d,%d,%d", grids->grids[gi].m_i, grids->grids[gi].m_j, grids->grids[gi].m_k);
+		printf("\n");
+	}
 
 	if (x >= grids->grids[grids_front].m_i)
 	{
