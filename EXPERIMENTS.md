@@ -859,3 +859,9 @@ occupancy 仍低 (8%) 因寄存器溢出仍占部分 shared (Block Limit Registe
 - Q4-3 shared 动态化实验：破坏 LS/BFGS 跨步语义，已回滚；需 design-first
 - Q4-4 regs 扫描 80-128：k2 无影响 → shared 独占绑定确认
 - 下一步：shared 重设计（-15% → occupancy +33%）或 v6-batch 填空窗
+
+## Q4-6 认证（2026-09-10）
+- 构建：Q4-5 + MAX_RIGID 40（shared 12204B，8 blocks/SM）+ per-node q→矩阵下传
+- CASF 285/285：rt 0.400 / e2e_dock 0.175 / k2 0.125 / Top-1 177（all-atom）
+- aff vs v4 mean|Δ|=0.158（Q4 系列最佳）；CERT=_certified/Q4-6_2026-09-10
+- Q4 世代 vs v4：rt -73.7%，e2e_dock -85%
