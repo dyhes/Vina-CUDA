@@ -662,7 +662,7 @@ def run_vina_cpu(dataset_info, exp_dir, exhaustiveness, box_size, timeout, max_e
     return results
 
 
-def run_qvina_w_cuda(dataset_info, exp_dir, thread, box_size, timeout, search_depth=0):
+def run_qvina_w_cuda(dataset_info, exp_dir, thread, box_size, timeout, search_depth=0, seed=0):
     """QuickVina-W-CUDA — per-target GPU."""
     data_dir = dataset_info["dir"]
     lig_sfx = dataset_info["ligand_suffix"]
@@ -702,11 +702,12 @@ def run_qvina_w_cuda(dataset_info, exp_dir, thread, box_size, timeout, search_de
         t0 = time.time()
         try:
             search_depth_part = f' --search_depth {search_depth}' if search_depth > 0 else ''
+            seed_part = f' --seed {seed}' if seed else ''
             cmd = [
                 "sudo", "bash", "-c",
                 f'ulimit -s 8192 && exec "{binary}" '
                 f'--receptor "{protein}" --ligand "{ligand}" '
-                f'--thread {thread}{search_depth_part} '
+                f'--thread {thread}{search_depth_part}{seed_part} '
                 f'--center_x {cx} --center_y {cy} --center_z {cz} '
                 f'--size_x {box_size} --size_y {box_size} --size_z {box_size} '
                 f'--out "{output_file}"',
@@ -736,7 +737,7 @@ def run_qvina_w_cuda(dataset_info, exp_dir, thread, box_size, timeout, search_de
     return results
 
 
-def run_cuda_vina(dataset_info, exp_dir, thread, box_size, timeout, search_depth, binary_key, opencl_binary_path=None, workdir=None):
+def run_cuda_vina(dataset_info, exp_dir, thread, box_size, timeout, search_depth, binary_key, opencl_binary_path=None, workdir=None, seed=0):
     """Vina-CUDA / QuickVina2-CUDA / Vina-GPU2 — per-target GPU, same CLI as QVina-W-CUDA."""
     data_dir = dataset_info["dir"]
     lig_sfx = dataset_info["ligand_suffix"]
@@ -776,13 +777,14 @@ def run_cuda_vina(dataset_info, exp_dir, thread, box_size, timeout, search_depth
         t0 = time.time()
         try:
             search_depth_part = f" --search_depth {search_depth}" if search_depth > 0 else ""
+            seed_part = f" --seed {seed}" if seed else ""
             opencl_part = f' --opencl_binary_path "{opencl_binary_path}"' if opencl_binary_path else ""
             cmd_prefix = f'cd "{workdir}" && ulimit -s 8192 && exec "{binary}"' if workdir else f'ulimit -s 8192 && exec "{binary}"'
             cmd = [
                 "sudo", "bash", "-c",
                 f'{cmd_prefix} '
                 f'--receptor "{protein}" --ligand "{ligand}" '
-                f"--thread {thread}{search_depth_part}{opencl_part} "
+                f"--thread {thread}{search_depth_part}{seed_part}{opencl_part} "
                 f"--center_x {cx} --center_y {cy} --center_z {cz} "
                 f"--size_x {box_size} --size_y {box_size} --size_z {box_size} "
                 f'--out "{output_file}"',
@@ -1319,6 +1321,8 @@ def main():
                    help="GPU variant thread count (default: 8192)")
     p.add_argument("--search-depth", type=int, default=0,
                    help="GPU variant search depth (0=heuristic, default: 0)")
+    p.add_argument("--seed", type=int, default=0,
+                   help="explicit RNG seed (0=auto)")
     p.add_argument("--max-evals", type=int, default=0,
                    help="Vina-CPU max_evals per MC run (0=auto heuristic, default: 0)")
     p.add_argument("--global-steps", type=int, default=0,
@@ -1431,7 +1435,7 @@ def main():
                                      args.box_size, args.timeout, args.search_depth, "vina-cuda")
         elif args.variant == "qvina2-cuda":
             run_screening_cuda_vina(dataset_info, exp_dir, args.thread,
-                                     args.box_size, args.timeout, args.search_depth, "qvina2-cuda")
+                                     args.box_size, args.timeout, args.search_depth, "qvina2-cuda", seed=args.seed)
         elif args.variant == "vina-gpu2":
             run_screening_cuda_vina(dataset_info, exp_dir, args.thread,
                                      args.box_size, args.timeout, args.search_depth, "vina-gpu2",
@@ -1469,7 +1473,7 @@ def main():
                           args.box_size, args.timeout, args.search_depth, "vina-cuda")
         elif args.variant == "qvina2-cuda":
             run_cuda_vina(dataset_info, exp_dir, args.thread,
-                          args.box_size, args.timeout, args.search_depth, "qvina2-cuda")
+                          args.box_size, args.timeout, args.search_depth, "qvina2-cuda", seed=args.seed)
         elif args.variant == "vina-gpu2":
             run_cuda_vina(dataset_info, exp_dir, args.thread,
                           args.box_size, args.timeout, args.search_depth, "vina-gpu2",
