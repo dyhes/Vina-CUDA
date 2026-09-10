@@ -851,3 +851,11 @@ occupancy 仍低 (8%) 因寄存器溢出仍占部分 shared (Block Limit Registe
 - 新线统一 Q2-<世代>.<合并序>：Q2-7 = 现主线 v4_8b（认证快照 _certified/Q2-7_2026-09-10）；Q2-8.0 = 合并 v6 batch 的目标版
 - 旧目录不重命名（引用链保护）；variants/_INDEX.md 为 90 目录状态索引（LINE/CERT/EXP），脚本可重生成
 - GPU 级批 = v6（batch_chunk）已完成认证，后续是合并非新做
+
+## Q4 kernel 层进展（2026-09-10）
+- Q4-1 grids 真实 dims：SMALL_BOX MAX 128→64，显存 1.14GB→136MB（93×膨胀修正）；k1/k2/rt 零变化=显存卫生
+- Q4-2 stage_timer 验证：v1 数值正确（ns 单位曾误读）；LS 占 k2 88%，k2 占 dock 71-90%；v2 结构+K2WALL 桩已合入
+- ncu（1u1b，计数器权限已开）：占用率 12.1%（shared 14.8KB→6 块/SM 绑定），No Eligible 82%，SM 17%/Mem 34%
+- Q4-3 shared 动态化实验：破坏 LS/BFGS 跨步语义，已回滚；需 design-first
+- Q4-4 regs 扫描 80-128：k2 无影响 → shared 独占绑定确认
+- 下一步：shared 重设计（-15% → occupancy +33%）或 v6-batch 填空窗
