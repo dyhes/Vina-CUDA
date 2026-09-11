@@ -59,6 +59,7 @@ extern "C" void v7_warmup_cuda();   // implemented in kernel2.cu (CUDA TU)
 extern boost::timer boost_t;
 // [v7] binary-side end-to-end timers (monotonic)
 static double e2e_t0 = 0, e2e_twarm0 = 0, e2e_twarm1 = 0, e2e_tres = 0, e2e_tend = 0;
+static double e2e_pd1 = 0, e2e_pd2 = 0, e2e_pd3 = 0;  // [Q4-10b]
 
 using boost::filesystem::path;
 
@@ -428,6 +429,14 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 #ifdef HOST_PROBE
 	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_tres = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6; }
 #endif
+	// [Q4-10b] post-dock segment dissection: 83ms median residue between
+	// main_procedure return and process exit. Split into:
+	//   PD1 refine+rescore  (refine_structure / eval_adjusted / remove_redundant)
+	//   PD2 formatting      (remarks + log table + model.set copies)
+	//   PD3 write+teardown  (write_all_output PDBQT text + log flush + stream dtors)
+#ifdef HOST_PROBE
+	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_pd1 = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6; }
+#endif
 
 	const vec authentic_v(1000, 1000, 1000);
 	const scoring_function &sf = wt;
@@ -512,6 +521,10 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 		done(verbosity, log);
 		std::cout << std::endl;
 	}
+#ifdef HOST_PROBE
+	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_pd2 = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6;
+	  fprintf(stderr, "PD_REFINE_S=%.3f\n", (e2e_pd2 - e2e_pd1)/1000.0); }
+#endif
 }
 
 struct usage_error : public std::runtime_error
@@ -1021,6 +1034,8 @@ int main(int argc, char *argv[])
 
 #ifdef HOST_PROBE
 	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_tend = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6;
+	  e2e_pd3 = e2e_tend;
+	  fprintf(stderr, "PD_WRITE_S=%.3f\n", (e2e_pd3 - e2e_pd2)/1000.0);
 	  fprintf(stderr, "E2E_TOTAL_S=%.3f\n", (e2e_tend - e2e_t0)/1000.0);
 	  fprintf(stderr, "E2E_WARM_S=%.3f\n", (e2e_twarm1 - e2e_twarm0)/1000.0);
 	  fprintf(stderr, "E2E_DOCK_S=%.3f\n", (e2e_tres - e2e_twarm1)/1000.0);
