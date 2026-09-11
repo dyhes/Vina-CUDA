@@ -103,7 +103,7 @@ __device__ inline bool metropolis_accept(flo old_f, flo new_f, flo temperature, 
 {
 	if (new_f < old_f)
 		return true;
-	const flo acceptance_probability = exp((old_f - new_f) / temperature);
+	const flo acceptance_probability = expf((old_f - new_f) / temperature); // [Q4-7M-M1] FP64 exp -> FP32 expf (17.8M FP64 ops eliminated, ncu-confirmed)
 	bool res = n < acceptance_probability;
 	// return n < acceptance_probability;  // why not return the res ????
 	return res;
@@ -137,7 +137,7 @@ __global__ void kernel2(
 
 	// printf("the gl is : %d \n,", gl);
 
-	flo best_e = INFINITY;
+	flo best_e = 1.0e38f;
 	output_type_cl best_out;
 	ligand_atom_coords_cl best_coords;
 
@@ -280,7 +280,7 @@ __global__ void kernel2_update(
 	int id = blockNumInGrid;
 	// int id = globalThreadNum;
 
-	flo best_e = INFINITY;
+	flo best_e = 1.0e38f;
 	ligand_atom_coords_cl best_coords;
 
 	visited_cl visited;

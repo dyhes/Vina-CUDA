@@ -25,32 +25,18 @@ __device__ void output_type_cl_increment(output_type_cl* x, const change_cl* c, 
 }
 
 __device__ inline flo norm3(const flo* a) {
-	return sqrtf(powf(a[0], 2) + powf(a[1], 2) + powf(a[2], 2));
+	return sqrtf(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
 }
 
 __device__ inline void normalize_angle(flo* x) {
-	while (1) {
-		if (*x >= -(M_PI) && *x <= (M_PI)) {
-			break;
-		}
-		else if (*x > 3 * (M_PI)) {
-			flo n = (*x - (M_PI)) / (2 * (M_PI));
-			*x -= 2 * (M_PI) * ceil(n);
-		}
-		else if (*x < 3 * -(M_PI)) {
-			flo n = (-*x - (M_PI)) / (2 * (M_PI));
-			*x += 2 * (M_PI) * ceil(n);
-		}
-		else if (*x > (M_PI)) {
-			*x -= 2 * (M_PI);
-		}
-		else if (*x < -(M_PI)) {
-			*x += 2 * (M_PI);
-		}
-		else {
-			break;
-		}
-	}
+	// [Q4-7M] was while-loop with double M_PI promotions (FP64 DSETP chains);
+	// float PI, branchless-ish reduction (max 3 wraps for |angle|<~10)
+	const flo PI_f = 3.14159265358979f;
+	const flo TWO_PI_f = 2 * PI_f;
+	while (*x > 3 * PI_f)  { flo n = nearbyintf((*x - PI_f) / TWO_PI_f); *x -= n * TWO_PI_f; if (n == 0) break; }
+	while (*x < -3 * PI_f) { flo n = nearbyintf((-*x - PI_f) / TWO_PI_f); *x += n * TWO_PI_f; if (n == 0) break; }
+	if (*x > PI_f)   *x -= TWO_PI_f;
+	else if (*x < -PI_f) *x += TWO_PI_f;
 }
 
 __device__ inline void normalize_angle_update(float* x) {
@@ -59,20 +45,20 @@ __device__ inline void normalize_angle_update(float* x) {
 
 
 __device__ inline bool quaternion_is_normalized(flo* q) {
-	flo q_pow = powf(q[0], 2) + powf(q[1], 2) + powf(q[2], 2) + powf(q[3], 2);
+	flo q_pow = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 	flo sqrt_q_pow = sqrt(q_pow);
-	return (q_pow - 1 < 0.001) && (sqrt_q_pow - 1 < 0.001);
+	return (q_pow - 1 < 0.001f) && (sqrt_q_pow - 1 < 0.001f);
 }
 
 __device__ inline void angle_to_quaternion(flo* q, const flo* rotation, flo epsilon_fl) {
 	//flo angle = norm3(rotation);
-	flo angle = sqrtf(powf(rotation[0], 2) + powf(rotation[1], 2) + powf(rotation[2], 2));
+	flo angle = sqrtf(rotation[0] * rotation[0] + rotation[1] * rotation[1] + rotation[2] * rotation[2]);
 	if (angle > epsilon_fl) {
 		flo axis[3] = { rotation[0] / angle, rotation[1] / angle ,rotation[2] / angle };
-		if (sqrtf(powf(axis[0], 2) + powf(axis[1], 2) + powf(axis[2], 2)) - 1 >= 0.001) printf("\nmutate: angle_to_quaternion() ERROR!"); // Replace assert(eq(axis.norm(), 1));
+		// [Q4-7M] axis-norm ERROR printf removed (FP64 promotion)
 		normalize_angle(&angle);
-		flo c = cos(angle / 2);
-		flo s = sin(angle / 2);
+		flo c = cosf(angle / 2);
+		flo s = sinf(angle / 2);
 		q[0] = c; q[1] = s * axis[0]; q[2] = s * axis[1]; q[3] = s * axis[2];
 		return;
 	}
@@ -84,13 +70,13 @@ __device__ inline void angle_to_quaternion(flo* q, const flo* rotation, flo epsi
 
 __device__ inline void angle_to_quaternion_update(flo* q, const flo* rotation, flo epsilon_fl) {
 	flo a0 = rotation[0], a1 = rotation[1], a2 = rotation[2];
-	flo angle = sqrtf(powf(a0, 2) + powf(a1, 2) + powf(a2, 2));
+	flo angle = sqrtf(a0 * a0 + a1 * a1 + a2 * a2);
 	if (angle > epsilon_fl) {
 		flo axis[3] = { a0 / angle, a1 / angle , a2 / angle };
-		if (norm3(axis) - 1 >= 0.001) printf("\nmutate: angle_to_quaternion() ERROR!"); // Replace assert(eq(axis.norm(), 1));
+		// [Q4-7M] norm3 ERROR printf removed (FP64 promotion via 0.001 literal)
 		normalize_angle(&angle);
-		flo c = cos(angle / 2);
-		flo s = sin(angle / 2);
+		flo c = cosf(angle / 2);
+		flo s = sinf(angle / 2);
 		q[0] = c; q[1] = s * axis[0]; q[2] = s * axis[1]; q[3] = s * axis[2];
 		return;
 	}
@@ -118,7 +104,7 @@ __device__ inline void angle_to_quaternion_multi_update(flo* qa, const flo* qb) 
 }
 
 __device__ inline void quaternion_normalize_approx(flo* q, flo epsilon_fl) {
-	const flo s = powf(q[0], 2) + powf(q[1], 2) + powf(q[2], 2) + powf(q[3], 2);
+	const flo s = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 	// Omit one assert()
 	if (fabs(s - 1) >= TOLERANCE){
 		const flo a = sqrt(s);
@@ -194,7 +180,7 @@ __device__  flo gyration_radius_update(				int				m_lig_begin,
 		)
 	{
 		counter[i] = 0;
-		acc[i] = 0.0;
+		acc[i] = 0.0f;
 		//current_coords[i][0] = 0.0;
 		//current_coords[i][1] = 0.0;
 		//current_coords[i][2] = 0.0;

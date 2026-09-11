@@ -18,7 +18,7 @@ __device__ inline int num_atom_types(int atu) {
 	case 1: return AD_TYPE_SIZE;
 	case 2: return XS_TYPE_SIZE;
 	case 3: return SY_TYPE_SIZE;
-	default: printf("Kernel1:num_atom_types() ERROR!"); return INFINITY;
+	default: printf("Kernel1:num_atom_types() ERROR!"); return 1.0e38f;
 	}
 }
 
@@ -41,7 +41,7 @@ __device__ inline flo elementwise_product_sum(const flo* a, const flo* b) {
 //}
 
 __device__ inline void curl_with_deriv(flo* e, flo* deriv, flo v, const flo epsilon_fl) {
-	if (*e > 0 && v < 0.1 * INFINITY) {
+	if (*e > 0 && v < 1.0e38f) {
 		flo tmp = (v < epsilon_fl) ? 0 : (v / (v + *e));
 		*e *= tmp;
 		for (int i = 0; i < 3; i++) deriv[i] *= powf(tmp, 2);
@@ -49,7 +49,7 @@ __device__ inline void curl_with_deriv(flo* e, flo* deriv, flo v, const flo epsi
 }
 
 __device__ inline void curl_without_deriv(flo* e, flo v, const flo epsilon_fl) {
-	if (*e > 0 && v < 0.1 * INFINITY) {
+	if (*e > 0 && v < 1.0e38f) {
 		flo tmp = (v < epsilon_fl) ? 0 : (v / (v + *e));
 		*e *= tmp;
 	}
@@ -521,10 +521,11 @@ __device__ inline void angle_to_quaternion2(	flo*		out,
 									const		flo*		axis,
 												flo		angle
 ) {
-	if (sqrtf(powf(axis[0], 2) + powf(axis[1], 2) + powf(axis[2], 2)) - 1 >= 0.001) printf("\nkernel2: angle_to_quaternion() ERROR! --> norm3(axis) - 1 = %f",norm3(axis) - 1); // Replace assert(eq(axis.norm(), 1));
-	normalize_angle(&angle);
-	flo c = cos(angle / 2);
-	flo s = sin(angle / 2);
+	// [Q4-7M] axis-norm ERROR printf removed: it pulled in FP64 DSETP/DFMA
+	// chains (double 0.001 literal + %f promotion) around every torsion step.
+	{ flo PI_f = 3.14159265358979f; while (angle > PI_f) angle -= 2 * PI_f; while (angle < -PI_f) angle += 2 * PI_f; }
+	flo c = cosf(angle / 2);
+	flo s = sinf(angle / 2);
 	out[0] = c;
 	out[1] = s * axis[0];
 	out[2] = s * axis[1];
@@ -688,7 +689,7 @@ __device__ inline void p_eval_deriv(						flo*		out,
 }
 
 __device__ inline void curl(flo* e, flo* deriv, flo v, const flo epsilon_fl) {
-	if (*e > 0 && v < 0.1 * INFINITY) {
+	if (*e > 0 && v < 1.0e38f) {
 		flo tmp = (v < epsilon_fl) ? 0 : (v / (v + *e));
 		(*e) = tmp * (*e);
 		for (int i = 0; i < 3; i++)deriv[i] = deriv[i] * (tmp * tmp);
@@ -1189,7 +1190,7 @@ __device__ inline flo scalar_product_update(	const	change_cl*	a,
 	__shared__ flo tmp[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
 	for (int i = threadNumInBlock; i < MAX_NUM_OF_DIMENSIONS_OF_MATIRX; i = i + threadsPerBlock)
 	{ 
-		tmp[i] = 0.0;
+		tmp[i] = 0.0f;
 	}
 
 	for (int i = threadNumInBlock; i < n; i = i + threadsPerBlock) {
@@ -1280,21 +1281,21 @@ __device__ int line_search_lewisoverton(					m_cl* 			m_cl_gpu,
 	int count = 0;
 	bool brackt = false;
 	flo finit, dginit, dgtest, dstest;
-	flo mu = 0.0, nu = 1.0e+20;
+	flo mu = 0.0f, nu = 1.0e+20f;
 
 	dginit = scalar_product(gp, d, n, torsion_size);
 
 	/* Make sure that s points to a descent direction. */
-	if (0.0 < dginit)
+	if (0.0f < dginit)
 	{
 		return -1;
 	}
 	/* The initial value of the cost function. */
 	finit = *f;
 	//F_DEC_COEFF
-	dgtest = 1.0e-4 * dginit;
+	dgtest = 1.0e-4f * dginit;
 	// S_CURV_COEFF 
-	dstest = 0.1 * dginit;
+	dstest = 0.1f * dginit;
 
 	while (true)
 	{
@@ -1338,11 +1339,11 @@ __device__ int line_search_lewisoverton(					m_cl* 			m_cl_gpu,
 		}
 		if (brackt)
 		{
-			(*stp) = 0.5 * (mu + nu);
+			(*stp) = 0.5f * (mu + nu);
 		}
 		else
 		{
-			(*stp) *= 2.0;
+			(*stp) *= 2.0f;
 		}
 	}
 }
@@ -1372,21 +1373,21 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 	int count = 0;
 	bool brackt = false;
 	flo finit, dginit, dgtest, dstest;
-	flo mu = 0.0, nu = 1.0e+20;
+	flo mu = 0.0f, nu = 1.0e+20f;
 
 	dginit = scalar_product_update(gp, d, n, torsion_size,threadNumInBlock,threadsPerBlock);
 
 	/* Make sure that s points to a descent direction. */
-	if (0.0 < dginit)
+	if (0.0f < dginit)
 	{
 		return -1;
 	}
 	/* The initial value of the cost function. */
 	finit = *f;
 	//F_DEC_COEFF
-	dgtest = 1.0e-4 * dginit;
+	dgtest = 1.0e-4f * dginit;
 	// S_CURV_COEFF 
-	dstest = 0.1 * dginit;
+	dstest = 0.1f * dginit;
 
 	while (true)
 	{
@@ -1438,11 +1439,11 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 		}
 		if (brackt)
 		{
-			(*stp) = 0.5 * (mu + nu);
+			(*stp) = 0.5f * (mu + nu);
 		}
 		else
 		{
-			(*stp) *= 2.0;
+			(*stp) *= 2.0f;
 		}
 	}
 }
@@ -1463,9 +1464,9 @@ __device__  flo line_search(					 	m_cl*				m,
 					const		flo*				hunt_cap,  // delete the __global
 					const				int					lig_torsion_size
 ) {
-	const flo c0 = 0.0001;
+	const flo c0 = 0.0001f;
 	const int max_trials = 10;
-	const flo multiplier = 0.5;
+	const flo multiplier = 0.5f;
 	flo alpha = 1;
 
 	const flo pg = scalar_product(p, g, n, lig_torsion_size);
@@ -1583,7 +1584,7 @@ __device__ void rilc_bfgs(				output_type_cl* 	x,
 	}
 	else
 	{
-		step = 1.0 / to_norm(&d, n, torsion_size);
+		step = 1.0f / to_norm(&d, n, torsion_size);
 		k = 1;
 
 		while (true) {
@@ -1657,7 +1658,7 @@ __device__ void rilc_bfgs(				output_type_cl* 	x,
 			}
 			cau = cau * sqrt(cau_t);
 			// CAUTIOUS_FACTOR
-			cau = cau * 1.0e-6;
+			cau = cau * 1.0e-6f;
 
 			if (ys > cau) {
 				/* \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}. */
@@ -1690,7 +1691,7 @@ __device__ void rilc_bfgs(				output_type_cl* 	x,
 				}
 
 			}
-			step = 1.0;
+			step = 1.0f;
 		}
 
 	}
@@ -1802,7 +1803,7 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 			}
 		else
 		{
-			step = 1.0 / to_norm(&d, n, torsion_size);
+			step = 1.0f / to_norm(&d, n, torsion_size);
 			//step = 1.0 / to_norm_update(&d, n, torsion_size,threadNumInBlock,threadsPerBlock);
 			k = 1;
 		int small_imp_count = 0;
@@ -1903,7 +1904,7 @@ unsigned long long st_t0w = st_clock_ns();
 			
 			cau = cau * sqrt(cau_t);
 			// CAUTIOUS_FACTOR
-			cau = cau * 1.0e-6;
+			cau = cau * 1.0e-6f;
 
 			if (ys > cau) {
 				/* \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}. */
@@ -1943,7 +1944,7 @@ unsigned long long st_t0w = st_clock_ns();
 
 			}
 				STAGE_ADD2(st_t0w, twop);
-				step = 1.0;
+				step = 1.0f;
 		}
 
 		}
