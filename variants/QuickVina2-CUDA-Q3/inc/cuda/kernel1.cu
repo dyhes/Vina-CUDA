@@ -1,3 +1,4 @@
+#include <cuda_fp16.h>
 #include "gpu_timer.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
@@ -183,21 +184,21 @@ __global__ void kernel1(
 		int addr_6 = x + mi * ((y - 1) + mj * (z - 1));
 		int addr_7 = (x - 1) + mi * ((y - 1) + mj * (z - 1));
 
-		grids->grids[t].m_data[addr_base * 8] = affinities[j];
+		grids->grids[t].m_data[addr_base * 8] = __float2half(affinities[j]);
 		if (x != 0)
-			grids->grids[t].m_data[addr_1 * 8 + 1] = affinities[j];
+			grids->grids[t].m_data[addr_1 * 8 + 1] = __float2half(affinities[j]);
 		if (y != 0)
-			grids->grids[t].m_data[addr_2 * 8 + 2] = affinities[j];
+			grids->grids[t].m_data[addr_2 * 8 + 2] = __float2half(affinities[j]);
 		if (x != 0 && y != 0)
-			grids->grids[t].m_data[addr_3 * 8 + 3] = affinities[j];
+			grids->grids[t].m_data[addr_3 * 8 + 3] = __float2half(affinities[j]);
 		if (z != 0)
-			grids->grids[t].m_data[addr_4 * 8 + 4] = affinities[j];
+			grids->grids[t].m_data[addr_4 * 8 + 4] = __float2half(affinities[j]);
 		if (x != 0 && z != 0)
-			grids->grids[t].m_data[addr_5 * 8 + 5] = affinities[j];
+			grids->grids[t].m_data[addr_5 * 8 + 5] = __float2half(affinities[j]);
 		if (y != 0 && z != 0)
-			grids->grids[t].m_data[addr_6 * 8 + 6] = affinities[j];
+			grids->grids[t].m_data[addr_6 * 8 + 6] = __float2half(affinities[j]);
 		if (x * y * z != 0)
-			grids->grids[t].m_data[addr_7 * 8 + 7] = affinities[j];
+			grids->grids[t].m_data[addr_7 * 8 + 7] = __float2half(affinities[j]);
 	}
 
 }

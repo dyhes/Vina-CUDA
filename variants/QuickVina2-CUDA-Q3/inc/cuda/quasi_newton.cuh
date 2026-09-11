@@ -1,3 +1,4 @@
+#include <cuda_fp16.h>
 #include "stage_timer.h"
 #ifndef _QUASI_NEWTON_H_
 #define _QUASI_NEWTON_H_
@@ -113,16 +114,16 @@ __device__ flo g_evaluate(   grid_cl*	g,  // delete the __constant
 	const int z0 = a[2];
 
 	int base = (x0 + m_i * (y0 + m_j * z0)) * 8;
-	 flo* base_ptr = &g->m_data[base]; // delete the constant
+	 __half* base_ptr = &g->m_data[base]; // [Q4-7M-M2] FP16 storage
 
-	const flo f000 = *base_ptr;
-	const flo f100 = *(base_ptr + 1);
-	const flo f010 = *(base_ptr + 2);
-	const flo f110 = *(base_ptr + 3);
-	const flo f001 = *(base_ptr + 4);
-	const flo f101 = *(base_ptr + 5);
-	const flo f011 = *(base_ptr + 6);
-	const flo f111 = *(base_ptr + 7);
+	const flo f000 = __half2float(*base_ptr);
+	const flo f100 = __half2float(*(base_ptr + 1));
+	const flo f010 = __half2float(*(base_ptr + 2));
+	const flo f110 = __half2float(*(base_ptr + 3));
+	const flo f001 = __half2float(*(base_ptr + 4));
+	const flo f101 = __half2float(*(base_ptr + 5));
+	const flo f011 = __half2float(*(base_ptr + 6));
+	const flo f111 = __half2float(*(base_ptr + 7));
 
 	const flo x = s[0];
 	const flo y = s[1];
@@ -243,16 +244,16 @@ __device__ flo g_evaluate_update(   grid_cl*	g,  // delete the __constant
 	const int z0 = a[2];
 
 	int base = (x0 + m_i * (y0 + m_j * z0)) * 8;
-	 flo* base_ptr = &g->m_data[base]; // delete the constant
+	 __half* base_ptr = &g->m_data[base]; // [Q4-7M-M2] FP16 storage
 
-	const flo f000 = *base_ptr;
-	const flo f100 = *(base_ptr + 1);
-	const flo f010 = *(base_ptr + 2);
-	const flo f110 = *(base_ptr + 3);
-	const flo f001 = *(base_ptr + 4);
-	const flo f101 = *(base_ptr + 5);
-	const flo f011 = *(base_ptr + 6);
-	const flo f111 = *(base_ptr + 7);
+	const flo f000 = __half2float(*base_ptr);
+	const flo f100 = __half2float(*(base_ptr + 1));
+	const flo f010 = __half2float(*(base_ptr + 2));
+	const flo f110 = __half2float(*(base_ptr + 3));
+	const flo f001 = __half2float(*(base_ptr + 4));
+	const flo f101 = __half2float(*(base_ptr + 5));
+	const flo f011 = __half2float(*(base_ptr + 6));
+	const flo f111 = __half2float(*(base_ptr + 7));
 
 	const flo x = s[0];
 	const flo y = s[1];

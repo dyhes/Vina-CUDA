@@ -207,7 +207,7 @@ typedef struct
 	flo m_factor[3];
 	flo m_dim_fl_minus_1[3];
 	flo m_factor_inv[3];
-	flo m_data[(MAX_NUM_OF_GRID_MI) * (MAX_NUM_OF_GRID_MJ) * (MAX_NUM_OF_GRID_MK) * 8];
+	__half m_data[(MAX_NUM_OF_GRID_MI) * (MAX_NUM_OF_GRID_MJ) * (MAX_NUM_OF_GRID_MK) * 8];  // [Q4-7M-M2] FP16 storage
 } grid_cl;
 
 typedef struct
@@ -305,7 +305,7 @@ typedef struct
 	// flo m_factor[3];
 	// flo m_dim_fl_minus_1[3];
 	// flo m_factor_inv[3];
-	flo m_data[(MAX_NUM_OF_GRID_MI) * (MAX_NUM_OF_GRID_MJ) * (MAX_NUM_OF_GRID_MK) * 8];
+	__half m_data[(MAX_NUM_OF_GRID_MI) * (MAX_NUM_OF_GRID_MJ) * (MAX_NUM_OF_GRID_MK) * 8];  // [Q4-7M-M2] FP16 storage
 } grid_cl_m;
 
 typedef struct
