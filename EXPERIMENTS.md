@@ -865,3 +865,17 @@ occupancy 仍低 (8%) 因寄存器溢出仍占部分 shared (Block Limit Registe
 - CASF 285/285：rt 0.400 / e2e_dock 0.175 / k2 0.125 / Top-1 177（all-atom）
 - aff vs v4 mean|Δ|=0.158（Q4 系列最佳）；CERT=_certified/Q4-6_2026-09-10
 - Q4 世代 vs v4：rt -73.7%，e2e_dock -85%
+
+## Q4-7（M1 精度域清理）认证（2026-09-11）
+- exp->expf（MC 接受判定，17.8M FP64）+ 移除 FP64 提升 printf + M_PI/INFINITY float 化
+- CASF 285/285：rt 0.340 / e2e_dock 0.118 / k2 0.067（-50% vs v4）/ Top-1 179（带中部）
+- aff vs v4 mean|Δ|=0.155（噪声带内）——精度域清理不改变结果分布
+- CERT=_certified/Q4-7_2026-09-11；论文新增"精度域污染"发现（SASS 审计法）
+
+## Q4-7（M1 精度域清理）认证（2026-09-11）
+- 构建：Q4-6 + exp→expf（MC 接受判定 17.8M FP64）+ 移除 FP64 提升 printf + M_PI/INFINITY float 化
+- CASF 285/285：rt 0.340 / e2e_dock 0.118 / k2 0.067（-50% vs v4）/ Top-1 179（all-atom，家族带中部）
+- aff vs v4 mean|Δ|=0.155（噪声带内）——精度域清理不改变结果分布
+- ★发现"精度域污染"：exp()、printf("%f")、double 宏三类源将 FP64 拉入热路径；
+  SASS 审计（cuobjdump -sass | grep "DFMA\|DADD"）是标准排查手段
+- CERT=_certified/Q4-7_2026-09-11；runner --seed 透传已加（可复现实验）

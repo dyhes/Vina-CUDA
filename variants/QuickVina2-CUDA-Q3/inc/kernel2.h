@@ -248,6 +248,7 @@ typedef struct
 typedef struct
 {
 	int needed_size;
+	int q4_num_colors;   // [Q4-8] pair graph colors (deterministic accumulation)
 	// int torsion_size;
 	// int search_depth;
 	// int max_bfgs_steps;

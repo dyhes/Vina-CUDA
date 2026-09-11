@@ -29,6 +29,11 @@
  * using boost::timer::cpu_timer
  */
 #include <boost/timer.hpp>
+
+// [Q4-8] extern device symbols (defined in quasi_newton.cuh)
+extern __device__ unsigned char* q4_pair_color;
+extern __device__ int q4_num_colors;
+extern __device__ unsigned char* q4_pair_color_d;  // host-managed staging ptr
 boost::timer boost_t;
 #ifdef HOST_PROBE
 // [v7] GPU-side rand_maps + ric generation (ric_gpu.cu)
@@ -603,6 +608,45 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 				throw std::runtime_error("/lib/main_procedure_cu.cpp: Only one ligand supported!");
 			} // Only one ligand supported!
 			m_ptr->ligand.pairs.num_pairs = m.ligands[0].pairs.size();
+
+		// [Q4-8] greedy edge-coloring of the pair graph: pairs sharing an atom
+		// get different colors. Device eval processes one color per pass with
+		// __syncthreads between => deterministic minus_forces accumulation
+		// order (fixes cross-thread float-add race, run-to-run LSB jitter).
+		{
+			const int np = (int)m.ligands[0].pairs.size();
+			static unsigned char* h_colors = (unsigned char*)malloc(MAX_NUM_OF_LIG_PAIRS);
+			static unsigned char* d_colors = nullptr;
+			if (!d_colors) {
+				cudaMalloc((void**)&d_colors, MAX_NUM_OF_LIG_PAIRS);
+			}
+			// build atom->pair incidence counts
+			int max_atom = 0;
+			for (int i = 0; i < np; i++) {
+				if (m.ligands[0].pairs[i].a > max_atom) max_atom = m.ligands[0].pairs[i].a;
+				if (m.ligands[0].pairs[i].b > max_atom) max_atom = m.ligands[0].pairs[i].b;
+			}
+			const int na = max_atom + 1;
+			// greedy: for each pair, pick smallest color not used by its atoms
+			memset(h_colors, 0, np);
+			// atom_color_mask: last color used per atom (small vec on stack)
+			std::vector<int> last_color(na, -1);
+			int ncolors = 0;
+			for (int i = 0; i < np; i++) {
+				const int pa = m.ligands[0].pairs[i].a;
+				const int pb = m.ligands[0].pairs[i].b;
+				int c = 0;
+				while ((last_color[pa] == c) || (last_color[pb] == c)) c++;
+				last_color[pa] = c; last_color[pb] = c;
+				h_colors[i] = (unsigned char)c;
+				if (c + 1 > ncolors) ncolors = c + 1;
+			}
+			// upload colors; ncolors goes to mis_ptr->q4_num_colors (h2d with mis)
+			cudaMemcpyAsync(d_colors, h_colors, np, cudaMemcpyHostToDevice, stream8);
+			mis_ptr->q4_num_colors = ncolors;
+			cudaStreamSynchronize(stream8);
+		}
+
 			// std::cout << "m_ptr->ligand.pairs.num_pairs = " << m_ptr->ligand.pairs.num_pairs << std::endl;
 			if (m.ligands[0].pairs.size() >= MAX_NUM_OF_LIG_PAIRS)
 			{
