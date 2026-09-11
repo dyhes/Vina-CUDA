@@ -2,6 +2,10 @@
 #ifndef _QUASI_NEWTON_H_
 #define _QUASI_NEWTON_H_
 
+// [Q4-7C] per-TU device globals (only kernel2.cu includes this header)
+__device__ unsigned long long* q4_skip_row_g = 0;
+__device__ int q4_epoch_i = 0;
+
 
 #include "commonMacros.h"
 #include "matrix.cuh"
@@ -730,12 +734,33 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 														m_minus_forces*  minus_forces,
 									const				flo			     epsilon_fl,
 									const				int				 threadNumInBlock,
-									const				int				 threadsPerBlock
+									const				int				 threadsPerBlock,
+									unsigned long long* q4_skip_row,
+									const				unsigned long long q4_ep
 ) {
 	// [FUSION v1] warp-shuffle reduction: 寄存器累加 + 单 warp 树形归约, 移除 16KB shared e[]
 	float my_e = 0.0f;
 
+	// [Q4-7C] shared skip-bitmap (256B): bit i set = pair i beyond cutoff at
+	// last probe. Rotating 1/8 re-probe window catches entries into cutoff.
+	__shared__ unsigned long long skip_row[(MAX_NUM_OF_LIG_PAIRS + 63) / 64];
+	__shared__ int q4_probe_epoch;
+	__shared__ int q4_bitmap_init;
+	if (threadNumInBlock == 0) {
+		if (!q4_bitmap_init) {
+			for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) skip_row[w] = 0ULL;
+			q4_bitmap_init = 1;
+			q4_probe_epoch = 0;
+		}
+	}
+	__syncthreads();
+	const int ep = q4_probe_epoch;
+
 	for (int i = threadNumInBlock; i < pairs->num_pairs; i = i + threadsPerBlock){
+		const int wi = i >> 6, bi = i & 63;
+		if ((skip_row[wi] >> bi) & 1ULL) {
+			if ((i + ep) & 7) continue; // rotating 1/8 re-probe
+		}
 		const int ip[3] = { pairs->type_pair_index[i], pairs->a[i] ,pairs->b[i] };
 		float coords_b[3] = { m_coords->coords[ip[2]][0], m_coords->coords[ip[2]][1], m_coords->coords[ip[2]][2] };
 		float coords_a[3] = { m_coords->coords[ip[1]][0], m_coords->coords[ip[1]][1], m_coords->coords[ip[1]][2] };
@@ -752,9 +777,14 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 				minus_forces->coords[ip[1]][j] -= force[j];
 				minus_forces->coords[ip[2]][j] += force[j];
 			}
+			skip_row[wi] &= ~(1ULL << bi); // in-cutoff: clear skip
+		} else {
+			skip_row[wi] |= (1ULL << bi); // far: mark skip
 		}
 
 	}
+	__syncthreads();
+	if (threadNumInBlock == 0) q4_probe_epoch++;
 
 	__syncthreads();
 	//Sum intermolecular energy
@@ -1001,7 +1031,9 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 					const				int					threadNumInBlock,
 					const				int					threadsPerBlock,
 									rigid_cl*       	m_gpu_rigid,
-									grids_gpu*          grids_cuda
+									grids_gpu*          grids_cuda,
+									unsigned long long* q4_skip_row,
+									const				unsigned long long q4_ep
 
 ) {
 
@@ -1032,8 +1064,9 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 										minus_forces,
 										epsilon_fl,
 										threadNumInBlock,
-										threadsPerBlock
-									);
+										threadsPerBlock,
+										q4_skip_row,
+										q4_ep);
 	STAGE_ADD2(st_t0b, intra);
 
 	unsigned long long st_t0c = st_clock_ns();
@@ -1373,7 +1406,9 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 			threadNumInBlock,
 			threadsPerBlock,
 			m_gpu_rigid,
-			grids_cuda
+			grids_cuda,
+			q4_skip_row_g,
+			q4_epoch_i
 		);
 		++count;
 		/* Check the Armijo condition. */
@@ -1689,7 +1724,9 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 						const				int					threadsPerBlock,
 						 				rigid_cl*       	m_gpu_rigid,
 										grids_gpu*          grids_cuda,
-										visited_cl*         visited
+										visited_cl*         visited,
+										unsigned long long* q4_skip_row,
+										const				unsigned long long q4_ep
 )
 {
 	int lig_torsion_size = torsion_size;
@@ -1729,7 +1766,9 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 						threadNumInBlock,
 						threadsPerBlock,
 						m_gpu_rigid,
-						grids_cuda
+						grids_cuda,
+						q4_skip_row,
+						q4_ep
 	);
 	STAGE_ADD(eval_init);
 	__syncthreads();

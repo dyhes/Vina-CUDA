@@ -317,6 +317,15 @@ __global__ void kernel2_update(
 	__shared__ mis_cl mis_gpu;
 	mis_gpu = *mis;
 
+	// [Q4-7C] per-trajectory pairs skip-bitmap (shared, zeroed once per kernel)
+	__shared__ unsigned long long q4_skip_row[(MAX_NUM_OF_LIG_PAIRS + 63) / 64];
+	__shared__ int q4_epoch_i;
+	if (threadNumInBlock == 0) {
+		for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) q4_skip_row[w] = 0ULL;
+		q4_epoch_i = 0;
+	}
+	__syncthreads();
+
 	__shared__ grids_gpu grids_cuda;
 
 	for(int i = threadNumInBlock; i<GRIDS_SIZE; i+=threadsPerBlock){
@@ -375,7 +384,9 @@ __global__ void kernel2_update(
 							 threadsPerBlock,
 							 &m_gpu_ligand.rigid,
 							 &grids_cuda,
-							&visited);
+							&visited,
+							 q4_skip_row,
+							 (unsigned long long)q4_epoch_i);
 		}
 		else
 		{
@@ -418,7 +429,9 @@ __global__ void kernel2_update(
 									 threadsPerBlock,
 									 &m_gpu_ligand.rigid,
 									 &grids_cuda,
-									 &visited);
+									 &visited,
+									 q4_skip_row,
+									 (unsigned long long)q4_epoch_i);
 				}
 				else
 				{
