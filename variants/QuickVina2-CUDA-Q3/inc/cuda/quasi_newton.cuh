@@ -1765,9 +1765,18 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 
 	flo lm_alpha = 0;
 
-
-	flo lm_s[MAX_HESSIAN_MATRIX_SIZE] = {0}; 
-	flo lm_y[MAX_HESSIAN_MATRIX_SIZE] = {0}; 
+	// [Q4-9R] lm_s/lm_y are VECTORS of length n (<= MAX_NUM_OF_DIMENSIONS =
+	// 6 + MAX_NUM_OF_LIG_TORSION + MAX_NUM_OF_FLEX_TORSION = 55), not packed
+	// triangles. Previous per-thread local arrays sized MAX_HESSIAN_MATRIX_SIZE
+	// (1485 floats, 27x oversize) were zero-initialized => materialized in
+	// local memory (~11.9KB/thread spill; ncu: 1.89G local-store sectors and
+	// 45GB DRAM writes per 1pxn kernel2 launch). Block-shared right-sized
+	// vectors: +440B/block, shared limit stays 7 blocks/SM.
+	__shared__ flo lm_s[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
+	__shared__ flo lm_y[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
+	if (threadNumInBlock == 0) {
+		for (int i = 0; i < MAX_NUM_OF_DIMENSIONS_OF_MATIRX; i++) { lm_s[i] = 0.f; lm_y[i] = 0.f; }
+	}
 
 	flo lm_ys = 0;
 	STAGE_T0;
