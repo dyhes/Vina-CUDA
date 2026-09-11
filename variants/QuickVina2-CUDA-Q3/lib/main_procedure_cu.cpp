@@ -838,7 +838,8 @@ GT_BLOCK_END(0);
 GT_BLOCK_END(1);
 
 			hp_mark("dtoh_results");
-			std::vector<output_type> result_vina = cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
+			std::vector<output_type> result_vina =
+cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 															  par.mc.thread, torsion_sizes[ligand_count]);
 			// if empty, something goes wrong in the device part
 			if (result_vina.size() == 0)

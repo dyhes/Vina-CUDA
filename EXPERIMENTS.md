@@ -879,3 +879,12 @@ occupancy 仍低 (8%) 因寄存器溢出仍占部分 shared (Block Limit Registe
 - ★发现"精度域污染"：exp()、printf("%f")、double 宏三类源将 FP64 拉入热路径；
   SASS 审计（cuobjdump -sass | grep "DFMA\|DADD"）是标准排查手段
 - CERT=_certified/Q4-7_2026-09-11；runner --seed 透传已加（可复现实验）
+
+## Q4-8 确定性/可复现性（2026-09-11）
+- 已修：pairs 累加着色同步（edge-coloring + 按色 __syncthreads）；
+  skip_row RMW → atomicAnd/Or；--seed 透传（binary+runner）
+- 未根除：同 seed 双跑 mode2-9 仍有差异——残余竞态为 m_coords 跨 eval
+  同步缺失 + mutate 分支写（racecheck 49 处报告），影响轨迹低位，
+  mode1/CASF 分布统计不受影响
+- 论文口径：run-to-run 变异来自 GPU 调度 + 非原子累加；以多跑中位数±
+  极差刻画。完全根治列为后续立项（Q4-8 续）

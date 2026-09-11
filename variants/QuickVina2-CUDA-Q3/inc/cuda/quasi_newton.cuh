@@ -996,6 +996,7 @@ __device__  void POT_deriv_update(
 		g->orientation[k] = orientation_derivative[0][k];
 	}
 	for (int k = 0; k < num_torsion; k++) g->lig_torsion[k] = torsion_derivative[k + 1];// no meaning for node 0
+	__syncthreads(); // [Q4-8] g fully written before caller consumes it
 }
 
 
@@ -1050,8 +1051,20 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 
 ) {
 
+	__shared__ int q4_eval_idx;
+	if (threadIdx.x==0 && threadIdx.y==0) {
+		if (q4_eval_idx == 0 && blockIdx.x + blockIdx.y * gridDim.x == 0) {
+			for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) {} // noop
+		}
+	}
 	set_update(c, m_gpu_rigid, m_coords, m->atoms, m->m_num_movable_atoms, epsilon_fl);
-	if (threadIdx.x==0 && threadIdx.y==0) atomicAdd(&d_stage.evals_n, 1ULL);
+	if (threadIdx.x==0 && threadIdx.y==0) {
+		unsigned long long n = atomicAdd(&d_stage.evals_n, 1ULL);
+		if (blockIdx.x + blockIdx.y * gridDim.x == 0 && n < 200)
+			printf("EV %llu\n", n);
+	}
+	__syncthreads(); // [Q4-8] all threads finish writing shared m_coords
+	                 // before GRID loop reads it (fixes straggler race)
 
 	STAGE_T0;
 	flo e = ig_eval_deriv_update_optimal(c,
@@ -1082,9 +1095,12 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 										q4_ep,
 										q4_num_colors);
 	STAGE_ADD2(st_t0b, intra);
+	__syncthreads(); // [Q4-8] pair-force writes complete before POT reads
 
 	unsigned long long st_t0c = st_clock_ns();
 	POT_deriv_update(minus_forces, m_gpu_rigid, m_coords, g, threadNumInBlock, threadsPerBlock);
+	if (threadIdx.x==0 && threadIdx.y==0 && blockIdx.x + blockIdx.y * gridDim.x == 0)
+		printf("EVENE %d %.6f\n", (int)*((int*)&d_stage.evals_n), e);
 	STAGE_ADD2(st_t0c, pot);
 
 	return e;
