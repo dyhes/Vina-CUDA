@@ -21,6 +21,8 @@ void HostProbe::mark(const char* name) {
 }
 #endif
 
+__constant__ mis_cl mis_cuda_const;  // [Q4-12] per-ligand scalar params (read-only)
+
 // [v7] one-time CUDA warmup: driver init, allocator mapping, module load.
 // Runs BEFORE per-target timing; excluded from E2E_DOCK (see handoff
 // e2e_timing_and_batch §1.2 — ctx/module load is environment cost).
@@ -312,8 +314,7 @@ __global__ void kernel2_update(
 	//}
 	//__syncthreads();
 
-	__shared__ mis_cl mis_gpu;
-	mis_gpu = *mis;
+	// [Q4-12] mis scalars now in __constant__ mis_cuda_const (-68B shared)
 
 	// [Q4-7C] per-trajectory pairs skip-bitmap (shared, zeroed once per kernel)
 	__shared__ unsigned long long q4_skip_row[(MAX_NUM_OF_LIG_PAIRS + 63) / 64];
@@ -359,8 +360,8 @@ __global__ void kernel2_update(
 							  m_gpu->atoms,
 							  &m_coords,
 							  m_gpu->ligand.rigid.origin[0],
-							  mis_gpu.epsilon_fl,
-							  mis_gpu.mutation_amplitude,
+							  mis_cuda_const.epsilon_fl,
+							  mis_cuda_const.mutation_amplitude,
 							  torsion_size,
 							  threadNumInBlock,
 							  threadsPerBlock);STAGE_ADD(mutate);;
@@ -373,7 +374,7 @@ __global__ void kernel2_update(
 							 m_gpu,	 // global memory
 							 pre,
 							 grids,
-							 &mis_gpu,
+							 &mis_cuda_const,
 							 torsion_size,
 							 max_bfgs_steps,
 							 &m_coords,		// shared memory
@@ -407,7 +408,7 @@ __global__ void kernel2_update(
 			tmp = candidate;
 
 			set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
-				m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_gpu.epsilon_fl);
+				m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
 
 			if (tmp.e < best_e)
 			{
@@ -418,7 +419,7 @@ __global__ void kernel2_update(
 									 m_gpu,
 									 pre,
 									 grids,
-									 &mis_gpu,
+									 &mis_cuda_const,
 									 torsion_size,
 									 max_bfgs_steps,
 									 &m_coords,		// shared memory
@@ -448,7 +449,7 @@ __global__ void kernel2_update(
 				if (tmp.e < best_e)
 				{
 					set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
-						m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_gpu.epsilon_fl);
+						m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
 
 					best_out = tmp;
 
@@ -502,6 +503,13 @@ void kernel_monte(
 
 	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);
 	  fprintf(stderr, "K2T pre-launch  : %.1f\n", _t.tv_sec*1000.0+_t.tv_nsec/1e6); }
+		// [Q4-12] bind per-ligand scalars to constant memory (TU-local symbol,
+		// cudaGetSymbolAddress form = ncu-safe; setDevice already done in warmup)
+		{
+			void* mc = nullptr;
+			checkCUDA(cudaGetSymbolAddress(&mc, mis_cuda_const));
+			checkCUDA(cudaMemcpy(mc, mis, sizeof(mis_cl), cudaMemcpyHostToDevice));
+		}
 	kernel2_update<<<grid_size, block_size>>>(ric, mg, pre, grids, random_maps, coords, results, mis, torsion_size,
 											  search_depth, max_bfgs_steps, rilc_bfgs_enable);
 	checkCUDA(cudaDeviceSynchronize());

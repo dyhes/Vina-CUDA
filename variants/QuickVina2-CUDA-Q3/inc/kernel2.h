@@ -32,7 +32,7 @@ typedef float flo;
 #define MAX_NUM_OF_DIMENSIONS_OF_MATIRX (3 + 3 + MAX_NUM_OF_LIG_TORSION + MAX_NUM_OF_FLEX_TORSION + 1)
 #define MAX_NUM_OF_LIG_TORSION 48
 #define MAX_NUM_OF_FLEX_TORSION 1
-#define MAX_NUM_OF_RIGID 40  // [Q4-6a] CASF max 36 torsions => 37 nodes; 40 covers. Shared -864B => 8 blocks/SM
+#define MAX_NUM_OF_RIGID 38  // [Q4-12] CASF-2016 max 36 torsions => 37 nodes; 38 covers (BRANCH count verified 3ag9=36). Saves shared for 8 blocks @64t
 #define MAX_NUM_OF_ATOMS 128
 #define SIZE_OF_MOLEC_STRUC ((3 + 4 + MAX_NUM_OF_LIG_TORSION + MAX_NUM_OF_FLEX_TORSION + 1) * sizeof(flo))
 #define SIZE_OF_CHANGE_STRUC ((3 + 3 + MAX_NUM_OF_LIG_TORSION + MAX_NUM_OF_FLEX_TORSION + 1) * sizeof(flo))
