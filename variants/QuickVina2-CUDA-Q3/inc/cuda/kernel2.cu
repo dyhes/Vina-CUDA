@@ -27,19 +27,17 @@ void HostProbe::mark(const char* name) {
 #ifdef HOST_PROBE
 __global__ void __v7_warmup_kernel() {}
 extern "C" void v7_warmup_cuda() {
-	{ void* wp=0; cudaMalloc(&wp, (size_t)1141*1024*1024); cudaFree(wp); }
-
+	// [Q4-10a] zombie probes removed: the 1.14GB cudaMalloc+Free probe sized
+	// the OLD grids buffer (Q4-1 shrank real grids to 136MB) and cudaFree
+	// releases the pages anyway (prep_floor_anatomy: warmup malloc+free does
+	// NOT help the real allocation); the 256MB memset was L2/page warmup for
+	// a footprint that no longer exists. Kept: real ctx init semantics
+	// (cudaSetDevice, small probe alloc+memset, warmup kernel launch for
+	// module load, device sync) — measured to cost ~2-5ms total.
 	checkCUDA(cudaSetDevice(0));
 	float* dummy = NULL; checkCUDA(cudaMalloc((void**)&dummy, 4096));
 	checkCUDA(cudaMemset(dummy, 0, 4096));
 	__v7_warmup_kernel<<<1, 32>>>();
-	{
-		void* big = NULL;
-		if (cudaMalloc((void**)&big, (size_t)256 * 1024 * 1024) == cudaSuccess) {
-			cudaMemset(big, 0, (size_t)256 * 1024 * 1024);
-			cudaFree(big);
-		}
-	}
 	checkCUDA(cudaFree(dummy));
 	checkCUDA(cudaDeviceSynchronize());
 }
