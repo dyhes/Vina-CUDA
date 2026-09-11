@@ -914,9 +914,9 @@ __device__  void POT_deriv_update(
 	int num_torsion = lig_rigid_gpu->num_children;
 	int num_rigid = num_torsion + 1;
 	__shared__ flo position_derivative_tmp[MAX_NUM_OF_RIGID][3];
-	flo position_derivative[MAX_NUM_OF_RIGID][3];
+	__shared__ flo position_derivative[MAX_NUM_OF_RIGID][3];   // [Q4-11 S1] was per-thread local (1.2KB spill)
 	__shared__ flo orientation_derivative_tmp[MAX_NUM_OF_RIGID][3];
-	flo orientation_derivative[MAX_NUM_OF_RIGID][3];
+	__shared__ flo orientation_derivative[MAX_NUM_OF_RIGID][3];// [Q4-11 S1] was per-thread local
 	flo torsion_derivative[MAX_NUM_OF_RIGID]; // torsion_derivative[0] has no meaning(root node has no torsion)
 
 	for (int i = threadNumInBlock; i < num_rigid; i = i + threadsPerBlock) {
@@ -947,6 +947,11 @@ __device__  void POT_deriv_update(
 	__syncthreads();
 
 	// position_derivative + orientation_derivetive + torsion_derivative
+	// [Q4-11 S1] tree walk is now thread0-only: the arrays are shared and the
+	// walk is inherently serial (children before parents); running it on all
+	// 32 threads would (a) 32x-redundantly add into the SAME shared arrays.
+	// Threads wait at the trailing __syncthreads() (already present).
+	if (threadNumInBlock == 0)
 	for (int i = num_rigid - 1; i >= 0; i--) {// from bottom to top
 		for (int k = 0; k < 3; k++)
 		{
@@ -979,13 +984,18 @@ __device__  void POT_deriv_update(
 	}
 
 
-	for (int k = 0; k < 3; k++)	
-	{
-		g->position[k] = position_derivative[0][k];
-		g->orientation[k] = orientation_derivative[0][k];
+	if (threadNumInBlock == 0) {
+		// [Q4-11 S1] g write is thread0-only: torsion_derivative is a
+		// per-thread local whose only meaningful copy lives in thread0
+		// after the single-thread tree walk.
+		for (int k = 0; k < 3; k++)
+		{
+			g->position[k] = position_derivative[0][k];
+			g->orientation[k] = orientation_derivative[0][k];
+		}
+		for (int k = 0; k < num_torsion; k++) g->lig_torsion[k] = torsion_derivative[k + 1];// no meaning for node 0
 	}
-	for (int k = 0; k < num_torsion; k++) g->lig_torsion[k] = torsion_derivative[k + 1];// no meaning for node 0
-	__syncthreads(); // [Q4-8] g fully written before caller consumes it
+	__syncthreads(); // [Q4-8+S1] g fully written before caller consumes it
 }
 
 
