@@ -789,9 +789,9 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 					minus_forces->coords[ip[1]][j] -= force[j];
 					minus_forces->coords[ip[2]][j] += force[j];
 				}
-				skip_row[wi] &= ~(1ULL << bi); // in-cutoff: clear skip
+				atomicAnd(skip_row + wi, ~(1ULL << bi)); // in-cutoff: clear skip (atomic: multi-thread RMW)
 			} else {
-				skip_row[wi] |= (1ULL << bi); // far: mark skip
+				atomicOr(skip_row + wi, 1ULL << bi); // far: mark skip (atomic RMW)
 			}
 		}
 		__syncthreads(); // all pairs of color c done before color c+1
