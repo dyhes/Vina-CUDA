@@ -888,3 +888,9 @@ occupancy 仍低 (8%) 因寄存器溢出仍占部分 shared (Block Limit Registe
   mode1/CASF 分布统计不受影响
 - 论文口径：run-to-run 变异来自 GPU 调度 + 非原子累加；以多跑中位数±
   极差刻画。完全根治列为后续立项（Q4-8 续）
+
+## Q4-7M-M2 grid FP16 存储（2026-09-11）
+- m_data flo → __half（136→68MB），kernel1 写 __float2half，读端 __half2float（插值保 FP32）
+- 结果：k2 与 FP32 持平（12MB grid 常驻 L2，命中无带宽差）；显存 -50%
+- 精度归因被 Q4-8 残余非确定性阻塞（同 seed 双跑差 0.2 kcal ≈ 竞态量级）
+- 保留（v6-batch 显存前置收益）；Q4 剩余顺序修正：Q4-8续 → M2归因 → M4 → Q4-9 batch
