@@ -6,8 +6,6 @@
 // [Q4-7C] per-TU device globals (only kernel2.cu includes this header)
 __device__ unsigned long long* q4_skip_row_g = 0;
 __device__ int q4_epoch_i = 0;
-__device__ unsigned char* q4_pair_color = 0;   // per-pair color (host-filled)
-__device__ int q4_num_colors = 0;              // number of colors used
 
 
 #include "commonMacros.h"
@@ -740,8 +738,7 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 									const				int				 threadNumInBlock,
 									const				int				 threadsPerBlock,
 									unsigned long long* q4_skip_row,
-									const				unsigned long long q4_ep,
-									const				int q4_num_colors
+									const				unsigned long long q4_ep
 ) {
 	// [FUSION v1] warp-shuffle reduction: 寄存器累加 + 单 warp 树形归约, 移除 16KB shared e[]
 	float my_e = 0.0f;
@@ -761,42 +758,33 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 	__syncthreads();
 	const int ep = q4_probe_epoch;
 
-	// [Q4-8] deterministic accumulation: pairs are edge-colored (no two
-	// pairs sharing an atom share a color). Process one color at a time
-	// with __syncthreads between colors => per-atom accumulation order is
-	// fixed => bit-deterministic across runs (same seed).
-	const int num_colors = q4_num_colors;
-
-	for (int c = 0; c < num_colors; c++) {
-		for (int i = threadNumInBlock; i < pairs->num_pairs; i = i + threadsPerBlock){
-			if (q4_pair_color[i] != c) continue;
-			const int wi = i >> 6, bi = i & 63;
-			if ((skip_row[wi] >> bi) & 1ULL) {
-				if ((i + ep) & 7) continue; // rotating 1/8 re-probe
-			}
-			const int ip[3] = { pairs->type_pair_index[i], pairs->a[i] ,pairs->b[i] };
-			float coords_b[3] = { m_coords->coords[ip[2]][0], m_coords->coords[ip[2]][1], m_coords->coords[ip[2]][2] };
-			float coords_a[3] = { m_coords->coords[ip[1]][0], m_coords->coords[ip[1]][1], m_coords->coords[ip[1]][2] };
-			float r[3] = { coords_b[0] - coords_a[0], coords_b[1] - coords_a[1] ,coords_b[2] - coords_a[2] };
-			float r2 = r[0] * r[0] + r[1] * r[1] + r[2] * r[2];
-
-			if (r2 < pre->m_cutoff_sqr) {
-				float tmp[2];
-				p_eval_deriv(tmp, ip[0], r2, pre, epsilon_fl);
-				float force[3] = { r[0] * tmp[1], r[1] * tmp[1] ,r[2] * tmp[1] };
-				curl(&tmp[0], force, v, epsilon_fl);
-				my_e += tmp[0];
-				for (int j = 0; j < 3; j++){
-					minus_forces->coords[ip[1]][j] -= force[j];
-					minus_forces->coords[ip[2]][j] += force[j];
-				}
-				atomicAnd(skip_row + wi, ~(1ULL << bi)); // in-cutoff: clear skip (atomic: multi-thread RMW)
-			} else {
-				atomicOr(skip_row + wi, 1ULL << bi); // far: mark skip (atomic RMW)
-			}
+	for (int i = threadNumInBlock; i < pairs->num_pairs; i = i + threadsPerBlock){
+		const int wi = i >> 6, bi = i & 63;
+		if ((skip_row[wi] >> bi) & 1ULL) {
+			if ((i + ep) & 7) continue; // rotating 1/8 re-probe
 		}
-		__syncthreads(); // all pairs of color c done before color c+1
+		const int ip[3] = { pairs->type_pair_index[i], pairs->a[i] ,pairs->b[i] };
+		float coords_b[3] = { m_coords->coords[ip[2]][0], m_coords->coords[ip[2]][1], m_coords->coords[ip[2]][2] };
+		float coords_a[3] = { m_coords->coords[ip[1]][0], m_coords->coords[ip[1]][1], m_coords->coords[ip[1]][2] };
+		float r[3] = { coords_b[0] - coords_a[0], coords_b[1] - coords_a[1] ,coords_b[2] - coords_a[2] };
+		float r2 = r[0] * r[0] + r[1] * r[1] + r[2] * r[2];
+
+		if (r2 < pre->m_cutoff_sqr) {
+			float tmp[2];
+			p_eval_deriv(tmp, ip[0], r2, pre, epsilon_fl);
+			float force[3] = { r[0] * tmp[1], r[1] * tmp[1] ,r[2] * tmp[1] };
+			curl(&tmp[0], force, v, epsilon_fl);
+			my_e += tmp[0];
+			for (int j = 0; j < 3; j++){
+				minus_forces->coords[ip[1]][j] -= force[j];
+				minus_forces->coords[ip[2]][j] += force[j];
+			}
+			atomicAnd(skip_row + wi, ~(1ULL << bi)); // in-cutoff: clear skip (atomic RMW) [Q4-8 kept]
+		} else {
+			atomicOr(skip_row + wi, 1ULL << bi); // far: mark skip (atomic RMW) [Q4-8 kept]
+		}
 	}
+	__syncthreads(); // [Q4-8, kept] all pair writes complete before reduction
 	if (threadNumInBlock == 0) q4_probe_epoch++;
 
 	__syncthreads();
@@ -1047,8 +1035,7 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 									rigid_cl*       	m_gpu_rigid,
 									grids_gpu*          grids_cuda,
 									unsigned long long* q4_skip_row,
-									const				unsigned long long q4_ep,
-									const				int q4_num_colors
+									const				unsigned long long q4_ep
 
 ) {
 
@@ -1093,8 +1080,7 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 										threadNumInBlock,
 										threadsPerBlock,
 										q4_skip_row,
-										q4_ep,
-										q4_num_colors);
+										q4_ep);
 	STAGE_ADD2(st_t0b, intra);
 	__syncthreads(); // [Q4-8] pair-force writes complete before POT reads
 
@@ -1397,8 +1383,7 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 									const				int				threadNumInBlock,
 									const		        int				threadsPerBlock,
 									               rigid_cl*   	m_gpu_rigid,
-												   grids_gpu*   grids_cuda,
-												   const		 int		 q4_num_colors
+												   grids_gpu*   grids_cuda
 	)
 {
 	int count = 0;
@@ -1440,8 +1425,7 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 			m_gpu_rigid,
 			grids_cuda,
 			q4_skip_row_g,
-			q4_epoch_i,
-			q4_num_colors
+			q4_epoch_i
 		);
 		++count;
 		/* Check the Armijo condition. */
@@ -1759,8 +1743,7 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 										grids_gpu*          grids_cuda,
 										visited_cl*         visited,
 										unsigned long long* q4_skip_row,
-										const				unsigned long long q4_ep,
-										const				int q4_num_colors
+										const				unsigned long long q4_ep
 )
 {
 	int lig_torsion_size = torsion_size;
@@ -1802,8 +1785,7 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 						m_gpu_rigid,
 						grids_cuda,
 						q4_skip_row,
-						q4_ep,
-						mis->q4_num_colors
+						q4_ep
 	);
 	STAGE_ADD(eval_init);
 	__syncthreads();
@@ -1870,8 +1852,7 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 				threadNumInBlock,
 				threadsPerBlock,
 				m_gpu_rigid,
-				grids_cuda,
-				mis->q4_num_colors
+				grids_cuda
 			);
 		STAGE_ADD(ls_total);
 		if (threadIdx.x==0 && threadIdx.y==0) atomicAdd(&d_stage.n_ls, 1ULL);

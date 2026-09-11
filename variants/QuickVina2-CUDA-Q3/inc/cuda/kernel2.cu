@@ -386,8 +386,7 @@ __global__ void kernel2_update(
 							 &grids_cuda,
 							&visited,
 							 q4_skip_row,
-							 (unsigned long long)q4_epoch_i,
-							 mis_gpu.q4_num_colors);
+							 (unsigned long long)q4_epoch_i);
 		}
 		else
 		{
@@ -432,8 +431,7 @@ __global__ void kernel2_update(
 									 &grids_cuda,
 									 &visited,
 									 q4_skip_row,
-									 (unsigned long long)q4_epoch_i,
-									 mis_gpu.q4_num_colors);
+									 (unsigned long long)q4_epoch_i);
 				}
 				else
 				{
