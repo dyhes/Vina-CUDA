@@ -914,9 +914,12 @@ __device__  void POT_deriv_update(
 	int num_torsion = lig_rigid_gpu->num_children;
 	int num_rigid = num_torsion + 1;
 	__shared__ flo position_derivative_tmp[MAX_NUM_OF_RIGID][3];
-	flo position_derivative[MAX_NUM_OF_RIGID][3];
+	// [Q4-12 S4a-3] the separate position_derivative/orientation_derivative
+	// arrays are merged away: the bottom-up tree walk (children before
+	// parents, DFS ordering) operates IN PLACE on the *_tmp arrays, so the
+	// 912B of duplicated shared storage is freed (8 blocks @64t becomes
+	// reachable: 12684+960-912 = 12732 <= 12800).
 	__shared__ flo orientation_derivative_tmp[MAX_NUM_OF_RIGID][3];
-	flo orientation_derivative[MAX_NUM_OF_RIGID][3];
 	flo torsion_derivative[MAX_NUM_OF_RIGID]; // torsion_derivative[0] has no meaning(root node has no torsion)
 
 	for (int i = threadNumInBlock; i < num_rigid; i = i + threadsPerBlock) {
@@ -947,46 +950,51 @@ __device__  void POT_deriv_update(
 	__syncthreads();
 
 	// position_derivative + orientation_derivetive + torsion_derivative
+	// [Q4-11 S1] tree walk is now thread0-only: the arrays are shared and the
+	// walk is inherently serial (children before parents); running it on all
+	// 32 threads would (a) 32x-redundantly add into the SAME shared arrays.
+	// Threads wait at the trailing __syncthreads() (already present).
+	if (threadNumInBlock == 0)
 	for (int i = num_rigid - 1; i >= 0; i--) {// from bottom to top
-		for (int k = 0; k < 3; k++)
-		{
-			position_derivative[i][k] = position_derivative_tmp[i][k]; // self
-			orientation_derivative[i][k] = orientation_derivative_tmp[i][k];
-		}
-
 		// looking for chidren node
 		for (int j = 0; j < num_rigid; j++) {
 			if (lig_rigid_gpu->children_map[i] & (1ULL << j)) {
 				for (int k = 0; k < 3; k++)
 				{
-					position_derivative[i][k] += position_derivative[j][k]; 
-					orientation_derivative[i][k] += orientation_derivative[j][k];
+					position_derivative_tmp[i][k] += position_derivative_tmp[j][k]; 
+					orientation_derivative_tmp[i][k] += orientation_derivative_tmp[j][k];
 				}
 				flo product_out[3];
 				flo origin_temp[3] = {	lig_rigid_gpu->origin[j][0] - lig_rigid_gpu->origin[i][0],
 											lig_rigid_gpu->origin[j][1] - lig_rigid_gpu->origin[i][1],
 											lig_rigid_gpu->origin[j][2] - lig_rigid_gpu->origin[i][2] };
-				product(product_out, origin_temp, position_derivative[j]);
-				for (int k = 0; k < 3; k++)orientation_derivative[i][k] += product_out[k];
+				product(product_out, origin_temp, position_derivative_tmp[j]);
+				for (int k = 0; k < 3; k++)orientation_derivative_tmp[i][k] += product_out[k];
 				 // self+children node
 			}
 		}
 
 		flo sum = 0;
-		for (int j = 0; j < 3; j++) sum += orientation_derivative[i][j] * lig_rigid_gpu->axis[i][j];
+		for (int j = 0; j < 3; j++) sum += orientation_derivative_tmp[i][j] * lig_rigid_gpu->axis[i][j];
 		torsion_derivative[i] = sum;
 
 	}
 
 
-	for (int k = 0; k < 3; k++)	
-	{
-		g->position[k] = position_derivative[0][k];
-		g->orientation[k] = orientation_derivative[0][k];
+	if (threadNumInBlock == 0) {
+		// [Q4-11 S1] g write is thread0-only: torsion_derivative is a
+		// per-thread local whose only meaningful copy lives in thread0
+		// after the single-thread tree walk.
+		for (int k = 0; k < 3; k++)
+		{
+			g->position[k] = position_derivative_tmp[0][k];
+			g->orientation[k] = orientation_derivative_tmp[0][k];
+		}
+		for (int k = 0; k < num_torsion; k++) g->lig_torsion[k] = torsion_derivative[k + 1];// no meaning for node 0
 	}
-	for (int k = 0; k < num_torsion; k++) g->lig_torsion[k] = torsion_derivative[k + 1];// no meaning for node 0
-	__syncthreads(); // [Q4-8] g fully written before caller consumes it
+	__syncthreads(); // [Q4-8+S1] g fully written before caller consumes it
 }
+
 
 
 
