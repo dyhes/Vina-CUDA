@@ -490,7 +490,7 @@ void kernel_monte(
 	const int rilc_bfgs_enable)
 {
 	dim3 grid_size(GRID_DIM1, GRID_DIM2, 1);
-	dim3 block_size(16, 2, 1);
+	dim3 block_size(16, 4, 1); // [Q4-12 S4a-2] 64 threads: 2 warps per trajectory
 	cudaEvent_t time1, time2;
 	cudaEventCreate(&time1);
 	cudaEventCreate(&time2);
