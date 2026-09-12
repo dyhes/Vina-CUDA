@@ -3,7 +3,7 @@ WORK_DIR=$(CURDIR)
 BOOST_LIB_PATH=/usr
 NVCC_COMPILER=/usr/local/cuda/bin/nvcc
 DOCKING_BOX_SIZE=-DSMALL_BOX
-GRID_DIM=-DGRID_DIM1=64 -DGRID_DIM2=128
+GRID_DIM=-DGRID_DIM1=8 -DGRID_DIM2=128
 
 
 # Should not be modified
@@ -16,7 +16,7 @@ LIB3=-lm -lpthread
 LIB_PATH=-L$(BOOST_LIB_PATH)/lib/x86_64-linux-gnu
 SRC=./lib/*.cpp
 SRC_CUDA = ./inc/cuda/kernel1.cu ./inc/cuda/kernel2.cu ./inc/cuda/ric_gpu.cu ../../milestones/gpu_timer.cu
-MACRO= $(GRID_DIM) $(DOCKING_BOX_SIZE) -DBOOST_TIMER_ENABLE_DEPRECATED -lineinfo -arch=sm_89 -maxrregcount=128
+MACRO= $(GRID_DIM) $(DOCKING_BOX_SIZE) -DBOOST_TIMER_ENABLE_DEPRECATED -lineinfo -arch=sm_89 -maxrregcount=64
 
 all:out
 out:./main/main.cpp

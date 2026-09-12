@@ -254,6 +254,10 @@ __global__ void kernel2(
 }
 
 
+// [Q7-BH] per-conf state now in dynamic shared (BhConfState bh[8])
+#define conf_barrier_k(conf_id) conf_barrier(conf_id)
+
+
 __global__ void kernel2_update(
 	const output_type_cl *ric,
 	m_cl *mg,
@@ -277,8 +281,16 @@ __global__ void kernel2_update(
 	int blockNumInGrid = gridDim.x * gridDim.y * blockIdx.z + gridDim.x * blockIdx.y +  blockIdx.x;
 	// int globalThreadNum = blockNumInGrid * threadsPerBlock + threadNumInBlock;        
 
-	int id = blockNumInGrid;
+	// [Q7-BH] 8 confs per block, 4 warps each
+	const int conf_id   = (threadNumInBlock >> 5) >> 2;   // warpInBlock >> 2 (0..7)
+	const int local_tid = threadNumInBlock & (BH_TPB - 1); // 0..127 within conf
+	const int local_tpb = BH_TPB;
+	int id = blockNumInGrid * BH_NCONF + conf_id;          // global trajectory id
 	// int id = globalThreadNum;
+#ifdef BH_DEBUG
+	if (local_tid == 0 && blockNumInGrid < 4)
+		printf("[BH] block %d conf %d START\n", blockNumInGrid, conf_id);
+#endif
 
 	flo best_e = 1.0e38f;
 	ligand_atom_coords_cl best_coords;
@@ -288,21 +300,18 @@ __global__ void kernel2_update(
 
 	m_cl* m_gpu = &mg[0];   // [Path B merged] single shared copy (read-only in kernel)
 
-	__shared__ m_coords_cl m_coords;
+	// [Q7-BH] per-conf shared via references into dynamic arena
+	m_coords_cl        &m_coords      = bh[conf_id].m_coords;
+	m_minus_forces     &minus_forces  = bh[conf_id].minus_forces;
+	output_type_cl     &tmp           = bh[conf_id].tmp;
+	change_cl          &g             = bh[conf_id].g;
+	output_type_cl     &best_out      = bh[conf_id].best_out;
+	output_type_cl     &candidate     = bh[conf_id].candidate;
+	ligand_gpu         &m_gpu_ligand  = bh[conf_id].m_gpu_ligand;
+
 	m_coords = m_gpu->m_coords;
-
-	__shared__ m_minus_forces minus_forces;
 	minus_forces = m_gpu->minus_forces;
-
-	__shared__ output_type_cl tmp;
 	tmp = ric[id];
-
-	__shared__ change_cl g;
-
-	__shared__ output_type_cl best_out;
-	__shared__ output_type_cl candidate;
-
-	__shared__ ligand_gpu m_gpu_ligand;
 	m_gpu_ligand.rigid = m_gpu->ligand.rigid;
 	m_gpu_ligand.begin =  m_gpu->ligand.begin;
 	m_gpu_ligand.end = m_gpu->ligand.end;
@@ -317,13 +326,13 @@ __global__ void kernel2_update(
 	// [Q4-12] mis scalars now in __constant__ mis_cuda_const (-68B shared)
 
 	// [Q4-7C] per-trajectory pairs skip-bitmap (shared, zeroed once per kernel)
-	__shared__ unsigned long long q4_skip_row[(MAX_NUM_OF_LIG_PAIRS + 63) / 64];
-	__shared__ int q4_epoch_i;
-	if (threadNumInBlock == 0) {
+	unsigned long long (&q4_skip_row)[(MAX_NUM_OF_LIG_PAIRS + 63) / 64] = bh[conf_id].q4_skip_row;
+	int &q4_epoch_i = bh[conf_id].q4_epoch_i;
+	if (local_tid == 0) {
 		for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) q4_skip_row[w] = 0ULL;
 		q4_epoch_i = 0;
 	}
-	__syncthreads();
+	conf_barrier_k(conf_id);
 
 	__shared__ grids_gpu grids_cuda;
 
@@ -363,8 +372,9 @@ __global__ void kernel2_update(
 							  mis_cuda_const.epsilon_fl,
 							  mis_cuda_const.mutation_amplitude,
 							  torsion_size,
-							  threadNumInBlock,
-							  threadsPerBlock);STAGE_ADD(mutate);;
+							  local_tid,
+							  local_tpb,
+							  conf_id);STAGE_ADD(mutate);;
 
 		if (rilc_bfgs_enable == 1)
 		{
@@ -379,13 +389,14 @@ __global__ void kernel2_update(
 							 max_bfgs_steps,
 							 &m_coords,		// shared memory
 							 &minus_forces, // shared memory
-							 threadNumInBlock,
-							 threadsPerBlock,
+							 local_tid,
+							 local_tpb,
 							 &m_gpu_ligand.rigid,
 							 &grids_cuda,
 							&visited,
 							 q4_skip_row,
-							 (unsigned long long)q4_epoch_i);
+							 (unsigned long long)q4_epoch_i,
+						 conf_id);
 		}
 		else
 		{
@@ -408,7 +419,7 @@ __global__ void kernel2_update(
 			tmp = candidate;
 
 			set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
-				m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
+				m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl, conf_id);
 
 			if (tmp.e < best_e)
 			{
@@ -424,13 +435,14 @@ __global__ void kernel2_update(
 									 max_bfgs_steps,
 									 &m_coords,		// shared memory
 									 &minus_forces, // shared memory
-									 threadNumInBlock,
-									 threadsPerBlock,
+									 local_tid,
+									 local_tpb,
 									 &m_gpu_ligand.rigid,
 									 &grids_cuda,
 									 &visited,
 									 q4_skip_row,
-									 (unsigned long long)q4_epoch_i);
+									 (unsigned long long)q4_epoch_i,
+						 conf_id);
 				}
 				else
 				{
@@ -449,7 +461,7 @@ __global__ void kernel2_update(
 				if (tmp.e < best_e)
 				{
 					set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
-						m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
+						m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl, conf_id);
 
 					best_out = tmp;
 
@@ -467,6 +479,10 @@ __global__ void kernel2_update(
 	// write the best conformation back to CPU
 	results[id] = best_out;
 	coords[id] = best_coords;
+#ifdef BH_DEBUG
+	if (local_tid == 0 && blockNumInGrid < 4)
+		printf("[BH] block %d conf %d END\n", blockNumInGrid, conf_id);
+#endif
 	{ if (threadIdx.x==0 && threadIdx.y==0 && blockIdx.x==0 && blockIdx.y==0) {
 	    unsigned long long w = st_clock_ns() - d_k2_wall;
 	    atomicAdd(&d_k2_wall, 0); // no-op keeps symbol referenced
@@ -490,7 +506,13 @@ void kernel_monte(
 	const int rilc_bfgs_enable)
 {
 	dim3 grid_size(GRID_DIM1, GRID_DIM2, 1);
-	dim3 block_size(16, 4, 1); // [Q4-12 S4a-2] 64 threads: 2 warps per trajectory
+	dim3 block_size(32, 32, 1); // [Q7-BH] 1024 threads: 8 confs x 4 warps, 1 block/SM
+	// [Q7-BH] opt-in dynamic shared for the per-conf arena (>48KB)
+	cudaError_t bh_err = cudaFuncSetAttribute((const void*)kernel2_update,
+		cudaFuncAttributeMaxDynamicSharedMemorySize,
+		(int)(BH_NCONF * sizeof(BhConfState)));
+	if (bh_err != cudaSuccess) { printf("BH: setAttribute failed: %s\n", cudaGetErrorString(bh_err)); }
+	size_t bh_dyn_smem = BH_NCONF * sizeof(BhConfState);
 	cudaEvent_t time1, time2;
 	cudaEventCreate(&time1);
 	cudaEventCreate(&time2);
@@ -510,7 +532,7 @@ void kernel_monte(
 			checkCUDA(cudaGetSymbolAddress(&mc, mis_cuda_const));
 			checkCUDA(cudaMemcpy(mc, mis, sizeof(mis_cl), cudaMemcpyHostToDevice));
 		}
-	kernel2_update<<<grid_size, block_size>>>(ric, mg, pre, grids, random_maps, coords, results, mis, torsion_size,
+	kernel2_update<<<grid_size, block_size, bh_dyn_smem>>>(ric, mg, pre, grids, random_maps, coords, results, mis, torsion_size,
 											  search_depth, max_bfgs_steps, rilc_bfgs_enable);
 	checkCUDA(cudaDeviceSynchronize());
 	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);

@@ -4,6 +4,8 @@
 #define _QUASI_NEWTON_H_
 
 // [Q4-7C] per-TU device globals (only kernel2.cu includes this header)
+#include "bh_shared.h" // [Q7-BH] arena
+
 __device__ unsigned long long* q4_skip_row_g = 0;
 __device__ int q4_epoch_i = 0;
 
@@ -360,7 +362,8 @@ __device__ flo ig_eval_deriv_update_optimal(		output_type_cl*		x,
 											m_minus_forces* minus_forces,
 						const				int				threadNumInBlock,
 						const				int				threadsPerBlock,
-						                    grids_gpu*      grids_cuda
+						                    grids_gpu*      grids_cuda,
+							 const int conf_id
 ) {
 
 	int nat = num_atom_types(grids->atu);
@@ -391,25 +394,25 @@ __device__ flo ig_eval_deriv_update_optimal(		output_type_cl*		x,
 				minus_forces->coords[i][2] = deriv[2];
 			}
 		}
-	}__syncthreads();
+	}conf_barrier(conf_id);
 	//Sum intermolecular energy
 	// [v4.5] block-level reduction: in-warp shfl + cross-warp shared tree.
 	// Behaviorally identical to the single-warp shfl version at threadsPerBlock=32.
 	{
-		__shared__ float warp_e[32];
+		float (&warp_e)[32] = bh[conf_id].warp_e; // [Q7-BH] was function-scope shared
 		const int lane = threadNumInBlock & 31;
 		const int wid = threadNumInBlock >> 5;
 		for (int offset = 16; offset > 0; offset >>= 1)
 			my_e += __shfl_down_sync(0xFFFFFFFF, my_e, offset);
 		if (lane == 0) warp_e[wid] = my_e;
-		__syncthreads();
+		conf_barrier(conf_id);
 		if (wid == 0) {
 			float v = (lane < (threadsPerBlock >> 5)) ? warp_e[lane] : 0.0f;
 			for (int offset = 16; offset > 0; offset >>= 1)
 				v += __shfl_down_sync(0xFFFFFFFF, v, offset);
 			if (lane == 0) warp_e[0] = v;
 		}
-		__syncthreads();
+		conf_barrier(conf_id);
 		my_e = warp_e[0];
 	}
 	return my_e;
@@ -602,14 +605,15 @@ __device__ void set_update(	const				output_type_cl* x,
 								m_coords_cl*	m_coords_gpu,	
 			const				atom_cl*		atoms,				
 			const				int				m_num_movable_atoms,
-			const				flo			epsilon_fl
+			const				flo			epsilon_fl,
 			
+				const int conf_id
 ) {
 	// [Q5R-SERIAL] this walk was previously executed redundantly by ALL
 	// threads (identical values written to shared). Gate to thread0:
 	// 63/64 of the redundant workload removed; trailing __syncthreads
 	// publishes shared m_coords/rigid to the whole block.
-	if (threadIdx.x == 0 && threadIdx.y == 0)
+	if ((threadIdx.x + blockDim.x * threadIdx.y) - conf_id * 128 == 0) // [Q7-BH] conf-local thread0
 	{
 	//************** (root --> origin[0]) node.set_conf **************// (CHECKED)
 	
@@ -674,7 +678,8 @@ __device__ void set_update(	const				output_type_cl* x,
 	}
 	//************** end branches_set_conf **************//
 	} // [Q5R-SERIAL] end thread0 gate
-	__syncthreads(); // [Q5R-SERIAL] publish m_coords/rigid
+	__syncwarp(); // [Q7-BH] reconverge warp0 before domain barrier
+	conf_barrier(conf_id); // [Q5R-SERIAL] publish m_coords/rigid
 }
 
 __device__ inline void p_eval_deriv(						flo*		out,
@@ -746,16 +751,17 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 									const				int				 threadNumInBlock,
 									const				int				 threadsPerBlock,
 									unsigned long long* q4_skip_row,
-									const				unsigned long long q4_ep
+									const				unsigned long long q4_ep,
+										const int conf_id
 ) {
 	// [FUSION v1] warp-shuffle reduction: 寄存器累加 + 单 warp 树形归约, 移除 16KB shared e[]
 	float my_e = 0.0f;
 
 	// [Q4-7C] shared skip-bitmap (256B): bit i set = pair i beyond cutoff at
 	// last probe. Rotating 1/8 re-probe window catches entries into cutoff.
-	__shared__ unsigned long long skip_row[(MAX_NUM_OF_LIG_PAIRS + 63) / 64];
-	__shared__ int q4_probe_epoch;
-	__shared__ int q4_bitmap_init;
+	unsigned long long (&skip_row)[(MAX_NUM_OF_LIG_PAIRS + 63) / 64] = bh[conf_id].skip_row; // [Q7-BH] was function-scope shared
+	int &q4_probe_epoch = bh[conf_id].q4_probe_epoch; // [Q7-BH] was function-scope shared
+	int &q4_bitmap_init = bh[conf_id].q4_bitmap_init; // [Q7-BH] was function-scope shared
 	if (threadNumInBlock == 0) {
 		if (!q4_bitmap_init) {
 			for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) skip_row[w] = 0ULL;
@@ -763,7 +769,8 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 			q4_probe_epoch = 0;
 		}
 	}
-	__syncthreads();
+	conf_barrier(conf_id); // [Q7-BH] publish zeroed bitmap before probes
+	conf_barrier(conf_id);
 	const int ep = q4_probe_epoch;
 
 	for (int i = threadNumInBlock; i < pairs->num_pairs; i = i + threadsPerBlock){
@@ -792,28 +799,29 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 			atomicOr(skip_row + wi, 1ULL << bi); // far: mark skip (atomic RMW) [Q4-8 kept]
 		}
 	}
-	__syncthreads(); // [Q4-8, kept] all pair writes complete before reduction
+	conf_barrier(conf_id); // [Q4-8, kept] all pair writes complete before reduction
 	if (threadNumInBlock == 0) q4_probe_epoch++;
+	__syncwarp(); // [Q7-BH]
 
-	__syncthreads();
+	conf_barrier(conf_id);
 	//Sum intermolecular energy
 	// [v4.5] block-level reduction (pairs): in-warp shfl + cross-warp shared tree.
 	// Behaviorally identical to the single-warp shfl version at threadsPerBlock=32.
 	{
-		__shared__ float warp_e[32];
+		float (&warp_e)[32] = bh[conf_id].warp_e; // [Q7-BH] was function-scope shared
 		const int lane = threadNumInBlock & 31;
 		const int wid = threadNumInBlock >> 5;
 		for (int offset = 16; offset > 0; offset >>= 1)
 			my_e += __shfl_down_sync(0xFFFFFFFF, my_e, offset);
 		if (lane == 0) warp_e[wid] = my_e;
-		__syncthreads();
+		conf_barrier(conf_id);
 		if (wid == 0) {
 			float v = (lane < (threadsPerBlock >> 5)) ? warp_e[lane] : 0.0f;
 			for (int offset = 16; offset > 0; offset >>= 1)
 				v += __shfl_down_sync(0xFFFFFFFF, v, offset);
 			if (lane == 0) warp_e[0] = v;
 		}
-		__syncthreads();
+		conf_barrier(conf_id);
 		my_e = warp_e[0];
 	}
 	return my_e;
@@ -917,17 +925,18 @@ __device__  void POT_deriv_update(
 				const					m_coords_cl*		m_coords,
 										change_cl*			g,
 				const		            int				    threadNumInBlock, 
-				const					int				    threadsPerBlock						
+				const					int				    threadsPerBlock,
+					const int conf_id
 ) {
 	int num_torsion = lig_rigid_gpu->num_children;
 	int num_rigid = num_torsion + 1;
-	__shared__ flo position_derivative_tmp[MAX_NUM_OF_RIGID][3];
+	flo (&position_derivative_tmp)[MAX_NUM_OF_RIGID][3] = bh[conf_id].pos_der_tmp; // [Q7-BH] was function-scope shared
 	// [Q4-12 S4a-3] the separate position_derivative/orientation_derivative
 	// arrays are merged away: the bottom-up tree walk (children before
 	// parents, DFS ordering) operates IN PLACE on the *_tmp arrays, so the
 	// 912B of duplicated shared storage is freed (8 blocks @64t becomes
 	// reachable: 12684+960-912 = 12732 <= 12800).
-	__shared__ flo orientation_derivative_tmp[MAX_NUM_OF_RIGID][3];
+	flo (&orientation_derivative_tmp)[MAX_NUM_OF_RIGID][3] = bh[conf_id].orient_der_tmp; // [Q7-BH] was function-scope shared
 	flo torsion_derivative[MAX_NUM_OF_RIGID]; // torsion_derivative[0] has no meaning(root node has no torsion)
 
 	for (int i = threadNumInBlock; i < num_rigid; i = i + threadsPerBlock) {
@@ -955,13 +964,13 @@ __device__  void POT_deriv_update(
 
 	// [v4.5] phase barrier: accumulate loop runs across warps; the tree walk reads
 	// *_tmp written by other warps. No-op at threadsPerBlock=32 (single warp).
-	__syncthreads();
+	conf_barrier(conf_id);
 
 	// position_derivative + orientation_derivetive + torsion_derivative
 	// [Q4-11 S1] tree walk is now thread0-only: the arrays are shared and the
 	// walk is inherently serial (children before parents); running it on all
 	// 32 threads would (a) 32x-redundantly add into the SAME shared arrays.
-	// Threads wait at the trailing __syncthreads() (already present).
+	// Threads wait at the trailing conf_barrier(conf_id) (already present).
 	if (threadNumInBlock == 0)
 	for (int i = num_rigid - 1; i >= 0; i--) {// from bottom to top
 		// looking for chidren node
@@ -1000,7 +1009,8 @@ __device__  void POT_deriv_update(
 		}
 		for (int k = 0; k < num_torsion; k++) g->lig_torsion[k] = torsion_derivative[k + 1];// no meaning for node 0
 	}
-	__syncthreads(); // [Q4-8+S1] g fully written before caller consumes it
+	__syncwarp(); // [Q7-BH] reconverge warp0 after thread0-only walk
+	conf_barrier(conf_id); // [Q4-8+S1] g fully written before caller consumes it
 }
 
 
@@ -1051,23 +1061,24 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 									rigid_cl*       	m_gpu_rigid,
 									grids_gpu*          grids_cuda,
 									unsigned long long* q4_skip_row,
-									const				unsigned long long q4_ep
+									const				unsigned long long q4_ep,
 
+	const int conf_id
 ) {
 
-	__shared__ int q4_eval_idx;
+	int &q4_eval_idx = bh[conf_id].q4_eval_idx; // [Q7-BH] was function-scope shared
 	if (threadIdx.x==0 && threadIdx.y==0) {
 		if (q4_eval_idx == 0 && blockIdx.x + blockIdx.y * gridDim.x == 0) {
 			for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) {} // noop
 		}
 	}
-	set_update(c, m_gpu_rigid, m_coords, m->atoms, m->m_num_movable_atoms, epsilon_fl);
+	set_update(c, m_gpu_rigid, m_coords, m->atoms, m->m_num_movable_atoms, epsilon_fl, conf_id);
 	if (threadIdx.x==0 && threadIdx.y==0) {
 		unsigned long long n = atomicAdd(&d_stage.evals_n, 1ULL);
 		if (blockIdx.x + blockIdx.y * gridDim.x == 0 && n < 200)
 			printf("EV %llu\n", n);
 	}
-	__syncthreads(); // [Q4-8] all threads finish writing shared m_coords
+	conf_barrier(conf_id); // [Q4-8] all threads finish writing shared m_coords
 	                 // before GRID loop reads it (fixes straggler race)
 
 	STAGE_T0;
@@ -1081,7 +1092,7 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 							minus_forces,
 							threadNumInBlock,
 							threadsPerBlock,							
-							grids_cuda);
+							grids_cuda, conf_id);
 	STAGE_ADD(grid);
 							
 	
@@ -1096,14 +1107,13 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 										threadNumInBlock,
 										threadsPerBlock,
 										q4_skip_row,
-										q4_ep);
+										q4_ep, conf_id);
 	STAGE_ADD2(st_t0b, intra);
-	__syncthreads(); // [Q4-8] pair-force writes complete before POT reads
+	conf_barrier(conf_id); // [Q4-8] pair-force writes complete before POT reads
 
 	unsigned long long st_t0c = st_clock_ns();
-	POT_deriv_update(minus_forces, m_gpu_rigid, m_coords, g, threadNumInBlock, threadsPerBlock);
-	if (threadIdx.x==0 && threadIdx.y==0 && blockIdx.x + blockIdx.y * gridDim.x == 0)
-		printf("EVENE %d %.6f\n", (int)*((int*)&d_stage.evals_n), e);
+	POT_deriv_update(minus_forces, m_gpu_rigid, m_coords, g, threadNumInBlock, threadsPerBlock, conf_id);
+	// [Q7-BH] printf probe removed (ungated global counter → serializes GPU)
 	STAGE_ADD2(st_t0c, pot);
 
 	return e;
@@ -1215,11 +1225,12 @@ __device__ inline flo scalar_product_update(	const	change_cl*	a,
 								const	int			n,
 								const	int			lig_torsion_size,
 								const	int			threadNumInBlock,
-								const   int			threadsPerBlock
+								const   int			threadsPerBlock,
 
+	const int conf_id
 ) {
 	if( n > MAX_NUM_OF_DIMENSIONS_OF_MATIRX) printf("\nKernel2: scalar_product() ERROR!"); 
-	__shared__ flo tmp[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
+	flo (&tmp)[MAX_NUM_OF_DIMENSIONS_OF_MATIRX] = bh[conf_id].sp_tmp; // [Q7-BH] was function-scope shared
 	for (int i = threadNumInBlock; i < MAX_NUM_OF_DIMENSIONS_OF_MATIRX; i = i + threadsPerBlock)
 	{ 
 		tmp[i] = 0.0f;
@@ -1237,7 +1248,7 @@ __device__ inline flo scalar_product_update(	const	change_cl*	a,
 		if (threadNumInBlock < ( n % threadsPerBlock)) {
 			tmp[threadNumInBlock] += tmp[threadNumInBlock + tmp_1 * threadsPerBlock];
 		}
-		__syncthreads();
+		conf_barrier(conf_id);
 	}
 	
 	for (int off = (n) >> 1; off > 0; off >>= 1)
@@ -1246,7 +1257,7 @@ __device__ inline flo scalar_product_update(	const	change_cl*	a,
 			{
 				tmp[threadNumInBlock] += tmp[threadNumInBlock + off];
 			}
-			__syncthreads();
+			conf_barrier(conf_id);
 		}
 
 	return tmp[0];
@@ -1399,7 +1410,8 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 									const				int				threadNumInBlock,
 									const		        int				threadsPerBlock,
 									               rigid_cl*   	m_gpu_rigid,
-												   grids_gpu*   grids_cuda
+												   grids_gpu*   grids_cuda,
+												   	const int conf_id
 	)
 {
 	int count = 0;
@@ -1407,7 +1419,7 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 	flo finit, dginit, dgtest, dstest;
 	flo mu = 0.0f, nu = 1.0e+20f;
 
-	dginit = scalar_product_update(gp, d, n, torsion_size,threadNumInBlock,threadsPerBlock);
+	dginit = scalar_product_update(gp, d, n, torsion_size,threadNumInBlock,threadsPerBlock, conf_id);
 
 	/* Make sure that s points to a descent direction. */
 	if (0.0f < dginit)
@@ -1425,12 +1437,13 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 	{
 		//output_type_cl_init_with_output(x, xp);
 		// [Q5R-SERIAL] x update was all-threads redundant; thread0-only.
-		// Consumers: set_update (thread0, reads x) and m_coords (published
+		// Consumers: set_update (thread0, reads x, conf_id) and m_coords (published
 		// by set_update's trailing __syncthreads) — ordering is safe.
 		if (threadNumInBlock == 0) {
 			*x = *xp;
 			output_type_cl_increment(x, d, *stp, epsilon_fl, torsion_size);
 		}
+		__syncwarp(); // [Q7-BH] reconverge before eval barriers
 		/* Evaluate the function and gradient values. */
 		*f = m_eval_deriv_update(x,
 			g,
@@ -1447,7 +1460,7 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 			grids_cuda,
 			q4_skip_row_g,
 			q4_epoch_i
-		);
+		, conf_id);
 		++count;
 		/* Check the Armijo condition. */
 		if (*f > finit + *stp * dgtest)
@@ -1457,7 +1470,7 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 		}
 		else
 		{
-			if (scalar_product_update(g, d, n, torsion_size,threadNumInBlock,threadsPerBlock) < dstest)
+			if (scalar_product_update(g, d, n, torsion_size,threadNumInBlock,threadsPerBlock, conf_id) < dstest)
 			{
 				mu = *stp;
 			}
@@ -1764,7 +1777,8 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 										grids_gpu*          grids_cuda,
 										visited_cl*         visited,
 										unsigned long long* q4_skip_row,
-										const				unsigned long long q4_ep
+										const				unsigned long long q4_ep,
+											const int conf_id
 )
 {
 	int lig_torsion_size = torsion_size;
@@ -1778,9 +1792,9 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 	flo lm_s_dot_d, cau_t;
 	//flo d_update_tmp = 0;
 
-	__shared__ output_type_cl xp;
+	output_type_cl &xp = bh[conf_id].xp; // [Q7-BH] was function-scope shared
 	xp = *x;
-	__shared__ change_cl gp;
+	change_cl &gp = bh[conf_id].gp; // [Q7-BH] was function-scope shared
 	gp = *g;
 
 
@@ -1793,8 +1807,8 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 	// local memory (~11.9KB/thread spill; ncu: 1.89G local-store sectors and
 	// 45GB DRAM writes per 1pxn kernel2 launch). Block-shared right-sized
 	// vectors: +440B/block, shared limit stays 7 blocks/SM.
-	__shared__ flo lm_s[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
-	__shared__ flo lm_y[MAX_NUM_OF_DIMENSIONS_OF_MATIRX];
+	flo (&lm_s)[MAX_NUM_OF_DIMENSIONS_OF_MATIRX] = bh[conf_id].lm_s; // [Q7-BH] was function-scope shared
+	flo (&lm_y)[MAX_NUM_OF_DIMENSIONS_OF_MATIRX] = bh[conf_id].lm_y; // [Q7-BH] was function-scope shared
 	if (threadNumInBlock == 0) {
 		for (int i = 0; i < MAX_NUM_OF_DIMENSIONS_OF_MATIRX; i++) { lm_s[i] = 0.f; lm_y[i] = 0.f; }
 	}
@@ -1816,9 +1830,9 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 						grids_cuda,
 						q4_skip_row,
 						q4_ep
-	);
+	, conf_id);
 	STAGE_ADD(eval_init);
-	__syncthreads();
+	conf_barrier(conf_id);
 
 	if(!interesting(x, fx, g, visited, torsion_size)){
 		x->e = fx;
@@ -1830,20 +1844,21 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 		flo fxp = fx;
 		flo fx_orig = fx;
 		// Init g_orig, x_orig
-		__shared__ change_cl g_orig;
+		change_cl &g_orig = bh[conf_id].g_orig; // [Q7-BH] was function-scope shared
 		g_orig = *g;
-		__shared__ output_type_cl x_orig;
+		output_type_cl &x_orig = bh[conf_id].x_orig; // [Q7-BH] was function-scope shared
 		x_orig = *x;
 
-		__shared__ change_cl d;
+		change_cl &d = bh[conf_id].d; // [Q7-BH] was function-scope shared
 		d = *g;
 
 		//d = -g
 		// [Q5R-SERIAL] was all-threads redundant; thread0-only + sync.
 		if (threadNumInBlock == 0) get_to_minus_update(&d, g, threadNumInBlock, threadsPerBlock);
-		__syncthreads();
+		__syncwarp(); // [Q7-BH]
+		conf_barrier(conf_id);
 
-		if (!(sqrt(scalar_product_update(g, g, n, torsion_size,threadNumInBlock,threadsPerBlock)) >= 1e-5))
+		if (!(sqrt(scalar_product_update(g, g, n, torsion_size,threadNumInBlock,threadsPerBlock, conf_id)) >= 1e-5))
 			{
 				x->e = fx;
 				return;
@@ -1852,9 +1867,10 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 		{
 			// [Q5R-SERIAL] to_norm was all-threads redundant serial loop;
 			// thread0 computes once into shared, block reads.
-			__shared__ flo d_norm;
+			flo &d_norm = bh[conf_id].d_norm; // [Q7-BH] was function-scope shared
 			if (threadNumInBlock == 0) d_norm = to_norm(&d, n, torsion_size);
-			__syncthreads();
+			__syncwarp(); // [Q7-BH]
+			conf_barrier(conf_id);
 			step = 1.0f / d_norm;
 			k = 1;
 		int small_imp_count = 0;
@@ -1888,10 +1904,10 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 				threadsPerBlock,
 				m_gpu_rigid,
 				grids_cuda
-			);
+			, conf_id);
 		STAGE_ADD(ls_total);
 		if (threadIdx.x==0 && threadIdx.y==0) atomicAdd(&d_stage.n_ls, 1ULL);
-			// __syncthreads();
+			// conf_barrier(conf_id);
 			if (ls < 0) {
 
 				*x = xp;
@@ -1913,7 +1929,7 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 					small_imp_count = 0;
 				}
 			}
-			if (!(sqrt(scalar_product_update(g, g, n, torsion_size,threadNumInBlock,threadsPerBlock)) >= 1e-5)) {
+			if (!(sqrt(scalar_product_update(g, g, n, torsion_size,threadNumInBlock,threadsPerBlock, conf_id)) >= 1e-5)) {
 				x->e = fx;
 				return;
 			}
@@ -1950,7 +1966,7 @@ unsigned long long st_t0w = st_clock_ns();
 			/* Compute the negative of gradients. */
 			// d = -g
 			get_to_minus_update(&d, g, threadNumInBlock,threadsPerBlock);
-			// __syncthreads();
+			// conf_barrier(conf_id);
 			cau = 0;
 			cau_t = 0;
 			for (int i = 0; i < n; i++) {
@@ -2001,7 +2017,8 @@ unsigned long long st_t0w = st_clock_ns();
 
 			}
 			} // [Q5R-SERIAL] end thread0 gate
-			__syncthreads(); // publish d for next LS iteration
+			__syncwarp(); // [Q7-BH] reconverge warp0
+			conf_barrier(conf_id); // publish d for next LS iteration
 				STAGE_ADD2(st_t0w, twop);
 				step = 1.0f;
 		}

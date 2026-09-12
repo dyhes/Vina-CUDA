@@ -2,6 +2,8 @@
 #define _MUTATE_CONF_H_
 #include "commonMacros.h"
 
+#include "bh_shared.h" // [Q7-BH] arena
+
 __device__ void quaternion_increment(flo* q, const flo* rotation, flo epsilon_fl);
 __device__ inline void normalize_angle(flo* x);
 
@@ -165,7 +167,7 @@ __device__  flo gyration_radius_update(				int				m_lig_begin,
 					const		flo*			m_lig_node_origin,
 						const		int				threadNumInBlock,
 						const		int				threadsPerBlock
-) {
+, const int conf_id ) {
 	// [Q5.2] register + shuffle reduction replaces acc[128]/counter[128]
 	// shared arrays (-1,024B/block). Each lane accumulates its strided
 	// subset in registers, in-warp shfl tree, cross-warp combine through
@@ -196,13 +198,13 @@ __device__  flo gyration_radius_update(				int				m_lig_begin,
 	}
 
 	// cross-warp combine via minimal shared scratch
-	__shared__ float warp_acc[32];
-	__shared__ int   warp_cnt[32];
+	float (&warp_acc)[32] = bh[conf_id].gyr_wacc; // [Q7-BH]
+	int   (&warp_cnt)[32] = bh[conf_id].gyr_wcnt; // [Q7-BH]
 	const int wid = threadNumInBlock >> 5;
 	const int lane = threadNumInBlock & 31;
 	const int nwarps = (threadsPerBlock + 31) >> 5;
 	if (lane == 0) { warp_acc[wid] = my_acc; warp_cnt[wid] = my_cnt; }
-	__syncthreads();
+	conf_barrier_m(conf_id);
 
 	if (wid == 0) {
 		float a = (lane < nwarps) ? warp_acc[lane] : 0.0f;
@@ -213,7 +215,7 @@ __device__  flo gyration_radius_update(				int				m_lig_begin,
 		}
 		if (lane == 0) { warp_acc[0] = a; warp_cnt[0] = c; }
 	}
-	__syncthreads();
+	conf_barrier_m(conf_id);
 
 	return (warp_cnt[0] > 0) ? sqrtf(warp_acc[0] / (flo)warp_cnt[0]) : 0.0f;
 }
@@ -276,7 +278,7 @@ __device__ void mutate_conf_cl_update(const		int				step,
 					const					int				lig_torsion_size,
 					const					int				threadNumInBlock,
 					const					int				threadsPerBlock
-) {
+, const int conf_id ) {
 
 		int index = step; // global index (among all threads)
 		int which = random_int_map[index];
@@ -288,16 +290,16 @@ __device__ void mutate_conf_cl_update(const		int				step,
 		}
 		--which;
 		if (which == 0) {
-			flo gr = gyration_radius_update(m_lig_begin, m_lig_end, atoms, m_coords_gpu, m_lig_node_origin_gpu,threadNumInBlock,threadsPerBlock);
+			flo gr = gyration_radius_update(m_lig_begin, m_lig_end, atoms, m_coords_gpu, m_lig_node_origin_gpu,threadNumInBlock,threadsPerBlock,conf_id);
 			//flo gr = gyration_radius(m_lig_begin, m_lig_end, atoms, m_coords_gpu, m_lig_node_origin_gpu);
 			
 			if (gr > epsilon_fl) {
-				__shared__ flo rotation[3];
+								flo (&rotation)[3] = bh[conf_id].mut_rotation; // [Q7-BH]
 				for (int i = threadNumInBlock; i < 3; i += threadsPerBlock)
 				{
 					rotation[i] = amplitude / gr * random_inside_sphere_map[index][i];
 				}
-				    __syncthreads();	
+				    conf_barrier_m(conf_id);	
 					quaternion_increment(c->orientation, rotation, epsilon_fl);		
 			}
 			return;
