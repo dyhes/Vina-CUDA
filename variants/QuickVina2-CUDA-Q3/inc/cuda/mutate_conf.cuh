@@ -160,84 +160,62 @@ __device__  flo gyration_radius(				int				m_lig_begin,
 
 __device__  flo gyration_radius_update(				int				m_lig_begin,
 									int				m_lig_end,
-								atom_cl*			atoms,
-						const		m_coords_cl*	m_coords_gpu,
-						const		flo*			m_lig_node_origin,
+						atom_cl*			atoms,
+					const		m_coords_cl*	m_coords_gpu,
+					const		flo*			m_lig_node_origin,
 						const		int				threadNumInBlock,
 						const		int				threadsPerBlock
 ) {
-	__shared__ float acc[MAX_NUM_OF_ATOMS];
-	//__shared__ float current_coords[MAX_NUM_OF_ATOMS][3];
-	__shared__ int counter [MAX_NUM_OF_ATOMS];
-	__shared__ flo origin[3];
-	origin[0] = m_lig_node_origin[0];
-	origin[1] =  m_lig_node_origin[1];
-	origin[2] = m_lig_node_origin[2];
+	// [Q5.2] register + shuffle reduction replaces acc[128]/counter[128]
+	// shared arrays (-1,024B/block). Each lane accumulates its strided
+	// subset in registers, in-warp shfl tree, cross-warp combine through
+	// a 2-entry shared partial. Semantics: same atom set (i in
+	// [0, m_lig_end) strided, non-H only), same sum/count; float
+	// addition order may differ from the array version (within the
+	// accepted reduction-order noise band, cf. Q5.1 aff symmetry).
+	const flo ox = m_lig_node_origin[0];
+	const flo oy = m_lig_node_origin[1];
+	const flo oz = m_lig_node_origin[2];
 
-	for (int i = threadNumInBlock;
-		i < m_lig_end;
-		i = i + threadsPerBlock
-		)
-	{
-		counter[i] = 0;
-		acc[i] = 0.0f;
-		//current_coords[i][0] = 0.0;
-		//current_coords[i][1] = 0.0;
-		//current_coords[i][2] = 0.0;
-	}
-	//flo acc = 0;
+	flo my_acc = 0.0f;
+	int  my_cnt = 0;
 	for (int i = threadNumInBlock; i < m_lig_end; i = i + threadsPerBlock) {
-		flo current_coords[3] = { m_coords_gpu->coords[i][0], m_coords_gpu->coords[i][1], m_coords_gpu->coords[i][2] };
-		if (atoms[i].types[0] != EL_TYPE_H) { // for el, we use the first element (atoms[i].types[0])
-			acc[i] = vec_distance_sqr(current_coords, origin);
-			counter[i] = 1;
+		if (atoms[i].types[0] != EL_TYPE_H) {
+			const flo cx = m_coords_gpu->coords[i][0] - ox;
+			const flo cy = m_coords_gpu->coords[i][1] - oy;
+			const flo cz = m_coords_gpu->coords[i][2] - oz;
+			my_acc += cx * cx + cy * cy + cz * cz;
+			my_cnt += 1;
 		}
 	}
-	//__threadfence();
-	__syncthreads();
-	
-	if (MAX_NUM_OF_ATOMS > threadsPerBlock) {
-		int tmp = MAX_NUM_OF_ATOMS / threadsPerBlock;
-		for (int i = 1; i < tmp; i++) {
-			acc[threadNumInBlock] += acc[threadNumInBlock + threadsPerBlock * i];
-			counter[threadNumInBlock] += counter[threadNumInBlock + threadsPerBlock * i];
-		}
-		if (threadNumInBlock < (MAX_NUM_OF_ATOMS % threadsPerBlock)) {
-			acc[threadNumInBlock] += acc[threadNumInBlock + tmp * threadsPerBlock];
-			counter[threadNumInBlock] += counter[threadNumInBlock + tmp * threadsPerBlock];
-		}
-		//__threadfence();
-		__syncthreads();
-		for (int off = threadsPerBlock >> 1; off > 0; off >>= 1)
-		{
-			if (threadNumInBlock < off)
-			{
-				acc[threadNumInBlock] += acc[threadNumInBlock + off];
-				counter[threadNumInBlock] += counter[threadNumInBlock + off];
-				
-			}
-			__syncthreads();
-			//__threadfence();
-		
-		
-		}
-		return (counter[0] > 0) ? sqrt(acc[0] / counter[0]) : 0;
-	}
-	else {
-		for (int off = (MAX_NUM_OF_ATOMS) >> 1; off > 0; off >>= 1)
-		{
-			if (threadNumInBlock < off)
-			{
-				acc[threadNumInBlock] += acc[threadNumInBlock + off];
-				counter[threadNumInBlock] += counter[threadNumInBlock + off];
 
-			}
-			//__threadfence();
-			__syncthreads();
-			
-		}
-		return (counter[0] > 0) ? sqrt(acc[0] / counter[0]) : 0;
+	// in-warp shuffle reduction (full-warp mask; all lanes converged here)
+	for (int off = 16; off > 0; off >>= 1) {
+		my_acc += __shfl_down_sync(0xFFFFFFFFu, my_acc, off);
+		my_cnt += __shfl_down_sync(0xFFFFFFFFu, my_cnt, off);
 	}
+
+	// cross-warp combine via minimal shared scratch
+	__shared__ float warp_acc[32];
+	__shared__ int   warp_cnt[32];
+	const int wid = threadNumInBlock >> 5;
+	const int lane = threadNumInBlock & 31;
+	const int nwarps = (threadsPerBlock + 31) >> 5;
+	if (lane == 0) { warp_acc[wid] = my_acc; warp_cnt[wid] = my_cnt; }
+	__syncthreads();
+
+	if (wid == 0) {
+		float a = (lane < nwarps) ? warp_acc[lane] : 0.0f;
+		int   c = (lane < nwarps) ? warp_cnt[lane] : 0;
+		for (int off = 16; off > 0; off >>= 1) {
+			a += __shfl_down_sync(0xFFFFFFFFu, a, off);
+			c += __shfl_down_sync(0xFFFFFFFFu, c, off);
+		}
+		if (lane == 0) { warp_acc[0] = a; warp_cnt[0] = c; }
+	}
+	__syncthreads();
+
+	return (warp_cnt[0] > 0) ? sqrtf(warp_acc[0] / (flo)warp_cnt[0]) : 0.0f;
 }
 
 __device__ void mutate_conf_cl(const		int				step,
