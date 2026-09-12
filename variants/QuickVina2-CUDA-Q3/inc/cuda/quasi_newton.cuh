@@ -605,6 +605,12 @@ __device__ void set_update(	const				output_type_cl* x,
 			const				flo			epsilon_fl
 			
 ) {
+	// [Q5R-SERIAL] this walk was previously executed redundantly by ALL
+	// threads (identical values written to shared). Gate to thread0:
+	// 63/64 of the redundant workload removed; trailing __syncthreads
+	// publishes shared m_coords/rigid to the whole block.
+	if (threadIdx.x == 0 && threadIdx.y == 0)
+	{
 	//************** (root --> origin[0]) node.set_conf **************// (CHECKED)
 	
 	lig_rigid_gpu->origin[0][0] = x->position[0]; // set origin
@@ -667,6 +673,8 @@ __device__ void set_update(	const				output_type_cl* x,
 		}
 	}
 	//************** end branches_set_conf **************//
+	} // [Q5R-SERIAL] end thread0 gate
+	__syncthreads(); // [Q5R-SERIAL] publish m_coords/rigid
 }
 
 __device__ inline void p_eval_deriv(						flo*		out,
@@ -1416,8 +1424,13 @@ __device__ int line_search_lewisoverton_update(			m_cl* 			m_cl_gpu,
 	while (true)
 	{
 		//output_type_cl_init_with_output(x, xp);
-		*x = *xp;
-		output_type_cl_increment(x, d, *stp, epsilon_fl, torsion_size);
+		// [Q5R-SERIAL] x update was all-threads redundant; thread0-only.
+		// Consumers: set_update (thread0, reads x) and m_coords (published
+		// by set_update's trailing __syncthreads) — ordering is safe.
+		if (threadNumInBlock == 0) {
+			*x = *xp;
+			output_type_cl_increment(x, d, *stp, epsilon_fl, torsion_size);
+		}
 		/* Evaluate the function and gradient values. */
 		*f = m_eval_deriv_update(x,
 			g,
@@ -1826,8 +1839,9 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 		d = *g;
 
 		//d = -g
-		get_to_minus_update(&d, g, threadNumInBlock, threadsPerBlock);
-		//__syncthreads();
+		// [Q5R-SERIAL] was all-threads redundant; thread0-only + sync.
+		if (threadNumInBlock == 0) get_to_minus_update(&d, g, threadNumInBlock, threadsPerBlock);
+		__syncthreads();
 
 		if (!(sqrt(scalar_product_update(g, g, n, torsion_size,threadNumInBlock,threadsPerBlock)) >= 1e-5))
 			{
@@ -1836,8 +1850,12 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 			}
 		else
 		{
-			step = 1.0f / to_norm(&d, n, torsion_size);
-			//step = 1.0 / to_norm_update(&d, n, torsion_size,threadNumInBlock,threadsPerBlock);
+			// [Q5R-SERIAL] to_norm was all-threads redundant serial loop;
+			// thread0 computes once into shared, block reads.
+			__shared__ flo d_norm;
+			if (threadNumInBlock == 0) d_norm = to_norm(&d, n, torsion_size);
+			__syncthreads();
+			step = 1.0f / d_norm;
 			k = 1;
 		int small_imp_count = 0;
 
@@ -1907,6 +1925,12 @@ __device__ void rilc_bfgs_update(			output_type_cl* 	x,
 			if (threadIdx.x==0 && threadIdx.y==0) atomicAdd(&d_stage.n_iter, 1ULL);
 
 unsigned long long st_t0w = st_clock_ns();
+			// [Q5R-SERIAL] the RILC low-rank update below was previously
+			// executed redundantly by ALL threads (lm_s/lm_y fill, ys/yy,
+			// cau, two-loop recursion — ~275 serial iterations each).
+			// Thread0-only + trailing sync; d/lm_s/lm_y are shared.
+			if (threadNumInBlock == 0)
+			{
 			for (int i = 0; i < n; i++) {
 				lm_s[i] = step * find_change_index_read_update(&d, i, torsion_size);
 				lm_y[i] = find_change_index_read_update(g, i, torsion_size) - find_change_index_read_update(&gp, i, torsion_size);
@@ -1976,6 +2000,8 @@ unsigned long long st_t0w = st_clock_ns();
 				}
 
 			}
+			} // [Q5R-SERIAL] end thread0 gate
+			__syncthreads(); // publish d for next LS iteration
 				STAGE_ADD2(st_t0w, twop);
 				step = 1.0f;
 		}
