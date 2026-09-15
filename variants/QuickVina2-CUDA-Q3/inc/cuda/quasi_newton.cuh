@@ -396,7 +396,7 @@ __device__ flo ig_eval_deriv_update_optimal(		output_type_cl*		x,
 	// [v4.5] block-level reduction: in-warp shfl + cross-warp shared tree.
 	// Behaviorally identical to the single-warp shfl version at threadsPerBlock=32.
 	{
-		__shared__ float warp_e[32];
+		__shared__ float warp_e[8];
 		const int lane = threadNumInBlock & 31;
 		const int wid = threadNumInBlock >> 5;
 		for (int offset = 16; offset > 0; offset >>= 1)
@@ -800,7 +800,7 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 	// [v4.5] block-level reduction (pairs): in-warp shfl + cross-warp shared tree.
 	// Behaviorally identical to the single-warp shfl version at threadsPerBlock=32.
 	{
-		__shared__ float warp_e[32];
+		__shared__ float warp_e[8];
 		const int lane = threadNumInBlock & 31;
 		const int wid = threadNumInBlock >> 5;
 		for (int offset = 16; offset > 0; offset >>= 1)

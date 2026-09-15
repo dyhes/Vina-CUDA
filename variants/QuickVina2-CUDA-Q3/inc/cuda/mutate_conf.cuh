@@ -196,8 +196,8 @@ __device__  flo gyration_radius_update(				int				m_lig_begin,
 	}
 
 	// cross-warp combine via minimal shared scratch
-	__shared__ float warp_acc[32];
-	__shared__ int   warp_cnt[32];
+	__shared__ float warp_acc[8];
+	__shared__ int   warp_cnt[8];
 	const int wid = threadNumInBlock >> 5;
 	const int lane = threadNumInBlock & 31;
 	const int nwarps = (threadsPerBlock + 31) >> 5;
