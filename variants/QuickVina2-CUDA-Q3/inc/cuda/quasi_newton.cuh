@@ -792,10 +792,11 @@ __device__ flo eval_interacting_pairs_deriv_update_optimal(  pre_cl*			 pre,  //
 			atomicOr(skip_row + wi, 1ULL << bi); // far: mark skip (atomic RMW) [Q4-8 kept]
 		}
 	}
+	// [W6c-L P4b] collapsed to one barrier: it orders BOTH the pair-force
+	// writes for the reduction below AND thread0's epoch increment; the epoch
+	// is next read after the NEXT invocation's init sync (full barrier chain).
 	__syncthreads(); // [Q4-8, kept] all pair writes complete before reduction
 	if (threadNumInBlock == 0) q4_probe_epoch++;
-
-	__syncthreads();
 	//Sum intermolecular energy
 	// [v4.5] block-level reduction (pairs): in-warp shfl + cross-warp shared tree.
 	// Behaviorally identical to the single-warp shfl version at threadsPerBlock=32.
@@ -1062,13 +1063,14 @@ __device__ flo m_eval_deriv_update(		output_type_cl*		c,
 		}
 	}
 	set_update(c, m_gpu_rigid, m_coords, m->atoms, m->m_num_movable_atoms, epsilon_fl);
+	// [W6c-L P4a] the former second __syncthreads here only ordered thread0
+	// telemetry (atomicAdd/printf write NO shared state); set_update's own
+	// trailing sync already publishes m_coords/rigid to all threads.
 	if (threadIdx.x==0 && threadIdx.y==0) {
 		unsigned long long n = atomicAdd(&d_stage.evals_n, 1ULL);
 		if (blockIdx.x + blockIdx.y * gridDim.x == 0 && n < 200)
 			printf("EV %llu\n", n);
 	}
-	__syncthreads(); // [Q4-8] all threads finish writing shared m_coords
-	                 // before GRID loop reads it (fixes straggler race)
 
 	STAGE_T0;
 	flo e = ig_eval_deriv_update_optimal(c,
