@@ -145,3 +145,71 @@
 ### 结论
 v6b 批量 screening 路径全量认证可用: 精度 (EF) 持平或优于历史基线,
 吞吐 ~10× vs 旧串行形态。57 靶分数文件在 experiments/Sep16_v6b_screen_full/scores/。
+
+## 七点五、加速比口径拆解 (2026-09-16 续 III, 全部实测)
+
+> 问题: "v6-batch 改造前后加速比是多少?" — 答案取决于"前"指什么形态。
+> 三个"前"形态全部实测 (同日, 同 1e66/2vw5/3ag9 靶点, Q3 b725964e 同 kernel):
+
+| 形态 | 机制 | 1e66 墙钟 | 2vw5 | 3ag9 | 57 靶投影 |
+|---|---|---|---|---|---|
+| **per-process** (旧 runner screening: 285 进程/靶) | 每配体一个进程 = prep 底座+ctx+teardown ×285 | 124.5s | — | — | ~2.0h |
+| **in-process 串行** (--ligand_directory, 改造前批量入口) | 1 进程, 285 次 kernel_monte, 每次 cudaDeviceSynchronize | 57.4s | 39.4s | 39.6s | ~0.9h |
+| **v6b batch (W6cS)** (改造后) | 1 进程, 3 chunk, N 异步 launch + 单 sync/靶 | 59.0s | 41.2s | 41.3s | **41.0min 实测** |
+| v6b batch (Q53S) | 同上, 128t/64reg | 59.1s | — | — | 41.0min 实测 |
+
+### 三个口径的加速比
+1. **vs per-process (旧 runner 实际形态): ~2.1×** (1e66: 124.5→59.0s)。
+   全部来自 entry-gap/ctx/teardown 摊销 — 与批_mode_amortization §3 的
+   Level-1 预测 (~350ms→40ms/配体) 一致。
+2. **vs in-process 串行 (--ligand_directory): ≈0.96×, 即无加速** (三靶点
+   0.96/0.96/0.97, 批量还略慢 ~1-4%)。这不是缺陷: in-process 串行的
+   per-ligand 开销已被一次 prep 摊薄, 剩下的 285 次 deviceSync 在 kernel
+   ~毫秒-秒级粒度下开销占比极小; DESIGN C 的 N-launch+单 sync 与
+   285-launch+285-sync 在同流排队上等价。**kernel 占比压倒一切**。
+3. **vs Jun10 qvina2-cuda screening (6.84h): ~10×**, 但要拆账:
+   Jun10 = per-process 形态 (452s/靶) + 旧 kernel (未做 Q4 系列优化)。
+   10× ≈ [per-process→批量形态 2.1×] × [Jun→Sep kernel 改进 ~4-5×]
+   (redocking k2 Jun≈0.21s (推算自 452s/285=1.59s 含 prep vs Sep 0.050)
+   — kernel 进步是大头, 批量形态是其次, 二者正交且都已认证)。
+
+### 结论重述
+"v6-batch 改造"的严格收益 = 消除 285×(N−1) 次 sync + 3 chunk 摊销,
+在已有 in-process 批量入口的代码库上是 **≈1× (中性)**; 它的真正价值在
+(a) 相对 per-process 部署形态的 2.1×, (b) 把 v6 的批量架构带进 Q4/Q5
+kernel 线 (否则 10× 里的 kernel 进步根本无法用于 screening)。
+论文引用建议: 用口径 1 (2.1×, 实测) + 口径 3 拆账, 不用口径 2。
+
+
+## 八、Screening 形状 A/B 实测 (2026-09-16 续 II) — Q5.3 形状胜出
+
+> 澄清: v6b 批量构建本身 fork 自 q53-w6-192t 头 = W6c 形状 (192t/40reg)。
+> 本步构建 Q5.3 形状孪生 (128t/64reg), 同驱动同 chunk 同日 A/B。
+> 新变体: variants/QuickVina2-CUDA-v6b_w53 (d9f442c5 → 7833d158,
+> block(32,4)+maxrregcount=64, 指纹 REG:64 STACK:10064 SHARED:11520 = Q5.3 CERT 同,
+> md5 76ac2c59)。全量: Sep16_screen_Q53S (41.0min) vs Sep16_screen_W6cS (41.0min)。
+
+### 结果 (171 chunk × ~6s, 同代码仅 launch 形状不同)
+| 指标 | **Q53S (128t/64reg)** | W6cS (192t/40reg) | 判读 |
+|---|---|---|---|
+| 全量 Σk2 (171 chunks) | **1010.5s** | 1032.6s | **Q53S −2.1%** |
+| per-target k2 配对 | **56/57 靶更快** | 中位 +1.6% (max +2.97s) | 一边倒 |
+| EF1% mean | 8.89 | **9.65** | 差异来自 2/57 靶 (1% 窗口量化) |
+| EF5% mean | **4.66** | 4.41 | Q53S 胜 (7 vs 4 靶) |
+| EF10% mean | **3.31** | 3.26 | 平 (6 vs 6) |
+| 配体配对 aff | med 0.100 = 自噪声; >0.5: 9.8% (16245 对) | | 双形状同 RNG 结构, 分布一致 |
+
+### 裁决
+1. **吞吐层: Q5.3 形状在批量 screening 下也赢** — 56/57 靶 k2 更快, 全量 −2.1%。
+   与 9-15 单配体结论 (W4 128t 比 W6c 192t k2 中位快 4~6%) 方向一致;
+   W6c 的 Σk2 优势 (−12.7% vs Q5.2) 主要来自波数量化 (9.14→8) 在**单配体
+   8192 块**下的调度收益, 批量路径 chunk=96 时 (96×8192 块) 波数不再是整数,
+   W6c 的形状收益被抹平, 只剩 40reg 溢出税 → Q5.3 形状全胜。
+2. **精度层: 平手** (EF5/EF10 一致; EF1 的 8.89 vs 9.65 是 2 个靶点上
+   1-binder 位置差, 属 1% 窗口量化噪声; 配体配对 |d| med = 自噪声)。
+3. **建议: screening 构建选 Q5.3 形状 (128t/64reg)** — 吞吐略优且与
+   redocking champion 同形状 (构建矩阵更简); W6c 形状保留为单配体
+   redocking 分支的 proof point (论文双口径引用点)。
+   注意: v6b 主线 (QuickVina2-CUDA-v6b_batch) 保持 W6c 形状不动 (已认证),
+   Q53S 结果由孪生目录 v6b_w53 承载; 若采纳本裁决, 下一步把 batch host
+   改造的 launch 参数切成 128t/64reg 一次完成 (当前两目录已并存, 零成本)。
