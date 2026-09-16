@@ -555,3 +555,32 @@ void kernel_monte(
 	printf("STAGE_ITER_N=%llu\n", h_stage.n_iter);
 	printf("STAGE_LS_N=%llu\n", h_stage.n_ls);
 }
+// [v6b-PD] expose a single-group launcher for the host-side sweep
+extern "C" void v6b_pd_launch_group(
+	output_type_cl **ric, m_cl **mg, pre_cl *pre, grids_cl *grids,
+	random_maps **rm, ligand_atom_coords_cl **co, output_type_cl **rs,
+	const mis_cl *mis, const int *tors, const int *sd, const int *bfgs,
+	const int rilc, const int *valid, const int lo, const int hi,
+	cudaEvent_t ev_done)
+{
+	const dim3 pd_grid(GRID_DIM1, GRID_DIM2, 1);
+	const dim3 pd_block(48, 4, 1);
+	for (int li = lo; li < hi; li++) {
+		// [v6b-PD] ric/mg/... slices are pre-offset by lo (caller passes
+		// .data()+lo), but valid is the FULL array -> index with li, and
+		// tors/sd/bfgs slices must use (li - lo).
+		if (valid[li] == 0) continue;
+		const int k = li - lo;
+		kernel2_update<<<pd_grid, pd_block>>>(ric[k], mg[k], pre, grids,
+			rm[k], co[k], rs[k], mis, tors[k], sd[k], bfgs[k], rilc);
+	}
+	cudaEventRecord(ev_done, 0);
+}
+
+// [v6b-PD] constant-memory binder (symbol lives in this TU)
+extern "C" void v6b_pd_bind_mis(const mis_cl *mis_host)
+{
+	void* mc = nullptr;
+	checkCUDA(cudaGetSymbolAddress(&mc, mis_cuda_const));
+	checkCUDA(cudaMemcpy(mc, mis_host, sizeof(mis_cl), cudaMemcpyHostToDevice));
+}

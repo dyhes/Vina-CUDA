@@ -1,5 +1,16 @@
 #include "cache.h"
 #include "host_probe.h"
+#include <pthread.h>
+#include <atomic>
+#include <memory>
+static int par_mc_thread_g = 0; // [v6b-PD] thread count for the consume lambda
+extern "C" void v6b_pd_bind_mis(const mis_cl *mis_host);
+extern "C" void v6b_pd_launch_group(
+	output_type_cl **ric, m_cl **mg, pre_cl *pre, grids_cl *grids,
+	random_maps **rm, ligand_atom_coords_cl **co, output_type_cl **rs,
+	const mis_cl *mis, const int *tors, const int *sd, const int *bfgs,
+	const int rilc, const int *valid, const int lo, const int hi,
+	cudaEvent_t ev_done);
 // #include "wrapcl.h"
 #include "monte_carlo.h"
 #include "coords.h"
@@ -827,29 +838,133 @@ GT_BLOCK_END(0);
 		}
 	}
 
-	// [v6b] ============================ batched kernel call ============================
+	// [v6b-PD] ================ double-buffered chunk sweep (D1) ================
+	par_mc_thread_g = par.mc.thread;
 	{
-		const int n_valid = (int)lig_valid_arr.size(); // full width; invalid entries gated on device
-		int n_lig_valid = 0;
-		for (int i = 0; i < n_valid; i++) n_lig_valid += lig_valid_arr[i];
-		printf("V6B_BATCH_LIGANDS=%d valid=%d\n", num_ligands, n_lig_valid);
-		if (n_lig_valid > 0) {
+		const int V6B_CHUNK = 96;
+		const int NB = 2;                      // double buffer (consumer slots)
+		int n_lig_valid_total = 0;
+		for (int i = 0; i < num_ligands; i++) n_lig_valid_total += lig_valid_arr[i];
+		printf("V6B_BATCH_LIGANDS=%d valid=%d chunk=%d\n", num_ligands, n_lig_valid_total, V6B_CHUNK);
+
+		if (n_lig_valid_total > 0) {
+			// [v6b-PD] bind mis_cuda_const ONCE per sweep (was inside
+			// kernel_monte; direct group launches bypassed it -> garbage
+			// epsilon_fl -> g_evaluate ERROR#6)
+			v6b_pd_bind_mis(mis_gpu);
 #ifdef HOST_PROBE
 			hp_mark("pre_km_batch");
 			fprintf(stderr, "PRE_KM\n");
 #endif
-			kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
-						 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
-						 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
-						 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
-						 lig_valid_arr.data());
-			hp_mark("km_done");
+			struct GrpCtx {
+				int lo, hi, nl;
+				output_type_cl **ric, **rs; m_cl **mg;
+				random_maps **rm; ligand_atom_coords_cl **co;
+				const int *valid;
+				cudaEvent_t ev_done;
+				cudaStream_t cstream;          // [v6b-PD D1.1]
+				output_type_cl **h_results;
+				ligand_atom_coords_cl **h_coords;
+				const mis_cl *mis_p; const int *tors_p; const int *sd_p; const int *bfgs_p;
+				int rilc;
+			};
+			GrpCtx grp[NB];
+			pthread_t cons_tid[NB];
+			bool cons_active[NB] = {false, false};
+
+			auto consume_fn = +[](void* p) -> void* {
+				GrpCtx* c = (GrpCtx*)p;
+				// [v6b-PD D1.1] DtoH on a DEDICATED stream gated by the group
+				// event — overlaps later groups' kernels on stream 0. (Sync
+				// cudaMemcpy on stream 0 would wait for ALL queued kernels.)
+				checkCUDA(cudaStreamWaitEvent(c->cstream, c->ev_done, 0));
+				for (int li = c->lo; li < c->hi; li++) {
+					if (c->valid[li] == 0) continue;
+					const int k = li - c->lo;   // [v6b-PD] slices are lo-offset
+					c->h_results[k] = (output_type_cl*)malloc(par_mc_thread_g * sizeof(output_type_cl));
+					c->h_coords[k]  = (ligand_atom_coords_cl*)malloc(par_mc_thread_g * sizeof(ligand_atom_coords_cl));
+					checkCUDA(cudaMemcpyAsync(c->h_results[k], c->rs[k], par_mc_thread_g * sizeof(output_type_cl), cudaMemcpyDeviceToHost, c->cstream));
+					checkCUDA(cudaMemcpyAsync(c->h_coords[k], c->co[k], par_mc_thread_g * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost, c->cstream));
+				}
+				checkCUDA(cudaStreamSynchronize(c->cstream)); // DtoH done
+				// [v6b-PD D1.1] device frees moved to the main thread after the
+				// sweep (cudaFree syncs the whole device — doing it here would
+				// stall later groups' kernels and kill the overlap).
+				checkCUDA(cudaStreamDestroy(c->cstream));
+				return nullptr;
+			};
+
+			auto hand_over = [&](GrpCtx &Pc) {
+				for (int li = Pc.lo; li < Pc.hi; li++) {
+					if (lig_valid_arr[li] == 0) continue;
+					const int k = li - Pc.lo;
+					result_ptrs[li] = Pc.h_results[k];
+					result_coords_ptrs[li] = Pc.h_coords[k];
+				}
+			};
+
+			int g = 0;
+			for (int lo = 0; lo < num_ligands; lo += V6B_CHUNK, g++) {
+				const int hi = (lo + V6B_CHUNK < num_ligands) ? (lo + V6B_CHUNK) : num_ligands;
+				const int slot = g % NB;
+				if (cons_active[slot]) {           // slot reuse: join + hand over
+					pthread_join(cons_tid[slot], nullptr);
+					hand_over(grp[slot]);
+					cons_active[slot] = false;
+				}
+				GrpCtx &C = grp[slot];
+				C.lo = lo; C.hi = hi; C.nl = hi - lo;
+				C.ric = ric_batch_arr.data() + lo; C.mg = mg_batch_arr.data() + lo;
+				C.rm = rm_batch_arr.data() + lo;   C.co = coords_batch_arr.data() + lo;
+				C.rs = results_batch_arr.data() + lo;
+				C.valid = lig_valid_arr.data();
+				C.h_results = (output_type_cl**)calloc(C.nl, sizeof(output_type_cl*));
+				C.h_coords  = (ligand_atom_coords_cl**)calloc(C.nl, sizeof(ligand_atom_coords_cl*));
+				cudaEventCreate(&C.ev_done);
+				checkCUDA(cudaStreamCreate(&C.cstream)); // [v6b-PD D1.1]
+
+				// launch this group's kernels via the TU-local launcher (async)
+				v6b_pd_launch_group(
+					ric_batch_arr.data() + lo, mg_batch_arr.data() + lo, pre_gpu, grids_gpu,
+					rm_batch_arr.data() + lo, coords_batch_arr.data() + lo, results_batch_arr.data() + lo,
+					mis_gpu, torsion_sizes.data() + lo, search_depths_arr.data() + lo,
+					bfgs_steps_arr.data() + lo, rilc_bfgs, lig_valid_arr.data(), lo, hi, C.ev_done);
+
+				pthread_create(&cons_tid[slot], nullptr, consume_fn, &C);
+				cons_active[slot] = true;
+			}
+			for (int slot = 0; slot < NB; slot++) {
+				if (!cons_active[slot]) continue;
+				pthread_join(cons_tid[slot], nullptr);
+				hand_over(grp[slot]);
+				cons_active[slot] = false;
+			}
+			printf("V6B_PD_GROUPS=%d\n", g);
+			checkCUDA(cudaDeviceSynchronize());
+			// [v6b-PD D1.2] device frees on main thread, once per group
+			for (int gg2 = 0; gg2 < g; gg2++) {
+				const int lo2 = gg2 * V6B_CHUNK;
+				const int hi2 = (lo2 + V6B_CHUNK < num_ligands) ? (lo2 + V6B_CHUNK) : num_ligands;
+				for (int li = lo2; li < hi2; li++) {
+					if (lig_valid_arr[li] == 0) continue;
+					checkCUDA(cudaFree(results_batch_arr[li]));
+					checkCUDA(cudaFree(coords_batch_arr[li]));
+					checkCUDA(cudaFree(ric_batch_arr[li]));
+					checkCUDA(cudaFree(mg_batch_arr[li]));
+					checkCUDA(cudaFree(rm_batch_arr[li]));
+				}
+			}
+			{
+				cudaError_t error = cudaGetLastError();
+				if (error != cudaSuccess) printf("kernel2 was wrong [%s]\n", cudaGetErrorString(error));
+			}
 #ifdef HOST_PROBE
+			hp_mark("km_done");
 			fprintf(stderr, "POST_KM\n");
 #endif
 		}
 	}
-	// [v6b] ========================== end batched kernel call ==========================
+	// [v6b-PD] ============== end double-buffered chunk sweep (D1) ==============
 
 	// [v6b-FIX5] per-ligand result consumption AFTER the batched kernel:
 	// DtoH/cl_to_vina/add_to_output + the per-ligand device frees (buffers
@@ -859,22 +974,17 @@ GT_BLOCK_END(0);
 		if (lig_valid_arr[ligand_count] == 0) continue;
 		try
 		{
-			// Init ligand atom coords
-			result_coords_ptrs[ligand_count] = (ligand_atom_coords_cl *)malloc(par.mc.thread * sizeof(ligand_atom_coords_cl));
-
-			// Init results
-			result_ptrs[ligand_count] = (output_type_cl *)malloc(par.mc.thread * sizeof(output_type_cl));
+			// [v6b-PD D1] host result buffers were malloc'd by the consume thread
+			// during the sweep (h_results/h_coords) and handed over via
+			// result_ptrs/result_coords_ptrs — no per-ligand malloc here anymore.
 			// std::vector<output_type_cl*>		result_ptrs			(num_ligands);
 			// std::vector<ligand_atom_coords_cl*> result_coords_ptrs	(num_ligands);
 
-			GT_BLOCK_START();
-			checkCUDA(cudaMemcpy(result_ptrs[ligand_count], result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
-
-			checkCUDA(cudaMemcpy(result_coords_ptrs[ligand_count], result_coords_gpus[ligand_count], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
-			// [v6b-P P-A] second (duplicate) coords DtoH removed: it re-copied the
-			// identical buffer back-to-back (~0.3s per 96-ligand chunk, pure waste).
-GT_BLOCK_END(1);
-
+			// [v6b-PD D1] device->host copies were done by the consume thread
+			// during the sweep (overlapping the NEXT group's kernels); host
+			// buffers were handed over via result_ptrs/result_coords_ptrs.
+			// The old blocking DtoH here (and GT block) is removed - it raced
+			// with the consumer's cudaFree of the same buffers.
 			hp_mark("dtoh_results");
 			std::vector<output_type> result_vina =
 cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
@@ -908,11 +1018,9 @@ cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 			free(result_coords_ptrs[ligand_count]);
 			free(result_ptrs[ligand_count]);
 
-			checkCUDA(cudaFree(result_coords_gpus[ligand_count]));
-			checkCUDA(cudaFree(result_gpus[ligand_count]));
-			checkCUDA(cudaFree(ric_gpus[ligand_count]));
-			checkCUDA(cudaFree(m_gpus[ligand_count]));
-			checkCUDA(cudaFree(random_maps_gpus[ligand_count]));
+			// [v6b-PD D1.2] per-group device frees moved into the sweep
+			// (main thread, post-pipeline) — legacy per-ligand frees removed
+			// (they double-freed buffers already freed by the sweep).
 		}
 		catch (...)
 		{
