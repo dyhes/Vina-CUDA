@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <iomanip>
 #include <stdio.h>
-#include "omp.h"
+#include <omp.h>
 
 /**
  * #include <boost/timer/timer.hpp>
@@ -99,39 +99,58 @@ std::vector<output_type> cl_to_vina(output_type_cl result_ptr[],
 									int thread, int lig_torsion_size)
 {
 	std::vector<output_type> results_vina;
-	int num_atoms;
+	results_vina.reserve(thread);
 
-#pragma omp parallel for
-	for (int i = 0; i < thread; i++)
+	// [v6b-P P-D-fix] The original #pragma omp parallel for here pushed into
+	// results_vina from all threads (UB: vector push_back is not thread-safe).
+	// It was INERT before v6b-P because the build never linked the OpenMP
+	// runtime; P-C added -fopenmp and made the race live (heap corruption).
+	// Fix: per-thread local vectors, then ordered concatenation. Result order
+	// is identical to the serial version (i-ascending) because schedule(static)
+	// assigns contiguous i-ranges in thread order.
 	{
-		output_type_cl tmp = result_ptr[i];
-		ligand_atom_coords_cl tmp_coords = result_coords_ptr[i];
-		conf tmp_c;
-		tmp_c.ligands.resize(1);
-		// Position
-		for (int j = 0; j < 3; j++)
-			tmp_c.ligands[0].rigid.position[j] = tmp.position[j];
-		// Orientation
-		qt q(tmp.orientation[0], tmp.orientation[1], tmp.orientation[2], tmp.orientation[3]);
-		tmp_c.ligands[0].rigid.orientation = q;
-		output_type tmp_vina(tmp_c, tmp.e);
-		// torsion
-		for (int j = 0; j < lig_torsion_size; j++)
-			tmp_vina.c.ligands[0].torsions.push_back(tmp.lig_torsion[j]);
-		// coords
-		for (int j = 0; j < MAX_NUM_OF_ATOMS; j++)
+		std::vector<std::vector<output_type>> per_thread(omp_get_max_threads());
+#pragma omp parallel
 		{
-			vec v_tmp(tmp_coords.coords[j][0], tmp_coords.coords[j][1], tmp_coords.coords[j][2]);
-			if ((v_tmp[0] != 0 || v_tmp[1] != 0) || (v_tmp[2] != 0))
-				tmp_vina.coords.push_back(v_tmp);
+			const int tid = omp_get_thread_num();
+			auto &sink = per_thread[tid];
+#pragma omp for schedule(static) nowait
+			for (int i = 0; i < thread; i++)
+			{
+				output_type_cl tmp = result_ptr[i];
+				ligand_atom_coords_cl tmp_coords = result_coords_ptr[i];
+				conf tmp_c;
+				tmp_c.ligands.resize(1);
+				// Position
+				for (int j = 0; j < 3; j++)
+					tmp_c.ligands[0].rigid.position[j] = tmp.position[j];
+				// Orientation
+				qt q(tmp.orientation[0], tmp.orientation[1], tmp.orientation[2], tmp.orientation[3]);
+				tmp_c.ligands[0].rigid.orientation = q;
+				output_type tmp_vina(tmp_c, tmp.e);
+				// torsion
+				for (int j = 0; j < lig_torsion_size; j++)
+					tmp_vina.c.ligands[0].torsions.push_back(tmp.lig_torsion[j]);
+				// coords
+				for (int j = 0; j < MAX_NUM_OF_ATOMS; j++)
+				{
+					vec v_tmp(tmp_coords.coords[j][0], tmp_coords.coords[j][1], tmp_coords.coords[j][2]);
+					if ((v_tmp[0] != 0 || v_tmp[1] != 0) || (v_tmp[2] != 0))
+						tmp_vina.coords.push_back(v_tmp);
+				}
+				sink.push_back(std::move(tmp_vina));
+			}
 		}
-		results_vina.push_back(tmp_vina);
-		if (i == 0)
-			num_atoms = tmp_vina.coords.size();
-		if (num_atoms != tmp_vina.coords.size())
-		{
-			throw std::runtime_error("atom coords not match!");
-		}
+		int num_atoms = -1;
+		bool first = true;
+		for (auto &pv : per_thread)
+			for (auto &r : pv)
+			{
+				if (first) { num_atoms = (int)r.coords.size(); first = false; }
+				else if ((int)r.coords.size() != num_atoms)
+					throw std::runtime_error("atom coords not match!");
+				results_vina.push_back(std::move(r));
+			}
 	}
 	return results_vina;
 }
@@ -718,7 +737,8 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 				m_ptr->ligand.rigid.children_map[i] = 0ULL;
 			}
 
-#pragma omp parallel for
+			// [v6b-P] pragma removed: children_map |= is an RMW race (bit-OR from
+			// multiple threads on the same word). Live since -fopenmp; serialize.
 			for (int i = 1; i < m_ptr->ligand.rigid.num_children + 1; i++)
 			{
 				int parent_index = m_ptr->ligand.rigid.parent[i];
@@ -851,7 +871,8 @@ GT_BLOCK_END(0);
 			checkCUDA(cudaMemcpy(result_ptrs[ligand_count], result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
 
 			checkCUDA(cudaMemcpy(result_coords_ptrs[ligand_count], result_coords_gpus[ligand_count], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
-			checkCUDA(cudaMemcpy(result_coords_ptrs[ligand_count], result_coords_gpus[ligand_count], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
+			// [v6b-P P-A] second (duplicate) coords DtoH removed: it re-copied the
+			// identical buffer back-to-back (~0.3s per 96-ligand chunk, pure waste).
 GT_BLOCK_END(1);
 
 			hp_mark("dtoh_results");
@@ -870,10 +891,11 @@ cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 
 			hp_mark("cl_to_vina");
 			// Write back to vina
-#pragma omp parallel for
+			// [v6b-P] pragma removed: add_to_output_container mutates the shared
+			// outs[ligand_count] container from all threads (UB). Live since
+			// -fopenmp; serial restores exact previous semantics.
 			for (int i = 0; i < par.mc.thread; i++)
 			{
-				// assert(result_vina[i].coords.size()== mis_ptr->)
 				add_to_output_container(outs[ligand_count], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
 			}
 			// VINA_CHECK(!outs[ligand_count].empty());

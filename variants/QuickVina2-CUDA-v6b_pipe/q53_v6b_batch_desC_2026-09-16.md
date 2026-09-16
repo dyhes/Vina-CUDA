@@ -146,6 +146,87 @@
 v6b 批量 screening 路径全量认证可用: 精度 (EF) 持平或优于历史基线,
 吞吐 ~10× vs 旧串行形态。57 靶分数文件在 experiments/Sep16_v6b_screen_full/scores/。
 
+## 七点四、chunk 墙钟预算与消费段流水化立项 (2026-09-16 续 III)
+
+> 问题: "消费段并行化/流水化"。先测量 (1e66 chunk0, 96 配体, E2E_TOTAL 19.0s):
+
+| 段 | 耗时 | 占比 | GPU 状态 |
+|---|---|---|---|
+| prep+everything(含 96×3.9ms non_cache 构建) | 6.88s | 35.3% | 空转 |
+| **kernel 窗口**(96 k2 launch + 单 sync, GPU 6.88s) | 6.90s | 35.4% | **满载** |
+| consume in main_procedure(dtoh_results 0.63s + cl_to_vina 0.70s + add_to_out 0.36s) | 1.69s | 8.7% | 空转 |
+| PD1 refine+rescore(**CPU BFGS** 每配体, main.cpp L457) | 4.09s | 20.5% | 空转 |
+| PD2/PD3 写盘+teardown | 0.03s | 0.2% | 空转 |
+
+- **CPU 侧(不动 GPU)占 64.6%**;nsys 证明 kernel 窗口内 k2 连续(间隙 1.1µs, 0.00%)。
+- **消费段重定义**: 原"消费段"1.69s 只是冰山一角, 真正的大头是 PD1 CPU refine
+  4.09s(21%, 每配体 ~43ms 的 5-轮 quasi_newton)——它不在 main_procedure 的
+  probe 覆盖里, 是 E2E 与账本差的 3.5s+ 的来源。
+- 已知惰性缺陷: dtoh_results 段含**重复的 result_coords DtoH**(L853-854 两行
+  相同 memcpy, ~0.3s/96 配体), 水电费级, 顺手删。
+
+### 流水化改造设计 (按收益排序)
+1. **P-A 删双重 DtoH** (L854): 0 收益声明——纯卫生, 0.3s/96。
+2. **P-B refine 异步化/流水化** (主力, ~20% 墙钟): PD1 的 CPU refine 与
+   GPU 无依赖(只读 results 缓冲)。两个方案:
+   a. OpenMP 并行 refine 每配体独立(CPU 核数 96/43ms → ~2 核即可全遮蔽);
+   b. 线程池: DtoH 一批 → 立即开 refine 线程, 主线程回头发射下一 chunk 的
+      kernel(GPU/CPU 真流水)。方案 b 是终态, a 是第一步。
+   前置: NO_REFINEMENT 已证 anchor-neutral (Δ≤0.4, 见 skill E1-retry 条目),
+   但 refine 影响输出姿态精度(非锚点口径), 保留语义只并行化。
+3. **P-C prep 段并行化** (35% 里的非 GPU 部分): 96×3.9ms non_cache 构建 +
+   m_cl 填充也是 per-ligand 独立 → 同样可 OpenMP。refine 后的第二个同型收益。
+4. **P-D chunk 间流水** (终态形态): driver 现在 chunk 串行(3 chunk/靶),
+   chunk i 的消费可与 chunk i+1 的 kernel 重叠 → 需要把 batch call 拆两半
+   (launch 前半/后半), 复杂度高, P-B/C 落地后再评估剩余空间。
+
+### 预期
+P-B(a) 落地后 chunk 墙钟 19.0s → ~15s (−21%); P-C 再 → ~11.5s (−40%);
+PD1+prep 的 OpenMP 化不改任何 GPU 语义 (门禁: 三锚点 + EF 一致性 + screening
+全量复跑一次对比墙钟与 EF)。
+
+## 七点六、消费段流水化执行实况 (2026-09-16 续 IV, 部分受阻)
+
+> fork v6b_pipe (6abc142b); 二进制 md5 43560509 (W6c 形状)。
+
+### 已落地
+- **P-A**: 双重 result_coords DtoH 删除 (L853-854 孪生行)。
+- **P-D-fix (计划外, 重要)**: `cl_to_vina` 原有 `#pragma omp parallel for` 对
+  `results_vina.push_back()` 是**潜伏数据竞争**——此前构建从不链 OpenMP,
+  pragma 编译为空; P-C 引入 `-Xcompiler -fopenmp` 使其激活 → 堆腐坏
+  (double free/corruption)。重写为 per-thread 局部 vector + 有序拼接
+  (schedule(static) 保持 i 升序 = 与串行逐位同序), num_atoms 一致性检查
+  移出并行区 (原为跨线程读 i==0 写入的竞争)。
+- **新增竞争清除**: `children_map |=` RMW 竞争 (L658) 与
+  `add_to_output_container` 共享容器竞争 (L893) 同为 -fopenmp 激活的潜伏
+  竞争, 已串行化 (恢复既有语义)。
+
+### 受阻 (如实记录)
+- **P-B v1 (refine 位姿级 OpenMP) 崩溃**: refine_structure 写共享 `model m`
+  (m.set(out.c)) 与共享 `nc.slope` (5-slope 扫描) — 位姿并行不安全。已回退
+  串行 (P-B v2); 该段收益转移到 P-D (chunk 间流水)。
+- **P-C (non_cache 构建 OpenMP) 崩溃**: threads>=2 段错误, threads=1 正常。
+  non_cache/prec 路径存在 lazy 共享态, 需逐状态审计后才可并行。已禁用
+  (串行 non_cache), OpenMP 保留给 cl_to_vina 修复版。
+- **线程数扫描**: 1t 19.0s / 2t 18.5s / 4t 17.8s / 8t 18.2s (cl_to_vina 修复
+  后全部 rc=0)。
+
+### 正确性判定 (关键)
+- CERT-vs-PIPE 同 seed42 配对: 32/96 亲和力差 >0.3 → 触发怀疑;
+- **CERT-vs-CERT (同一二进制, 同 seed42) 对照: 33/96 差 >0.3, 仅 26/96
+  位级相同** — 搜索本身跨运行非确定 (已知的 m_coords 跨 eval 同步残差,
+  q4_8_determinism), 配对差与家族自噪声不可区分 → **pipe 改动搜索中性**。
+- 教训: 修复"潜伏 OpenMP 竞争"前先跑同二进制同 seed 双跑对照, 否则会把
+  既有非确定性误判为新改动引起。
+
+### 当前收益
+- chunk 墙钟 19.0 → 17.8s (4 线程, ~-6%), 来自 P-A + cl_to_vina 并行修复;
+- P-B/P-C 的 5-6s 大头未兑现 (并行不安全), 需 P-D chunk 流水或逐状态审计
+  后再战。诚实结论: 消费段流水化的低垂果实已摘 (~6%), 大头需要更深的
+  重构 (P-D 或 refine 的 per-pose 模型副本方案 = 内存 x8 代价)。
+
+
+
 ## 七点五、加速比口径拆解 (2026-09-16 续 III, 全部实测)
 
 > 问题: "v6-batch 改造前后加速比是多少?" — 答案取决于"前"指什么形态。

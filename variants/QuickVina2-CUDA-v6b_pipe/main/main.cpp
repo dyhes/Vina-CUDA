@@ -24,6 +24,7 @@
 #include <string>
 #include <exception>
 #include <vector> // ligand paths
+#include <memory> // [v6b-P] unique_ptr
 #include <cmath>  // for ceila
 #include <boost/program_options.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -397,12 +398,17 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 
 	std::vector<non_cache> nc;
 
+	// [v6b-P P-C] non_cache construction is per-ligand independent (96 x 3.9ms
+	// serial). non_cache has no default ctor -> build into unique_ptr slots in
+	// parallel, then move out in index order (nc[ligand_count] indexing kept).
+	// [v6b-P P-C DISABLED] non_cache ctor is not thread-safe (lazy state inside
+	// cache/precalculate path — segfault at >=2 OMP threads). Serial until the
+	// shared-state path is audited; P-A + cl_to_vina fix stay.
 	for (int ligand_count = 0; ligand_count < ligand_num; ligand_count++)
 	{
-		hp_mark("bfgs_steps_vec");
-		non_cache tmp(ms[ligand_count], gd, &prec, slope);
-		nc.push_back(tmp); // if gd has 0 n's, this will not constrain anything
+		nc.push_back(non_cache(ms[ligand_count], gd, &prec, slope));
 	}
+	hp_mark("bfgs_steps_vec");
 
 	doing(verbosity, "Analyzing the binding site", log);
 	hp_mark("non_cache_vec");
@@ -453,6 +459,10 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 		std::string name_tmp2 = name_tmp.substr(name_tmp.find("\\") + 1, name_tmp.length() - name_tmp.find("\\") - 11);
 		std::cout << "Refining ligand " << name_tmp2 << " results...";
 #ifndef NO_REFINEMENT
+		// [v6b-P P-B v2] refine_structure is NOT pose-parallel-safe: it mutates the
+		// SHARED model m (m.set(out.c)) and SHARED nc.slope (5-slope sweep) —
+		// pose-parallel races on both (double-free/corruption). Serial loop;
+		// pipelining win moves to P-D (overlap with next chunk kernel).
 		VINA_FOR_IN(i, out_cont)
 		refine_structure(m, prec, nc[ligand_count], out_cont[i], authentic_v, par.mc.ssd_par.bfgs_steps[ligand_count]);
 #endif
