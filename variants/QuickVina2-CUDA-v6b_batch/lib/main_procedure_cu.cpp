@@ -498,6 +498,16 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 	std::vector<ligand_atom_coords_cl *> result_coords_ptrs(num_ligands);
 	std::vector<output_type_cl *> result_ptrs(num_ligands);
 	std::vector<int> torsion_sizes(num_ligands);
+	// [v6b] batch staging: pointer-of-buffers (v6 architecture, zero struct churn)
+	// + per-ligand scalars; arrays filled in the per-ligand loop, kernel called once after it
+	std::vector<output_type_cl *> ric_batch_arr(num_ligands, nullptr);
+	std::vector<m_cl *> mg_batch_arr(num_ligands, nullptr);
+	std::vector<random_maps *> rm_batch_arr(num_ligands, nullptr);
+	std::vector<ligand_atom_coords_cl *> coords_batch_arr(num_ligands, nullptr);
+	std::vector<output_type_cl *> results_batch_arr(num_ligands, nullptr);
+	std::vector<int> search_depths_arr(num_ligands, 0);
+	std::vector<int> bfgs_steps_arr(num_ligands, 0);
+	std::vector<int> lig_valid_arr(num_ligands, 0);
 
 	// std::vector<cl_mem> ric_gpus			(num_ligands);
 	// std::vector<cl_mem> m_gpus				(num_ligands);
@@ -582,8 +592,9 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			size_t rand_maps_size = sizeof(random_maps);
 
 			// Preparing random initial conformations
-			ric_ptrs[ligand_count] = (output_type_cl *)malloc(par.mc.thread * sizeof(output_type_cl));
-			output_type_cl *ric_ptr = ric_ptrs[ligand_count];
+		ric_ptrs[ligand_count] = (output_type_cl *)malloc(par.mc.thread * sizeof(output_type_cl));
+		output_type_cl *ric_ptr = ric_ptrs[ligand_count];
+		// [v6b] second malloc below was leak+dead (pointer overwritten before use); removed
 
 			// [v7-GPU] ric (random initial conformations) generated on device by
 			// v7_gen_ric_gpu right after the ric buffer is allocated below.
@@ -591,8 +602,7 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 #ifdef HOST_PROBE
 			hp_mark("ric_gpu_plan");
 #endif
-			ric_ptrs[ligand_count] = (output_type_cl *)malloc(par.mc.thread * sizeof(output_type_cl));
-			size_t ric_size = par.mc.thread * sizeof(output_type_cl);
+		size_t ric_size = par.mc.thread * sizeof(output_type_cl);
 
 			// Preparing ligand data
 			if (m.num_other_pairs() != 0)
@@ -752,6 +762,16 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 
 			// output_type_cl* result_gpus[ligand_count];
 			checkCUDA(cudaMalloc((void **)&result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl)));
+			// [v6b] staging for the post-loop batch kernel call — MUST sit after the
+			// LAST cudaMalloc of this ligand (FIX2: early stash captured NULL for
+			// rm/coords/results because their cudaMallocs come later in the block)
+			mg_batch_arr[ligand_count] = m_gpus[ligand_count];
+			rm_batch_arr[ligand_count] = random_maps_gpus[ligand_count];
+			ric_batch_arr[ligand_count] = ric_gpus[ligand_count];
+			coords_batch_arr[ligand_count] = result_coords_gpus[ligand_count];
+			results_batch_arr[ligand_count] = result_gpus[ligand_count];
+			search_depths_arr[ligand_count] = par.mc.search_depth[ligand_count];
+			bfgs_steps_arr[ligand_count] = par.mc.ssd_par.bfgs_steps[ligand_count];
 			// checkCUDA(cudaMemcpy(result_gpus[ligand_count], result_ptrs[ligand_count], par.mc.thread * sizeof(output_type_cl), cudaMemcpyHostToDevice));
 			// checkCUDA(cudaMemcpy(result_gpus[ligand_count], result_ptrs[ligand_count], par.mc.thread * sizeof(output_type_cl), cudaMemcpyHostToDevice));
 GT_BLOCK_END(0);
@@ -772,14 +792,53 @@ GT_BLOCK_END(0);
 #ifdef HOST_PROBE
 			fprintf(stderr, "PRE_KM\n");
 #endif
-			kernel_monte(ric_gpus[ligand_count], m_gpus[ligand_count], pre_gpu, grids_gpu, random_maps_gpus[ligand_count],
-						 result_coords_gpus[ligand_count], result_gpus[ligand_count], mis_gpu, torsion_sizes[ligand_count],
-						 par.mc.search_depth[ligand_count], par.mc.ssd_par.bfgs_steps[ligand_count], rilc_bfgs);
-						 hp_mark("km_done");
+			// [v6b] kernel launch moved AFTER the per-ligand loop: one batched
+			// kernel_monte call for all fully-prepared ligands (v6 architecture)
+			lig_valid_arr[ligand_count] = 1;
+			hp_mark("km_done");
 #ifdef HOST_PROBE
 			fprintf(stderr, "POST_KM\n");
 #endif
 
+		}
+		catch (...)
+		{
+			continue;
+		}
+	}
+
+	// [v6b] ============================ batched kernel call ============================
+	{
+		const int n_valid = (int)lig_valid_arr.size(); // full width; invalid entries gated on device
+		int n_lig_valid = 0;
+		for (int i = 0; i < n_valid; i++) n_lig_valid += lig_valid_arr[i];
+		printf("V6B_BATCH_LIGANDS=%d valid=%d\n", num_ligands, n_lig_valid);
+		if (n_lig_valid > 0) {
+#ifdef HOST_PROBE
+			hp_mark("pre_km_batch");
+			fprintf(stderr, "PRE_KM\n");
+#endif
+			kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
+						 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
+						 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
+						 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
+						 lig_valid_arr.data());
+			hp_mark("km_done");
+#ifdef HOST_PROBE
+			fprintf(stderr, "POST_KM\n");
+#endif
+		}
+	}
+	// [v6b] ========================== end batched kernel call ==========================
+
+	// [v6b-FIX5] per-ligand result consumption AFTER the batched kernel:
+	// DtoH/cl_to_vina/add_to_output + the per-ligand device frees (buffers
+	// must stay alive until the batched kernel has finished).
+	for (int ligand_count = 0; ligand_count < num_ligands; ligand_count++)
+	{
+		if (lig_valid_arr[ligand_count] == 0) continue;
+		try
+		{
 			// Init ligand atom coords
 			result_coords_ptrs[ligand_count] = (ligand_atom_coords_cl *)malloc(par.mc.thread * sizeof(ligand_atom_coords_cl));
 

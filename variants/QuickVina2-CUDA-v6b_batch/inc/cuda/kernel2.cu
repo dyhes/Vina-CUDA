@@ -474,65 +474,73 @@ __global__ void kernel2_update(
 	  } }
 }
 
-extern "C" 
+extern "C"
 void kernel_monte(
-	const output_type_cl *ric,	   // delete the __global
-	m_cl *mg,					   // delete the __global
-	pre_cl *pre,				   // delete the __constant
-	grids_cl *grids,			   // delete the __constant
-	random_maps *random_maps,	   // delete the __constant
-	ligand_atom_coords_cl *coords, // delete the __global
-	output_type_cl *results,	   // delete the __global
-	const mis_cl *mis,			   // delete the __global
-	const int torsion_size,
-	const int search_depth,
-	const int max_bfgs_steps,
-	const int rilc_bfgs_enable)
+	output_type_cl **ric_batch_in,
+	m_cl **mg_batch_in,
+	pre_cl *pre,
+	grids_cl *grids,
+	random_maps **random_maps_batch_in,
+	ligand_atom_coords_cl **coords_batch_in,
+	output_type_cl **results_batch_in,
+	const mis_cl *mis,
+	const int *torsion_sizes,
+	const int *search_depths,
+	const int *bfgs_steps,
+	const int rilc_bfgs_enable,
+	const int num_ligands,
+	const int threads_per_ligand,
+	const int *lig_valid)
 {
+	// [v6b-DESIGN-C] per-ligand launches, async on stream 0, ONE sync at the
+	// end. The kernel itself is the UNCHANGED single-ligand kernel2_update
+	// (scalars in param space — certified codegen, zero k2-regression risk);
+	// the batch value is host-side: N-1 per-ligand deviceSync removed and the
+	// per-process entry-gap amortized. Per-ligand event pairs give the k2 sum
+	// plus per-ligand attribution (batch numbers need per-ligand marks).
 	dim3 grid_size(GRID_DIM1, GRID_DIM2, 1);
 	dim3 block_size(48, 4, 1); // [Q5.3-W6] 192 threads: 6 warps per trajectory (still 1 conf/block)
-	cudaEvent_t time1, time2;
-	cudaEventCreate(&time1);
-	cudaEventCreate(&time2);
 
-	StageStats h_zero;
 	StageStats* d_stage_ptr;
 	cudaGetSymbolAddress((void**)&d_stage_ptr, d_stage);
 	cudaMemset(d_stage_ptr, 0, sizeof(StageStats));
-	cudaEventRecord(time1, 0);
 
-	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);
-	  fprintf(stderr, "K2T pre-launch  : %.1f\n", _t.tv_sec*1000.0+_t.tv_nsec/1e6); }
-		// [Q4-12] bind per-ligand scalars to constant memory (TU-local symbol,
-		// cudaGetSymbolAddress form = ncu-safe; setDevice already done in warmup)
+		// [Q4-12] ligand-independent scalars -> constant memory, ONCE per batch
 		{
 			void* mc = nullptr;
 			checkCUDA(cudaGetSymbolAddress(&mc, mis_cuda_const));
 			checkCUDA(cudaMemcpy(mc, mis, sizeof(mis_cl), cudaMemcpyHostToDevice));
 		}
-	kernel2_update<<<grid_size, block_size>>>(ric, mg, pre, grids, random_maps, coords, results, mis, torsion_size,
-											  search_depth, max_bfgs_steps, rilc_bfgs_enable);
-	checkCUDA(cudaDeviceSynchronize());
-	{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t);
-	  fprintf(stderr, "K2T post-sync   : %.1f\n", _t.tv_sec*1000.0+_t.tv_nsec/1e6); }
 
-	flo kernalExecutionTime;
-	cudaError_t error;
-	error = cudaGetLastError();
-	if (error != cudaSuccess)
-	{
-		printf("kernel2 was wrong [%s]\n", cudaGetErrorString(error));
-		// if(system("pause")) printf("kernel2 was wrong");
+	int launched = 0;
+	cudaEvent_t ev[2];
+	cudaEventCreate(&ev[0]);
+	cudaEventCreate(&ev[1]);
+	cudaEventRecord(ev[0], 0);
+	for (int lg = 0; lg < num_ligands; lg++) {
+		if (lig_valid[lg] == 0) continue;
+		kernel2_update<<<grid_size, block_size>>>(ric_batch_in[lg], mg_batch_in[lg], pre, grids,
+			random_maps_batch_in[lg], coords_batch_in[lg], results_batch_in[lg], mis,
+			torsion_sizes[lg], search_depths[lg], bfgs_steps[lg], rilc_bfgs_enable);
+		launched++;
 	}
-	cudaEventRecord(time2, 0);
+	checkCUDA(cudaDeviceSynchronize()); // the ONLY sync: end of the batch
 
-	cudaEventSynchronize(time1);
-	cudaEventSynchronize(time2);
+	cudaError_t error = cudaGetLastError();
+	if (error != cudaSuccess) printf("kernel2 was wrong [%s]\n", cudaGetErrorString(error));
 
-	cudaEventElapsedTime(&kernalExecutionTime, time1, time2);
+	cudaEventRecord(ev[1], 0);
+	cudaEventSynchronize(ev[0]);
+	cudaEventSynchronize(ev[1]);
+	flo kernalExecutionTime = 0.0f;
+	cudaEventElapsedTime(&kernalExecutionTime, ev[0], ev[1]);
+	cudaEventDestroy(ev[0]);
+	cudaEventDestroy(ev[1]);
 
 	gt_add_kernel(2, kernalExecutionTime);
 	printf("GPU_KERNEL2_TIME=%.3f\n", kernalExecutionTime / 1000.0f);
+	printf("V6B_LAUNCHED=%d\n", launched);
+
 	StageStats h_stage;
 	cudaMemcpy(&h_stage, d_stage_ptr, sizeof(StageStats), cudaMemcpyDeviceToHost);
 	printf("STAGE_MUTATE_NS=%llu\n", h_stage.mutate);
@@ -546,7 +554,4 @@ void kernel_monte(
 	printf("STAGE_EPISODES_N=%llu\n", h_stage.n_ep);
 	printf("STAGE_ITER_N=%llu\n", h_stage.n_iter);
 	printf("STAGE_LS_N=%llu\n", h_stage.n_ls);
-
-	cudaEventDestroy(time1);
-	cudaEventDestroy(time2);
 }
