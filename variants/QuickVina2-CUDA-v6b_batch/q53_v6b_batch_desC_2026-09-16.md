@@ -115,3 +115,33 @@
    screening 构建可在 v6b 上切 192t/40reg。
 3. random_maps 共享化 (pi/sphere 单份) — 可选优化, 非正确性项。
 4. per-ligand 事件对 (批量内每配体 k2 归因) — 需要时再加。
+
+## 七、Screening 全量实测 (2026-09-16 续, 同 session)
+
+### 执行
+- 驱动: /tmp/v6b_screen.py (57 靶 × 285 配体池, chunk=96 → 3 批/靶,
+  失败隔离半分重试, 分数解析 = 输出 pdbqt 首个 REMARK VINA RESULT)。
+- **坑×1**: 首版按 {code}_out.pdbqt 收分, 实际输出名是 lig%05d_{code}_out.pdbqt
+  (chunk 内序号前缀) → 3 靶假 FAIL; 改 glob *_{code}_out.pdbqt 后 57/57 OK。
+- 实验: experiments/Sep16_v6b_screen_full (scores/ 57 文件, 285 分/靶)。
+
+### 结果
+| 指标 | **v6b 批量 (09-16)** | qvina2-cuda (06-10) | qvina-w-cuda | vina-cpu |
+|---|---|---|---|---|
+| EF1% mean | **9.83** | 9.35 | 7.55 | 8.15 |
+| EF5% mean | **4.43** | 3.88 | 4.27 | 3.88 |
+| EF10% mean | **3.14** | 3.07 | 3.09 | 3.00 |
+| 墙钟/靶 | **~40s** | 432s | 322s | 3804s |
+| 完成率 | 57/57 × 285 全 | — | — | — |
+
+- **wall-clock: 40.4 min 全量 vs qvina2-cuda 串行 6.8h = ~10×** (含每靶点
+  285×3 chunk 的 host 摊销 + N-1 sync 消除; 分项: k2 相同 + entry-gap 350ms→
+  1/N + per-ligand sync 消除)。
+- EF 略优于旧 qvina2-cuda 基线 (9.83/4.43/3.14 vs 9.35/3.88/3.07) —
+  同代码库 6 月后的 kernel 改进 (Q4 系列精度域清理等) 自然带入, 非批量本身。
+- EF1% median 0.00 与全部历史运行一致 (5-binder 靶点 1% 窗口 <1 个 binder
+  的量化效应, 非缺陷)。
+
+### 结论
+v6b 批量 screening 路径全量认证可用: 精度 (EF) 持平或优于历史基线,
+吞吐 ~10× vs 旧串行形态。57 靶分数文件在 experiments/Sep16_v6b_screen_full/scores/。
