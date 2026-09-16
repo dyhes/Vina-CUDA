@@ -499,7 +499,7 @@ void kernel_monte(
 	// per-process entry-gap amortized. Per-ligand event pairs give the k2 sum
 	// plus per-ligand attribution (batch numbers need per-ligand marks).
 	dim3 grid_size(GRID_DIM1, GRID_DIM2, 1);
-	dim3 block_size(48, 4, 1); // [Q5.3-W6] 192 threads: 6 warps per trajectory (still 1 conf/block)
+	dim3 block_size(32, 4, 1); // [Q5.3-W6] 192 threads: 6 warps per trajectory (still 1 conf/block)
 
 	StageStats* d_stage_ptr;
 	cudaGetSymbolAddress((void**)&d_stage_ptr, d_stage);
