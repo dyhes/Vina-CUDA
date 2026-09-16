@@ -225,6 +225,40 @@ PD1+prep 的 OpenMP 化不改任何 GPU 语义 (门禁: 三锚点 + EF 一致性
   后再战。诚实结论: 消费段流水化的低垂果实已摘 (~6%), 大头需要更深的
   重构 (P-D 或 refine 的 per-pose 模型副本方案 = 内存 x8 代价)。
 
+## 七点七、P-D chunk 流水执行实况 (2026-09-16 续 V, 完成并封存)
+
+> fork v6b_pd (c73ac9df → 5dea10d4), 二进制 md5 0dfbc459。285 配体单进程
+> 3 组 × 96, 双缓冲 + 专用消费流 + per-group event 门控。
+
+### 落地
+- 组内 launch (DESIGN C 循环) + 消费线程 DtoH (专用流 cudaStreamWaitEvent
+  门控 per-group event + cudaMemcpyAsync) — 消费与后组 kernel 重叠。
+- mis_cuda_const 绑定从 kernel_monte 移到 sweep (直接发射绕过了原绑定 →
+  epsilon_fl 垃圾 → g_evaluate ERROR#6 刷屏; 教训: 把逻辑搬出函数时其
+  隐式前置必须随迁)。
+- consumer 切片索引修正 (rs[k]/co[k]/tors[k-lo]); legacy per-ligand DtoH+free
+  删除 (双释放); device free 移到主线程 post-pipeline (cudaFree 全设备同步)。
+
+### 裁决: 正确但无净收益, 封存
+- 285/285 rc=0, 零 CUDA error, kernel 语义不变;
+- 墙钟 56.4s vs 串行 57.4s (**无收益**)。机制: 消费段仅 1.7s 可隐藏, 而
+  PD1 refine 11.9s + prep 4.9s + parse 5.7s 串行主导 — 消费重叠被这些
+  大头淹没。
+- P-B (refine 位姿并行) 与 P-C (non_cache 并行) 已被共享态竞争阻断
+  (model m / nc.slope / lazy 构造), 它们才是 60% CPU 墙钟的持有者。
+- **后续真杠杆**: ①refine 移植到 GPU (kernel 线工程, 收益 = 整个 PD1 段);
+  ②per-pose model 副本并行 refine (内存 ×8); ③NO_REFINEMENT 语义降级
+  (需重定义输出精度口径)。三选一之前, P-D 线到此为止。
+
+### 过程教训
+1. `cudaMemcpy` (同步版) 在默认流上会等待全部已排队 kernel — 消费线程
+   用它 = 零重叠; 必须专用流 + `cudaStreamWaitEvent` + `cudaMemcpyAsync`。
+2. `cudaFree` 隐式全设备同步, 放在流水线中会杀掉重叠; 统一挪到末尾。
+3. 把函数体搬出原函数时, 其**隐式前置操作** (如 mis_cuda_const 绑定)
+   必须随迁 — 漏掉的症状是下游读垃圾常量。
+4. 指针切片偏移 (`data()+lo`) 与全局索引 (`valid[li]`) 混用是本次 3 个
+   崩溃的共同根源 — 切片后一律用局部索引 k=li-lo。
+
 
 
 ## 七点五、加速比口径拆解 (2026-09-16 续 III, 全部实测)
