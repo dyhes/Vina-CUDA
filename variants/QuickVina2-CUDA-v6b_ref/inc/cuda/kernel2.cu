@@ -648,9 +648,13 @@ __global__ void refine_update_kernel(
 	set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
 		m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
 
-	// 5-slope emulation: re-run the optimizer per slope from the previous
-	// result (CPU ladder 100*10^(2p), p=0..4; same exponent sequence here).
-	for (int p_i = 0; p_i < 5; p_i++) {
+	// [v2a] SINGLE slope: the GPU grid potential has NO slope knob (CPU
+	// nc.slope only rescales out-of-box penalties in non_cache). v1's 5
+	// chained re-runs were an invalid ladder emulation that (a) over-pulled
+	// poses off the exact-surface optimum (CASF aff treatment +0.1-0.2 med)
+	// and (b) cost 5x refine wall. D0/sweep 2026-09-18: rescue is pool-lottery
+	// (AUTH_FULL 0/5 on 1u1b+2zda), REF-G matches cert per-seed on 2zda.
+	for (int p_i = 0; p_i < 1; p_i++) {
 		if (threadNumInBlock == 0) {
 			g.position[0] = 0; g.position[1] = 0; g.position[2] = 0;
 			g.orientation[0] = 0; g.orientation[1] = 0;

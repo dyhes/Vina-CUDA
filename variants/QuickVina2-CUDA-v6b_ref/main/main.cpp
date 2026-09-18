@@ -458,7 +458,7 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 		// int int1 = name_tmp.find("\\"); int int2 = name_tmp.find(".pdbqt");
 		std::string name_tmp2 = name_tmp.substr(name_tmp.find("\\") + 1, name_tmp.length() - name_tmp.find("\\") - 11);
 		std::cout << "Refining ligand " << name_tmp2 << " results...";
-#if defined(REF_PROBE_GRID) || defined(REF_PROBE_AUTH) || defined(REF_PROBE_GRIDAUTH)
+#if defined(REF_PROBE_GRID) || defined(REF_PROBE_AUTH) || defined(REF_PROBE_GRIDAUTH) || defined(REF_PROBE_AUTH_FULL)
 		// [D0 probe] discriminate refine rescue mechanism on cliff targets:
 		//   GRID     = CPU cache grid potential (GPU-equivalent), 5-slope ladder
 		//   AUTH     = exact non_cache potential, single slope (slope_orig)
@@ -490,7 +490,20 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 #else
 				igrid &pig = nc[ligand_count];
 #endif
-#if defined(REF_PROBE_AUTH) || defined(REF_PROBE_GRIDAUTH)
+#if defined(REF_PROBE_AUTH_FULL)
+				// [D0-E] exact cert semantics: non_cache + 5-slope ladder + within break
+				{
+					const fl slope_orig3 = nc[ligand_count].slope;
+					VINA_FOR(p5e, 5) {
+						nc[ligand_count].slope = 100 * std::pow(10.0, 2.0 * p5e);
+						quasi_newton_par(m, prec, pig, oc[i], g, authentic_v);
+						m.set(oc[i].c);
+						if (nc[ligand_count].within(m)) break;
+					}
+					oc[i].coords = m.get_heavy_atom_movable_coords();
+					nc[ligand_count].slope = slope_orig3;
+				}
+#elif defined(REF_PROBE_AUTH) || defined(REF_PROBE_GRIDAUTH)
 				quasi_newton_par(m, prec, pig, oc[i], g, authentic_v);
 				m.set(oc[i].c);
 				oc[i].coords = m.get_heavy_atom_movable_coords();
