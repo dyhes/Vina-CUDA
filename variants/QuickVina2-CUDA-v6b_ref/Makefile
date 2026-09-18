@@ -16,7 +16,7 @@ LIB3=-lm -lpthread
 LIB_PATH=-L$(BOOST_LIB_PATH)/lib/x86_64-linux-gnu
 SRC=./lib/*.cpp
 SRC_CUDA = ./inc/cuda/kernel1.cu ./inc/cuda/kernel2.cu ./inc/cuda/ric_gpu.cu ../../milestones/gpu_timer.cu
-MACRO= $(GRID_DIM) $(DOCKING_BOX_SIZE) -Xcompiler -fopenmp -DBOOST_TIMER_ENABLE_DEPRECATED -lineinfo -arch=sm_89 -maxrregcount=40
+MACRO= $(GRID_DIM) $(DOCKING_BOX_SIZE) -Xcompiler -fopenmp -DBOOST_TIMER_ENABLE_DEPRECATED -DREF_GPU -DHOST_PROBE -lineinfo -arch=sm_89 -maxrregcount=40
 
 all:out
 out:./main/main.cpp

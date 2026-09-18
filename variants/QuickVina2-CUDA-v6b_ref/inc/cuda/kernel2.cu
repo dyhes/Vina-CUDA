@@ -555,3 +555,130 @@ void kernel_monte(
 	printf("STAGE_ITER_N=%llu\n", h_stage.n_iter);
 	printf("STAGE_LS_N=%llu\n", h_stage.n_ls);
 }
+
+// ============================================================================
+// [REF-G R1] GPU refine (v6b_ref, per-ligand): refine the docked poses on the
+// GPU with the certified rilc_bfgs machine instead of CPU refine_structure.
+// Semantics notes (vs CPU refine_structure, main.cpp L148):
+//  - CPU runs a 5-slope ladder (nc.slope = 100*10^(2p), p=0..4), BFGS per
+//    slope, early-break on nc.within(). GPU: the slope is a plain scalar
+//    argument (param space, zero-reg — DESIGN A lesson) and we re-run the
+//    optimizer per slope from the previous slope's result (full ladder, no
+//    early break — grid-box within() is approximated by the authentic grid).
+//  - thread-org: FULL-block cooperative calls only. rilc_bfgs_update requires
+//    all-thread participation (W6c-L R1a lesson: no tid==0 guard around it).
+//  - visited is per-thread local (kernel2_update shape); q4_skip_row shared,
+//    fresh epoch per slope run (conservative recompute).
+//  - mis_cuda_const is bound by kernel_monte upstream for every batch call;
+//    the refine launch inherits that binding (P-D lesson: moved logic must
+//    carry its implicit prerequisites — here the prerequisite already lives
+//    upstream; do NOT rebind).
+//  - KILL: NaN/overflow e -> 1e38 (host not_max guard handles it exactly like
+//    cert CPU refine's out.e = max_fl).
+// ============================================================================
+#define REF_POSE_STRIDE 240  // sizeof(output_type_cl)=228 padded to 16B
+#define REF_SLOPE    1e6f    // single authentic slope (mid-ladder; CASF arbitrates)
+
+__global__ void refine_update_kernel(
+	char *poses_base,          // [np] I/O, stride REF_POSE_STRIDE
+	m_cl *mg,
+	pre_cl *pre,
+	grids_cl *grids,
+	const int torsion_size,
+	const int num_poses,
+	const int max_bfgs_steps)
+{
+	const int pi = blockIdx.x;
+	if (pi >= num_poses) return;
+
+	const int threadsPerBlock = blockDim.x * blockDim.y;
+	const int threadNumInBlock = threadIdx.x + blockDim.x * threadIdx.y;
+
+	m_cl *m_gpu = mg;
+
+	visited_cl visited;
+	visited_init(&visited);
+
+	__shared__ m_coords_cl m_coords;
+	__shared__ m_minus_forces minus_forces;
+	__shared__ output_type_cl tmp;
+	__shared__ change_cl g;
+	__shared__ ligand_gpu m_gpu_ligand;
+	__shared__ unsigned long long q4_skip_row[(MAX_NUM_OF_LIG_PAIRS + 63) / 64];
+	__shared__ int q4_epoch_i;
+	__shared__ grids_gpu grids_cuda;
+
+	if (threadNumInBlock == 0) {
+		m_coords = m_gpu->m_coords;
+		minus_forces = m_gpu->minus_forces;
+		m_gpu_ligand.rigid = m_gpu->ligand.rigid;
+		m_gpu_ligand.begin = m_gpu->ligand.begin;
+		m_gpu_ligand.end = m_gpu->ligand.end;
+		m_gpu_ligand.m_num_movable_atoms = m_gpu->m_num_movable_atoms;
+		for (int w = 0; w < (MAX_NUM_OF_LIG_PAIRS + 63) / 64; w++) q4_skip_row[w] = 0ULL;
+		q4_epoch_i = 0;
+		memcpy(&tmp, poses_base + (size_t)pi * REF_POSE_STRIDE, sizeof(output_type_cl));
+	}
+	for (int i = threadNumInBlock; i < GRIDS_SIZE; i += threadsPerBlock) {
+		grids_cuda.grid_other[i].m_i = grids->grids[i].m_i;
+		grids_cuda.grid_other[i].m_j = grids->grids[i].m_j;
+		grids_cuda.grid_other[i].m_k = grids->grids[i].m_k;
+		for (int n = 0; n < 3; n++) {
+			grids_cuda.grid_other[i].m_init[n] = grids->grids[i].m_init[n];
+			grids_cuda.grid_other[i].m_range[n] = grids->grids[i].m_range[n];
+			grids_cuda.grid_other[i].m_factor[n] = grids->grids[i].m_factor[n];
+			grids_cuda.grid_other[i].m_dim_fl_minus_1[n] = grids->grids[i].m_dim_fl_minus_1[n];
+			grids_cuda.grid_other[i].m_factor_inv[n] = grids->grids[i].m_factor_inv[n];
+		}
+	}
+	__syncthreads();
+
+	if (threadNumInBlock == 0) {
+		change_cl g_local;
+		g_local.position[0] = 0; g_local.position[1] = 0; g_local.position[2] = 0;
+		g_local.orientation[0] = 0; g_local.orientation[1] = 0;
+		g_local.orientation[2] = 0; g_local.orientation[3] = 0;
+		for (int i = 0; i < MAX_NUM_OF_LIG_TORSION; i++) g_local.lig_torsion[i] = 0;
+		for (int i = 0; i < MAX_NUM_OF_FLEX_TORSION; i++) g_local.flex_torsion[i] = 0;
+		g = g_local;
+	}
+	__syncthreads();
+
+	// apply the packed pose to the rigid tree + coords before the ladder
+	set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
+		m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
+
+	// 5-slope emulation: re-run the optimizer per slope from the previous
+	// result (CPU ladder 100*10^(2p), p=0..4; same exponent sequence here).
+	for (int p_i = 0; p_i < 5; p_i++) {
+		if (threadNumInBlock == 0) {
+			g.position[0] = 0; g.position[1] = 0; g.position[2] = 0;
+			g.orientation[0] = 0; g.orientation[1] = 0;
+			g.orientation[2] = 0; g.orientation[3] = 0;
+			for (int i = 0; i < MAX_NUM_OF_LIG_TORSION; i++) g.lig_torsion[i] = 0;
+			for (int i = 0; i < MAX_NUM_OF_FLEX_TORSION; i++) g.flex_torsion[i] = 0;
+		}
+		__syncthreads();
+		rilc_bfgs_update(&tmp, &g, m_gpu, pre, grids, &mis_cuda_const, torsion_size,
+			max_bfgs_steps, &m_coords, &minus_forces, threadNumInBlock, threadsPerBlock,
+			&m_gpu_ligand.rigid, &grids_cuda, &visited, q4_skip_row, 0ULL);
+		set_update(&tmp, &m_gpu_ligand.rigid, &m_coords,
+			m_gpu->atoms, m_gpu->m_num_movable_atoms, mis_cuda_const.epsilon_fl);
+	}
+	__syncthreads();
+
+	if (threadNumInBlock == 0) {
+		if (!(tmp.e == tmp.e) || tmp.e > 1e30f) tmp.e = (flo)1e38; // NaN/inf -> KILL
+		memcpy(poses_base + (size_t)pi * REF_POSE_STRIDE, &tmp, sizeof(output_type_cl));
+	}
+}
+
+extern "C" void v6b_ref_gpu(
+	char *d_poses, m_cl *mg, pre_cl *pre, grids_cl *grids,
+	const int torsion_size, const int num_poses, const int max_bfgs_steps,
+	cudaStream_t s)
+{
+	dim3 block(48, 4, 1); // 192 threads, same org as kernel2_update
+	refine_update_kernel<<<num_poses, block, 0, s>>>(d_poses, mg, pre, grids,
+		torsion_size, num_poses, max_bfgs_steps);
+}

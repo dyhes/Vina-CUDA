@@ -458,11 +458,68 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 		// int int1 = name_tmp.find("\\"); int int2 = name_tmp.find(".pdbqt");
 		std::string name_tmp2 = name_tmp.substr(name_tmp.find("\\") + 1, name_tmp.length() - name_tmp.find("\\") - 11);
 		std::cout << "Refining ligand " << name_tmp2 << " results...";
-#ifndef NO_REFINEMENT
-		// [v6b-P P-B v2] refine_structure is NOT pose-parallel-safe: it mutates the
-		// SHARED model m (m.set(out.c)) and SHARED nc.slope (5-slope sweep) —
-		// pose-parallel races on both (double-free/corruption). Serial loop;
-		// pipelining win moves to P-D (overlap with next chunk kernel).
+#if defined(REF_PROBE_GRID) || defined(REF_PROBE_AUTH) || defined(REF_PROBE_GRIDAUTH)
+		// [D0 probe] discriminate refine rescue mechanism on cliff targets:
+		//   GRID     = CPU cache grid potential (GPU-equivalent), 5-slope ladder
+		//   AUTH     = exact non_cache potential, single slope (slope_orig)
+		//   GRIDAUTH = grid potential + single slope  (== REF-G.0 literal semantics)
+		{
+			output_container &oc = out_cont;
+			change g(m.get_size());
+			quasi_newton quasi_newton_par;
+			quasi_newton_par.max_steps = par.mc.ssd_par.bfgs_steps[ligand_count];
+			const fl slope_orig = nc[ligand_count].slope;
+#if defined(REF_PROBE_GRID) || defined(REF_PROBE_GRIDAUTH)
+			static std::vector<cache> probe_caches;
+			static bool probe_caches_ready = false;
+			if (!probe_caches_ready) {
+				probe_caches.reserve(ligand_num);
+				for (int li2 = 0; li2 < ligand_num; li2++)
+					probe_caches.emplace_back("scoring_function_version001", gd, slope, atom_type::XS);
+				for (int li2 = 0; li2 < ligand_num; li2++) {
+					const szv needed = ms[li2].get_movable_atom_types(atom_type::XS);
+					probe_caches[li2].populate(ms[li2], prec, needed, false);
+				}
+				probe_caches_ready = true;
+			}
+			cache &pc = probe_caches[ligand_count];
+#endif
+			VINA_FOR_IN(i, oc) {
+#if defined(REF_PROBE_GRID) || defined(REF_PROBE_GRIDAUTH)
+				igrid &pig = pc;
+#else
+				igrid &pig = nc[ligand_count];
+#endif
+#if defined(REF_PROBE_AUTH) || defined(REF_PROBE_GRIDAUTH)
+				quasi_newton_par(m, prec, pig, oc[i], g, authentic_v);
+				m.set(oc[i].c);
+				oc[i].coords = m.get_heavy_atom_movable_coords();
+#else
+				const fl slope_orig2 = nc[ligand_count].slope;
+				VINA_FOR(p5, 5) {
+					nc[ligand_count].slope = 100 * std::pow(10.0, 2.0 * p5);
+					quasi_newton_par(m, prec, pig, oc[i], g, authentic_v);
+					m.set(oc[i].c);
+					if (nc[ligand_count].within(m)) break;
+				}
+				oc[i].coords = m.get_heavy_atom_movable_coords();
+				nc[ligand_count].slope = slope_orig2;
+#endif
+			}
+		}
+#elif defined(REF_GPU)
+		// [REF-G] refine performed on GPU (v6b_ref_gpu) inside main_procedure;
+		// out_cont entries already carry refined poses/energies. Recompute the
+		// heavy-atom coords exactly like cert CPU refine did (m.set + walk) so
+		// output PDBQT geometry matches the refined conf.
+		VINA_FOR_IN(i, out_cont)
+		{
+			m.set(out_cont[i].c);
+			out_cont[i].coords = m.get_heavy_atom_movable_coords();
+		}
+#elif !defined(NO_REFINEMENT)
+		// [v6b-P P-B v2] refine_structure is NOT pose-parallel-safe: it mutates
+		// the SHARED model m and SHARED nc.slope (5-slope sweep). Serial loop.
 		VINA_FOR_IN(i, out_cont)
 		refine_structure(m, prec, nc[ligand_count], out_cont[i], authentic_v, par.mc.ssd_par.bfgs_steps[ligand_count]);
 #endif

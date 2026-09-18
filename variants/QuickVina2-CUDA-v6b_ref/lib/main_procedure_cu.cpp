@@ -30,6 +30,13 @@
  */
 #include <boost/timer.hpp>
 
+#ifdef REF_GPU
+extern "C" void v6b_ref_gpu(
+	char *d_poses, m_cl *mg, pre_cl *pre, grids_cl *grids,
+	const int torsion_size, const int num_poses, const int max_bfgs_steps,
+	cudaStream_t s);
+#endif
+
 boost::timer boost_t;
 #ifdef HOST_PROBE
 // [v7] GPU-side rand_maps + ric generation (ric_gpu.cu)
@@ -902,6 +909,53 @@ cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 			// VINA_CHECK(outs[ligand_count].front().e <= outs[ligand_count].back().e);
 
 			hp_mark("add_to_out");
+#ifdef REF_GPU
+			// [REF-G R1] per-ligand GPU refine: replace the CPU refine_structure
+			// that main.cpp would run on this container (its REF_GPU branch skips).
+			// outs[ligand_count] is descending-quality (add_to_output invariant);
+			// refine top REF_GPU_POSES poses. Frees below stay untouched.
+			if (!outs[ligand_count].empty()) {
+				const int NP_REF = 20;
+				const size_t REF_POSE_STRIDE = 240; // sizeof(output_type_cl)=228 -> 16B pad
+				const int np = (int)std::min((size_t)NP_REF, outs[ligand_count].size());
+				const size_t buf_sz = (size_t)np * REF_POSE_STRIDE;
+				std::vector<char> h_pack(buf_sz);
+				for (int k = 0; k < np; k++) {
+					const output_type &o = outs[ligand_count][k];
+					output_type_cl &p = *(output_type_cl *)(h_pack.data() + (size_t)k * REF_POSE_STRIDE);
+					p.e = o.e;
+					for (int j = 0; j < 3; j++) p.position[j] = o.c.ligands[0].rigid.position[j];
+					p.orientation[0] = o.c.ligands[0].rigid.orientation.R_component_1();
+					p.orientation[1] = o.c.ligands[0].rigid.orientation.R_component_2();
+					p.orientation[2] = o.c.ligands[0].rigid.orientation.R_component_3();
+					p.orientation[3] = o.c.ligands[0].rigid.orientation.R_component_4();
+					const int nt = torsion_sizes[ligand_count];
+					for (int t = 0; t < nt; t++) p.lig_torsion[t] = o.c.ligands[0].torsions[t];
+				}
+				char *d_poses = NULL;
+				checkCUDA(cudaMalloc((void **)&d_poses, buf_sz));
+				checkCUDA(cudaMemcpy(d_poses, h_pack.data(), buf_sz, cudaMemcpyHostToDevice));
+				if (getenv("V6B_REF_GPU_OFF") == NULL) {
+					v6b_ref_gpu(d_poses, m_gpus[ligand_count], pre_gpu, grids_gpu,
+						torsion_sizes[ligand_count], np, bfgs_steps_arr[ligand_count], 0);
+					checkCUDA(cudaDeviceSynchronize());
+				} else {
+					printf("V6B_REF_GPU=disabled\\n");
+				}
+				checkCUDA(cudaMemcpy(h_pack.data(), d_poses, buf_sz, cudaMemcpyDeviceToHost));
+				checkCUDA(cudaFree(d_poses));
+				for (int k = 0; k < np; k++) {
+					const output_type_cl &p = *(const output_type_cl *)(h_pack.data() + (size_t)k * REF_POSE_STRIDE);
+					output_type &o = outs[ligand_count][k];
+					o.e = p.e;
+					for (int j = 0; j < 3; j++) o.c.ligands[0].rigid.position[j] = p.position[j];
+					o.c.ligands[0].rigid.orientation = qt(p.orientation[0], p.orientation[1], p.orientation[2], p.orientation[3]);
+					const int nt = torsion_sizes[ligand_count];
+					for (int t = 0; t < nt; t++) o.c.ligands[0].torsions[t] = p.lig_torsion[t];
+				}
+				printf("V6B_REF_GPU=1 np=%d\\n", np);
+			}
+#endif
 			free(rand_maps_ptrs[ligand_count]);
 			free(ric_ptrs[ligand_count]);
 			free(m_ptrs[ligand_count]);
