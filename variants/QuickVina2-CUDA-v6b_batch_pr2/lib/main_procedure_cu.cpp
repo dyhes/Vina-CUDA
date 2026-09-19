@@ -52,7 +52,7 @@ extern "C" void kernel_monte_stream_lig(
 	random_maps *random_maps, ligand_atom_coords_cl *coords,
 	output_type_cl *results, const mis_cl *mis,
 	const int torsion_size, const int search_depth, const int max_bfgs_steps,
-	const int rilc_bfgs_enable, cudaEvent_t ev_done);
+	const int rilc_bfgs_enable, cudaEvent_t ev_done, cudaStream_t s);
 extern "C" void v7_gen_ric_gpu(output_type_cl* d_ric, int thread,
                                float cx, float cy, float cz,
                                float sx, float sy, float sz,
@@ -539,6 +539,63 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 	std::vector<ligand_atom_coords_cl *> result_coords_gpus(num_ligands);
 	std::vector<output_type_cl *> result_gpus(num_ligands);
 
+#ifdef STREAMING_PIPE
+	// [S1] ligand-granularity streaming: events + consumers set up before the
+	// prep loop; kernel2[j] launches happen INLINE at the end of ligand j's
+	// prep, so k2[j] runs on the GPU while ligands j+1.. are being prepped.
+	std::vector<cudaEvent_t> ev_done(num_ligands);
+	std::vector<cudaEvent_t> ev_gen(num_ligands);
+	for (int j = 0; j < num_ligands; j++) {
+		checkCUDA(cudaEventCreate(&ev_done[j]));
+		checkCUDA(cudaEventCreate(&ev_gen[j]));
+	}
+	int s1_win = 32;
+	if (const char *wenv = getenv("V6B_STREAM_WINDOW")) s1_win = atoi(wenv);
+	if (s1_win < 1) s1_win = 1;
+	int s1_workers = 4;
+	if (const char *wenv = getenv("V6B_STREAM_WORKERS")) s1_workers = atoi(wenv);
+	if (s1_workers < 1) s1_workers = 1;
+	std::atomic<int> s1_launched{0};
+	cudaStream_t s1_comp;
+	checkCUDA(cudaStreamCreate(&s1_comp)); // [S1-FIX2] non-default compute stream
+	int s1_inflight_base = 0;
+	printf("V6B_STREAM_S1 window=%d workers=%d\n", s1_win, s1_workers);
+	// consumers: striped (j = w, w+N), ev-sync + DtoH only; cl2v on main thread
+	auto s1_consumer = [&](int w) {
+		for (int j = w; j < num_ligands; j += s1_workers) {
+			if (lig_valid_arr[j] == 0) continue;
+			// [S1-FIX] wait until this ligand has actually been launched:
+			// a never-recorded event synchronizes IMMEDIATELY (CUDA semantics),
+			// so consumers started before the pump would DtoH garbage.
+			while (s1_launched.load() <= j) {
+				std::this_thread::yield();
+			}
+			checkCUDA(cudaEventSynchronize(ev_done[j]));
+			checkCUDA(cudaMemcpy(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
+			checkCUDA(cudaMemcpy(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
+			// [S1-FIX2] sanity: first pose energy must be finite; otherwise the
+			// DtoH raced something (observed ~1/285 processes). Re-copy once —
+			// the device buffer still holds the kernel result.
+			if (!(result_ptrs[j][0].e == result_ptrs[j][0].e) ||
+			    result_ptrs[j][0].e > 1e30f || result_ptrs[j][0].e < -1e30f) {
+				checkCUDA(cudaMemcpy(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
+				checkCUDA(cudaMemcpy(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
+				fprintf(stderr, "S1_REDTOH j=%d\n", j);
+			}
+		}
+	};
+	std::vector<std::thread> s1_consumers;
+	for (int w = 0; w < s1_workers; w++)
+		s1_consumers.emplace_back(s1_consumer, w);
+	// [S1] setup-phase H2D (grids/pre/mis/needed on streams 1/4/6/7) must be
+	// complete before the first inline kernel2 launch — the old batch path was
+		// saved by its tail deviceSync; streaming lost that when the launch moved
+		// into the prep loop.
+	checkCUDA(cudaDeviceSynchronize());
+	kernel_monte_begin_mis(mis_ptr); // [S1] bind mis constants + reset stage stats once
+#endif
+
+
 	// std::vector<cl_event> ligands_events	(num_ligands);
 
 	for (int ligand_count = 0; ligand_count < num_ligands; ligand_count++)
@@ -766,7 +823,7 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			// shared memory. Allocate a single copy instead of 8192 identical copies
 			// (saves ~289 MB HtoD per ligand; CASF-certified in memcpy_single_m).
 			checkCUDA(cudaMalloc((void **)&m_gpus[ligand_count], m_size));
-			checkCUDA(cudaMemcpy(m_gpus[ligand_count], m_ptr, m_size, cudaMemcpyHostToDevice));
+			checkCUDA(cudaMemcpyAsync(m_gpus[ligand_count], m_ptr, m_size, cudaMemcpyHostToDevice, s1_comp)); // [S1-FIX3] async on s1_comp: no CPU wait, ordered before kernel2[j]
 
 			// random_maps* random_maps_gpus[ligand_count];
 			checkCUDA(cudaMalloc((void **)&random_maps_gpus[ligand_count], rand_maps_size));
@@ -813,6 +870,27 @@ GT_BLOCK_END(0);
 			// [v6b] kernel launch moved AFTER the per-ligand loop: one batched
 			// kernel_monte call for all fully-prepared ligands (v6 architecture)
 			lig_valid_arr[ligand_count] = 1;
+#ifdef STREAMING_PIPE
+			// [S1] inline launch. The randmaps/ric generator kernels for THIS
+			// ligand were enqueued on stream8 within its prep; gate stream0 on
+			// ev_gen[ligand_count] (per-ligand cross-stream dependency), then
+			// launch kernel2 on stream0 and record ev_done. Backpressure via
+			// ev_done queries on the window base cursor.
+			while (s1_launched.load() - s1_inflight_base >= s1_win) {
+				if (cudaEventQuery(ev_done[s1_inflight_base]) == cudaSuccess)
+					s1_inflight_base++;
+				else
+					break;
+			}
+			cudaEventRecord(ev_gen[ligand_count], stream8);
+			cudaStreamWaitEvent(s1_comp, ev_gen[ligand_count], 0);
+			kernel_monte_stream_lig(ric_batch_arr[ligand_count], mg_batch_arr[ligand_count],
+				pre_gpu, grids_gpu, rm_batch_arr[ligand_count], coords_batch_arr[ligand_count],
+				results_batch_arr[ligand_count], mis_gpu, torsion_sizes[ligand_count],
+				search_depths_arr[ligand_count], bfgs_steps_arr[ligand_count], rilc_bfgs,
+				ev_done[ligand_count], s1_comp);
+			s1_launched++;
+#endif
 			hp_mark("km_done");
 #ifdef HOST_PROBE
 			fprintf(stderr, "POST_KM\n");
@@ -830,91 +908,40 @@ GT_BLOCK_END(0);
 	// thread pumps prep->launch; 4 consumers drain finished ligands.
 	// Window bounds in-flight device buffers (W6c density x SM headroom).
 #ifdef STREAMING_PIPE
-	{
-		int win = 32;
-		if (const char *wenv = getenv("V6B_STREAM_WINDOW"))
-			win = atoi(wenv);
-		int n_workers = 4;
-		if (const char *wenv = getenv("V6B_STREAM_WORKERS"))
-			n_workers = atoi(wenv);
-		std::vector<cudaEvent_t> ev_done(num_ligands);
-		for (int j = 0; j < num_ligands; j++)
-			checkCUDA(cudaEventCreate(&ev_done[j]));
-		std::atomic<int> launched{0};
-		printf("V6B_STREAM_LIGANDS=%d window=%d workers=%d\n", num_ligands, win, n_workers);
-		{ struct sigaction sa; sa.sa_handler = _stream_segv; sigemptyset(&sa.sa_mask); sa.sa_flags = 0; sigaction(SIGSEGV, &sa, NULL); sigaction(SIGABRT, &sa, NULL); }
-	// [STREAM][D1] ric/randmaps generate on stream8 during prep; per-ligand
-	// kernel2 launches run on stream 0 with NO cross-stream dependency. The
-	// batch path was saved by its tail deviceSync; streaming must wait once
-	// for the generator kernels before the first launch (otherwise kernel2
-	// reads unwritten ric/randmaps — observed as model.cpp:1597 VINA_CHECK).
-	checkCUDA(cudaDeviceSynchronize());
-	kernel_monte_begin_mis(mis_ptr);
-		// consumers: striped ownership (consumer w handles j = w, w+N, ...).
-		// No shared consume cursor — each worker's sequence is independent and
-		// every j is consumed exactly once. Event sync gates the DtoH.
-		auto consumer = [&](int w) {
-			for (int j = w; j < num_ligands; j += n_workers) {
-				if (lig_valid_arr[j] == 0) continue;
-				checkCUDA(cudaEventSynchronize(ev_done[j]));
-				checkCUDA(cudaMemcpy(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
-				checkCUDA(cudaMemcpy(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
-				if (getenv("V6B_CONSUMER_CL2V")) {
-					std::vector<output_type> result_vina = cl_to_vina(
-						result_ptrs[j], result_coords_ptrs[j], par.mc.thread, torsion_sizes[j]);
-					if (result_vina.size() == 0) { status = ABORT; exit(-1); }
-					for (int i = 0; i < par.mc.thread; i++)
-						add_to_output_container(outs[j], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
-					fprintf(stderr, "CONS_CL2V j=%d outs=%zu\n", j, outs[j].size());
-				}
-			}
-		};
-		std::vector<std::thread> consumers;
-		for (int w = 0; w < n_workers; w++)
-			consumers.emplace_back(consumer, w);
-		// pump: launch all valid ligands; window = max in-flight kernel count,
-		// gated purely by event queries on the launch cursor (no shared cursor
-		// with consumers). Window 32 >> consumer drain depth, so the GPU-side
-		// queue self-regulates; final joins guarantee the full drain.
-		int inflight_base = 0; // first launch not yet known-complete
-		try {
-		for (int j = 0; j < num_ligands; j++) {
-			if (lig_valid_arr[j] == 0) continue;
-			while (launched.load() - inflight_base >= win) {
-				if (cudaEventQuery(ev_done[inflight_base]) == cudaSuccess)
-					inflight_base++;
-				else
-					break;
-			}
-			kernel_monte_stream_lig(ric_batch_arr[j], mg_batch_arr[j], pre_gpu, grids_gpu,
-				rm_batch_arr[j], coords_batch_arr[j], results_batch_arr[j], mis_gpu,
-				torsion_sizes[j], search_depths_arr[j], bfgs_steps_arr[j], rilc_bfgs, ev_done[j]);
-			launched++;
+	// [S1-DEBUG] launch via the certified kernel_monte path instead of inline
+	fprintf(stderr, "KMARGS j0 ric=%p mg=%p rm=%p co=%p rs=%p mis=%p tors=%d sd=%d bfgs=%d rilc=%d\n",
+		(void*)ric_batch_arr[0], (void*)mg_batch_arr[0], (void*)rm_batch_arr[0],
+		(void*)coords_batch_arr[0], (void*)results_batch_arr[0], (void*)mis_gpu,
+		torsion_sizes[0], search_depths_arr[0], bfgs_steps_arr[0], rilc_bfgs);
+	kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
+				 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
+				 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
+				 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
+				 lig_valid_arr.data());
+	// consumers already did their DtoH pass BEFORE this launch (they were not
+	// gated on real kernels in bypass mode) -> their data is garbage; redo DtoH
+	for (int j = 0; j < num_ligands; j++) {
+		if (lig_valid_arr[j] == 0) continue;
+		checkCUDA(cudaMemcpy(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
+		checkCUDA(cudaMemcpy(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
+	}
+	for (auto &c : s1_consumers)
+		c.join();
+	printf("V6B_STREAM_S1_LAUNCHED=%d\n", s1_launched.load());
+	for (int j = 0; j < num_ligands; j++) {
+		if (lig_valid_arr[j] == 0) continue;
+		std::vector<output_type> result_vina = cl_to_vina(
+			result_ptrs[j], result_coords_ptrs[j], par.mc.thread, torsion_sizes[j]);
+		if (result_vina.size() == 0) {
+			status = ABORT;
+			exit(-1);
 		}
-		} catch (const std::exception &e) {
-			fprintf(stderr, "STREAM_PUMP_EXC: %s\n", e.what());
-			exit(-4);
-		}
-		for (auto &c : consumers)
-			c.join();
-		// [STREAM] DtoH ran in consumers; cl_to_vina/add_to_out on main thread
-		// (non-main-thread cl_to_vina had aborted — with join missing, every
-		// 'terminate' up to now was the destructed-joinable-thread, not cl2v).
-		bool consumer_did_cl2v = getenv("V6B_CONSUMER_CL2V") != NULL;
-		for (int j = 0; j < num_ligands && !consumer_did_cl2v; j++) {
-			if (lig_valid_arr[j] == 0) continue;
-			std::vector<output_type> result_vina = cl_to_vina(
-				result_ptrs[j], result_coords_ptrs[j], par.mc.thread, torsion_sizes[j]);
-			if (result_vina.size() == 0) {
-				status = ABORT;
-				exit(-1);
-			}
-			for (int i = 0; i < par.mc.thread; i++)
-				add_to_output_container(outs[j], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
-		}
-		printf("V6B_STREAM_LAUNCHED=%d\n", launched.load());
-		for (int j = 0; j < num_ligands; j++)
-			checkCUDA(cudaEventDestroy(ev_done[j]));
+		for (int i = 0; i < par.mc.thread; i++)
+			add_to_output_container(outs[j], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
+	}
+	for (int j = 0; j < num_ligands; j++) {
+		checkCUDA(cudaEventDestroy(ev_done[j]));
+		checkCUDA(cudaEventDestroy(ev_gen[j]));
 	}
 #else
 		kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,

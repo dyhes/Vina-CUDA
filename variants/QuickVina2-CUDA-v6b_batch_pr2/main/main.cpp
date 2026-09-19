@@ -478,9 +478,15 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 #endif
 		auto refine_ligand = [&](int j) {
 			if (work[j].empty()) return;
-			model mj = ms[j]; // per-task private copy (serial code did the same)
-			for (size_t i = 0; i < work[j].size(); i++)
-				refine_structure(mj, prec, nc[j], work[j][i], authentic_v, par.mc.ssd_par.bfgs_steps[j]);
+			try {
+				model mj = ms[j]; // per-task private copy (serial code did the same)
+				for (size_t i = 0; i < work[j].size(); i++)
+					refine_structure(mj, prec, nc[j], work[j][i], authentic_v, par.mc.ssd_par.bfgs_steps[j]);
+			} catch (const std::exception &e) {
+				fprintf(stderr, "REFINE_EXC j=%d: %s - ligand skipped\n", j, e.what());
+			} catch (...) {
+				fprintf(stderr, "REFINE_EXC j=%d: unknown - ligand skipped\n", j);
+			}
 		};
 		struct timespec _pa0, _pa1;
 		clock_gettime(CLOCK_MONOTONIC, &_pa0);
