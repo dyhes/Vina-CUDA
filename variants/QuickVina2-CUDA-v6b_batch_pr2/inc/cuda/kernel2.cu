@@ -555,3 +555,33 @@ void kernel_monte(
 	printf("STAGE_ITER_N=%llu\n", h_stage.n_iter);
 	printf("STAGE_LS_N=%llu\n", h_stage.n_ls);
 }
+
+// [STREAM] split-form launchers: ligand-level pipeline. NO batch-tail sync:
+// the pump thread keeps launching while consumers drain finished ligands.
+extern "C"
+void kernel_monte_begin_mis(const mis_cl *mis)
+{
+	void* mc = nullptr;
+	checkCUDA(cudaGetSymbolAddress(&mc, mis_cuda_const));
+	checkCUDA(cudaMemcpy(mc, mis, sizeof(mis_cl), cudaMemcpyHostToDevice));
+	StageStats* d_stage_ptr;
+	cudaGetSymbolAddress((void**)&d_stage_ptr, d_stage);
+	cudaMemset(d_stage_ptr, 0, sizeof(StageStats));
+}
+
+extern "C"
+void kernel_monte_stream_lig(
+	output_type_cl *ric, m_cl *mg, pre_cl *pre, grids_cl *grids,
+	random_maps *random_maps, ligand_atom_coords_cl *coords,
+	output_type_cl *results, const mis_cl *mis,
+	const int torsion_size, const int search_depth, const int max_bfgs_steps,
+	const int rilc_bfgs_enable, cudaEvent_t ev_done)
+{
+	dim3 grid_size(GRID_DIM1, GRID_DIM2, 1);
+	dim3 block_size(48, 4, 1);
+	kernel2_update<<<grid_size, block_size>>>(ric, mg, pre, grids,
+		random_maps, coords, results, mis, torsion_size, search_depth,
+		max_bfgs_steps, rilc_bfgs_enable);
+	cudaEventRecord(ev_done, 0);
+}
+

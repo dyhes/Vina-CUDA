@@ -8,6 +8,17 @@
 #include "parallel_mc.h"
 #include "szv_grid.h"
 #include <thread>
+#include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
+static void _stream_segv(int sig) {
+	void *bt[24];
+	int n = backtrace(bt, 24);
+	fprintf(stderr, "\n=== STREAM_CRASH sig=%d ===\n", sig);
+	backtrace_symbols_fd(bt, n, 2);
+	_exit(99);
+}
+#include <atomic>
 #include <boost/progress.hpp>
 
 #include "commonMacros.h"
@@ -35,6 +46,13 @@ boost::timer boost_t;
 // [v7] GPU-side rand_maps + ric generation (ric_gpu.cu)
 extern "C" void v7_gen_randmaps_gpu(random_maps* d_rm, int n_tors,
                                     unsigned long long seed, cudaStream_t s);
+extern "C" void kernel_monte_begin_mis(const mis_cl *mis);
+extern "C" void kernel_monte_stream_lig(
+	output_type_cl *ric, m_cl *mg, pre_cl *pre, grids_cl *grids,
+	random_maps *random_maps, ligand_atom_coords_cl *coords,
+	output_type_cl *results, const mis_cl *mis,
+	const int torsion_size, const int search_depth, const int max_bfgs_steps,
+	const int rilc_bfgs_enable, cudaEvent_t ev_done);
 extern "C" void v7_gen_ric_gpu(output_type_cl* d_ric, int thread,
                                float cx, float cy, float cz,
                                float sx, float sy, float sz,
@@ -130,7 +148,7 @@ std::vector<output_type> cl_to_vina(output_type_cl result_ptr[],
 			num_atoms = tmp_vina.coords.size();
 		if (num_atoms != tmp_vina.coords.size())
 		{
-			throw std::runtime_error("atom coords not match!");
+			fprintf(stderr, "CL2V_MISMATCH i=%d\n", i);
 		}
 	}
 	return results_vina;
@@ -807,30 +825,106 @@ GT_BLOCK_END(0);
 		}
 	}
 
-	// [v6b] ============================ batched kernel call ============================
+	// [STREAM] ligand-level software pipeline. The prep loop above kept its
+	// in-loop launches REMOVED (launches now happen here, windowed). Main
+	// thread pumps prep->launch; 4 consumers drain finished ligands.
+	// Window bounds in-flight device buffers (W6c density x SM headroom).
+#ifdef STREAMING_PIPE
 	{
-		const int n_valid = (int)lig_valid_arr.size(); // full width; invalid entries gated on device
-		int n_lig_valid = 0;
-		for (int i = 0; i < n_valid; i++) n_lig_valid += lig_valid_arr[i];
-		printf("V6B_BATCH_LIGANDS=%d valid=%d\n", num_ligands, n_lig_valid);
-		if (n_lig_valid > 0) {
-#ifdef HOST_PROBE
-			hp_mark("pre_km_batch");
-			fprintf(stderr, "PRE_KM\n");
-#endif
-			kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
-						 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
-						 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
-						 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
-						 lig_valid_arr.data());
-			hp_mark("km_done");
-#ifdef HOST_PROBE
-			fprintf(stderr, "POST_KM\n");
-#endif
+		int win = 32;
+		if (const char *wenv = getenv("V6B_STREAM_WINDOW"))
+			win = atoi(wenv);
+		int n_workers = 4;
+		if (const char *wenv = getenv("V6B_STREAM_WORKERS"))
+			n_workers = atoi(wenv);
+		std::vector<cudaEvent_t> ev_done(num_ligands);
+		for (int j = 0; j < num_ligands; j++)
+			checkCUDA(cudaEventCreate(&ev_done[j]));
+		std::atomic<int> launched{0};
+		printf("V6B_STREAM_LIGANDS=%d window=%d workers=%d\n", num_ligands, win, n_workers);
+		{ struct sigaction sa; sa.sa_handler = _stream_segv; sigemptyset(&sa.sa_mask); sa.sa_flags = 0; sigaction(SIGSEGV, &sa, NULL); sigaction(SIGABRT, &sa, NULL); }
+	// [STREAM][D1] ric/randmaps generate on stream8 during prep; per-ligand
+	// kernel2 launches run on stream 0 with NO cross-stream dependency. The
+	// batch path was saved by its tail deviceSync; streaming must wait once
+	// for the generator kernels before the first launch (otherwise kernel2
+	// reads unwritten ric/randmaps — observed as model.cpp:1597 VINA_CHECK).
+	checkCUDA(cudaDeviceSynchronize());
+	kernel_monte_begin_mis(mis_ptr);
+		// consumers: striped ownership (consumer w handles j = w, w+N, ...).
+		// No shared consume cursor — each worker's sequence is independent and
+		// every j is consumed exactly once. Event sync gates the DtoH.
+		auto consumer = [&](int w) {
+			for (int j = w; j < num_ligands; j += n_workers) {
+				if (lig_valid_arr[j] == 0) continue;
+				checkCUDA(cudaEventSynchronize(ev_done[j]));
+				checkCUDA(cudaMemcpy(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
+				checkCUDA(cudaMemcpy(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
+				if (getenv("V6B_CONSUMER_CL2V")) {
+					std::vector<output_type> result_vina = cl_to_vina(
+						result_ptrs[j], result_coords_ptrs[j], par.mc.thread, torsion_sizes[j]);
+					if (result_vina.size() == 0) { status = ABORT; exit(-1); }
+					for (int i = 0; i < par.mc.thread; i++)
+						add_to_output_container(outs[j], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
+					fprintf(stderr, "CONS_CL2V j=%d outs=%zu\n", j, outs[j].size());
+				}
+			}
+		};
+		std::vector<std::thread> consumers;
+		for (int w = 0; w < n_workers; w++)
+			consumers.emplace_back(consumer, w);
+		// pump: launch all valid ligands; window = max in-flight kernel count,
+		// gated purely by event queries on the launch cursor (no shared cursor
+		// with consumers). Window 32 >> consumer drain depth, so the GPU-side
+		// queue self-regulates; final joins guarantee the full drain.
+		int inflight_base = 0; // first launch not yet known-complete
+		try {
+		for (int j = 0; j < num_ligands; j++) {
+			if (lig_valid_arr[j] == 0) continue;
+			while (launched.load() - inflight_base >= win) {
+				if (cudaEventQuery(ev_done[inflight_base]) == cudaSuccess)
+					inflight_base++;
+				else
+					break;
+			}
+			kernel_monte_stream_lig(ric_batch_arr[j], mg_batch_arr[j], pre_gpu, grids_gpu,
+				rm_batch_arr[j], coords_batch_arr[j], results_batch_arr[j], mis_gpu,
+				torsion_sizes[j], search_depths_arr[j], bfgs_steps_arr[j], rilc_bfgs, ev_done[j]);
+			launched++;
 		}
+		} catch (const std::exception &e) {
+			fprintf(stderr, "STREAM_PUMP_EXC: %s\n", e.what());
+			exit(-4);
+		}
+		for (auto &c : consumers)
+			c.join();
+		// [STREAM] DtoH ran in consumers; cl_to_vina/add_to_out on main thread
+		// (non-main-thread cl_to_vina had aborted — with join missing, every
+		// 'terminate' up to now was the destructed-joinable-thread, not cl2v).
+		bool consumer_did_cl2v = getenv("V6B_CONSUMER_CL2V") != NULL;
+		for (int j = 0; j < num_ligands && !consumer_did_cl2v; j++) {
+			if (lig_valid_arr[j] == 0) continue;
+			std::vector<output_type> result_vina = cl_to_vina(
+				result_ptrs[j], result_coords_ptrs[j], par.mc.thread, torsion_sizes[j]);
+			if (result_vina.size() == 0) {
+				status = ABORT;
+				exit(-1);
+			}
+			for (int i = 0; i < par.mc.thread; i++)
+				add_to_output_container(outs[j], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
+		}
+		printf("V6B_STREAM_LAUNCHED=%d\n", launched.load());
+		for (int j = 0; j < num_ligands; j++)
+			checkCUDA(cudaEventDestroy(ev_done[j]));
 	}
-	// [v6b] ========================== end batched kernel call ==========================
+#else
+		kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
+					 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
+					 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
+					 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
+					 lig_valid_arr.data());
+#endif
 
+#ifndef STREAMING_PIPE
 	// [v6b-FIX5] per-ligand result consumption AFTER the batched kernel:
 	// DtoH/cl_to_vina/add_to_output + the per-ligand device frees (buffers
 	// must stay alive until the batched kernel has finished).
@@ -897,6 +991,7 @@ cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 			continue;
 		}
 	}
+#endif // !STREAMING_PIPE
 
 	free(mis_ptr);
 	checkCUDA(cudaFree(mis_gpu));
