@@ -9,6 +9,7 @@
 #include "szv_grid.h"
 #include <thread>
 #include <execinfo.h>
+static struct timespec _g_tv;
 #include <signal.h>
 #include <unistd.h>
 static void _stream_segv(int sig) {
@@ -545,9 +546,11 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 	// prep, so k2[j] runs on the GPU while ligands j+1.. are being prepped.
 	std::vector<cudaEvent_t> ev_done(num_ligands);
 	std::vector<cudaEvent_t> ev_gen(num_ligands);
+	std::vector<cudaEvent_t> ev_dtoh(num_ligands);
 	for (int j = 0; j < num_ligands; j++) {
 		checkCUDA(cudaEventCreate(&ev_done[j]));
 		checkCUDA(cudaEventCreate(&ev_gen[j]));
+		checkCUDA(cudaEventCreateWithFlags(&ev_dtoh[j], cudaEventDisableTiming));
 	}
 	int s1_win = 32;
 	if (const char *wenv = getenv("V6B_STREAM_WINDOW")) s1_win = atoi(wenv);
@@ -558,8 +561,19 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 	std::atomic<int> s1_launched{0};
 	cudaStream_t s1_comp;
 	checkCUDA(cudaStreamCreate(&s1_comp)); // [S1-FIX2] non-default compute stream
+	// [S1-FIX5] pre-extend the MallocAsync pool: without this, every per-ligand
+	// allocation that grows the pool triggers a device-synchronizing expansion
+	// (measured 22ms p50 == waiting for the running kernel2). Pre-touch 2GB.
+	{
+		void* pre = nullptr;
+		if (cudaMallocAsync(&pre, (size_t)2 << 30, s1_comp) == cudaSuccess) {
+			cudaFreeAsync(pre, s1_comp);
+		}
+		cudaStreamSynchronize(s1_comp);
+	}
 	int s1_inflight_base = 0;
 	printf("V6B_STREAM_S1 window=%d workers=%d\n", s1_win, s1_workers);
+	clock_gettime(CLOCK_MONOTONIC, &_g_tv);
 	// consumers: striped (j = w, w+N), ev-sync + DtoH only; cl2v on main thread
 	auto s1_consumer = [&](int w) {
 		for (int j = w; j < num_ligands; j += s1_workers) {
@@ -570,9 +584,13 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			while (s1_launched.load() <= j) {
 				std::this_thread::yield();
 			}
-			checkCUDA(cudaEventSynchronize(ev_done[j]));
-			checkCUDA(cudaMemcpy(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost));
-			checkCUDA(cudaMemcpy(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost));
+			// [S1-FIX7] DtoH async on s1_comp: the legacy default stream would
+			// serialize against the whole s1_comp queue. Events keep ordering.
+			while (cudaEventQuery(ev_done[j]) == cudaErrorNotReady)
+				std::this_thread::yield();
+			checkCUDA(cudaMemcpyAsync(result_ptrs[j], result_gpus[j], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost, s1_comp));
+			checkCUDA(cudaMemcpyAsync(result_coords_ptrs[j], result_coords_gpus[j], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost, s1_comp));
+			checkCUDA(cudaEventRecord(ev_dtoh[j], s1_comp));
 			// [S1-FIX2] sanity: first pose energy must be finite; otherwise the
 			// DtoH raced something (observed ~1/285 processes). Re-copy once —
 			// the device buffer still holds the kernel result.
@@ -624,7 +642,7 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			// assert(tmp.c.ligands[0].torsions.size() < MAX_NUM_OF_LIG_TORSION);
 
 			// Preparing m related data
-			m_ptrs[ligand_count] = (m_cl *)malloc(sizeof(m_cl));
+			checkCUDA(cudaMallocHost((void **)&m_ptrs[ligand_count], sizeof(m_cl))); // [S1-FIX6] pinned: async H2D must not block on pageable copy
 			m_cl *m_ptr = m_ptrs[ligand_count];
 
 			for (int i = 0; i < m.atoms.size(); i++)
@@ -813,7 +831,8 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			// cl_mem ric_gpu;
 			// output_type_cl* ric_gpus[ligand_count];
 			boost_t.restart();
-			checkCUDA(cudaMalloc((void **)&ric_gpus[ligand_count], ric_size));
+			struct timespec _m0; clock_gettime(CLOCK_MONOTONIC, &_m0);
+			checkCUDA(cudaMallocAsync((void **)&ric_gpus[ligand_count], ric_size, s1_comp));
 			// GT_BLOCK_START();
 			// [v7-GPU] ric HtoD skipped: generated on device
 
@@ -822,21 +841,25 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			// [Path B merged] m_gpus is read-only in kernel2_update — all writes go to
 			// shared memory. Allocate a single copy instead of 8192 identical copies
 			// (saves ~289 MB HtoD per ligand; CASF-certified in memcpy_single_m).
-			checkCUDA(cudaMalloc((void **)&m_gpus[ligand_count], m_size));
-			checkCUDA(cudaMemcpyAsync(m_gpus[ligand_count], m_ptr, m_size, cudaMemcpyHostToDevice, s1_comp)); // [S1-FIX3] async on s1_comp: no CPU wait, ordered before kernel2[j]
+			checkCUDA(cudaMallocAsync((void **)&m_gpus[ligand_count], m_size, s1_comp));
+			checkCUDA(cudaMemcpyAsync(m_gpus[ligand_count], m_ptr, m_size, cudaMemcpyHostToDevice, s1_comp));
+			{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t); fprintf(stderr, "PP2=%.2f\n", (_t.tv_sec-_g_tv.tv_sec)*1e3+(_t.tv_nsec-_g_tv.tv_nsec)/1e6); _g_tv = _t; } // [S1-FIX3] async on s1_comp: no CPU wait, ordered before kernel2[j]
 
 			// random_maps* random_maps_gpus[ligand_count];
-			checkCUDA(cudaMalloc((void **)&random_maps_gpus[ligand_count], rand_maps_size));
+			checkCUDA(cudaMallocAsync((void **)&random_maps_gpus[ligand_count], rand_maps_size, s1_comp));
 			// [v7-GPU] random_maps generated on device (HtoD skipped)
 			v7_gen_randmaps_gpu(random_maps_gpus[ligand_count], n_tors_gpu,
 					(unsigned long long)seed + 77u, stream8);
+			{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t); fprintf(stderr, "PP1=%.2f\n", (_t.tv_sec-_g_tv.tv_sec)*1e3+(_t.tv_nsec-_g_tv.tv_nsec)/1e6); _g_tv = _t; }
 
-			checkCUDA(cudaMalloc((void **)&result_coords_gpus[ligand_count], mis_ptr->thread * sizeof(ligand_atom_coords_cl)));
+			checkCUDA(cudaMallocAsync((void **)&result_coords_gpus[ligand_count], mis_ptr->thread * sizeof(ligand_atom_coords_cl), s1_comp));
 			// checkCUDA(cudaMemcpy(result_coords_gpus[ligand_count], result_coords_ptrs[ligand_count], mis_ptr->thread * sizeof(ligand_atom_coords_cl), cudaMemcpyHostToDevice));
 			// [v7-GPU] result_coords HtoD skipped (device writes coords)
 
 			// output_type_cl* result_gpus[ligand_count];
-			checkCUDA(cudaMalloc((void **)&result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl)));
+			checkCUDA(cudaMallocAsync((void **)&result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl), s1_comp));
+			{ struct timespec _m1; clock_gettime(CLOCK_MONOTONIC, &_m1);
+			  fprintf(stderr, "MALLOC_MS=%.2f\n", (_m1.tv_sec-_m0.tv_sec)*1e3+(_m1.tv_nsec-_m0.tv_nsec)/1e6); }
 			// [v6b] staging for the post-loop batch kernel call — MUST sit after the
 			// LAST cudaMalloc of this ligand (FIX2: early stash captured NULL for
 			// rm/coords/results because their cudaMallocs come later in the block)
@@ -856,6 +879,7 @@ GT_BLOCK_END(0);
 				const float sx = corner2[0] - corner1[0], sy = corner2[1] - corner1[1], sz2 = corner2[2] - corner1[2];
 				v7_gen_ric_gpu(ric_gpus[ligand_count], par.mc.thread, cx, cy, cz, sx, sy, sz2,
 						n_tors_gpu, (unsigned long long)seed + 991u, stream8);
+			{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t); fprintf(stderr, "PP3=%.2f\n", (_t.tv_sec-_g_tv.tv_sec)*1e3+(_t.tv_nsec-_g_tv.tv_nsec)/1e6); _g_tv = _t; }
 			}
 			// std::cout << "time of memcpy for kernel monte carlo: " << boost_t.elapsed() << std::endl;
 
@@ -882,6 +906,9 @@ GT_BLOCK_END(0);
 				else
 					break;
 			}
+			struct timespec _pp; clock_gettime(CLOCK_MONOTONIC, &_pp);
+			fprintf(stderr, "PREPT[j]=%.3f\n", (_pp.tv_sec - _g_tv.tv_sec) * 1e3 + (_pp.tv_nsec - _g_tv.tv_nsec) / 1e6);
+			_g_tv = _pp;
 			cudaEventRecord(ev_gen[ligand_count], stream8);
 			cudaStreamWaitEvent(s1_comp, ev_gen[ligand_count], 0);
 			kernel_monte_stream_lig(ric_batch_arr[ligand_count], mg_batch_arr[ligand_count],
@@ -928,6 +955,9 @@ GT_BLOCK_END(0);
 	for (auto &c : s1_consumers)
 		c.join();
 	printf("V6B_STREAM_S1_LAUNCHED=%d\n", s1_launched.load());
+	for (int j = 0; j < num_ligands; j++)
+		if (lig_valid_arr[j] == 0) continue;
+		else checkCUDA(cudaEventSynchronize(ev_dtoh[j]));
 	for (int j = 0; j < num_ligands; j++) {
 		if (lig_valid_arr[j] == 0) continue;
 		std::vector<output_type> result_vina = cl_to_vina(
@@ -938,11 +968,18 @@ GT_BLOCK_END(0);
 		}
 		for (int i = 0; i < par.mc.thread; i++)
 			add_to_output_container(outs[j], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
+		checkCUDA(cudaFreeAsync(ric_gpus[j], s1_comp));
+		checkCUDA(cudaFreeAsync(m_gpus[j], s1_comp));
+		checkCUDA(cudaFreeAsync(random_maps_gpus[j], s1_comp));
+		checkCUDA(cudaFreeAsync(result_coords_gpus[j], s1_comp));
+		checkCUDA(cudaFreeAsync(result_gpus[j], s1_comp));
 	}
 	for (int j = 0; j < num_ligands; j++) {
 		checkCUDA(cudaEventDestroy(ev_done[j]));
 		checkCUDA(cudaEventDestroy(ev_gen[j]));
+		checkCUDA(cudaEventDestroy(ev_dtoh[j]));
 	}
+
 #else
 		kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
 					 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
@@ -1003,7 +1040,7 @@ cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 			hp_mark("add_to_out");
 			free(rand_maps_ptrs[ligand_count]);
 			free(ric_ptrs[ligand_count]);
-			free(m_ptrs[ligand_count]);
+			checkCUDA(cudaFreeHost(m_ptrs[ligand_count]));
 			free(result_coords_ptrs[ligand_count]);
 			free(result_ptrs[ligand_count]);
 
