@@ -26,6 +26,7 @@
 #include <vector> // ligand paths
 #include <memory> // [v6b-P] unique_ptr
 #include <cmath>  // for ceila
+#include <thread> // [#2] parallel refine workers
 #include <boost/program_options.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -448,10 +449,117 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 	const scoring_function &sf = wt;
 	std::cout << std::endl;
 
+#if defined(PARALLEL_REFINE) || defined(CHECK_PARALLEL_REFINE)
+	std::vector<output_container> &refine_work_pool = *(new std::vector<output_container>);
+	// (freed intentionally never: process-lifetime pool, keeps Phase A scope-free)
+	// [#2] Phase A: ligand-granularity parallel refine. Semantics-preserving
+	// by construction: the serial code already deep-copied model m = ms[j]
+	// per ligand and nc[j] is already per-ligand (P-C's lazy-state hazard
+	// lives in the non_cache CONSTRUCTOR path, never called here). Inside the
+	// parallel region every task owns a private model copy and exclusively
+	// owns nc[j]; prec/sf/ms are read-only; refine has no RNG and no
+	// function-level statics (bfgs.cpp/quasi_newton.cpp audited).
+	{
+		int n_workers = 8;
+		if (const char *wenv = getenv("PARALLEL_REFINE_THREADS"))
+			n_workers = atoi(wenv);
+		if (n_workers < 1) n_workers = 1;
+#ifdef CHECK_PARALLEL_REFINE
+		// deep snapshot of the UNREFINED pools (ptr_vector copy = clone)
+		std::vector<output_container> snap(ligand_num);
+		std::vector<output_container> par_pool(ligand_num);
+		std::vector<output_container> serial_pool(ligand_num);
+		for (int j = 0; j < ligand_num; j++) {
+			snap[j] = out_conts[j];
+			par_pool[j] = snap[j];
+			serial_pool[j] = snap[j];
+		}
+		refine_work_pool.resize(ligand_num);
+		for (int j = 0; j < ligand_num; j++)
+			refine_work_pool[j] = par_pool[j];
+		std::vector<output_container> &work = refine_work_pool;
+#else
+		refine_work_pool.resize(ligand_num);
+		for (int j = 0; j < ligand_num; j++)
+			refine_work_pool[j] = out_conts[j];
+		std::vector<output_container> &work = refine_work_pool;
+#endif
+		auto refine_ligand = [&](int j) {
+			if (work[j].empty()) return;
+			model mj = ms[j]; // per-task private copy (serial code did the same)
+			for (size_t i = 0; i < work[j].size(); i++)
+				refine_structure(mj, prec, nc[j], work[j][i], authentic_v, par.mc.ssd_par.bfgs_steps[j]);
+		};
+		struct timespec _pa0, _pa1;
+		clock_gettime(CLOCK_MONOTONIC, &_pa0);
+		std::vector<std::thread> workers;
+		for (int w = 0; w < n_workers; w++) {
+			workers.emplace_back([&, w]() {
+				for (int j = w; j < ligand_num; j += n_workers)
+					refine_ligand(j);
+			});
+		}
+		for (auto &th : workers)
+			th.join();
+		clock_gettime(CLOCK_MONOTONIC, &_pa1);
+		fprintf(stderr, "PHASEA_MS=%.1f workers=%d\n",
+			((_pa1.tv_sec - _pa0.tv_sec) * 1e3 + (_pa1.tv_nsec - _pa0.tv_nsec) / 1e6), n_workers);
+#ifdef CHECK_PARALLEL_REFINE
+		// control arm: serial refine of the same snapshot, then exact compare
+		for (int j = 0; j < ligand_num; j++) {
+			if (serial_pool[j].empty()) continue;
+			model mj = ms[j];
+			for (size_t i = 0; i < serial_pool[j].size(); i++)
+				refine_structure(mj, prec, nc[j], serial_pool[j][i], authentic_v, par.mc.ssd_par.bfgs_steps[j]);
+		}
+		size_t mismatches = 0, poses_cmp = 0;
+		for (int j = 0; j < ligand_num; j++) {
+			const output_container &a = work[j];
+			const output_container &b = serial_pool[j];
+			if (a.size() != b.size()) { mismatches++; continue; }
+			for (size_t i = 0; i < a.size(); i++) {
+				bool same = (a[i].e == b[i].e);
+				const conf &ca = a[i].c;
+				const conf &cb = b[i].c;
+				same = same && (ca.ligands.size() == cb.ligands.size());
+				if (same && ca.ligands.size() == 1) {
+					for (int d = 0; d < 3 && same; d++)
+						same = (ca.ligands[0].rigid.position[d] == cb.ligands[0].rigid.position[d]);
+											same = same && (ca.ligands[0].rigid.orientation.R_component_1() == cb.ligands[0].rigid.orientation.R_component_1());
+						same = same && (ca.ligands[0].rigid.orientation.R_component_2() == cb.ligands[0].rigid.orientation.R_component_2());
+						same = same && (ca.ligands[0].rigid.orientation.R_component_3() == cb.ligands[0].rigid.orientation.R_component_3());
+						same = same && (ca.ligands[0].rigid.orientation.R_component_4() == cb.ligands[0].rigid.orientation.R_component_4());
+					same = same && (ca.ligands[0].torsions.size() == cb.ligands[0].torsions.size());
+					for (size_t t = 0; t < ca.ligands[0].torsions.size() && same; t++)
+						same = (ca.ligands[0].torsions[t] == cb.ligands[0].torsions[t]);
+				}
+				same = same && (a[i].coords.size() == b[i].coords.size());
+				for (size_t c = 0; c < a[i].coords.size() && same; c++)
+					same = (a[i].coords[c][0] == b[i].coords[c][0]) &&
+					       (a[i].coords[c][1] == b[i].coords[c][1]) &&
+					       (a[i].coords[c][2] == b[i].coords[c][2]);
+				poses_cmp++;
+				if (!same) mismatches++;
+			}
+		}
+		fprintf(stderr, "CHECK_PARALLEL_REFINE workers=%d poses=%zu mismatches=%zu\n",
+				n_workers, poses_cmp, mismatches);
+		if (mismatches != 0) {
+			fprintf(stderr, "CHECK_PARALLEL_REFINE: FAIL - hidden shared state\n");
+			exit(7);
+		}
+#endif
+	}
+#endif
+
 	for (int ligand_count = 0; ligand_count < ligand_num; ligand_count++)
 	{
 
+#if defined(PARALLEL_REFINE) || defined(CHECK_PARALLEL_REFINE)
+		output_container out_cont = std::move(refine_work_pool[ligand_count]);
+#else
 		output_container out_cont = out_conts[ligand_count];
+#endif
 		model m = ms[ligand_count];
 
 		std::string name_tmp = out_names[ligand_count];
@@ -530,6 +638,8 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 			m.set(out_cont[i].c);
 			out_cont[i].coords = m.get_heavy_atom_movable_coords();
 		}
+#elif defined(PARALLEL_REFINE) || defined(CHECK_PARALLEL_REFINE)
+		// [#2] pool already refined by Phase A workers - nothing to do here.
 #elif !defined(NO_REFINEMENT)
 		// [v6b-P P-B v2] refine_structure is NOT pose-parallel-safe: it mutates
 		// the SHARED model m and SHARED nc.slope (5-slope sweep). Serial loop.
