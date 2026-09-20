@@ -1,6 +1,9 @@
 #include <ctime>
+#include <atomic>
 #include "cache.h"
 #include "host_probe.h"
+// [PHASEA_PIPE] per-range consume-completion flags (index r -> ready when >= r+1)
+std::atomic<int> s3_range_ready[4];
 // #include "wrapcl.h"
 #include "monte_carlo.h"
 #include "coords.h"
@@ -1077,6 +1080,7 @@ cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
 						continue;
 					}
 				}
+				s3_range_ready[r].store(r + 1); // PHASEA_PIPE: range r refine can start
 				checkCUDA(cudaEventDestroy(evr[r]));
 			}
 						// [S3_DEFER_FREES+S3_DEFER_PINNED] cudaFree device-synchronizes: doing it per range

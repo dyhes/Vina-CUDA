@@ -27,6 +27,9 @@
 #include <cmath>  // for ceila
 #include <thread>
 #include <atomic> // [#2] parallel refine workers
+#ifdef PHASEA_PIPE
+extern std::atomic<int> s3_range_ready[4];
+#endif
 #include <boost/program_options.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -196,6 +199,7 @@ void do_search(model &m, const boost::optional<model> &ref, const scoring_functi
 	conf_size s = m.get_size();
 	conf c = m.get_initial_conf();
 	fl e = max_fl;
+
 	const vec authentic_v(1000, 1000, 1000);
 	// score_only = true;
 	if (score_only)
@@ -427,6 +431,45 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_twarm1 = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6;
 	  fprintf(stderr, "PROBE ctx_warmup : %.1f ms\n", e2e_twarm1 - e2e_twarm0); }
 #endif
+	#if defined(PHASEA_PIPE) && !defined(CHECK_PARALLEL_REFINE)
+	for (int r = 0; r < 4; r++) s3_range_ready[r].store(0);
+	const vec pa_authentic_v(1000, 1000, 1000);
+	int n_workers = 8;
+	if (const char *wenv = getenv("PARALLEL_REFINE_THREADS"))
+		n_workers = atoi(wenv);
+	if (n_workers < 1) n_workers = 1;
+	auto refine_ligand = [&](int j) {
+		if (out_conts[j].empty()) return; // S3_DIRECT_OUT
+		try {
+			model mj = ms[j]; // per-task private copy (serial code did the same)
+			for (size_t i = 0; i < out_conts[j].size(); i++)
+				refine_structure(mj, prec, nc[j], out_conts[j][i], pa_authentic_v, par.mc.ssd_par.bfgs_steps[j]);
+		} catch (const std::exception &e) {
+			fprintf(stderr, "REFINE_EXC j=%d: %s - ligand skipped\n", j, e.what());
+		} catch (...) {
+			fprintf(stderr, "REFINE_EXC j=%d: unknown - ligand skipped\n", j);
+		}
+	};
+	// [PHASEA_EARLY_START] workers start BEFORE main_procedure_cl so range-0
+	// refine overlaps GPU ranges 1-3; join still happens at the PHASEA site.
+	// S3_DIRECT_OUT: no pool snapshot; workers refine out_conts[j] in place.
+	std::vector<std::thread> &pa_workers = *(new std::vector<std::thread>);
+	for (int w = 0; w < n_workers; w++) {
+		pa_workers.emplace_back([&, w]() {
+			const int NR = 4;
+			int per = (ligand_num + NR - 1) / NR;
+			for (int r = 0; r < NR; r++) {
+				int lo = r * per;
+				int hi = std::min(ligand_num, lo + per);
+				if (lo >= hi) break;
+				while (s3_range_ready[r].load() < r + 1)
+					std::this_thread::yield();
+				for (int j = lo + w; j < hi; j += n_workers)
+					refine_ligand(j);
+			}
+		});
+	}
+#endif
 	main_procedure_cl(c, ms, prec, par, corner1, corner2, seed, out_conts, ligand_names, rilc_bfgs);
 #ifdef HOST_PROBE
 	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_tres = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6; }
@@ -445,7 +488,7 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 	std::cout << std::endl;
 
 #if defined(PARALLEL_REFINE) || defined(CHECK_PARALLEL_REFINE)
-	std::vector<output_container> &refine_work_pool = *(new std::vector<output_container>);
+
 	// [#2] Phase A: ligand-granularity parallel refine. Semantics-preserving
 	// by construction: the serial code already deep-copied model m = ms[j]
 	// per ligand and nc[j] is already per-ligand (P-C lazy-state hazard lives
@@ -472,26 +515,26 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 			refine_work_pool[j] = par_pool[j];
 		std::vector<output_container> &work = refine_work_pool;
 #else
+#ifdef PHASEA_PIPE
+		std::vector<output_container> &work = out_conts; // S3_DIRECT_OUT
+#else
 		refine_work_pool.resize(ligand_num);
 		for (int j = 0; j < ligand_num; j++)
 			refine_work_pool[j] = out_conts[j];
 		std::vector<output_container> &work = refine_work_pool;
 #endif
-		auto refine_ligand = [&](int j) {
-			if (work[j].empty()) return;
-			try {
-				model mj = ms[j]; // per-task private copy (serial code did the same)
-				for (size_t i = 0; i < work[j].size(); i++)
-					refine_structure(mj, prec, nc[j], work[j][i], authentic_v, par.mc.ssd_par.bfgs_steps[j]);
-			} catch (const std::exception &e) {
-				fprintf(stderr, "REFINE_EXC j=%d: %s - ligand skipped\n", j, e.what());
-			} catch (...) {
-				fprintf(stderr, "REFINE_EXC j=%d: unknown - ligand skipped\n", j);
-			}
-		};
+#endif
+#ifndef PHASEA_PIPE // [PHASEA_EARLY_START] pool copy + workers already started early
+
+#endif // PHASEA_PIPE early-start guard
 		struct timespec _pa0, _pa1;
 		clock_gettime(CLOCK_MONOTONIC, &_pa0);
 		std::vector<std::thread> workers;
+#ifdef PHASEA_PIPE
+		// workers already started early (PHASEA_EARLY_START); just join.
+		for (auto &th : pa_workers)
+			th.join();
+#else
 		for (int w = 0; w < n_workers; w++) {
 			workers.emplace_back([&, w]() {
 				for (int j = w; j < ligand_num; j += n_workers)
@@ -500,6 +543,7 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 		}
 		for (auto &th : workers)
 			th.join();
+#endif
 		clock_gettime(CLOCK_MONOTONIC, &_pa1);
 		fprintf(stderr, "PHASEA_MS=%.1f workers=%d\n",
 			((_pa1.tv_sec - _pa0.tv_sec) * 1e3 + (_pa1.tv_nsec - _pa0.tv_nsec) / 1e6), n_workers);
@@ -555,7 +599,11 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 	{
 
 #if defined(PARALLEL_REFINE) || defined(CHECK_PARALLEL_REFINE)
+#ifdef PHASEA_PIPE
+		output_container out_cont = std::move(out_conts[ligand_count]); // S3_DIRECT_OUT
+#else
 		output_container out_cont = std::move(refine_work_pool[ligand_count]);
+#endif
 #else
 		output_container out_cont = out_conts[ligand_count];
 #endif
