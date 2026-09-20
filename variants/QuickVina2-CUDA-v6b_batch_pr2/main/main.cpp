@@ -431,13 +431,15 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_twarm1 = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6;
 	  fprintf(stderr, "PROBE ctx_warmup : %.1f ms\n", e2e_twarm1 - e2e_twarm0); }
 #endif
-	#if defined(PHASEA_PIPE) && !defined(CHECK_PARALLEL_REFINE)
-	for (int r = 0; r < 4; r++) s3_range_ready[r].store(0);
-	const vec pa_authentic_v(1000, 1000, 1000);
+	const vec pa_authentic_v(1000, 1000, 1000); // PA_EARLY_SPLIT: both builds
+	std::vector<output_container> &refine_work_pool = *(new std::vector<output_container>);
 	int n_workers = 8;
 	if (const char *wenv = getenv("PARALLEL_REFINE_THREADS"))
 		n_workers = atoi(wenv);
 	if (n_workers < 1) n_workers = 1;
+#if defined(PHASEA_PIPE) && !defined(CHECK_PARALLEL_REFINE)
+	for (int r = 0; r < 4; r++) s3_range_ready[r].store(0);
+#endif
 	auto refine_ligand = [&](int j) {
 		if (out_conts[j].empty()) return; // S3_DIRECT_OUT
 		try {
@@ -453,6 +455,7 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 	// [PHASEA_EARLY_START] workers start BEFORE main_procedure_cl so range-0
 	// refine overlaps GPU ranges 1-3; join still happens at the PHASEA site.
 	// S3_DIRECT_OUT: no pool snapshot; workers refine out_conts[j] in place.
+#if defined(PHASEA_PIPE) && !defined(CHECK_PARALLEL_REFINE)
 	std::vector<std::thread> &pa_workers = *(new std::vector<std::thread>);
 	for (int w = 0; w < n_workers; w++) {
 		pa_workers.emplace_back([&, w]() {
@@ -469,7 +472,7 @@ void main_procedure(std::vector<model> &ms, const boost::optional<model> &ref, /
 			}
 		});
 	}
-#endif
+#endif // PA_EARLY_SPLIT gate
 	main_procedure_cl(c, ms, prec, par, corner1, corner2, seed, out_conts, ligand_names, rilc_bfgs);
 #ifdef HOST_PROBE
 	{ struct timespec _ts; clock_gettime(CLOCK_MONOTONIC, &_ts); e2e_tres = _ts.tv_sec*1000.0+_ts.tv_nsec/1e6; }
