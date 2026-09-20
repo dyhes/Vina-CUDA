@@ -559,6 +559,47 @@ void kernel_monte(
 // [STREAM] split-form launchers: ligand-level pipeline. NO batch-tail sync:
 // the pump thread keeps launching while consumers drain finished ligands.
 extern "C"
+void kernel_monte_ranged(
+	cudaStream_t s3_kernel_stream,
+	output_type_cl **ric_batch_in,
+	m_cl **mg_batch_in,
+	pre_cl *pre,
+	grids_cl *grids,
+	random_maps **random_maps_batch_in,
+	ligand_atom_coords_cl **coords_batch_in,
+	output_type_cl **results_batch_in,
+	const mis_cl *mis,
+	const int *torsion_sizes,
+	const int *search_depths,
+	const int *bfgs_steps,
+	const int rilc_bfgs_enable,
+	const int num_ligands,
+	const int threads_per_ligand,
+	const int *lig_valid,
+	cudaEvent_t ev_range) // records event after ALL launches; no sync inside
+{
+	dim3 grid_size(GRID_DIM1, GRID_DIM2, 1);
+	dim3 block_size(48, 4, 1);
+
+	StageStats* d_stage_ptr;
+	cudaGetSymbolAddress((void**)&d_stage_ptr, d_stage);
+	cudaMemset(d_stage_ptr, 0, sizeof(StageStats));
+
+	{
+		void* mc = nullptr;
+		checkCUDA(cudaGetSymbolAddress(&mc, mis_cuda_const));
+		checkCUDA(cudaMemcpy(mc, mis, sizeof(mis_cl), cudaMemcpyHostToDevice));
+	}
+
+	for (int lg = 0; lg < num_ligands; lg++) {
+		if (lig_valid[lg] == 0) continue;
+		kernel2_update<<<grid_size, block_size, 0, s3_kernel_stream>>>(ric_batch_in[lg], mg_batch_in[lg], pre, grids,
+			random_maps_batch_in[lg], coords_batch_in[lg], results_batch_in[lg], mis,
+			torsion_sizes[lg], search_depths[lg], bfgs_steps[lg], rilc_bfgs_enable);
+	}
+	checkCUDA(cudaEventRecord(ev_range, s3_kernel_stream)); // fire when range kernels done
+}
+
 void kernel_monte_begin_mis(const mis_cl *mis)
 {
 	void* mc = nullptr;

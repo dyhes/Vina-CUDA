@@ -1,3 +1,4 @@
+#include <ctime>
 #include "cache.h"
 #include "host_probe.h"
 // #include "wrapcl.h"
@@ -1004,12 +1005,95 @@ GT_BLOCK_END(0);
 		checkCUDA(cudaEventDestroy(ev_dtoh[j]));
 	}
 
-#else
 		kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
 					 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
 					 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
 					 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
 					 lig_valid_arr.data());
+#else
+#ifdef S3_PIPE // S3_COPY_STREAM
+		{
+			cudaStream_t s3_copy; checkCUDA(cudaStreamCreate(&s3_copy));
+			cudaStream_t s3_kernel; checkCUDA(cudaStreamCreate(&s3_kernel));
+			cudaEvent_t s3_ev_copy; checkCUDA(cudaEventCreate(&s3_ev_copy));
+			std::vector<int> deferred_frees;
+			const int NR = 4;
+			int per = (num_ligands + NR - 1) / NR;
+			cudaEvent_t evr[NR];
+			for (int r = 0; r < NR; r++) checkCUDA(cudaEventCreate(&evr[r]));
+			int launched_total = 0;
+			for (int r = 0; r < NR; r++) {
+				int lo = r * per;
+				int hi = std::min(num_ligands, lo + per);
+				if (lo >= hi) { checkCUDA(cudaEventRecord(evr[r], s3_kernel)); continue; }
+				kernel_monte_ranged(s3_kernel, ric_batch_arr.data() + lo, mg_batch_arr.data() + lo,
+					pre_gpu, grids_gpu,
+					rm_batch_arr.data() + lo, coords_batch_arr.data() + lo,
+					results_batch_arr.data() + lo,
+					mis_gpu, torsion_sizes.data() + lo, search_depths_arr.data() + lo,
+					bfgs_steps_arr.data() + lo, rilc_bfgs, hi - lo, par.mc.thread,
+					lig_valid_arr.data() + lo, evr[r]);
+				launched_total += hi - lo;
+			}
+			for (int r = 0; r < NR; r++) {
+				checkCUDA(cudaEventSynchronize(evr[r]));
+				int lo = r * per;
+				int hi = std::min(num_ligands, lo + per);
+				for (int ligand_count = lo; ligand_count < hi; ligand_count++) {
+					if (lig_valid_arr[ligand_count] == 0) continue;
+					try {
+						result_coords_ptrs[ligand_count] = (ligand_atom_coords_cl *)malloc(par.mc.thread * sizeof(ligand_atom_coords_cl));
+						result_ptrs[ligand_count] = (output_type_cl *)malloc(par.mc.thread * sizeof(output_type_cl));
+						checkCUDA(cudaStreamWaitEvent(s3_copy, evr[r], 0));
+						checkCUDA(cudaMemcpyAsync(result_ptrs[ligand_count], result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl), cudaMemcpyDeviceToHost, s3_copy));
+						checkCUDA(cudaMemcpyAsync(result_coords_ptrs[ligand_count], result_coords_gpus[ligand_count], par.mc.thread * sizeof(ligand_atom_coords_cl), cudaMemcpyDeviceToHost, s3_copy));
+						checkCUDA(cudaEventRecord(s3_ev_copy, s3_copy));
+						checkCUDA(cudaEventSynchronize(s3_ev_copy));
+						std::vector<output_type> result_vina =
+cl_to_vina(result_ptrs[ligand_count], result_coords_ptrs[ligand_count],
+								   par.mc.thread, torsion_sizes[ligand_count]);
+						if (result_vina.size() == 0) {
+							status = ABORT;
+							exit(-1);
+						}
+#pragma omp parallel for
+						for (int i = 0; i < par.mc.thread; i++)
+						{
+							add_to_output_container(outs[ligand_count], result_vina[i], par.mc.min_rmsd, par.mc.num_saved_mins);
+						}
+						free(rand_maps_ptrs[ligand_count]);
+						free(ric_ptrs[ligand_count]);
+						// S3_DEFER_PINNED: cudaFreeHost also device-syncs; deferred
+						free(result_coords_ptrs[ligand_count]);
+						free(result_ptrs[ligand_count]);
+						// S3_DEFER_FREES+S3_DEFER_PINNED: device frees moved after all ranges
+						deferred_frees.push_back(ligand_count);
+					}
+					catch (...)
+					{
+						continue;
+					}
+				}
+				checkCUDA(cudaEventDestroy(evr[r]));
+			}
+						// [S3_DEFER_FREES+S3_DEFER_PINNED] cudaFree device-synchronizes: doing it per range
+			// blocked the host until ALL kernels finished, killing the overlap.
+						for (int lf : deferred_frees) {
+				checkCUDA(cudaFreeHost(m_ptrs[lf]));
+			}
+			// S3_DEFER_PINNED done
+for (int lf : deferred_frees) {
+				checkCUDA(cudaFree(result_coords_gpus[lf]));
+				checkCUDA(cudaFree(result_gpus[lf]));
+				checkCUDA(cudaFree(ric_gpus[lf]));
+				checkCUDA(cudaFree(m_gpus[lf]));
+				checkCUDA(cudaFree(random_maps_gpus[lf]));
+			}
+printf("S3_LAUNCHED=%d\n", launched_total);
+			checkCUDA(cudaEventDestroy(s3_ev_copy));
+			checkCUDA(cudaStreamDestroy(s3_copy));
+		}
+#endif
 #endif
 
 #ifndef STREAMING_PIPE
