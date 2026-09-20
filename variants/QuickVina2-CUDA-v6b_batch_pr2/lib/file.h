@@ -43,12 +43,12 @@ struct file_error {
 定义构造函数   输入  文件路径name    输入模式mode   如果没有输入  抛出异常
 
 */
-struct ifile : public boost::filesystem::ifstream { // never use ifstream pointer to destroy ifile - no virtual destructors, possibly
-	ifile(const path& name) : boost::filesystem::ifstream(name) {
+struct ifile : public std::ifstream { // never use ifstream pointer to destroy ifile - no virtual destructors, possibly
+	ifile(const path& name) : std::ifstream(name.string()) {
 		if(!(*this))
 			throw file_error(name, true);
 	}
-	ifile(const path& name, std::ios_base::openmode mode) : boost::filesystem::ifstream(name, mode) {
+	ifile(const path& name, std::ios_base::openmode mode) : std::ifstream(name.string(), mode) {
 		if(!(*this))
 			throw file_error(name, true);
 	}

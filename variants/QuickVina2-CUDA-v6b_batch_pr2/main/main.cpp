@@ -25,7 +25,8 @@
 #include <exception>
 #include <vector> // ligand paths
 #include <cmath>  // for ceila
-#include <thread> // [#2] parallel refine workers
+#include <thread>
+#include <atomic> // [#2] parallel refine workers
 #include <boost/program_options.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -1070,6 +1071,49 @@ int main(int argc, char *argv[])
 		doing(verbosity, "Reading input", log);
 		std::vector<model> ms;
 		std::vector<std::string> out_names_valid;
+#ifdef S2_PARSE_POOL
+		// [S2] parallel parse pool: parse is pure CPU+IO (~60ms/lig), the single
+		// largest CPU item; 2 threads overlap it with GPU setup/k2 of earlier
+		// ligands. Order-preserving via per-slot ready flags; downstream code
+		// keeps its indices. parse_bundle has no statics (audited) and each
+		// thread touches only its own model.
+		{
+			const size_t n = ligand_names.size();
+			std::vector<std::unique_ptr<model>> slots(n); // model has no default ctor
+			std::vector<bool> ok(n, false);
+			std::vector<std::string> out_names_all(n);
+			int np = 2;
+			if (const char* e = getenv("S2_PARSE_THREADS")) np = atoi(e);
+			if (np < 1) np = 1;
+			std::atomic<int> next_slot{0};
+			auto parse_worker = [&](int w) {
+				for (size_t i = w; i < n; i += np) {
+					try {
+						slots[i] = std::make_unique<model>(parse_bundle(rigid_name_opt, flex_name_opt, ligand_names[i]));
+						out_names_all[i] = out_names[i];
+						ok[i] = true;
+					}
+					catch (parse_error &e) {
+						std::cerr << "\nParse error on line " << e.line << " in file \"" << e.file.string() << "\": " << e.reason << '\n';
+					}
+				}
+			};
+			std::vector<std::thread> pws;
+			for (int w = 0; w < np; w++) pws.emplace_back(parse_worker, w);
+			for (auto& t : pws) t.join();
+			for (size_t i = 0; i < n; i++) {
+				if (ok[i]) out_names_valid.push_back(out_names_all[i]);
+			}
+			// compact: drop failed slots in-place, keeping order
+			for (size_t i = 0; i < n; i++) {
+				if (ok[i]) {
+					ms.push_back(std::move(*slots[i]));
+					out_names_valid.push_back(out_names_all[i]);
+				}
+			}
+			ligand_names.resize(ms.size());
+		}
+#else
 		for (int i = 0; i < ligand_names.size(); i++)
 		{
 			try
@@ -1083,6 +1127,7 @@ int main(int argc, char *argv[])
 				continue;
 			}
 		}
+#endif
 
 		boost::optional<model> ref;
 		std::cout << "reading time: " << boost_t.elapsed() << std::endl;
