@@ -1005,12 +1005,15 @@ GT_BLOCK_END(0);
 		checkCUDA(cudaEventDestroy(ev_dtoh[j]));
 	}
 
-		kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
-					 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
-					 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
-					 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
-					 lig_valid_arr.data());
 #else
+#ifdef S3_PIPE // S3_FALLBACK_KM
+#else
+		kernel_monte(ric_batch_arr.data(), mg_batch_arr.data(), pre_gpu, grids_gpu,
+				 rm_batch_arr.data(), coords_batch_arr.data(), results_batch_arr.data(),
+				 mis_gpu, torsion_sizes.data(), search_depths_arr.data(),
+				 bfgs_steps_arr.data(), rilc_bfgs, num_ligands, par.mc.thread,
+				 lig_valid_arr.data());
+#endif // S3_FALLBACK_KM inner
 #ifdef S3_PIPE // S3_COPY_STREAM
 		{
 			cudaStream_t s3_copy; checkCUDA(cudaStreamCreate(&s3_copy));
