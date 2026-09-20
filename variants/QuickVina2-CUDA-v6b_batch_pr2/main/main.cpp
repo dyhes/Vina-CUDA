@@ -1086,10 +1086,29 @@ int main(int argc, char *argv[])
 			if (const char* e = getenv("S2_PARSE_THREADS")) np = atoi(e);
 			if (np < 1) np = 1;
 			std::atomic<int> next_slot{0};
+			// [S2-FIX] parse the receptor ONCE: parse_bundle was re-parsing the
+			// same 10k-line protein for every ligand (285x60ms = 17s). Cache the
+			// rigid body and append ligands to copies of it.
+			boost::optional<model> rigid_cache;
+			if (rigid_name_opt) {
+				if (flex_name_opt)
+					rigid_cache = parse_receptor_pdbqt(
+						make_path(rigid_name_opt.get()),
+						make_path(flex_name_opt.get()));
+				else
+					rigid_cache = parse_receptor_pdbqt(make_path(rigid_name_opt.get()));
+			}
 			auto parse_worker = [&](int w) {
 				for (size_t i = w; i < n; i += np) {
 					try {
-						slots[i] = std::make_unique<model>(parse_bundle(rigid_name_opt, flex_name_opt, ligand_names[i]));
+						model lig_m = parse_bundle(ligand_names[i]); // ligand-only parse
+						if (rigid_cache) {
+							model m = *rigid_cache; // copy receptor
+							m.append(lig_m);
+							slots[i] = std::make_unique<model>(std::move(m));
+						} else {
+							slots[i] = std::make_unique<model>(std::move(lig_m));
+						}
 						out_names_all[i] = out_names[i];
 						ok[i] = true;
 					}
@@ -1105,6 +1124,7 @@ int main(int argc, char *argv[])
 				if (ok[i]) out_names_valid.push_back(out_names_all[i]);
 			}
 			// compact: drop failed slots in-place, keeping order
+
 			for (size_t i = 0; i < n; i++) {
 				if (ok[i]) {
 					ms.push_back(std::move(*slots[i]));
@@ -1114,11 +1134,36 @@ int main(int argc, char *argv[])
 			ligand_names.resize(ms.size());
 		}
 #else
+#ifdef RIGID_CACHE_SERIAL
+		// [S2-FIX applied to serial path] parse receptor ONCE instead of
+		// re-parsing the same protein for every ligand (285x60ms = 17s).
+		boost::optional<model> rigid_cache;
+		if (rigid_name_opt) {
+			if (flex_name_opt)
+				rigid_cache = parse_receptor_pdbqt(
+					make_path(rigid_name_opt.get()),
+					make_path(flex_name_opt.get()));
+			else
+				rigid_cache = parse_receptor_pdbqt(make_path(rigid_name_opt.get()));
+		}
+#endif
+
 		for (int i = 0; i < ligand_names.size(); i++)
 		{
 			try
 			{
+				#ifdef RIGID_CACHE_SERIAL
+			if (rigid_cache) {
+				model m = *rigid_cache;
+				VINA_FOR_IN(k, ligand_names[i])
+					m.append(parse_ligand_pdbqt(make_path(ligand_names[i][k])));
+				ms.push_back(std::move(m));
+			} else {
 				ms.push_back(parse_bundle(rigid_name_opt, flex_name_opt, ligand_names[i]));
+			}
+		#else
+		ms.push_back(parse_bundle(rigid_name_opt, flex_name_opt, ligand_names[i]));
+		#endif
 				out_names_valid.push_back(out_names[i]);
 			}
 			catch (parse_error &e)
