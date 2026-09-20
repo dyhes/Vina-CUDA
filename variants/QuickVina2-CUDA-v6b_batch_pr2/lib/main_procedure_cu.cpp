@@ -832,7 +832,11 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			// output_type_cl* ric_gpus[ligand_count];
 			boost_t.restart();
 			struct timespec _m0; clock_gettime(CLOCK_MONOTONIC, &_m0);
+			#ifdef STREAMING_PIPE
 			checkCUDA(cudaMallocAsync((void **)&ric_gpus[ligand_count], ric_size, s1_comp));
+			#else
+			checkCUDA(cudaMalloc((void **)&ric_gpus[ligand_count], ric_size));
+			#endif
 			// GT_BLOCK_START();
 			// [v7-GPU] ric HtoD skipped: generated on device
 
@@ -841,23 +845,43 @@ std::vector<random_maps *> rand_maps_ptrs(num_ligands);
 			// [Path B merged] m_gpus is read-only in kernel2_update — all writes go to
 			// shared memory. Allocate a single copy instead of 8192 identical copies
 			// (saves ~289 MB HtoD per ligand; CASF-certified in memcpy_single_m).
+			#ifdef STREAMING_PIPE
 			checkCUDA(cudaMallocAsync((void **)&m_gpus[ligand_count], m_size, s1_comp));
+			#else
+			checkCUDA(cudaMalloc((void **)&m_gpus[ligand_count], m_size));
+			#endif
+			#ifdef STREAMING_PIPE
 			checkCUDA(cudaMemcpyAsync(m_gpus[ligand_count], m_ptr, m_size, cudaMemcpyHostToDevice, s1_comp));
+			#else
+			checkCUDA(cudaMemcpy(m_gpus[ligand_count], m_ptr, m_size, cudaMemcpyHostToDevice));
+			#endif
 			{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t); fprintf(stderr, "PP2=%.2f\n", (_t.tv_sec-_g_tv.tv_sec)*1e3+(_t.tv_nsec-_g_tv.tv_nsec)/1e6); _g_tv = _t; } // [S1-FIX3] async on s1_comp: no CPU wait, ordered before kernel2[j]
 
 			// random_maps* random_maps_gpus[ligand_count];
+			#ifdef STREAMING_PIPE
 			checkCUDA(cudaMallocAsync((void **)&random_maps_gpus[ligand_count], rand_maps_size, s1_comp));
+			#else
+			checkCUDA(cudaMalloc((void **)&random_maps_gpus[ligand_count], rand_maps_size));
+			#endif
 			// [v7-GPU] random_maps generated on device (HtoD skipped)
 			v7_gen_randmaps_gpu(random_maps_gpus[ligand_count], n_tors_gpu,
 					(unsigned long long)seed + 77u, stream8);
 			{ struct timespec _t; clock_gettime(CLOCK_MONOTONIC, &_t); fprintf(stderr, "PP1=%.2f\n", (_t.tv_sec-_g_tv.tv_sec)*1e3+(_t.tv_nsec-_g_tv.tv_nsec)/1e6); _g_tv = _t; }
 
+			#ifdef STREAMING_PIPE
 			checkCUDA(cudaMallocAsync((void **)&result_coords_gpus[ligand_count], mis_ptr->thread * sizeof(ligand_atom_coords_cl), s1_comp));
+			#else
+			checkCUDA(cudaMalloc((void **)&result_coords_gpus[ligand_count], mis_ptr->thread * sizeof(ligand_atom_coords_cl)));
+			#endif
 			// checkCUDA(cudaMemcpy(result_coords_gpus[ligand_count], result_coords_ptrs[ligand_count], mis_ptr->thread * sizeof(ligand_atom_coords_cl), cudaMemcpyHostToDevice));
 			// [v7-GPU] result_coords HtoD skipped (device writes coords)
 
 			// output_type_cl* result_gpus[ligand_count];
+			#ifdef STREAMING_PIPE
 			checkCUDA(cudaMallocAsync((void **)&result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl), s1_comp));
+			#else
+			checkCUDA(cudaMalloc((void **)&result_gpus[ligand_count], par.mc.thread * sizeof(output_type_cl)));
+			#endif
 			{ struct timespec _m1; clock_gettime(CLOCK_MONOTONIC, &_m1);
 			  fprintf(stderr, "MALLOC_MS=%.2f\n", (_m1.tv_sec-_m0.tv_sec)*1e3+(_m1.tv_nsec-_m0.tv_nsec)/1e6); }
 			// [v6b] staging for the post-loop batch kernel call — MUST sit after the
